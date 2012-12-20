@@ -1,0 +1,60 @@
+@header-height: 50px;
+@convo-width: 470px;
+@standard-margin: 10px;
+@dual-convo-width: (@convo-width * 2) + @standard-margin;
+@tile-height: 100px;
+
+@blue: #33B5E5;
+@white: #FFFFFF;
+@light-gray: #C3C3C3;
+@gray: #333333;
+@black: #000000;
+
+html {
+	background-color: @white;
+	background-image: url(../images/background.jpg);
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+
+body {
+	background: transparent;
+	margin: 0;
+}
+
+.centered {
+	margin: 0 auto;
+}
+
+.margin-bottom (@value: @standard-margin) {
+	margin-bottom: @value;
+}
+
+#header {
+	width: @dual-convo-width + 140px;
+	height: @header-height;
+	.centered;
+	.margin-bottom;
+}
+
+#dual-convo {
+	width: @dual-convo-width;
+	height: 500px;
+	.centered;
+	.margin-bottom(@standard-margin * 2);
+}
+
+#strip {
+	width: 100%;
+	height: @tile-height;
+	.margin-bottom;
+}
+
+#logo {
+	font-family: MuseoSlab-500;
+	color: @blue;
+	font-weight: bold;
+	text-align: left;
+	font-size: @header-height - 10px;
+	text-shadow: @gray 0px 1px 2px;
+}

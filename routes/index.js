@@ -36,9 +36,9 @@ function desktop(req, res){
 					});
 				});
 					
-				res.render('conversations', { title: 'desktop',
+				res.render('conversations/active', { title: 'desktop',
 		    	conversations: JSON.stringify(conversations),
-		    	desktop: JSON.stringify(desktop) });
+		    	desktop: JSON.stringify(desktop), layout: '' });
 			});
 		});
 	});

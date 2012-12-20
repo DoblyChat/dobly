@@ -10,6 +10,9 @@
 @gray: #333333;
 @black: #000000;
 
+@sans: MuseoSlab-500;
+@sans-serif: MuseoSans-500;
+
 html {
 	background-color: @white;
 	background-image: url(../images/background.jpg);
@@ -28,6 +31,14 @@ body {
 
 .margin-bottom (@value: @standard-margin) {
 	margin-bottom: @value;
+}
+
+.margin-top (@value: @standard-margin) {
+	margin-top: @value;
+}
+
+.margin-left (@value: @standard-margin) {
+	margin-left: @value;
 }
 
 #header {
@@ -51,10 +62,26 @@ body {
 }
 
 #logo {
-	font-family: MuseoSlab-500;
+	font-family: @sans;
 	color: @blue;
 	font-weight: bold;
 	text-align: left;
 	font-size: @header-height - 10px;
 	text-shadow: @gray 0px 1px 2px;
+	float: left;
+	.margin-top(5px);
+}
+
+#top-button {
+	font-family: @sans-serif;
+	color: @black;
+	font-size: 15px;
+	float: right;
+	width: 180px;
+	height: @header-height - @standard-margin;
+	.margin-left;
+	.margin-top;
+	background: @light-gray;
+	text-align: center;
+	line-height: 41px;
 }

@@ -3,12 +3,18 @@ html
 	head		
 		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/MyFontsWebfontsKit.css")
 		link(rel="stylesheet/less", type="text/css", href="/stylesheets/active.less")
-		script(src="/scripts/lib/less-1.3.1.min.js", type="text/javascript")
 		title Active Conversations
 	body
 		#header
 			#logo Fluidity
 			#top-button John Synnex
 			#top-button All Conversations
-		#dual-convo
+		#convos
+			#convo-left
+			#convo-right
 		#strip
+
+
+script(type="text/javascript", src="/scripts/lib/less-1.3.1.min.js")
+script(type="text/javascript", src="/scripts/lib/jquery.js")
+script(type="text/javascript", src="/scripts/client/active.js")

@@ -18,11 +18,13 @@ html {
 	background-image: url(../images/background.jpg);
 	background-repeat: no-repeat;
 	background-position: top left;
+	height: 100%;
 }
 
 body {
 	background: transparent;
 	margin: 0;
+	height: 100%;
 }
 
 .centered {
@@ -48,11 +50,26 @@ body {
 	.margin-bottom;
 }
 
-#dual-convo {
+#convos {
 	width: @dual-convo-width;
-	height: 500px;
 	.centered;
 	.margin-bottom(@standard-margin * 2);
+}
+
+.convo {
+	width: @convo-width;
+	height: 100%;
+	background: @white;
+}
+
+#convo-left {
+	.convo;
+	float: left;
+}
+
+#convo-right {
+	.convo;
+	float:right;
 }
 
 #strip {

@@ -1,17 +1,20 @@
 @header-height: 50px;
 @convo-width: 470px;
 @standard-margin: 10px;
+@standard-padding: 10px;
 @dual-convo-width: (@convo-width * 2) + @standard-margin;
-@tile-height: 100px;
 
 @blue: #33B5E5;
 @white: #FFFFFF;
 @light-gray: #C3C3C3;
 @gray: #333333;
-@black: #000000;
+@black: #222;
 
 @sans: MuseoSlab-500;
 @sans-serif: MuseoSans-500;
+@arial: Arial;
+
+@text-size: 14px;
 
 html {
 	background-color: @white;
@@ -19,6 +22,7 @@ html {
 	background-repeat: no-repeat;
 	background-position: top left;
 	height: 100%;
+	font-family: @sans-serif;
 }
 
 body {
@@ -43,62 +47,28 @@ body {
 	margin-left: @value;
 }
 
-#header {
-	width: @dual-convo-width + 140px;
-	height: @header-height;
-	.centered;
-	.margin-bottom;
+.padding-bottom (@value: @standard-padding) {
+	padding-bottom: @value;
 }
 
-#convos {
-	width: @dual-convo-width;
-	.centered;
-	.margin-bottom(@standard-margin * 2);
+.padding-top (@value: @standard-padding) {
+	padding-top: @value;
 }
 
-.convo {
-	width: @convo-width;
-	height: 100%;
-	background: @white;
+.padding-left (@value: @standard-padding) {
+	padding-left: @value;
 }
 
-#convo-left {
-	.convo;
-	float: left;
+.padding-right (@value: @standard-padding) {
+	padding-right: @value;
 }
 
-#convo-right {
-	.convo;
-	float:right;
+.padding (@value: @standard-padding) {
+	padding: @standard-padding;
 }
 
-#strip {
-	width: 100%;
-	height: @tile-height;
-	.margin-bottom;
-}
+@import "active/header";
 
-#logo {
-	font-family: @sans;
-	color: @blue;
-	font-weight: bold;
-	text-align: left;
-	font-size: @header-height - 10px;
-	text-shadow: @gray 0px 1px 2px;
-	float: left;
-	.margin-top(5px);
-}
+@import "active/convos";
 
-#top-button {
-	font-family: @sans-serif;
-	color: @black;
-	font-size: 15px;
-	float: right;
-	width: 180px;
-	height: @header-height - @standard-margin;
-	.margin-left;
-	.margin-top;
-	background: @light-gray;
-	text-align: center;
-	line-height: 41px;
-}
+@import "active/strip";

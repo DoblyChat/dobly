@@ -1,0 +1,84 @@
+.title-color {
+	color: @black;
+}
+
+.caption-color {
+	color: lighten(@light-gray,5%);
+}
+
+.text-color {
+	color: @gray;
+}
+
+#convos {
+	width: @dual-convo-width;
+	.centered;
+	.margin-bottom(@standard-margin * 2);
+}
+
+.convo {
+	width: @convo-width;
+	height: 100%;
+	background: @white;
+	.convo-box-shadow;
+}
+
+.convo-box-shadow {
+	-moz-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
+	-webkit-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
+	-o-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
+	box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
+}
+
+#convo-left {
+	.convo;
+	float: left;
+}
+
+#convo-right {
+	.convo;
+	float:right;
+}
+
+.convo-header {	
+	.padding;
+	border-bottom: 1px solid @gray;
+}
+
+.convo-title {
+	.title-color;
+	font-size: 20px;
+}
+
+.convo-subtitle {
+	.caption-color;
+	font-size: @text-size;
+	.padding-top(5px);
+}
+
+.convo-body{
+	// possibly use it for scrolling
+	font-size: @text-size;
+}
+
+.message {
+	.padding;
+	border-bottom: 1px solid @light-gray;
+}
+
+.message-author {
+	.caption-color;
+	float: left;
+}
+
+.message-time {
+	.caption-color;
+	float: right;
+}
+
+.message-text {
+	.text-color;
+	clear: both;
+	.padding-top(5px);
+	line-height: 1.5;
+}

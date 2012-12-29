@@ -1,9 +1,9 @@
 .title-color {
-	color: @black;
+	color: @gray;
 }
 
 .caption-color {
-	color: lighten(@light-gray,5%);
+	color: @muted;
 }
 
 .text-color {
@@ -48,17 +48,16 @@
 .convo-title {
 	.title-color;
 	font-size: 20px;
+	font-weight: 700;
 }
 
 .convo-subtitle {
 	.caption-color;
-	font-size: @text-size;
 	.padding-top(5px);
 }
 
 .convo-body{
-	// possibly use it for scrolling
-	font-size: @text-size;
+	// possibly use it for scrolling	
 }
 
 .message {
@@ -74,6 +73,7 @@
 .message-time {
 	.caption-color;
 	float: right;
+	font-size: @text-size - 1px;
 }
 
 .message-text {

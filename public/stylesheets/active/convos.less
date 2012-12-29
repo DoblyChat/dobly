@@ -1,3 +1,8 @@
+@message-top-padding: 10px;
+@message-bottom-padding: 10px;
+@message-left-padding: 25px;
+@message-right-padding: 25px;
+
 .title-color {
 	color: @gray;
 }
@@ -13,7 +18,7 @@
 #convos {
 	width: @dual-convo-width;
 	.centered;
-	.margin-bottom(@standard-margin * 2);
+	margin-bottom: @standard-margin * 2;
 }
 
 .convo {
@@ -41,7 +46,7 @@
 }
 
 .convo-header {	
-	.padding;
+	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
 	border-bottom: 1px solid @gray;
 }
 
@@ -53,7 +58,7 @@
 
 .convo-subtitle {
 	.caption-color;
-	.padding-top(5px);
+	padding-top: 5px;
 }
 
 .convo-body{
@@ -61,7 +66,7 @@
 }
 
 .message {
-	.padding;
+	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
 	border-bottom: 1px solid @light-gray;
 }
 
@@ -79,6 +84,6 @@
 .message-text {
 	.text-color;
 	clear: both;
-	.padding-top(5px);
+	padding-top: 5px;
 	line-height: 1.5;
 }

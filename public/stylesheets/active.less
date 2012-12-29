@@ -1,7 +1,6 @@
 @header-height: 50px;
 @convo-width: 500px;
 @standard-margin: 10px;
-@standard-padding: 10px;
 @dual-convo-width: (@convo-width * 2) + @standard-margin;
 
 @blue: #33B5E5;
@@ -37,36 +36,20 @@ body {
 	margin: 0 auto;
 }
 
-.margin-bottom (@value: @standard-margin) {
-	margin-bottom: @value;
+.margin-bottom {
+	margin-bottom: @standard-margin;
 }
 
-.margin-top (@value: @standard-margin) {
-	margin-top: @value;
+.margin-top {
+	margin-top: @standard-margin;
 }
 
-.margin-left (@value: @standard-margin) {
-	margin-left: @value;
+.margin-left {
+	margin-left: @standard-margin;
 }
 
-.padding-bottom (@value: @standard-padding) {
-	padding-bottom: @value;
-}
-
-.padding-top (@value: @standard-padding) {
-	padding-top: @value;
-}
-
-.padding-left (@value: @standard-padding) {
-	padding-left: @value;
-}
-
-.padding-right (@value: @standard-padding) {
-	padding-right: @value;
-}
-
-.padding (@value: @standard-padding) {
-	padding: @standard-padding;
+.margin-right {
+	margin-right: @standard-margin;
 }
 
 @import "active/header";

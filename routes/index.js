@@ -8,7 +8,9 @@ exports.config = function(app){
 
 	app.post('/log-in', log_in);
 
-	app.get('/conversations/', desktop);
+	app.get('/conversations/', renderDesktop);
+
+	app.get('/conversations/old', renderOldDesktop);
 }
 
 function home(req, res){
@@ -20,7 +22,7 @@ function log_in(req, res){
   	res.redirect('/conversations/');
 }
 
-function desktop(req, res){
+function desktop(req, res, route, layout){
 	Conversation.find({}, function(err, conversations){
 		
 		Desktop.findOrCreateByUserId(req.session.user.id, function(err, desktop){
@@ -36,10 +38,18 @@ function desktop(req, res){
 					});
 				});
 					
-				res.render('conversations/active', { title: 'desktop',
+				res.render(route, { title: 'desktop',
 		    	conversations: JSON.stringify(conversations),
-		    	desktop: JSON.stringify(desktop), layout: '' });
+		    	desktop: JSON.stringify(desktop), layout: layout });
 			});
 		});
 	});
+}
+
+function renderDesktop(req, res) {
+	desktop(req, res, 'conversations/active', '');
+}
+
+function renderOldDesktop(req, res) {
+	desktop(req, res, 'conversations/index', 'layout');	
 }

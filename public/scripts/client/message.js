@@ -5,14 +5,15 @@ function createMessage(data) {
   self.timestamp = formatTimestamp(data.timestamp);
   self.username = data.user.name;
 
-  function formatTimestamp(timestamp) {
-    var date = new Date(timestamp);
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var hour = date.getHours();
-    var minute = date.getMinutes();
+  function formatTimestamp(timestampString) {
+    var timestamp = new Date(timestampString);
+    var datestamp = new Date(timestampString).clearTime();
 
-    return month + '/' + day + ' ' + hour + ':' + minute;
+    if (datestamp.equals(Date.today())) {
+      return timestamp.toString("h:m tt");
+    } else {
+      return timestamp.toString("M/d h:m tt");
+    }
   }
 
   return self;

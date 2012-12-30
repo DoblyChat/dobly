@@ -12,18 +12,30 @@ $(document).ready(function() {
 
 	//viewModel.adjustScrolling();
 	//viewModel.desktop.setupSorting();
+	resizeConvoBody();
 });
 
 function resizeDualConvo() {
-	var bodyHeight = $('body').outerHeight(true);
-	var headerHeight = $('#header').outerHeight(true);
-	var stripHeight = $('#strip').outerHeight(true);
-	var convosMargin = $('#convos').outerHeight(true) - $('#convos').innerHeight();
+	var includeMargin = true;
+	var bodyHeight = $('body').outerHeight(includeMargin);
+	var headerHeight = $('#header').outerHeight(includeMargin);
+	var stripHeight = $('#strip').outerHeight(includeMargin);
+	var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
+
 	$('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
+}
+
+function resizeConvoBody() {
+	var titleHeight = $('.convo-header').outerHeight();
+	var newMessageHeight = $('.convo-new-message').outerHeight();
+	var convoHeight = $('#convos').innerHeight();
+
+	$('.convo-body').height(convoHeight - titleHeight - newMessageHeight);
 }
 
 $(window).resize(function() {
 	resizeDualConvo();
+	resizeConvoBody();
 });
 
 window.onbeforeunload = function() { 

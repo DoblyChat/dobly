@@ -12,8 +12,11 @@ $(document).ready(function() {
 
 	//viewModel.adjustScrolling();
 	//viewModel.desktop.setupSorting();
-	resizeConvoBody();
 });
+
+$(window).load(function() {
+	resizeConvoBody();
+})
 
 function resizeDualConvo() {
 	var includeMargin = true;

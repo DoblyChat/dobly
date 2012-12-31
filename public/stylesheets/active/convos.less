@@ -3,6 +3,13 @@
 @message-left-padding: 25px;
 @message-right-padding: 25px;
 
+@new-message-top-padding: 10px;
+@new-message-bottom-padding: 10px;
+@new-message-left-padding: 13px;
+@new-message-right-padding: 13px;
+
+@textarea-height: 46px;
+
 .title-color {
 	color: @gray;
 }
@@ -45,8 +52,12 @@
 	float:right;
 }
 
-.convo-header {	
+.message-padding {
 	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
+}
+
+.convo-header {	
+	.message-padding;
 	border-bottom: 1px solid @gray;
 }
 
@@ -66,7 +77,7 @@
 }
 
 .message {
-	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
+	.message-padding;
 	border-bottom: 1px solid @light-gray;
 }
 
@@ -89,11 +100,20 @@
 }
 
 .convo-new-message {
+	padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
+	//.message-padding;
 	border-top: 1px solid @gray;
 }
 
 .convo-new-message textarea {
 	border: none;
 	resize: none;
-	width: @convo-width - 4px;
+	width: (@convo-width - 4px) - @new-message-right-padding - @new-message-left-padding;
+	height: @textarea-height;
+	//width: (@convo-width - 4px) - @message-right-padding - @message-left-padding;
+	font-size: @text-size + 4px;
+}
+
+.convo-new-message textarea:focus{
+	outline: none;
 }

@@ -2,7 +2,8 @@ function createConversation(data) {
   var self = {};
 
   self.id = data._id;
-  self.topic = data.topic;
+  self.topic = ko.observable(data.topic);
+  self.settingTopic = ko.observable(false);
   self.createdBy = data.createdBy;
   self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
   self.newMessage = ko.observable('');
@@ -25,14 +26,29 @@ function createConversation(data) {
     }
   });
 
+  self.topicSet = function(data, event) {
+    if (enterKeyPressed(event) && self.topic().length > 0) {
+      socket.emit('set_topic', { id: self.id, topic: self.topic() });
+      self.settingTopic(false);
+      return false;
+    }
+    else {
+      return true;
+    }
+  };
+
+  function enterKeyPressed(event) {
+    var keyCode = (event.which ? event.which : event.keyCode);
+    return keyCode === 13;
+  }
+
   function addMessage(data){
     var msg = createMessage(data);
     self.messages.push(msg);
   }
 
-  self.sendMessage = function (data, event) {
-    var keyCode = (event.which ? event.which : event.keyCode);
-    if (keyCode === 13) {
+  self.sendMessage = function (data, event) {    
+    if (enterKeyPressed(event)) {
       sendMessageToServer();
       return false;
     } else {

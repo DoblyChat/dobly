@@ -57,7 +57,40 @@ function createDesktop(data, conversations){
     if(!hasConversation(conversation)){
       socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
       self.conversations.push(conversation);
+      self.resize.convoBody();
+      self.resize.strip();
+      conversation.settingTopic.subscribe(function(newValue){
+        self.resize.convoBody();
+      });
     }
+  };
+
+  self.resize = {
+    dualConvo: function() {
+      var includeMargin = true;
+      var bodyHeight = $('body').outerHeight(includeMargin);
+      var headerHeight = $('#header').outerHeight(includeMargin);
+      var stripHeight = $('#strip').outerHeight(includeMargin);
+      var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
+
+      $('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
+    },
+
+    convoBody: function() {
+      var titleHeight = $('.convo-header').outerHeight();
+      var newMessageHeight = $('.convo-new-message').outerHeight();
+      var convoHeight = $('#convos').innerHeight();
+
+      $('.convo-body').height(convoHeight - titleHeight - newMessageHeight);
+    },
+
+    strip: function() {
+      var tileWidth = $('#new-convo-tile').outerWidth();
+      var standardMargin = 10;
+      var newConvoTile = 1;
+      var tileCount = self.conversations().length + newConvoTile;
+      $('#strip').width((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
+    },
   };
 
   self.addAndFocus = function(conversation){
@@ -129,6 +162,10 @@ function createDesktop(data, conversations){
 
     $('.film-strip').disableSelection();
   };
+
+  self.addNewConversation = function(){
+    socket.emit('create_conversation');
+  }
 
   return self;
 }

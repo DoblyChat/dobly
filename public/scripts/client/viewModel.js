@@ -8,7 +8,14 @@ function createViewModel(conversationsData, desktopData) {
 
   self.desktop = createDesktop(desktopData, self.conversations());
 
-  socket.on('conversation_added', function(data){
+  socket.on('my_new_conversation', function(data){
+    var conversation = createConversation(data);
+    conversation.settingTopic(true);
+    self.conversations.push(conversation);
+    self.desktop.addAndFocus(conversation);
+  })
+
+  socket.on('your_new_conversation', function(data){
     var conversation = createConversation(data);
     self.conversations.push(conversation);
     self.desktop.add(conversation);

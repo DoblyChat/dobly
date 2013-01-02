@@ -1,7 +1,7 @@
 var socket = io.connect(window.location.origin);
+var resize;
 
 $(document).ready(function() {
-	resizeDualConvo();
 
 	var desktopData = JSON.parse($('#desktop').val());
 	var conversationData = JSON.parse($('#data').val());
@@ -10,35 +10,20 @@ $(document).ready(function() {
 
 	ko.applyBindings(viewModel);
 
+	resize = viewModel.desktop.resize;
+	resize.dualConvo();
+	resize.strip();
 	//viewModel.adjustScrolling();
 	//viewModel.desktop.setupSorting();
 });
 
 $(window).load(function() {
-	resizeConvoBody();
+	resize.convoBody();
 })
 
-function resizeDualConvo() {
-	var includeMargin = true;
-	var bodyHeight = $('body').outerHeight(includeMargin);
-	var headerHeight = $('#header').outerHeight(includeMargin);
-	var stripHeight = $('#strip').outerHeight(includeMargin);
-	var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
-
-	$('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
-}
-
-function resizeConvoBody() {
-	var titleHeight = $('.convo-header').outerHeight();
-	var newMessageHeight = $('.convo-new-message').outerHeight();
-	var convoHeight = $('#convos').innerHeight();
-
-	$('.convo-body').height(convoHeight - titleHeight - newMessageHeight);
-}
-
 $(window).resize(function() {
-	resizeDualConvo();
-	resizeConvoBody();
+	resize.dualConvo();
+	resize.convoBody();
 });
 
 window.onbeforeunload = function() { 

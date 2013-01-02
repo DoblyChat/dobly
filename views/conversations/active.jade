@@ -13,6 +13,19 @@ html
 			#top-button All Conversations
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-left(data-bind="with: leftConversation, visible: hasLeftConversation")
+				.convo-header-topic-set(data-bind="visible: settingTopic")
+					input(placeholder="Write a topic or question for your new conversation", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: topicSet }")
+				.convo-header(data-bind="visible: !settingTopic()")
+					.convo-title(data-bind="text: topic")
+					.convo-subtitle by John Synnex
+				.convo-body(data-bind="foreach: messages, visible: !settingTopic()")
+					.message
+						.message-author(data-bind="text:username")
+						.message-time(data-bind="text:timestamp")
+						.message-text(data-bind="text:content")
+				.convo-new-message(data-bind="visible: !settingTopic()")
+					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")	
+			#convo-right(data-bind="with: rightConversation, visible: hasRightConversation")
 				.convo-header
 					.convo-title(data-bind="text: topic")
 					.convo-subtitle by John Synnex
@@ -22,24 +35,11 @@ html
 						.message-time(data-bind="text:timestamp")
 						.message-text(data-bind="text:content")
 				.convo-new-message
-					textarea(placeholder="Write a new message", rows="2")
-			#convo-right
-				.convo-header
-					.convo-title How do you derive the gravitational equation?
-					.convo-subtitle by John Synnex
-				.convo-body
-					.message
-						.message-author Mario Gomez
-						.message-time 9:21 PM
-						.message-text 
-							| That's a tough one, but not impossible. Use a program like Mathematica 
-							| to get the calculations you will need. You will have to start with ready-equations, 
-							| like the ones for velocity, force and momentum.
-							| Then take velocity and find its inverse relationship to force and momentum.
-		#strip
-			#convo-tiles(data-bind="foreach: desktop.conversations")
+					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")
+		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
+			#convo-tiles(data-bind="foreach: conversations")
 				.tile(data-bind="text:topic")
-			#new-convo-tile
+			#new-convo-tile(data-bind="event: {click: addNewConversation }")
 				#new-convo-sign +
 				#new-convo-text New Conversation
 

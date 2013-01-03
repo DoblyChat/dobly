@@ -14,7 +14,7 @@ html
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-left(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")
-					input(placeholder="Write a topic or question for your new conversation", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: topicSet }")
+					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: topicSet }")
 				.convo-header(data-bind="visible: !settingTopic()")
 					.convo-title(data-bind="text: topic")
 					.convo-subtitle by John Synnex

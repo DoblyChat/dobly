@@ -77,11 +77,19 @@ function createDesktop(data, conversations){
     },
 
     convoBody: function() {
-      var titleHeight = $('.convo-header').outerHeight();
-      var newMessageHeight = $('.convo-new-message').outerHeight();
       var convoHeight = $('#convos').innerHeight();
 
-      $('.convo-body').height(convoHeight - titleHeight - newMessageHeight);
+      if (self.hasLeftConversation()) {
+        var titleHeightLeft = $('#convo-left .convo-header').outerHeight();
+        var newMessageHeightLeft = $('#convo-left .convo-new-message').outerHeight();  
+        $('#convo-left .convo-body').height(convoHeight - titleHeightLeft - newMessageHeightLeft);
+      }
+      
+      if (self.hasRightConversation()) {
+        var titleHeightRight = $('#convo-right .convo-header').outerHeight();
+        var newMessageHeightRight = $('#convo-right .convo-new-message').outerHeight();
+        $('#convo-right .convo-body').height(convoHeight - titleHeightRight - newMessageHeightRight);
+      }
     },
 
     strip: function() {

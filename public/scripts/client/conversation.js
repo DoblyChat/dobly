@@ -30,6 +30,7 @@ function createConversation(data) {
     if (enterKeyPressed(event) && self.topic().length > 0) {
       socket.emit('set_topic', { id: self.id, topic: self.topic() });
       self.settingTopic(false);
+      setTimeout(function () { $('.convo-new-message textarea').focus(); }, 400);
       return false;
     }
     else {

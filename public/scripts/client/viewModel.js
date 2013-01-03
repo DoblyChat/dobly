@@ -13,6 +13,7 @@ function createViewModel(conversationsData, desktopData) {
     conversation.settingTopic(true);
     self.conversations.push(conversation);
     self.desktop.addAndFocus(conversation);
+    setTimeout(function () { $('.convo-header-topic-set input').focus(); }, 400);
   })
 
   socket.on('your_new_conversation', function(data){

@@ -1,3 +1,5 @@
+@convo-title-text-size: 20px;
+
 @message-top-padding: 10px;
 @message-bottom-padding: 10px;
 @message-left-padding: 25px;
@@ -21,6 +23,12 @@
 
 .text-color {
 	color: @gray;
+}
+
+.title-font {
+	font-size: @convo-title-text-size;
+	font-weight: 700;
+	.title-color;
 }
 
 #convos {
@@ -53,13 +61,20 @@
 	float:right;
 }
 
-.convo-header-topic-set {
-	border-bottom: @thick-gray-border;
-	// NEXT: continue here, the input might need some styling, but test it first;
-}
-
 .message-padding {
 	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
+}
+
+.convo-header-topic-set {
+	.message-padding;
+	border-bottom: @thick-gray-border;
+}
+
+.convo-header-topic-set input {
+	border: none;
+	outline: none;
+	.title-font;
+	width: @convo-width - @message-right-padding - @message-left-padding;
 }
 
 .convo-header {	
@@ -68,9 +83,7 @@
 }
 
 .convo-title {
-	.title-color;
-	font-size: 20px;
-	font-weight: 700;
+	.title-font;
 }
 
 .convo-subtitle {

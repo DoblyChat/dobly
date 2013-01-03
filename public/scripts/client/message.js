@@ -10,9 +10,9 @@ function createMessage(data) {
     var datestamp = new Date(timestampString).clearTime();
 
     if (datestamp.equals(Date.today())) {
-      return timestamp.toString("h:m tt");
+      return timestamp.toString("h:mm tt");
     } else {
-      return timestamp.toString("M/d h:m tt");
+      return timestamp.toString("M/d h:mm tt");
     }
   }
 

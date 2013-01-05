@@ -38,9 +38,11 @@ html
 					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")
 		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-tiles(data-bind="foreach: conversations")
-				.tile(data-bind="text:topic, css: { highlight: focused }, click: $parent.focus")
+				.tile(data-bind="css: { highlight: focused }, click: $parent.focus")
+					.tile-text(data-bind="text:topic")
+					.tile-icons
+						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
 			#new-convo-tile(data-bind="click: addNewConversation")
-				#new-convo-sign +
 				#new-convo-text New Conversation
 
 input#data(type="hidden", value=conversations)

@@ -57,48 +57,11 @@ function createDesktop(data, conversations){
     if(!hasConversation(conversation)){
       socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
       self.conversations.push(conversation);
-      self.resize.convoBody();
       self.resize.strip();
       conversation.settingTopic.subscribe(function(newValue){
         self.resize.convoBody();
       });
     }
-  };
-
-  self.resize = {
-    dualConvo: function() {
-      var includeMargin = true;
-      var bodyHeight = $('body').outerHeight(includeMargin);
-      var headerHeight = $('#header').outerHeight(includeMargin);
-      var stripHeight = $('#strip').outerHeight(includeMargin);
-      var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
-
-      $('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
-    },
-
-    convoBody: function() {
-      var convoHeight = $('#convos').innerHeight();
-
-      if (self.hasLeftConversation()) {
-        var titleHeightLeft = $('#convo-left .convo-header').outerHeight();
-        var newMessageHeightLeft = $('#convo-left .convo-new-message').outerHeight();  
-        $('#convo-left .convo-body').height(convoHeight - titleHeightLeft - newMessageHeightLeft);
-      }
-      
-      if (self.hasRightConversation()) {
-        var titleHeightRight = $('#convo-right .convo-header').outerHeight();
-        var newMessageHeightRight = $('#convo-right .convo-new-message').outerHeight();
-        $('#convo-right .convo-body').height(convoHeight - titleHeightRight - newMessageHeightRight);
-      }
-    },
-
-    strip: function() {
-      var tileWidth = $('#new-convo-tile').outerWidth();
-      var standardMargin = 10;
-      var newConvoTile = 1;
-      var tileCount = self.conversations().length + newConvoTile;
-      $('#strip').width((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
-    },
   };
 
   self.addAndFocus = function(conversation){
@@ -129,6 +92,7 @@ function createDesktop(data, conversations){
     }
 
     updateActiveConversations();
+    self.resize.convoBody();
   };
 
   function updateActiveConversations(){
@@ -143,6 +107,46 @@ function createDesktop(data, conversations){
       conversation.focused(false);
     });
   };
+
+  self.resize = function () {
+    var res = this;
+
+    res.dualConvo = function() {
+      var includeMargin = true;
+      var bodyHeight = $('body').outerHeight(includeMargin);
+      var headerHeight = $('#header').outerHeight(includeMargin);
+      var stripHeight = $('#strip').outerHeight(includeMargin);
+      var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
+
+      $('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
+    };
+
+    res.convoBody = function() {
+      var convoHeight = $('#convos').innerHeight();
+
+      if (self.hasLeftConversation()) {
+        var titleHeightLeft = $('#convo-left .convo-header').outerHeight();
+        var newMessageHeightLeft = $('#convo-left .convo-new-message').outerHeight();  
+        $('#convo-left .convo-body').height(convoHeight - titleHeightLeft - newMessageHeightLeft);
+      }
+      
+      if (self.hasRightConversation()) {
+        var titleHeightRight = $('#convo-right .convo-header').outerHeight();
+        var newMessageHeightRight = $('#convo-right .convo-new-message').outerHeight();
+        $('#convo-right .convo-body').height(convoHeight - titleHeightRight - newMessageHeightRight);
+      }
+    };
+
+    res.strip = function() {
+      var tileWidth = $('#new-convo-tile').outerWidth();
+      var standardMargin = 10;
+      var newConvoTile = 1;
+      var tileCount = self.conversations().length + newConvoTile;
+      $('#strip').width((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
+    };
+
+    return res;
+  }();
 
   self.focus();
 

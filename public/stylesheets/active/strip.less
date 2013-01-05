@@ -2,10 +2,11 @@
 @tile-width: 180px;
 @tile-padding: 5px;
 
-@tile-top-padding: 5px;
-@tile-bottom-padding: 5px;
-@tile-left-padding: 7px;
-@tile-right-padding: 7px;
+@tile-top-padding: 2px;
+@tile-bottom-padding: 2px;
+@tile-left-padding: 4px;
+@tile-right-padding: 4px;
+@tile-border-size: 3px;
 
 @tile-count: 2;
 
@@ -26,9 +27,14 @@
 .tile {
 	.tile-common;
 	.margin-right;
+	border: @tile-border-size solid @light-gray;
 	padding: @tile-top-padding @tile-right-padding @tile-bottom-padding @tile-left-padding;
-	height: @tile-height - (@tile-top-padding + @tile-bottom-padding);
-	width: @tile-width - (@tile-left-padding + @tile-right-padding);
+	height: @tile-height - (@tile-top-padding + @tile-bottom-padding) - (@tile-border-size * 2);
+	width: @tile-width - (@tile-left-padding + @tile-right-padding) - (@tile-border-size * 2);
+}
+
+.tile.highlight {
+	border: @tile-border-size solid @blue;
 }
 
 #new-convo-tile {

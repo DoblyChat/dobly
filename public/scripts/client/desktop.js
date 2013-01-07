@@ -74,6 +74,7 @@ function createDesktop(data, conversations){
     var index = self.conversations.indexOf(conversation);
     self.conversations.splice(index, 1);
     self.focus();
+    self.resize.strip();
   };
 
   self.focus = function(leftConversation){

@@ -2,17 +2,18 @@
 @tile-width: 130px;
 @tile-padding: 5px;
 
-@tile-top-padding: 2px;
-@tile-bottom-padding: 2px;
-@tile-left-padding: 4px;
-@tile-right-padding: 4px;
+@tile-text-top-padding: 2px;
+@tile-text-bottom-padding: 2px;
+@tile-text-left-padding: 4px;
+@tile-text-right-padding: 4px;
 @tile-border-size: 3px;
 
 @tile-count: 2;
 
-@tile-inner-height: @tile-height - (@tile-top-padding + @tile-bottom-padding) - (@tile-border-size * 2);
-@tile-inner-width: @tile-width - (@tile-left-padding + @tile-right-padding) - (@tile-border-size * 2);
+@tile-inner-height: @tile-height - (@tile-border-size * 2);
+@tile-inner-width: @tile-width - (@tile-border-size * 2);
 @tile-text-height: 55px;
+@tile-icons-height: @tile-inner-height - (@tile-text-height + @tile-text-top-padding + @tile-text-bottom-padding);
 
 #strip {
 	width: (@tile-width * @tile-count) + (@standard-margin * (@tile-count - 1));
@@ -34,7 +35,6 @@
 	.tile-common;
 	.margin-right;
 	border: @tile-border-size solid @light-gray;
-	padding: @tile-top-padding @tile-right-padding @tile-bottom-padding @tile-left-padding;
 	height: @tile-inner-height;
 	width: @tile-inner-width;
 }
@@ -44,24 +44,37 @@
 }
 
 .tile-text {
+	padding: @tile-text-top-padding @tile-text-right-padding @tile-text-bottom-padding @tile-text-left-padding;
 	height: @tile-text-height;
 	overflow: hidden;
 }
 
 .tile-icons {
-	height: @tile-inner-height - @tile-text-height;
+	height: @tile-icons-height;
+}
+
+.tile-icons .icon-dismiss {
+	float: left;
+	font-size: 14px;
+	color: lighten(@gray, 40%);
+	padding: 4px;
+}
+
+.tile-icons .icon-dismiss:hover {
+	color: @gray;
 }
 
 .tile-counter {
 	background: @blue;
 	.tile-counter-box-shadow;
-	width: 26px;
-	height: 23px;
+	width: 25px;
+	height: @tile-icons-height - 2px;
 	float: right;
 	text-align: center;
 	font-size: 20px;
 	font-weight: bold;
 	line-height: 1.1;
+	margin-right: 1px;
 }
 
 .tile-counter-box-shadow {

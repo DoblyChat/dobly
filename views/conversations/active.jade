@@ -3,7 +3,7 @@ html
 	head
 		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
 		link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/MyFontsWebfontsKit.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
 		link(rel="stylesheet/less", type="text/css", href="/stylesheets/active.less")
 		title Active Conversations
 	body
@@ -41,6 +41,7 @@ html
 				.tile(data-bind="css: { highlight: focused }, click: $parent.focus")
 					.tile-text(data-bind="text:topic")
 					.tile-icons
+						.icon-dismiss(data-bind="click: $parent.remove")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
 			#new-convo-tile(data-bind="click: addNewConversation")
 				#new-convo-text New Conversation

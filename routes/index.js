@@ -1,5 +1,5 @@
 var Conversation = require('../models/conversation'),
-    users = require('../models/users'),
+    User = require('../models/user'),
     Desktop = require('../models/desktop'),
     UnreadMarker = require('../models/unread_marker');
 
@@ -14,20 +14,23 @@ exports.config = function(app){
 }
 
 function home(req, res){
-  res.render('index', { title: 'my chat app', users: users.list });
+  res.render('index', { title: 'Fluid Talk' });
 }
 
 function log_in(req, res){
-  	req.session.user = users.find(req.body.userId);
-  	res.redirect('/conversations/');
+  	User.findOne({ username: req.body.username }, function(err, user){
+  		if(err) { res.send('Invalid user'); }
+  		
+  		req.session.user = user._doc;
+  		res.redirect('/conversations/');
+  	});
 }
 
 function desktop(req, res, route, layout){
 	Conversation.find({}, function(err, conversations){
 		
-		Desktop.findOrCreateByUserId(req.session.user.id, function(err, desktop){
-				
-			UnreadMarker.find({ userId: req.session.user.id }, function(err, markers){
+		Desktop.findOrCreateByUserId(req.session.user._id, function(err, desktop){
+			UnreadMarker.find({ userId: req.session.user._id }, function(err, markers){
 				conversations.forEach(function(conversation){
 					conversation._doc.unread = 0;
 					

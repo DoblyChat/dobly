@@ -35,6 +35,12 @@ app.listen(port);
 var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 mongo.connect(databaseUri);
 
+// Seed data
+if(process.argv.indexOf('seed') > -1){
+  var seed = require('./seed');
+  seed.set();
+}
+
 // Routes
 routes.config(app);
 

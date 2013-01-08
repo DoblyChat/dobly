@@ -2,10 +2,10 @@
 div.login
 	form(method='post', action="/log-in")
 		div
-			label Who are you?
+			label Username:
+			input(type="text", name="username")
 		div
-			select#selUser(name='userId')
-				each user in users
-					option(value=user.id)= user.name
+			label Password:
+			input(type="password", name="password")
 		div
-			input(type="submit", value="submit")
+			input(type="submit", value="Log In")

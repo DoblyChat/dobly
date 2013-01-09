@@ -31,7 +31,7 @@ exports.config = function(socket){
 }
 
 function createConversation(socket) {
-    Conversation.create({ topic: '', createdBy: socket.handshake.session.user.username }, 
+    Conversation.create({ topic: '', createdBy: socket.handshake.user.username }, 
         function(err, conversation){
             var dataToEmit = { _id: conversation.id, topic: '', createdBy: conversation.createdBy };
             socket.emit('my_new_conversation', dataToEmit);
@@ -57,37 +57,37 @@ function emit(socket, event, dataToEmit){
 }
 
 function addNewActiveConversations(socket, data){
-    var userId = socket.handshake.session.user._id;
+    var userId = socket.handshake.user._id;
     active[userId] = data;
 };
 
 function removeActiveUser(socket){
-    delete active[socket.handshake.session.user._id];
+    delete active[socket.handshake.user._id];
 };
 
 function sendMessage(socket, data){
 	Conversation.findById(data.conversationId, function(err, conversation){
         var msg = new Message();
         msg.content = data.content;
-        msg.username = socket.handshake.session.user.username;
+        msg.username = socket.handshake.user.username;
         msg.timestamp = data.timestamp;
         conversation.messages.push(msg);
         conversation.save(function(err){
             var dataToEmit = {
                 content: data.content, 
-                username: socket.handshake.session.user.username, 
+                username: socket.handshake.user.username, 
                 conversationId: data.conversationId,
                 timestamp: data.timestamp,
             };
 
             emit(socket, 'receive_message', dataToEmit);
-            saveUnreadMarkers(data.conversationId);
+            saveUnreadMarkers(socket.handshake.user._id, data.conversationId);
         });
     });
 };
 
-function saveUnreadMarkers(conversationId){
-    User.find({}, function(err, users){
+function saveUnreadMarkers(currentUserId, conversationId){
+    User.find({ _id: { $ne: currentUserId }}, function(err, users){
         for(var i = 0; i < users.length; i++){
             if(!userIsActive(users[i]) || !userInConversation(users[i], conversationId)){
                 UnreadMarker.update({ userId: users[i]._id, conversationId: conversationId },
@@ -107,5 +107,5 @@ function userInConversation(user, conversationId){
 }
 
 function markAsRead(socket, conversationId){
-    UnreadMarker.remove({ conversationId: conversationId, userId: socket.handshake.session.user._id }).exec();
+    UnreadMarker.remove({ conversationId: conversationId, userId: socket.handshake.user._id }).exec();
 }

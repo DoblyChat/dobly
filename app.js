@@ -5,7 +5,9 @@ var express = require('express')
   , app = express.createServer()
   , io = require('socket.io').listen(app)
   , mongo = require('mongoose')
-  , path = require('path');
+  , path = require('path')
+  , passport = require('passport')
+  , security = require('./security');
 
 // Configuration
 app.configure(function(){
@@ -16,6 +18,8 @@ app.configure(function(){
 
   app.use(express.cookieParser());
   app.use(express.session({ store: sessionStore, secret: 'my secret token', key: 'express.sid' }));
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
@@ -34,6 +38,9 @@ app.listen(port);
 
 var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 mongo.connect(databaseUri);
+
+// Security configuration
+security.config(passport); 
 
 // Seed data
 if(process.argv.indexOf('seed') > -1){

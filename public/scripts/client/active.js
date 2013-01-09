@@ -1,5 +1,5 @@
 var socket = io.connect(window.location.origin);
-var resize;
+var desktop;
 
 $(document).ready(function() {
 
@@ -10,20 +10,21 @@ $(document).ready(function() {
 
 	ko.applyBindings(viewModel);
 
-	resize = viewModel.desktop.resize;
-	resize.dualConvo();
-	resize.strip();
-	//viewModel.adjustScrolling();
+	desktop = viewModel.desktop;
+	desktop.resize.dualConvo();
+	desktop.resize.strip();
 	//viewModel.desktop.setupSorting();
 });
 
 $(window).load(function() {
-	resize.convoBody();
+	desktop.resize.convoBody();
+	desktop.scroll.setup();
 })
 
 $(window).resize(function() {
-	resize.dualConvo();
-	resize.convoBody();
+	desktop.resize.dualConvo();
+	desktop.resize.convoBody();
+	desktop.scroll.setup();
 });
 
 window.onbeforeunload = function() { 

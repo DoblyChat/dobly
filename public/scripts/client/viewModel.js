@@ -27,14 +27,9 @@ function createViewModel(conversationsData, desktopData) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){
       if(data.conversationId === conversation.id){
         conversation.receiveMessage(data);
-        self.adjustScrolling();
       }
     });
   });
-
-  self.adjustScrolling = function (desktop){
-    $(".nano").nanoScroller({ scroll: 'bottom' });
-  }
 
   self.navigation = function(){
     var nav = this;

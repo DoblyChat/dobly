@@ -60,6 +60,7 @@ function createDesktop(data, conversations){
       self.resize.strip();
       conversation.settingTopic.subscribe(function(newValue){
         self.resize.convoBody();
+        self.scroll.setup();       
       });
     }
   };
@@ -85,31 +86,30 @@ function createDesktop(data, conversations){
     }
 
     if(self.hasLeftConversation()){
-      self.leftConversation().focused(true);
+      self.leftConversation().focus('#convo-left');
     }
 
     if(self.hasRightConversation()){
-      self.rightConversation().focused(true);
+      self.rightConversation().focus('#convo-right');
     }
 
     updateActiveConversations();
-    self.resize.convoBody();
   };
 
   function updateActiveConversations(){
-    var conversations = [];
-    if(self.hasLeftConversation()) conversations.push(self.leftConversation().id);
-    if(self.hasRightConversation()) conversations.push(self.rightConversation().id);
-    socket.emit('new_active_conversation', conversations);
+    var activeConversations = [];
+    if(self.hasLeftConversation()) activeConversations.push(self.leftConversation().id);
+    if(self.hasRightConversation()) activeConversations.push(self.rightConversation().id);
+    socket.emit('new_active_conversation', activeConversations);
   }
 
   function clearFocus(){
     ko.utils.arrayForEach(self.conversations(), function(conversation){
-      conversation.focused(false);
+      conversation.resetFocus();
     });
   };
 
-  self.resize = function () {
+  self.resize = function() {
     var res = this;
 
     res.dualConvo = function() {
@@ -123,18 +123,12 @@ function createDesktop(data, conversations){
     };
 
     res.convoBody = function() {
-      var convoHeight = $('#convos').innerHeight();
-
       if (self.hasLeftConversation()) {
-        var titleHeightLeft = $('#convo-left .convo-header').outerHeight();
-        var newMessageHeightLeft = $('#convo-left .convo-new-message').outerHeight();  
-        $('#convo-left .convo-body').height(convoHeight - titleHeightLeft - newMessageHeightLeft);
+        self.leftConversation().resize.body();
       }
       
       if (self.hasRightConversation()) {
-        var titleHeightRight = $('#convo-right .convo-header').outerHeight();
-        var newMessageHeightRight = $('#convo-right .convo-new-message').outerHeight();
-        $('#convo-right .convo-body').height(convoHeight - titleHeightRight - newMessageHeightRight);
+        self.rightConversation().resize.body();
       }
     };
 
@@ -147,6 +141,22 @@ function createDesktop(data, conversations){
     };
 
     return res;
+  }();
+
+  self.scroll = function() {
+    var scr = this;
+
+    scr.setup = function() {
+      if (self.hasLeftConversation()) {
+        self.leftConversation().scroll.setup();
+      }
+      
+      if (self.hasRightConversation()) {
+        self.rightConversation().scroll.setup();
+      }
+    };
+
+    return scr;
   }();
 
   self.focus();

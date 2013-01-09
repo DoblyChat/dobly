@@ -3,7 +3,7 @@ function createMessage(data) {
 
   self.content = ko.observable(data.content);
   self.timestamp = formatTimestamp(data.timestamp);
-  self.username = data.user.name;
+  self.username = data.username;
 
   function formatTimestamp(timestampString) {
     var timestamp = new Date(timestampString);

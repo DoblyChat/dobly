@@ -1,5 +1,6 @@
 var desktopIo = require('./desktop_io')
-  , conversationIo = require('./conversation_io');
+  , conversationIo = require('./conversation_io')
+  , User = require('../models/user');
 
 exports.config = function(io, sessionStore){
     // needed for heroku
@@ -33,15 +34,18 @@ exports.config = function(io, sessionStore){
 
 function authorize(data, accept, sessionStore){
 	if (data.headers.cookie) {
-        var cookie = require('cookie');
-        data.cookie = cookie.parse(data.headers.cookie);
-        data.sessionID = unescape(data.cookie['express.sid']);
-        sessionStore.load(data.sessionID, function (err, session) {
+        var cookieParser = require('cookie');
+        var cookie = cookieParser.parse(data.headers.cookie);
+        var sessionID = unescape(cookie['express.sid']);
+
+        sessionStore.load(sessionID, function (err, session) {
             if (err || !session) {
                 return accept('Error', false);
             } else {
-                data.session = session;
-                return accept(null, true);
+                User.findById(session.passport.user, function(err, user){
+                  data.user = user._doc;
+                  return accept(null, true);
+                });
             }
         });
     } else {

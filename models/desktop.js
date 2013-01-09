@@ -2,7 +2,7 @@ var mongo = require('mongoose');
 
 var schema = new mongo.Schema({
 	conversations: [ mongo.Schema.Types.ObjectId ],
-	userId: Number,
+	userId: mongo.Schema.Types.ObjectId,
 });
 
 schema.methods.removeConversation = function(conversationId){

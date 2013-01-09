@@ -11,4 +11,7 @@ test-debug:
 		--reporter $(REPORTER) \
 		--require test/test_helper.js \
 
-.PHONY: test test-debug
+seed:
+	@NODE_ENV=development node seed/index.js
+
+.PHONY: test test-debug seed

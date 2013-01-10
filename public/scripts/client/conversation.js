@@ -26,6 +26,24 @@ function createConversation(data) {
     }
   });
 
+  self.focus = function(convoSelector) {
+    self.focused(true);
+
+    self.resize = createConversationResizing(convoSelector);
+    self.scroll = createConversationScrolling(convoSelector);
+    
+    self.resize.body();
+    self.scroll.setup();
+  };
+
+  self.resetFocus = function() {
+    if (self.scroll !== undefined) {
+      self.scroll.stop();
+    }
+
+    self.focused(false);
+  };
+
   self.topicSet = function(data, event) {
     if (enterKeyPressed(event) && self.topic().length > 0) {
       socket.emit('set_topic', { id: self.id, topic: self.topic() });
@@ -71,7 +89,9 @@ function createConversation(data) {
 
   self.receiveMessage = function(message){
     addMessage(message);
-    if(!self.focused()){
+    if (self.focused()) {
+      self.scroll.adjust();
+    } else {
       self.unreadCounter(self.unreadCounter() + 1);
     }
   }
@@ -80,5 +100,68 @@ function createConversation(data) {
     return self.unreadCounter() > 0;
   });
 
+  function getSelector(cssSelector) {
+    return selector + ' > ' + cssSelector;
+  }
+
   return self;
-};
+}
+
+function createConversationResizing(convoSelector) {
+  var self = {};
+
+  self.body = function() {
+    var convoHeight = $('#convos').innerHeight();
+    var titleHeightLeft = $(getSelector('.convo-header')).outerHeight();
+    var newMessageHeightLeft = $(getSelector('.convo-new-message')).outerHeight();  
+    $(getSelector('.convo-body')).height(convoHeight - titleHeightLeft - newMessageHeightLeft);
+  };
+
+  function getSelector(cssSelector) {
+    return convoSelector + ' > ' + cssSelector;
+  }
+
+  return self;
+}
+
+function createConversationScrolling(convoSelector) {
+  var self = {};
+
+  self.setup = function() {
+      self.adjust();
+      setupHoverIntent();
+    };
+
+  function setupHoverIntent() {
+    var config = {
+      over: thickBar,
+      timeout: 1000,
+      out: thinBar,
+    };
+    $(getSelector(".nano > .pane")).hoverIntent(config);
+  }
+
+  function thickBar() {
+    $(this).addClass("thickBar");
+    $(this).siblings(".pane").addClass("thickBar");
+  }
+
+  function thinBar() {
+    $(this).removeClass("thickBar");
+    $(this).siblings(".pane").removeClass("thickBar");
+  }
+
+  self.adjust = function() {
+    $(getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
+  };
+
+  self.stop = function() {
+    $(getSelector('.nano')).nanoScroller({ stop: true });
+  };
+
+  function getSelector(cssSelector) {
+    return convoSelector + ' > ' + cssSelector;
+  }
+
+  return self;
+}

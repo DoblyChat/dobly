@@ -11,7 +11,7 @@ describe('Desktop', function(){
 	describe('#removeConversation', function(){
 
 		it('removes a conversation', function(){
-			var conversationId = new mongo.Types.ObjectId;
+			var conversationId = new mongo.Types.ObjectId();
 			desktop.conversations.push(conversationId);
 
 			desktop.conversations.should.include(conversationId);
@@ -41,7 +41,7 @@ describe('Desktop', function(){
 		var userId, findOne;
 
 		beforeEach(function(){
-			userId = 123;
+			userId = new mongo.Types.ObjectId();
 			findOne = sinon.spy();
 			Desktop.findOne = findOne;
 		});
@@ -51,13 +51,13 @@ describe('Desktop', function(){
 			Desktop.findOrCreateByUserId(userId, function(){ 
 				Desktop.find({ userId: userId }, function(err, savedDesktops){
 					savedDesktops.length.should.equal(1)
-					savedDesktops[0].userId.should.equal(userId);
+					savedDesktops[0].userId.should.eql(userId);
 					done();
 				});
 			});
 
 			findOne.called.should.equal(true);
-			findOne.args[0][0].userId.should.equal(userId);
+			findOne.args[0][0].userId.should.eql(userId);
 			var findOneCallback = findOne.args[0][1];
 
 			findOneCallback(null, null);
@@ -67,11 +67,11 @@ describe('Desktop', function(){
 			desktop.userId = userId;
 
 			Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){
-				savedDesktop.userId.should.equal(userId);
+				savedDesktop.userId.should.eql(userId);
 			});
 
 			findOne.called.should.equal(true);
-			findOne.args[0][0].userId.should.equal(userId);
+			findOne.args[0][0].userId.should.eql(userId);
 			var findOneCallback = findOne.args[0][1];
 
 			findOneCallback(null, desktop);

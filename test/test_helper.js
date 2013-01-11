@@ -1,4 +1,6 @@
-global.should = require('should');
+var chai = require('chai');
+chai.should();
+
 global.sinon = require('sinon');
 global.mongo = require('mongoose');
 

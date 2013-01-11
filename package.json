@@ -16,7 +16,6 @@
     "passport": "~0.1.15",
     "passport-local": "~0.1.6",
     "mocha": "~1.8.1",
-    "should": "~1.2.1",
     "sinon": "~1.5.2",
     "nodemon": "~0.6.23",
     "bcrypt": "~0.7.3",

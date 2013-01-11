@@ -24,7 +24,6 @@ $(window).load(function() {
 $(window).resize(function() {
 	desktop.resize.dualConvo();
 	desktop.resize.convoBody();
-	desktop.scroll.setup();
 });
 
 window.onbeforeunload = function() { 

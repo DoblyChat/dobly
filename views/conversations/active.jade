@@ -46,7 +46,8 @@ html
 					.tile-icons
 						.icon-dismiss(data-bind="click: $parent.remove")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
-			#new-convo-tile(data-bind="click: addNewConversation")
+			#new-convo-tile(data-bind="click: addNewConversation")				
+				.icon-plus
 				#new-convo-text New Conversation
 
 input#data(type="hidden", value=conversations)

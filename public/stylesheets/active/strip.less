@@ -84,13 +84,23 @@
 	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
 }
 
+@new-convo-tile-top-padding: 18px;
+@new-convo-tile-bottom-padding: 5px;
+@new-convo-tile-left-padding: 5px;
+@new-convo-tile-right-padding: 5px;
+
 #new-convo-tile {
 	.tile-common;
-	height: @tile-height;	
-	width: @tile-width;
+	height: @tile-height - @new-convo-tile-top-padding - @new-convo-tile-bottom-padding;
+	width: @tile-width - @new-convo-tile-left-padding - @new-convo-tile-right-padding;
+	padding: @new-convo-tile-top-padding @new-convo-tile-right-padding @new-convo-tile-bottom-padding @new-convo-tile-left-padding;
+	text-align: center;
 }
 
-#new-convo-text {
-	padding: 20px;
-	text-align: center;
+#new-convo-tile .icon-plus {
+	font-size: 24px;
+}
+
+#new-convo-text {	
+	
 }

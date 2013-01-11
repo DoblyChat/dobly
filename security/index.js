@@ -11,11 +11,15 @@ exports.config = function(passport){
 					return done(null, false);
 				}
 
-				if(user.password !== password){
-					return done(null, false);	
-				}
+				user.comparePassword(password, function(err, isMatch) {
+					if(err) { done(err); }
 
-				return done(null, user);
+					if(isMatch) {
+						done(null, user);
+					}else {
+						done(null, false);
+					}
+				});
 			});
 		})
 	);

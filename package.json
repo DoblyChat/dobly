@@ -1,6 +1,6 @@
 {
-  "name": "qna-prototype", 
-  "version": "0.0.1", 
+  "name": "qna-prototype",
+  "version": "0.0.1",
   "private": true,
   "engines": {
     "node": "0.8.x",
@@ -12,6 +12,14 @@
     "mongoose": "2.6.6",
     "requirejs": "2.0.2",
     "socket.io": "0.9.6",
-    "cookie": "0.0.3"
+    "cookie": "0.0.3",
+    "passport": "~0.1.15",
+    "passport-local": "~0.1.6",
+    "mocha": "~1.8.1",
+    "should": "~1.2.1",
+    "sinon": "~1.5.2",
+    "nodemon": "~0.6.23",
+    "bcrypt": "~0.7.3",
+    "chai": "~1.4.2"
   }
 }

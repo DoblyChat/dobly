@@ -9,7 +9,7 @@ $(document).ready(function(){
   ko.applyBindings(viewModel);
 
   viewModel.desktop.scroll.setup();
-  viewModel.desktop.setupSorting();
+  //viewModel.desktop.setupSorting();
 });
 
 window.onbeforeunload = function() { 

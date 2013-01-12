@@ -110,7 +110,7 @@ function createDesktop(data, conversations){
   };
 
   self.resize = function() {
-    var res = this;
+    var res = {};
 
     res.dualConvo = function() {
       var includeMargin = true;
@@ -144,7 +144,7 @@ function createDesktop(data, conversations){
   }();
 
   self.scroll = function() {
-    var scr = this;
+    var scr = {};
 
     scr.setup = function() {
       if (self.hasLeftConversation()) {

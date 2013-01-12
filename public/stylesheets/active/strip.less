@@ -31,28 +31,6 @@
 	overflow: hidden;
 }
 
-.tile {
-	.tile-common;
-	.margin-right;
-	border: @tile-border-size solid @light-gray;
-	height: @tile-inner-height;
-	width: @tile-inner-width;
-}
-
-.tile.highlight {
-	border: @tile-border-size solid @blue;
-}
-
-.tile-text {
-	padding: @tile-text-top-padding @tile-text-right-padding @tile-text-bottom-padding @tile-text-left-padding;
-	height: @tile-text-height;
-	overflow: hidden;
-}
-
-.tile-icons {
-	height: @tile-icons-height;
-}
-
 .tile-icons-common {
 	float: left;
 	font-size: 14px;
@@ -64,41 +42,63 @@
 	color: @gray;
 }
 
-.tile-icons .icon-dismiss {
-	.tile-icons-common;
-}
-
-.tile-icons .icon-dismiss:hover {
-	.tile-icons-common-hover;
-}
-
-.tile-icons .icon-move-handle {
-	cursor: move;
-	.tile-icons-common;
-}
-
-.tile-icons .icon-move-handle:hover {
-	.tile-icons-common-hover;
-}
-
-.tile-counter {
-	background: @blue;
-	.tile-counter-box-shadow;
-	width: 25px;
-	height: @tile-icons-height - 2px;
-	float: right;
-	text-align: center;
-	font-size: 20px;
-	font-weight: bold;
-	line-height: 1.1;
-	margin-right: 1px;
-}
-
 .tile-counter-box-shadow {
 	-moz-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
 	-webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
 	-o-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
 	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
+}
+
+.tile {
+	.tile-common;
+	.margin-right;
+	border: @tile-border-size solid @light-gray;
+	height: @tile-inner-height;
+	width: @tile-inner-width;
+
+	.tile-text {
+		padding: @tile-text-top-padding @tile-text-right-padding @tile-text-bottom-padding @tile-text-left-padding;
+		height: @tile-text-height;
+		overflow: hidden;
+	}
+
+	.tile-icons {
+		height: @tile-icons-height;
+
+		.icon-move-handle {
+			cursor: move;
+			.tile-icons-common;
+
+			&:hover {
+				.tile-icons-common-hover;
+			}
+		}		
+
+		.icon-dismiss {
+			.tile-icons-common;
+
+			&:hover {
+				.tile-icons-common-hover;
+			}
+		}
+
+		.tile-counter {
+			background: @blue;
+			.tile-counter-box-shadow;
+			width: 25px;
+			height: @tile-icons-height - 2px;
+			float: right;
+			text-align: center;
+			font-size: 20px;
+			font-weight: bold;
+			line-height: 1.1;
+			margin-right: 1px;
+		}
+	}
+}
+
+.tile.highlight {
+	border: @tile-border-size solid @blue;
 }
 
 @new-convo-tile-top-padding: 18px;
@@ -116,8 +116,4 @@
 
 #new-convo-tile .icon-plus {
 	font-size: 24px;
-}
-
-#new-convo-text {	
-	
 }

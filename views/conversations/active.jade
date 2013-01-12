@@ -16,34 +16,34 @@ html
 			.top-button(data-bind="visible: !navigation.showingDesktop()")
 				a(data-bind="click: navigation.desktop") Back to Conversations
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
-			#convo-left(data-bind="with: leftConversation, visible: hasLeftConversation")
+			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")
 					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: topicSet }")
 				.convo-header(data-bind="visible: !settingTopic()")
-					.convo-title(data-bind="text: topic")
-					.convo-subtitle 
+					.topic(data-bind="text: topic")
+					.created-by 
 						span by 
-						span(data-bind="text:createdBy")
+						span(data-bind="text: createdBy")
 				.nano.convo-body
 					.content(data-bind="foreach: messages, visible: !settingTopic()")
 						.message
-							.message-author(data-bind="text:username")
-							.message-time(data-bind="text:timestamp")
-							.message-text(data-bind="text:content")
+							.author(data-bind="text: username")
+							.time(data-bind="text: timestamp")
+							.text(data-bind="text: content")
 				.convo-new-message(data-bind="visible: !settingTopic()")
 					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")	
-			#convo-right(data-bind="with: rightConversation, visible: hasRightConversation")
+			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation")
 				.convo-header
-					.convo-title(data-bind="text: topic")
-					.convo-subtitle 
+					.topic(data-bind="text: topic")
+					.created-by 
 						span by 
-						span(data-bind="text:createdBy")
+						span(data-bind="text: createdBy")
 				.nano.convo-body
 					.content(data-bind="foreach: messages")
 						.message
-							.message-author(data-bind="text:username")
-							.message-time(data-bind="text:timestamp")
-							.message-text(data-bind="text:content")
+							.author(data-bind="text: username")
+							.time(data-bind="text: timestamp")
+							.text(data-bind="text: content")
 				.convo-new-message
 					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")
 		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
@@ -57,7 +57,16 @@ html
 			#new-convo-tile(data-bind="click: addNewConversation")				
 				.icon-plus
 				#new-convo-text New Conversation
-		#all-convos(data-bind="with:desktop, visible: !navigation.showingDesktop()")
+		#all-convos(data-bind="visible: !navigation.showingDesktop(), foreach: allConversations.sortedConversations")
+			.convo(data-bind="click: $root.allConversations.open")
+				.header
+					.topic(data-bind="text: topic")
+					.created-by(data-bind="text: createdBy")
+					.counter(data-bind="text: unreadCounter")
+				.messages(data-bind="foreach: lastMessages")
+					.message
+						.author(data-bind="text: username")
+						.text(data-bind="text: content")
 
 input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop);

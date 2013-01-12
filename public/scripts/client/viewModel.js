@@ -32,7 +32,7 @@ function createViewModel(conversationsData, desktopData) {
   });
 
   self.navigation = function(){
-    var nav = this;
+    var nav = {};
 
     nav.showingDesktop = ko.observable(true);
 
@@ -43,25 +43,14 @@ function createViewModel(conversationsData, desktopData) {
     nav.desktop = function(){
       nav.showingDesktop(true);
       self.desktop.resize.convoBody();
-    }
-
-    // to be removed, part of old desktop
-    function toggle(){
-      $('#all-conversations').toggle();
-      $('.desktop').toggle();
-    }
-
-    // to be removed, part of old desktop
-    nav.newConversation = function(){
-      $('#new-conversation').modal('toggle');
-      setTimeout(function () { $('#new-conversation input').focus(); }, 400);
+      self.desktop.setupStripDragAndDrop();
     }
 
     return nav;
   }();
 
   self.allConversations = function(desktop, navigation, conversationsObservable){
-    var all = this;
+    var all = {};
 
     all.open = function(conversation){
       navigation.desktop();

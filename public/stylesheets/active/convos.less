@@ -37,11 +37,16 @@
 	.margin-bottom;
 }
 
-.convo {
-	width: @convo-width;
-	height: 100%;
-	background: @white;
-	.convo-box-shadow;
+#convo-left {
+	float: left;
+}
+
+#convo-right {
+	float:right;
+}
+
+.message-padding {
+	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
 }
 
 .convo-box-shadow {
@@ -51,90 +56,83 @@
 	box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
 }
 
-#convo-left {
-	.convo;
-	float: left;
-}
+#convos .convo {
+	width: @convo-width;
+	height: 100%;
+	background: @white;
+	.convo-box-shadow;
 
-#convo-right {
-	.convo;
-	float:right;
-}
+	.convo-header-topic-set {
+		.message-padding;
+		border-bottom: @thick-gray-border;
 
-.message-padding {
-	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
-}
+		input {
+			border: none;
+			outline: none;
+			.title-font;
+			width: @convo-width - @message-right-padding - @message-left-padding;
+		}
+	}
 
-.convo-header-topic-set {
-	.message-padding;
-	border-bottom: @thick-gray-border;
-}
+	.convo-header {	
+		.message-padding;
+		border-bottom: @thick-gray-border;
 
-.convo-header-topic-set input {
-	border: none;
-	outline: none;
-	.title-font;
-	width: @convo-width - @message-right-padding - @message-left-padding;
-}
+		.topic {
+			.title-font;
+		}
 
-.convo-header {	
-	.message-padding;
-	border-bottom: @thick-gray-border;
-}
+		.created-by {
+			.caption-color;
+			padding-top: 5px;
+		}
+	}
 
-.convo-title {
-	.title-font;
-}
+	.convo-body{
+		// possibly use it for scroll	
+	}
 
-.convo-subtitle {
-	.caption-color;
-	padding-top: 5px;
-}
+	.message {
+		.message-padding;
+		border-bottom: 1px solid @light-gray;
 
-.convo-body{
-	// possibly use it for scroll	
-}
+		&:last-child {
+			border-bottom: 0;
+		}
 
-.message {
-	.message-padding;
-	border-bottom: 1px solid @light-gray;
-}
+		.author {
+			.caption-color;
+			float: left;
+		}
 
-.message:last-child {
-	border-bottom: 0;
-}
+		.time {
+			.caption-color;
+			float: right;
+			font-size: @text-size - 1px;
+		}
 
-.message-author {
-	.caption-color;
-	float: left;
-}
+		.text {
+			.text-color;
+			clear: both;
+			padding-top: 5px;
+			line-height: 1.5;
+		}
+	}
 
-.message-time {
-	.caption-color;
-	float: right;
-	font-size: @text-size - 1px;
-}
+	.convo-new-message {
+		padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
+		border-top: @thick-gray-border;
 
-.message-text {
-	.text-color;
-	clear: both;
-	padding-top: 5px;
-	line-height: 1.5;
-}
+		textarea {
+			border: none;
+			resize: none;
+			width: (@convo-width - 4px) - @new-message-right-padding - @new-message-left-padding;
+			height: @textarea-height;
+			font-size: @text-size + 4px;
 
-.convo-new-message {
-	padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
-	border-top: @thick-gray-border;
-}
-
-.convo-new-message textarea {
-	border: none;
-	resize: none;
-	width: (@convo-width - 4px) - @new-message-right-padding - @new-message-left-padding;
-	height: @textarea-height;
-	font-size: @text-size + 4px;
-}
-
-.convo-new-message textarea:focus{
-	outline: none;
+			&:focus{
+				outline: none;
+			}
+		}
+	}
 }

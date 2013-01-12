@@ -11,8 +11,10 @@ html
 		#header
 			#logo Fluidity
 			#user-name.top-button
-			.top-button(data-bind="visible: navigation.showingDesktop, click: navigation.all") All Conversations
-			.top-button(data-bind="visible: !navigation.showingDesktop(), click: navigation.desktop") Back to Conversations			
+			.top-button(data-bind="visible: navigation.showingDesktop")
+				a(data-bind="click: navigation.all") All Conversations
+			.top-button(data-bind="visible: !navigation.showingDesktop()")
+				a(data-bind="click: navigation.desktop") Back to Conversations
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-left(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")

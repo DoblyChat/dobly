@@ -40,13 +40,7 @@ var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 mongo.connect(databaseUri);
 
 // Security configuration
-security.config(passport); 
-
-// Seed data
-if(process.argv.indexOf('seed') > -1){
-  var seed = require('./seed');
-  seed.set();
-}
+security.config(passport);
 
 // Routes
 routes.config(app);

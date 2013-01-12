@@ -18,7 +18,9 @@ html
 					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: topicSet }")
 				.convo-header(data-bind="visible: !settingTopic()")
 					.convo-title(data-bind="text: topic")
-					.convo-subtitle by John Synnex
+					.convo-subtitle 
+						span by 
+						span(data-bind="text:createdBy")
 				.nano.convo-body
 					.content(data-bind="foreach: messages, visible: !settingTopic()")
 						.message
@@ -30,7 +32,9 @@ html
 			#convo-right(data-bind="with: rightConversation, visible: hasRightConversation")
 				.convo-header
 					.convo-title(data-bind="text: topic")
-					.convo-subtitle by John Synnex
+					.convo-subtitle 
+						span by 
+						span(data-bind="text:createdBy")
 				.nano.convo-body
 					.content(data-bind="foreach: messages")
 						.message

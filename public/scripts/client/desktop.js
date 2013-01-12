@@ -55,14 +55,24 @@ function createDesktop(data, conversations){
 
   self.add = function(conversation){
     if(!hasConversation(conversation)){
-      socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
+      self.persistNewConversation(conversation);
       self.conversations.push(conversation);
       self.resize.strip();
-      conversation.settingTopic.subscribe(function(newValue){
-        self.resize.convoBody();
-        self.scroll.setup();       
-      });
     }
+  };
+
+  self.addEmptyConversation = function(conversation) {
+    self.conversations.push(conversation);
+    self.resize.strip();
+    self.focus(conversation);
+    conversation.settingTopic.subscribe(function(newValue){
+      self.resize.convoBody();
+      self.scroll.setup();       
+    });
+  };
+
+  self.persistNewConversation = function(conversation) {
+    socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
   };
 
   self.addAndFocus = function(conversation){
@@ -186,10 +196,6 @@ function createDesktop(data, conversations){
 
     $('.film-strip').disableSelection();
   };
-
-  self.addNewConversation = function(){
-    socket.emit('create_conversation');
-  }
 
   return self;
 }

@@ -13,12 +13,8 @@ exports.config = function(socket){
         sendMessage(socket, data);
     });
 
-    socket.on('create_conversation', function(){
-        createConversation(socket);
-    });
-
-    socket.on('set_topic', function(data){
-        setTopic(socket, data);
+    socket.on('create_conversation', function(data){
+        createConversation(socket, data);
     });
 
     socket.on('remove_active_conversations', function(){
@@ -30,26 +26,15 @@ exports.config = function(socket){
     });
 }
 
-function createConversation(socket) {
-    Conversation.create({ topic: '', createdBy: socket.handshake.user.username }, 
+function createConversation(socket, data) {
+    Conversation.create({ topic: data.topic, createdBy: socket.handshake.user.username }, 
         function(err, conversation){
-            var dataToEmit = { _id: conversation.id, topic: '', createdBy: conversation.createdBy };
+            var dataToEmit = { _id: conversation.id, topic: conversation.topic, createdBy: conversation.createdBy };
             socket.emit('my_new_conversation', dataToEmit);
+            socket.broadcast.emit('new_conversation', dataToEmit);
         }
     );
 }
-
-function setTopic(socket, data){
-    Conversation.findById(data.id, function(err, conversation){
-        if (conversation) {
-            conversation.topic = data.topic;
-            conversation.save(function(err) {
-                var dataToEmit = { _id: conversation.id, topic: conversation.topic, createdBy: conversation.createdBy };
-                socket.broadcast.emit('your_new_conversation', dataToEmit);
-            });
-        }
-    });
-};
 
 function emit(socket, event, dataToEmit){
     socket.emit(event, dataToEmit);

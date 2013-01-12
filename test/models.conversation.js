@@ -3,13 +3,12 @@ var Conversation = require('../models/conversation'),
 
 describe('Conversation', function(){
 
-	var conversation;
-
-	beforeEach(function(){
-		conversation = new Conversation();
-	});
-
 	describe('#lastMessages', function(){
+		var conversation;
+
+		beforeEach(function(){
+			conversation = new Conversation();
+		});
 
 		it('returns the last two messages', function(){
 			conversation.messages.push(new Message({ content: 'First in', timestamp: new Date(2012, 12, 11) }));
@@ -37,5 +36,9 @@ describe('Conversation', function(){
 		afterEach(function(){
 			conversation.messages = [];
 		});
+	});
+
+	describe('#required fields', function() {
+
 	});
 });

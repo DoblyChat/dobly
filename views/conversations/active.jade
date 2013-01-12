@@ -18,7 +18,7 @@ html
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-left(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")
-					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: topicSet }")
+					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: create }")
 				.convo-header(data-bind="visible: !settingTopic()")
 					.convo-title(data-bind="text: topic")
 					.convo-subtitle 
@@ -54,7 +54,7 @@ html
 						.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
 						.icon-dismiss(data-bind="click: $parent.remove")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
-			#new-convo-tile(data-bind="click: addNewConversation")				
+			#new-convo-tile(data-bind="click: $parent.addNewConversation")				
 				.icon-plus
 				#new-convo-text New Conversation
 		#all-convos(data-bind="with:desktop, visible: !navigation.showingDesktop()")

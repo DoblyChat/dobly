@@ -1,10 +1,11 @@
 var socket = io.connect(window.location.origin);
+var viewModel;
 
 $(document).ready(function(){
   var desktopData = JSON.parse($('#desktop').val());
   var conversationData = JSON.parse($('#conversations').val());
   
-  var viewModel = createViewModel(conversationData, desktopData);
+  viewModel = createViewModel(conversationData, desktopData);
 
   ko.applyBindings(viewModel);
 

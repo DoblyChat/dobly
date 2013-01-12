@@ -2,12 +2,13 @@ var mongo = require('mongoose')
   , bcrypt = require('bcrypt')
   , SALT_WORK_FACTOR = 10;
 
-var userSchema = new mongo.Schema({
+var schema = new mongo.Schema({
 	username: { type: String, required: true, index: { unique: true } },
-	password: { type: String, required: true }
+	password: { type: String, required: true },
+	groupId: { type: mongo.Schema.Types.ObjectId, required: true }
 });
 
-userSchema.pre('save', function(next) {
+schema.pre('save', function(next) {
 	var user = this;
 	
 	if(!user.isModified('password')) { return next(); }
@@ -25,7 +26,7 @@ userSchema.pre('save', function(next) {
 	});
 });
 
-userSchema.methods.comparePassword = function(candidatePassword, callback) {
+schema.methods.comparePassword = function(candidatePassword, callback) {
 	bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
 		if(err) { return callback(err); }
 		callback(null, isMatch);
@@ -33,4 +34,4 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
 };
 
 
-module.exports = mongo.model('User', userSchema);
+module.exports = mongo.model('User', schema);

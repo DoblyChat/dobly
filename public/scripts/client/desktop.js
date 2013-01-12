@@ -161,10 +161,11 @@ function createDesktop(data, conversations){
 
   self.focus();
 
-  self.setupSorting = function(){
+  self.setupStripDragAndDrop = function(){
     var currentSort;
 
-    $('.film-strip').sortable({
+    $('#convo-tiles').sortable({      
+      handle: ".icon-move-handle",
       start: function(event, ui){
         currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
       },
@@ -174,7 +175,7 @@ function createDesktop(data, conversations){
         clearFocus();
         reorder();
         self.focus();
-      }
+      },
     });
 
     function reorder(){

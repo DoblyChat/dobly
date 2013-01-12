@@ -13,7 +13,7 @@ $(document).ready(function() {
 	desktop = viewModel.desktop;
 	desktop.resize.dualConvo();
 	desktop.resize.strip();
-	//viewModel.desktop.setupSorting();
+	desktop.setupStripDragAndDrop();
 
 	var currentUserData = JSON.parse($('#currentUser').val());
 	$('#user-name').text(currentUserData.username);

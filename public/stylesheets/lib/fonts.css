@@ -32,12 +32,12 @@
 */
 
 @font-face {
-	font-family: 'broccolidry';
-	src:url('webfonts/broccolidry/broccolidry.eot');
-	src:url('webfonts/broccolidry/broccolidry.eot?#iefix') format('embedded-opentype'),
-		url('webfonts/broccolidry/broccolidry.svg#broccolidry') format('svg'),
-		url('webfonts/broccolidry/broccolidry.woff') format('woff'),
-		url('webfonts/broccolidry/broccolidry.ttf') format('truetype');
+	font-family: 'icomoon';
+	src:url('webfonts/icomoon/icomoon.eot');
+	src:url('webfonts/icomoon/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('webfonts/icomoon/icomoon.svg#icomoon') format('svg'),
+		url('webfonts/icomoon/icomoon.woff') format('woff'),
+		url('webfonts/icomoon/icomoon.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }

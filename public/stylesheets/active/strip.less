@@ -53,15 +53,32 @@
 	height: @tile-icons-height;
 }
 
-.tile-icons .icon-dismiss {
+.tile-icons-common {
 	float: left;
 	font-size: 14px;
 	color: lighten(@gray, 40%);
 	padding: 4px;
 }
 
-.tile-icons .icon-dismiss:hover {
+.tile-icons-common-hover {
 	color: @gray;
+}
+
+.tile-icons .icon-dismiss {
+	.tile-icons-common;
+}
+
+.tile-icons .icon-dismiss:hover {
+	.tile-icons-common-hover;
+}
+
+.tile-icons .icon-move-handle {
+	cursor: move;
+	.tile-icons-common;
+}
+
+.tile-icons .icon-move-handle:hover {
+	.tile-icons-common-hover;
 }
 
 .tile-counter {

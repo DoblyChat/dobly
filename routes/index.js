@@ -38,9 +38,14 @@ function desktop(req, res, route, layout){
 					});
 				});
 					
-				res.render(route, { title: 'desktop',
-		    	conversations: JSON.stringify(conversations),
-		    	desktop: JSON.stringify(desktop), layout: layout });
+				res.render(route, 
+					{ 
+						title: 'desktop',
+		    			conversations: JSON.stringify(conversations),
+		    			desktop: JSON.stringify(desktop), 
+		    			currentUser: JSON.stringify(req.user),
+		    			layout: layout
+		    		});
 			});
 		});
 	});

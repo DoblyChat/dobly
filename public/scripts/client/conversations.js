@@ -2,7 +2,7 @@ var socket = io.connect(window.location.origin);
 
 $(document).ready(function(){
   var desktopData = JSON.parse($('#desktop').val());
-  var conversationData = JSON.parse($('#data').val());
+  var conversationData = JSON.parse($('#conversations').val());
   
   var viewModel = createViewModel(conversationData, desktopData);
 

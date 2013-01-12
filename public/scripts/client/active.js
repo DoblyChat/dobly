@@ -4,7 +4,7 @@ var desktop;
 $(document).ready(function() {
 
 	var desktopData = JSON.parse($('#desktop').val());
-	var conversationData = JSON.parse($('#data').val());
+	var conversationData = JSON.parse($('#conversations').val());
 	
 	var viewModel = createViewModel(conversationData, desktopData);
 
@@ -14,6 +14,10 @@ $(document).ready(function() {
 	desktop.resize.dualConvo();
 	desktop.resize.strip();
 	//viewModel.desktop.setupSorting();
+
+
+	var currentUserData = JSON.parse($('#currentUser').val());
+	$('#user-name').text(currentUserData.username);
 });
 
 $(window).load(function() {

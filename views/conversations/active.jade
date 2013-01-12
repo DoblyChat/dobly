@@ -10,8 +10,8 @@ html
 	body
 		#header
 			#logo Fluidity
-			#top-button John Synnex
-			#top-button All Conversations
+			#user-name.top-button
+			.top-button All Conversations
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-left(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")
@@ -54,8 +54,9 @@ html
 				.icon-plus
 				#new-convo-text New Conversation
 
-input#data(type="hidden", value=conversations)
+input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop);
+input#currentUser(type="hidden", value=currentUser)
 
 script(type="text/javascript", src="/scripts/lib/less-1.3.1.min.js")
 script(type="text/javascript", src="/scripts/lib/jquery.js")

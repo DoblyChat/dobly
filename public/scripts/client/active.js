@@ -15,7 +15,6 @@ $(document).ready(function() {
 	desktop.resize.strip();
 	desktop.setupStripDragAndDrop();
 
-
 	var currentUserData = JSON.parse($('#currentUser').val());
 	$('#user-name').text(currentUserData.username);
 });

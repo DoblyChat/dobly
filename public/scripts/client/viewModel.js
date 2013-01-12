@@ -8,21 +8,6 @@ function createViewModel(conversationsData, desktopData) {
 
   self.desktop = createDesktop(desktopData, self.conversations());
 
-  socket.on('my_new_conversation', function(data){
-    var conversation = createConversation(data);
-    conversation.settingTopic(true);
-    self.conversations.push(conversation);
-    self.desktop.addAndFocus(conversation);
-    setTimeout(function () { $('.convo-header-topic-set input').focus(); }, 400);
-  })
-
-  socket.on('your_new_conversation', function(data){
-    var conversation = createConversation(data);
-    self.conversations.push(conversation);
-    self.desktop.add(conversation);
-    self.desktop.focus();
-  });
-
   socket.on('receive_message', function(data) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){
       if(data.conversationId === conversation.id){
@@ -80,26 +65,37 @@ function createViewModel(conversationsData, desktopData) {
 
   }(self.desktop, self.navigation, self.conversations);
 
-  self.newConversation = function(desktop, navigation){
-    var newConversation = this;
-
-    newConversation.topic = ko.observable('');
-
-    newConversation.add = function(data, event) {
-      var keyCode = (event.which ? event.which : event.keyCode);
-      if (keyCode === 13) {
-        socket.emit('create_conversation', { topic: newConversation.topic() });
-        navigation.newConversation();
-        newConversation.topic('');
-        return false;
-      } else {
-        return true;
+  socket.on('my_new_conversation', function(data) {
+    for(var c = 0; c < self.conversations().length; c++){
+      if(self.conversations()[c].id == 0){
+        var conversation = self.conversations()[c];
+        conversation.id = data._id;
+        conversation.topic(data.topic);
+        conversation.createdBy(data.createdBy);
+        desktop.persistNewConversation(conversation);
+        conversation.settingTopic(false);
+        setTimeout(function () { $('.convo-new-message textarea').focus(); }, 400);
+        break;
       }
-    };
+    }
+  });
 
-    return newConversation;
-    
-  }(self.desktop, self.navigation);
+  socket.on('new_conversation', function(data){
+    var conversation = createConversation(data);
+    self.conversations.push(conversation);
+    self.desktop.add(conversation);
+    self.desktop.focus();
+  });
+
+  self.addNewConversation = function(){
+    var conversation = createConversation({});
+    self.conversations.push(conversation);
+    conversation.settingTopic(true);
+
+    self.desktop.addEmptyConversation(conversation);
+
+    setTimeout(function () { $('.convo-header-topic-set input').focus(); }, 400);
+  }
 
   return self;
 }

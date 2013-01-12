@@ -1,10 +1,10 @@
 function createConversation(data) {
   var self = {};
 
-  self.id = data._id;
+  self.id = data._id ? data._id : 0;
   self.topic = ko.observable(data.topic);
   self.settingTopic = ko.observable(false);
-  self.createdBy = data.createdBy;
+  self.createdBy = ko.observable(data.createdBy);
   self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
   self.newMessage = ko.observable('');
   
@@ -44,12 +44,9 @@ function createConversation(data) {
     self.focused(false);
   };
 
-  self.topicSet = function(data, event) {
+  self.create = function(data, event) {
     if (enterKeyPressed(event) && self.topic().length > 0) {
-      socket.emit('set_topic', { id: self.id, topic: self.topic() });
-      self.settingTopic(false);
-      self.resize.body();
-      setTimeout(function () { $('.convo-new-message textarea').focus(); }, 400);
+      socket.emit('create_conversation', { topic: self.topic() });
       return false;
     }
     else {

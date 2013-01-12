@@ -8,7 +8,7 @@ $(document).ready(function(){
 
   ko.applyBindings(viewModel);
 
-  viewModel.desktop.scroll.adjust();
+  viewModel.desktop.scroll.setup();
   viewModel.desktop.setupSorting();
 });
 

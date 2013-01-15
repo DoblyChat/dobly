@@ -1,18 +1,119 @@
+@all-convos-counter-width: 40px;
+@all-convos-counter-margin-right: -14px;
+
+.thin-message-padding {
+	padding: 6px @message-right-padding 6px @message-left-padding;
+}
+
+.withOutCounter {
+	width: 100%;
+}
+
+.withCounter {
+	width: @convo-width - @message-right-padding - @message-left-padding - @all-convos-counter-width - @all-convos-counter-margin-right;
+}
+
 #all-convos {
-	.margin-top;
-	.margin-bottom;
+	width: @dual-convo-width;
+	height: auto;
 	.centered;
-	width: 780px;
+	padding-bottom: @standard-margin;
 
-	.convo {
-		.margin-bottom;
-		.convo-box-shadow;
-		background: @white;
-		cursor: pointer;
+	.convo-pair {
+		.margin-bottom;		
 
-		.header {
-			.topic {
+		.convo {
+			width: @convo-width;
+			background: @white;
+			.convo-box-shadow;	
+			cursor: pointer;
+
+			.header {
+				.message-padding;
+				border-bottom: @thick-gray-border;
+
+				.left {
+					float: left;
+
+					.topic {
+						.title-font;
+						.ellipsis;
+					}
+
+					.created-by {
+						.caption-color;
+						padding-top: 1px;
+					}
+				}
+
+				.right {
+					float: right;					
+
+					.counter {						
+						.tile-counter-common;
+						width: @all-convos-counter-width;
+						height: 35px;
+						margin-right: -14px;
+						font-size: 26px;
+						line-height: 1.3;						
+					}
+				}
+
+				&:after {
+					.float-parent
+				}
 			}
+
+			.messages {
+
+				.message {
+					.thin-message-padding;
+					border-bottom: 1px solid @light-gray;
+
+					&:last-child {
+						border-bottom: 0;
+					}
+
+					.author {
+						.caption-color;
+						float: left;
+					}
+
+					.time {
+						.caption-color;
+						float: right;
+						font-size: @text-size - 1px;
+					}
+
+					.text {
+						.text-color;
+						clear: both;
+						padding-top: 1px;
+						line-height: 1.5;
+						.ellipsis
+					}
+				}
+			}
+
+			.no-messages {
+
+				.message {
+					.thin-message-padding;
+					.caption-color;
+				}
+			}
+
+			&:first-child {
+				float: left;
+			}
+
+			&:last-child {
+				float: right;
+			}
+		}
+
+		&:after {
+			.float-parent
 		}
 	}
 }

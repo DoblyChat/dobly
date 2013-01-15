@@ -49,6 +49,13 @@
 	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
 }
 
+.tile-counter-common {
+	background: @blue;
+	text-align: center;	
+	font-weight: bold;
+	.tile-counter-box-shadow;
+}
+
 .tile {
 	.tile-common;
 	.margin-right;
@@ -83,14 +90,11 @@
 		}
 
 		.tile-counter {
-			background: @blue;
-			.tile-counter-box-shadow;
+			.tile-counter-common;
 			width: 25px;
 			height: @tile-icons-height - 2px;
-			float: right;
-			text-align: center;
+			float: right;			
 			font-size: 20px;
-			font-weight: bold;
 			line-height: 1.1;
 			margin-right: 1px;
 		}

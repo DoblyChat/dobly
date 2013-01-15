@@ -34,36 +34,7 @@ function createViewModel(conversationsData, desktopData) {
     return nav;
   }();
 
-  self.allConversations = function(desktop, navigation, conversationsObservable){
-    var all = {};
-
-    all.open = function(conversation){
-      navigation.desktop();
-      desktop.addAndFocus(conversation);
-    };
-
-    all.sortedConversations = ko.computed(function(){
-        return conversationsObservable.sort(function(left, right){
-          return left.unreadCounter() < right.unreadCounter();
-        });
-    });
-
-    all.unreadCounter = ko.computed(function(){
-      var count = 0;
-      ko.utils.arrayForEach(conversationsObservable(), function(conversation){
-        count += conversation.unreadCounter();
-      });
-
-      return count;
-    });
-
-    all.showUnreadCounter = ko.computed(function(){
-      return all.unreadCounter() > 0;
-    });
-
-    return all;
-
-  }(self.desktop, self.navigation, self.conversations);
+  self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
 
   socket.on('my_new_conversation', function(data) {
     for(var c = 0; c < self.conversations().length; c++){

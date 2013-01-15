@@ -1,4 +1,4 @@
-function createDesktop(data, conversations){
+function createDesktop(data, allConversations){
   var self = {};
 
   self.id = data._id;
@@ -13,9 +13,9 @@ function createDesktop(data, conversations){
   }
 
   function getConversationBy(id){
-    for(var c = 0; c < conversations.length; c++){
-      if(conversations[c].id == id){
-        return conversations[c];
+    for(var c = 0; c < allConversations.length; c++){
+      if(allConversations[c].id == id){
+        return allConversations[c];
       }
     }
   }

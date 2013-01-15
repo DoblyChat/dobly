@@ -57,16 +57,24 @@ html
 			#new-convo-tile(data-bind="click: $parent.addNewConversation")				
 				.icon-plus
 				#new-convo-text New Conversation
-		#all-convos(data-bind="visible: !navigation.showingDesktop(), foreach: allConversations.sortedConversations")
-			.convo(data-bind="click: $root.allConversations.open")
-				.header
-					.topic(data-bind="text: topic")
-					.created-by(data-bind="text: createdBy")
-					.counter(data-bind="text: unreadCounter")
-				.messages(data-bind="foreach: lastMessages")
-					.message
-						.author(data-bind="text: username")
-						.text(data-bind="text: content")
+		#all-convos(data-bind="visible: !navigation.showingDesktop(), foreach: allConversations.conversationPairs")
+			.convo-pair(data-bind="foreach: $data")				
+				.convo(data-bind="click: $root.allConversations.open")
+					.header
+						.left(data-bind="css: { withOutCounter: unreadCounter() <= 0, withCounter: unreadCounter() > 0 }")
+							.topic(data-bind="text: topic")
+							.created-by
+								span by 
+								span(data-bind="text: createdBy")
+						.right(data-bind="visible: unreadCounter() > 0")
+							.counter(data-bind="text: unreadCounter")
+					.messages(data-bind="foreach: lastMessages")
+						.message
+							.author(data-bind="text: username")
+							.time(data-bind="text: simpleTimestamp")
+							.text(data-bind="text: content")
+					.no-messages(data-bind="visible: lastMessages().length <= 0")
+						.message There aren't any messages in this conversation.
 
 input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop);
@@ -83,5 +91,6 @@ script(type="text/javascript", src="/socket.io/socket.io.js")
 script(type="text/javascript", src="/scripts/client/message.js")
 script(type="text/javascript", src="/scripts/client/conversation.js")
 script(type="text/javascript", src="/scripts/client/desktop.js")
+script(type="text/javascript", src="/scripts/client/allConversations.js")
 script(type="text/javascript", src="/scripts/client/viewModel.js")
 script(type="text/javascript", src="/scripts/client/active.js")

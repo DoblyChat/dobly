@@ -52,6 +52,19 @@ body {
 	margin-right: @standard-margin;
 }
 
+.float-parent {
+	display: table;
+	line-height: 0;
+	content: "";
+	clear: both;
+}
+
+.ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 @import "active/icons";
 
 @import "active/header";

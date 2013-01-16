@@ -39,6 +39,34 @@ describe('Conversation', function(){
 	});
 
 	describe('#required fields', function() {
+		var conversationData;
 
+		beforeEach(function () {
+			conversationData = { 
+					topic: 'my topic', 
+					createdBy: 'Pepe',
+					timestamp: Date.now(),
+				};
+		});
+
+		function requiredFieldTest(field, done) {
+			conversationData[field] = undefined;
+			Conversation.create(conversationData, function(err) {
+				checkRequiredFieldError(err, field);
+				done();
+			});
+		}
+
+		it('topic', function(done) {
+			requiredFieldTest('topic', done);
+		});
+
+		it('createdBy', function(done) {
+			requiredFieldTest('createdBy', done);
+		});
+
+		it('timestamp', function(done) {
+			requiredFieldTest('timestamp', done);
+		});
 	});
 });

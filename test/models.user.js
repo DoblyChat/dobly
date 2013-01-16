@@ -75,34 +75,24 @@ describe('User', function() {
 
 	describe('#required fields', function() {
 		
-		it('username', function(done) {
-			userData.username = null;
+		function requiredFieldTest(field, done) {
+			userData[field] = null;
 			User.create(userData, function(err) {
-				err.should.not.be.null;
-				err.errors.username.type.should.eql('required');
-
+				checkRequiredFieldError(err, field);
 				done();
 			});
+		};
+
+		it('username', function(done) {
+			requiredFieldTest('username', done);
 		});
 
 		it('password', function(done) {
-			userData.password = null;
-			User.create(userData, function(err) {
-				err.should.not.be.null;
-				err.errors.password.type.should.eql('required');
-
-				done();
-			});
+			requiredFieldTest('password', done);
 		});
 
 		it('group', function(done) {
-			userData.groupId = null;
-			User.create(userData, function(err) {
-				err.should.not.be.null;
-				err.errors.groupId.type.should.eql('required');
-
-				done();
-			});
+			requiredFieldTest('groupId', done);
 		});
 	});
 

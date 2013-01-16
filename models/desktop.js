@@ -28,5 +28,3 @@ schema.statics.findOrCreateByUserId = function(userId, callback){
 }
 
 module.exports = mongo.model('Desktop', schema);
-
-exports.schema = schema;

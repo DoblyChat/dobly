@@ -82,4 +82,14 @@ describe('Desktop', function(){
 		});
 
 	});
+
+	describe('#required fields', function() {
+
+		it('userId', function(done) {
+			Desktop.create({}, function(err){
+				checkRequiredFieldError(err, 'userId');
+				done();
+			});
+		});
+	});
 });

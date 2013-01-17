@@ -3,7 +3,7 @@ function createMessage(data) {
 
   self.content = ko.observable(data.content);
   self.timestamp = formatTimestamp(data.timestamp, "h:mm tt", "M/d h:mm tt");
-  self.username = data.username;
+  self.createdBy = data.createdBy;
   self.simpleTimestamp = formatTimestamp(data.timestamp, "h:mm tt", "M/d");
 
   function formatTimestamp(timestampString, todayFormat, otherFormat) {

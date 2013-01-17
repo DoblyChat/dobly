@@ -30,7 +30,12 @@ exports.config = function(passport){
 
 	passport.deserializeUser(function(id, done) {
 	  User.findById(id, function(err, user) {
-	    done(err, { username: user.username, _id: user._id });
+	    done(err, 
+	    	{ 
+	    		username: user.username, 
+	    		_id: user._id, 
+	    		groupId: user.groupId 
+	    	});
 	  });
 	});
 };

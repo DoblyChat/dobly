@@ -25,7 +25,7 @@ function authenticate(){
 }
 
 function desktop(req, res, route, layout){
-	Conversation.find({}, function(err, conversations){
+	Conversation.find({ groupId: req.user.groupId }, function(err, conversations){
 		Desktop.findOrCreateByUserId(req.user._id, function(err, desktop){
 			UnreadMarker.find({ userId: req.user._id }, function(err, markers){
 				conversations.forEach(function(conversation){

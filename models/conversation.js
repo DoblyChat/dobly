@@ -2,9 +2,10 @@ var mongo = require('mongoose'),
 	message = require('./message');
 
 var schema = new mongo.Schema({
-	topic: String,
-   	createdBy : String,
-   	timestamp: { type: Date, default: Date.now },
+	topic: { type: String, required: true },
+   	createdBy: { type: String, required: true },
+   	groupId: { type: mongo.Schema.Types.ObjectId, required: true },
+   	timestamp: { type: Date, default: Date.now, required: true },
 	messages: [message.schema]
 });
 
@@ -17,6 +18,4 @@ schema.virtual('lastMessages').get(function(){
 });
 
 module.exports = mongo.model('Conversation', schema);
-
-exports.schema = schema;
 

@@ -40,7 +40,7 @@ function authorize(data, accept, sessionStore){
 
         sessionStore.load(sessionID, function (err, session) {
             if (err || !session) {
-                return accept('Error', false);
+                return accept("Can't find session", false);
             } else {
                 User.findById(session.passport.user, function(err, user){
                   data.user = user._doc;

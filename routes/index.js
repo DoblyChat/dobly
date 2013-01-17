@@ -9,9 +9,15 @@ exports.config = function(app){
 
 	app.post('/log-in', authenticate());
 
-	app.get('/conversations/', renderDesktop);
+	app.get('/conversations/', checkUserIsLoggedIn, renderDesktop);
+}
 
-	app.get('/conversations/old', renderOldDesktop);
+function checkUserIsLoggedIn(req, res, next) {
+	if(req.user) {
+		next();
+	} else {
+		res.redirect('/');
+	}
 }
 
 function home(req, res){
@@ -20,11 +26,10 @@ function home(req, res){
 
 function authenticate(){
 	return passport.authenticate('local', { successRedirect: '/conversations/',
-									 		failureRedirect: '/',
-									 		failureFlash: true });
+									 		failureRedirect: '/' });
 }
 
-function desktop(req, res, route, layout){
+function renderDesktop(req, res) {
 	Conversation.find({ groupId: req.user.groupId }, function(err, conversations){
 		Desktop.findOrCreateByUserId(req.user._id, function(err, desktop){
 			UnreadMarker.find({ userId: req.user._id }, function(err, markers){
@@ -38,23 +43,15 @@ function desktop(req, res, route, layout){
 					});
 				});
 					
-				res.render(route, 
+				res.render('conversations/active', 
 					{ 
 						title: 'desktop',
 		    			conversations: JSON.stringify(conversations),
 		    			desktop: JSON.stringify(desktop), 
 		    			currentUser: JSON.stringify(req.user),
-		    			layout: layout
+		    			layout: ''
 		    		});
 			});
 		});
 	});
-}
-
-function renderDesktop(req, res) {
-	desktop(req, res, 'conversations/active', '');
-}
-
-function renderOldDesktop(req, res) {
-	desktop(req, res, 'conversations/index', 'layout');	
 }

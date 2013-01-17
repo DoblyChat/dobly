@@ -27,12 +27,22 @@ exports.config = function(socket){
 }
 
 function createConversation(socket, data) {
-    Conversation.create({ topic: data.topic, createdBy: socket.handshake.user.username }, 
-        function(err, conversation){
-            var dataToEmit = { _id: conversation.id, topic: conversation.topic, createdBy: conversation.createdBy };
-            socket.emit('my_new_conversation', dataToEmit);
-            socket.broadcast.emit('new_conversation', dataToEmit);
-        }
+    Conversation.create(
+            { 
+                topic: data.topic, 
+                createdBy: socket.handshake.user.username, 
+                groupId: socket.handshake.user.groupId 
+            }, 
+            function(err, conversation){
+                var dataToEmit = { 
+                    _id: conversation.id, 
+                    topic: conversation.topic, 
+                    createdBy: conversation.createdBy 
+                };
+
+                socket.emit('my_new_conversation', dataToEmit);
+                socket.broadcast.emit('new_conversation', dataToEmit);
+            }
     );
 }
 
@@ -54,13 +64,13 @@ function sendMessage(socket, data){
 	Conversation.findById(data.conversationId, function(err, conversation){
         var msg = new Message();
         msg.content = data.content;
-        msg.username = socket.handshake.user.username;
+        msg.createdBy = socket.handshake.user.username;
         msg.timestamp = data.timestamp;
         conversation.messages.push(msg);
         conversation.save(function(err){
             var dataToEmit = {
                 content: data.content, 
-                username: socket.handshake.user.username, 
+                createdBy: socket.handshake.user.username, 
                 conversationId: data.conversationId,
                 timestamp: data.timestamp,
             };

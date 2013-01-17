@@ -27,7 +27,7 @@ html
 				.nano.convo-body
 					.content(data-bind="foreach: messages, visible: !settingTopic()")
 						.message
-							.author(data-bind="text: username")
+							.author(data-bind="text: createdBy")
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
 				.convo-new-message(data-bind="visible: !settingTopic()")
@@ -41,7 +41,7 @@ html
 				.nano.convo-body
 					.content(data-bind="foreach: messages")
 						.message
-							.author(data-bind="text: username")
+							.author(data-bind="text: createdBy")
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
 				.convo-new-message

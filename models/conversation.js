@@ -4,6 +4,7 @@ var mongo = require('mongoose'),
 var schema = new mongo.Schema({
 	topic: { type: String, required: true },
    	createdBy: { type: String, required: true },
+   	groupId: { type: mongo.Schema.Types.ObjectId, required: true },
    	timestamp: { type: Date, default: Date.now, required: true },
 	messages: [message.schema]
 });

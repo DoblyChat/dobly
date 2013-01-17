@@ -4,7 +4,7 @@ var User = require('../models/user')
 
 mongo.connect('mongodb://localhost/proto');
 
-function clean() {
+function clean(create) {
 
 	User.find({ username: { $in: [ 'Fernando', 'Carlos' ] } }).remove(function(err) {
 		
@@ -14,6 +14,7 @@ function clean() {
 			Group.findOneAndRemove({ name: 'Founders'}, function(err) {
 				if(!err) {
 					console.log('Group removed');
+					create();
 				};
 			});
 		}
@@ -26,27 +27,26 @@ function create() {
 		if(!err) {
 			console.log('Group created');
 		}
-	});
 
-	Group.findOne({ name: 'Founders'}, function(err, group){
-		var users = [ 
-						{ username: 'Fernando', password: 'pass', groupId: group._id }, 
-						{ username: 'Carlos', password: 'pass', groupId: group._id } 
-					];
+		Group.findOne({ name: 'Founders'}, function(err, group){
+			var users = [ 
+							{ username: 'Fernando', password: 'pass', groupId: group._id }, 
+							{ username: 'Carlos', password: 'pass', groupId: group._id } 
+						];
 
-		User.create(users, 
-				function(err){
-					if(!err){
-						console.log('Users added');
+			User.create(users, 
+					function(err){
+						if(!err){
+							console.log('Users added');
+						}
+						process.exit(0);
 					}
-					process.exit(0);
-				}
-			);
+				);
+			});
 	});
 }
 
-clean();
-create();
+clean(create);
 
 
 

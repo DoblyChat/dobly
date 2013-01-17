@@ -46,6 +46,7 @@ describe('Conversation', function(){
 					topic: 'my topic', 
 					createdBy: 'Pepe',
 					timestamp: Date.now(),
+					groupId: new mongo.Types.ObjectId()
 				};
 		});
 
@@ -67,6 +68,10 @@ describe('Conversation', function(){
 
 		it('timestamp', function(done) {
 			requiredFieldTest('timestamp', done);
+		});
+
+		it('groupId', function(done) {
+			requiredFieldTest('groupId', done);
 		});
 	});
 });

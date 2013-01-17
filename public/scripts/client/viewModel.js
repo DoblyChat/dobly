@@ -22,6 +22,7 @@ function createViewModel(conversationsData, desktopData) {
     nav.showingDesktop = ko.observable(true);
 
     nav.all = function(){
+      self.allConversations.refresh();
       nav.showingDesktop(false);
     };
 
@@ -29,7 +30,7 @@ function createViewModel(conversationsData, desktopData) {
       nav.showingDesktop(true);
       self.desktop.resize.convoBody();
       self.desktop.setupStripDragAndDrop();
-    }
+    };
 
     return nav;
   }();

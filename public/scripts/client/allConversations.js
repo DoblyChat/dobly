@@ -6,12 +6,18 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
     desktop.addAndFocus(conversation);
   };
 
-  self.conversationPairs = ko.computed(function() {
+  self.pairs = [];
+
+  self.refresh = function () {
     var sortedConversations = conversationsObservable.sort(function(left, right){
-      return left.unreadCounter() < right.unreadCounter();
+      if (left.unreadCounter() == right.unreadCounter()) {
+        return left.topic().toLowerCase().localeCompare(right.topic().toLowerCase());
+      } else {
+        return left.unreadCounter() < right.unreadCounter() ? 1 : -1; 
+      }
     });
 
-    var pairs = [];
+    self.pairs = [];
 
     for (var i = 0; i < sortedConversations.length; i = i + 2) {
       if (i + 1 < sortedConversations.length) {
@@ -19,12 +25,9 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
       } else {
         var pair = [sortedConversations[i]];
       }
-      pairs.push(pair);
+      self.pairs.push(pair);
     };
-
-    return pairs;
-  });
-
+  };
 
   self.unreadCounter = ko.computed(function(){
     var count = 0;

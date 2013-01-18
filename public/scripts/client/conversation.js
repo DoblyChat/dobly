@@ -29,12 +29,17 @@ function createConversation(data) {
   self.focus = function(convoSelector) {
     self.focused(true);
 
-    self.resize = createConversationResizing(convoSelector);
-    self.scroll = createConversationScrolling(convoSelector);
+    var getSelector = function getSelector(cssSelector) {
+      return convoSelector + ' > ' + cssSelector;
+    }
+
+    self.focusElement = createFocusElement(getSelector);
+    self.resize = createConversationResizing(getSelector);
+    self.scroll = createConversationScrolling(getSelector);
     
     self.resize.body();
     self.scroll.setup();
-  };
+  };  
 
   self.resetFocus = function() {
     if (self.scroll !== undefined) {
@@ -96,16 +101,26 @@ function createConversation(data) {
 
   self.showUnreadCounter = ko.computed(function(){
     return self.unreadCounter() > 0;
-  });
-
-  function getSelector(cssSelector) {
-    return selector + ' > ' + cssSelector;
-  }
+  });  
 
   return self;
 }
 
-function createConversationResizing(convoSelector) {
+function createFocusElement(getSelector) {
+  var self = {};
+
+  self.newMessage = function() {
+    setTimeout(function () { $(getSelector('.convo-new-message textarea')).focus(); }, 400);
+  };
+
+  self.topic = function() {
+    setTimeout(function () { $(getSelector('.convo-header-topic-set input')).focus(); }, 400);
+  };
+
+  return self;
+}
+
+function createConversationResizing(getSelector) {
   var self = {};
 
   self.body = function() {
@@ -115,14 +130,10 @@ function createConversationResizing(convoSelector) {
     $(getSelector('.convo-body')).height(convoHeight - titleHeightLeft - newMessageHeightLeft);
   };
 
-  function getSelector(cssSelector) {
-    return convoSelector + ' > ' + cssSelector;
-  }
-
   return self;
 }
 
-function createConversationScrolling(convoSelector) {
+function createConversationScrolling(getSelector) {
   var self = {};
 
   self.setup = function() {
@@ -156,10 +167,6 @@ function createConversationScrolling(convoSelector) {
   self.stop = function() {
     $(getSelector('.nano')).nanoScroller({ stop: true });
   };
-
-  function getSelector(cssSelector) {
-    return convoSelector + ' > ' + cssSelector;
-  }
 
   return self;
 }

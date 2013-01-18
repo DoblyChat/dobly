@@ -97,6 +97,7 @@ function createDesktop(data, allConversations){
 
     if(self.hasLeftConversation()){
       self.leftConversation().focus('#convo-left');
+      self.leftConversation().focusElement.newMessage();
     }
 
     if(self.hasRightConversation()){

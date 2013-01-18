@@ -29,6 +29,7 @@ function createViewModel(conversationsData, desktopData) {
     nav.desktop = function(){
       nav.showingDesktop(true);
       self.desktop.resize.convoBody();
+      self.desktop.scroll.setup();
       self.desktop.setupStripDragAndDrop();
     };
 
@@ -46,7 +47,7 @@ function createViewModel(conversationsData, desktopData) {
         conversation.createdBy(data.createdBy);
         desktop.persistNewConversation(conversation);
         conversation.settingTopic(false);
-        setTimeout(function () { $('.convo-new-message textarea').focus(); }, 400);
+        conversation.focusElement.newMessage();
         break;
       }
     }
@@ -65,8 +66,7 @@ function createViewModel(conversationsData, desktopData) {
     conversation.settingTopic(true);
 
     self.desktop.addEmptyConversation(conversation);
-
-    setTimeout(function () { $('.convo-header-topic-set input').focus(); }, 400);
+    conversation.focusElement.topic();    
   }
 
   return self;

@@ -70,7 +70,7 @@ html
 							.counter(data-bind="text: unreadCounter")
 					.messages(data-bind="foreach: lastMessages")
 						.message
-							.author(data-bind="text: username")
+							.author(data-bind="text: createdBy")
 							.time(data-bind="text: simpleTimestamp")
 							.text(data-bind="text: content")
 					.no-messages(data-bind="visible: lastMessages().length <= 0")

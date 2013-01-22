@@ -1,5 +1,6 @@
 var Conversation = require('../models/conversation'),
     User = require('../models/user'),
+    Group = require('../models/group'),
     Desktop = require('../models/desktop'),
     UnreadMarker = require('../models/unread_marker'),
     passport = require('passport');
@@ -9,7 +10,15 @@ exports.config = function(app){
 
 	app.post('/log-in', authenticate());
 
+	app.get('/sign-up', signUp);
+
+	app.post('/create-user', createUser);
+
 	app.get('/conversations/', checkUserIsLoggedIn, renderDesktop);
+
+	app.get('/admin/groups', checkUserIsLoggedIn, getGroups);
+
+	app.post('/admin/create-group', checkUserIsLoggedIn, createGroup);
 }
 
 function checkUserIsLoggedIn(req, res, next) {
@@ -21,12 +30,26 @@ function checkUserIsLoggedIn(req, res, next) {
 }
 
 function home(req, res){
-  res.render('index', { title: 'Fluid Talk' });
+  res.render('index', { title: 'Welcome to Fluid Talk! '});
 }
 
 function authenticate(){
 	return passport.authenticate('local', { successRedirect: '/conversations/',
 									 		failureRedirect: '/' });
+}
+
+function signUp(req, res){
+	Group.find({}, function(err, groups){
+		res.render('sign-up', { groups: groups, title: 'Sign up - Fluid Talk' });
+	});
+}
+
+function createUser(req, res){
+	User.create(
+		{ username: req.body.username, groupId: req.body.group, password: req.body.password },
+		function(err){
+			res.redirect('/');
+		});
 }
 
 function renderDesktop(req, res) {
@@ -45,7 +68,7 @@ function renderDesktop(req, res) {
 					
 				res.render('conversations/active', 
 					{ 
-						title: 'desktop',
+						title: 'Fluid Talk',
 		    			conversations: JSON.stringify(conversations),
 		    			desktop: JSON.stringify(desktop), 
 		    			currentUser: JSON.stringify(req.user),
@@ -53,5 +76,32 @@ function renderDesktop(req, res) {
 		    		});
 			});
 		});
+	});
+}
+
+function getGroups(req, res){
+	Group.find({}, function(err, groups){
+		User.find({}, function(err, users) {
+			for(var i = 0; i < users.length; i++){
+				var group = findGroup(users[i].groupId);
+				group.users = group.users || [];
+				group.users.push(users[i]);
+			}
+			res.render('admin/groups', { groups: groups, title: 'groups' });
+		});
+
+		function findGroup(groupId){
+			for(var i = 0; i < groups.length; i++){
+				if(groups[i]._id.equals(groupId)){
+					return groups[i];
+				}
+			}
+		}
+	});
+}
+
+function createGroup(req, res){
+	Group.create({ name: req.body.name }, function(err){
+		res.redirect('/admin/groups');
 	});
 }

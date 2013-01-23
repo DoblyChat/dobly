@@ -1,0 +1,21 @@
+h1 Groups
+
+h2 Add a new group
+
+form(method='post', action='/admin/create-group')
+	div
+		label(for='name') Name:
+		input(type='text', name='name')
+	div
+		input(type='submit')
+
+
+each group in groups
+	h3= group.name
+
+	if group.users
+		ul
+			each user in group.users
+				li= user.username
+	else
+		p No users for this group

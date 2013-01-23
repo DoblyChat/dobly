@@ -56,12 +56,18 @@ describe('Desktop', function(){
 				});
 			});
 
-			findOne.called.should.equal(true);
-			findOne.args[0][0].userId.should.eql(userId);
-			var findOneCallback = findOne.args[0][1];
+			verifyFindOneCall(findOne);
+			var findOneCallback = findOne.args[0][3];
 
 			findOneCallback(null, null);
 		});
+
+		function verifyFindOneCall(findOne){
+			findOne.called.should.equal(true);
+			findOne.args[0][0].userId.should.eql(userId);
+			expect(findOne.args[0][1]).to.be.null;
+			findOne.args[0][2].lean.should.be.true;
+		}
 
 		it('returns desktop entry if one for user already exists', function(){
 			desktop.userId = userId;
@@ -70,9 +76,8 @@ describe('Desktop', function(){
 				savedDesktop.userId.should.eql(userId);
 			});
 
-			findOne.called.should.equal(true);
-			findOne.args[0][0].userId.should.eql(userId);
-			var findOneCallback = findOne.args[0][1];
+			verifyFindOneCall(findOne);
+			var findOneCallback = findOne.args[0][3];
 
 			findOneCallback(null, desktop);
 		});

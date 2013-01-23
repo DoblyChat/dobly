@@ -39,7 +39,7 @@ function authenticate(){
 }
 
 function signUp(req, res){
-	Group.find({}, function(err, groups){
+	Group.find({}, { lean: true }, function(err, groups){
 		res.render('sign-up', { groups: groups, title: 'Sign up - Fluid Talk' });
 	});
 }
@@ -53,15 +53,15 @@ function createUser(req, res){
 }
 
 function renderDesktop(req, res) {
-	Conversation.find({ groupId: req.user.groupId }, function(err, conversations){
+	Conversation.find({ groupId: req.user.groupId }, null, { lean: true }, function(err, conversations){
 		Desktop.findOrCreateByUserId(req.user._id, function(err, desktop){
-			UnreadMarker.find({ userId: req.user._id }, function(err, markers){
+			UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, function(err, markers){
 				conversations.forEach(function(conversation){
-					conversation._doc.unread = 0;
+					conversation.unread = 0;
 					
 					markers.forEach(function(marker){
 						if(marker.conversationId.equals(conversation._id)){
-							conversation._doc.unread = marker.count;
+							conversation.unread = marker.count;
 						}
 					});
 				});
@@ -80,22 +80,26 @@ function renderDesktop(req, res) {
 }
 
 function getGroups(req, res){
-	Group.find({}, function(err, groups){
-		User.find({}, function(err, users) {
-			for(var i = 0; i < users.length; i++){
-				var group = findGroup(users[i].groupId);
+	Group.find({}).lean().exec(function(err, groups){
+		User.find({}).lean().exec(function(err, users) {
+			users.forEach(function(user){
+				var group = findGroup(user.groupId);
 				group.users = group.users || [];
-				group.users.push(users[i]);
-			}
+				group.users.push(user);
+			});
+
 			res.render('admin/groups', { groups: groups, title: 'groups' });
 		});
 
 		function findGroup(groupId){
-			for(var i = 0; i < groups.length; i++){
-				if(groups[i]._id.equals(groupId)){
-					return groups[i];
+			var foundGroup;
+			groups.forEach(function(group){
+				if(group._id.equals(groupId)){
+					foundGroup = group;
 				}
-			}
+			});
+
+			return foundGroup;
 		}
 	});
 }

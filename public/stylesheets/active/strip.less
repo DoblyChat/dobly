@@ -42,20 +42,6 @@
 	color: @gray;
 }
 
-.tile-counter-box-shadow {
-	-moz-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
-	-webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
-	-o-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
-	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
-}
-
-.tile-counter-common {
-	background: @blue;
-	text-align: center;	
-	font-weight: bold;
-	.tile-counter-box-shadow;
-}
-
 .tile {
 	.tile-common;
 	.margin-right;
@@ -90,7 +76,7 @@
 		}
 
 		.tile-counter {
-			.tile-counter-common;
+			.counter-common;
 			width: 25px;
 			height: @tile-icons-height - 2px;
 			float: right;			

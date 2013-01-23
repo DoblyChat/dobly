@@ -65,6 +65,20 @@ body {
 	text-overflow: ellipsis;
 }
 
+.counter-box-shadow {
+	-moz-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
+	-o-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
+	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
+}
+
+.counter-common {
+	background: @blue;
+	text-align: center;	
+	font-weight: bold;
+	.counter-box-shadow;
+}
+
 @import "active/icons";
 
 @import "active/header";

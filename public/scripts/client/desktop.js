@@ -20,15 +20,9 @@ function createDesktop(data, allConversations){
     }
   }
 
-  self.leftConversationIndex = ko.observable(0);
+  self.leftConversation = ko.observable(null);
 
-  self.leftConversation = ko.computed(function(){
-    return getConversationAt(self.leftConversationIndex());
-  });
-
-  self.rightConversation = ko.computed(function(){
-    return getConversationAt(self.leftConversationIndex() + 1);
-  });
+  self.rightConversation = ko.observable(null);
 
   function getConversationAt(index){
     var conversation = self.conversations()[index];
@@ -42,11 +36,11 @@ function createDesktop(data, allConversations){
   }
 
   self.hasLeftConversation = ko.computed(function(){
-    return self.leftConversation() !== undefined;
+    return self.leftConversation() !== null;
   });
 
   self.hasRightConversation = ko.computed(function(){
-    return self.rightConversation() !== undefined;
+    return self.rightConversation() !== null;
   });
 
   function hasConversation(conversation){
@@ -58,8 +52,22 @@ function createDesktop(data, allConversations){
       self.persistNewConversation(conversation);
       self.conversations.push(conversation);
       self.resize.strip();
+      if (!self.hasLeftConversation() || !self.hasRightConversation()) {
+        focusLastConversation();
+      }
     }
   };
+
+  function focusLastConversation() {
+    if (!self.hasLeftConversation()) {
+      focusLeftConversationBy(self.conversations().length - 1);
+    } 
+    else if (!self.hasRightConversation()) {
+      focusRightConversationBy(self.conversations().length - 1);
+    }
+
+    updateActiveConversations();
+  }
 
   self.addEmptyConversation = function(conversation) {
     self.conversations.push(conversation);
@@ -67,7 +75,7 @@ function createDesktop(data, allConversations){
     self.focus(conversation);
     conversation.settingTopic.subscribe(function(newValue){
       self.resize.convoBody();
-      self.scroll.setup();       
+      self.scroll.setup();
     });
   };
 
@@ -75,36 +83,76 @@ function createDesktop(data, allConversations){
     socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
   };
 
-  self.addAndFocus = function(conversation){
+  self.addAndFocus = function(conversation) {
     self.add(conversation);
     self.focus(conversation);
   }
 
-  self.remove = function(conversation){
+  self.remove = function(conversation) {
     socket.emit('remove_from_desktop', { id: self.id, conversationId: conversation.id });
     var index = self.conversations.indexOf(conversation);
     self.conversations.splice(index, 1);
-    self.focus();
     self.resize.strip();
+    if(conversation.focused()) {
+      removeFocused(conversation, index);
+    }
   };
 
-  self.focus = function(leftConversation){
-    clearFocus();
+  function removeFocused(conversation, index) {
+    conversation.resetFocus();
 
-    if(leftConversation){
-      self.leftConversationIndex(self.conversations.indexOf(leftConversation));
+    if (isLeft(conversation)) {
+      focusLeftConversationBy(index);      
+      focusRightConversationBy(index + 1);
     }
+    else if (isRight(conversation)) {
+      focusRightConversationBy(index);
+    }   
 
-    if(self.hasLeftConversation()){
+    updateActiveConversations();
+  }
+
+  function focusRightConversationBy(index) {
+    self.rightConversation(slideInto(index));
+    if (self.hasRightConversation()) {
+      self.rightConversation().focus('#convo-right');
+    }
+  }
+
+  function focusLeftConversationBy(index) {
+    self.leftConversation(slideInto(index));
+    if (self.hasLeftConversation()) {
       self.leftConversation().focus('#convo-left');
       self.leftConversation().focusElement.newMessage();
     }
+  }
 
-    if(self.hasRightConversation()){
-      self.rightConversation().focus('#convo-right');
+  function slideInto(index) {
+    if (index >= self.conversations().length) {
+        return null;
+      } else {
+        return getConversationAt(index);
+      }
+  }
+
+  function isRight(conversation) {
+    return conversation === self.rightConversation();
+  }
+
+  function isLeft(conversation) {
+    return conversation === self.leftConversation();
+  }
+
+  self.focus = function(conversation) {
+    var index = self.conversations.indexOf(conversation);
+    var leftIndex = self.conversations.indexOf(self.leftConversation());
+
+    if (index !== leftIndex) {
+      clearFocus();
+      focusLeftConversationBy(index);
+      focusRightConversationBy(index + 1);
+      updateActiveConversations();
     }
-
-    updateActiveConversations();
   };
 
   function updateActiveConversations(){
@@ -170,7 +218,9 @@ function createDesktop(data, allConversations){
     return scr;
   }();
 
-  self.focus();
+  focusLeftConversationBy(0);
+  focusRightConversationBy(1);
+  updateActiveConversations();
 
   self.setupStripDragAndDrop = function(){
     var currentSort;
@@ -183,9 +233,7 @@ function createDesktop(data, allConversations){
       stop: function(event, ui){
         currentSort.stopIndex = ui.item.index();
         socket.emit('update_strip_order', { id: self.id, currentSort: currentSort });
-        clearFocus();
         reorder();
-        self.focus();
       },
     });
 

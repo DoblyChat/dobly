@@ -5,11 +5,11 @@
 	padding: 6px @message-right-padding 6px @message-left-padding;
 }
 
-.withOutCounter {
+.with-out-counter {
 	width: 100%;
 }
 
-.withCounter {
+.with-counter {
 	width: @convo-width - @message-right-padding - @message-left-padding - @all-convos-counter-width - @all-convos-counter-margin-right;
 }
 
@@ -51,7 +51,7 @@
 					float: right;					
 
 					.counter {						
-						.tile-counter-common;
+						.counter-common;
 						width: @all-convos-counter-width;
 						height: 35px;
 						margin-right: -14px;
@@ -102,14 +102,14 @@
 					padding: 26px 25px 10px 25px;
 					.caption-color;
 				}
+			}			
+
+			&:last-child {
+				float: right;
 			}
 
 			&:first-child {
 				float: left;
-			}
-
-			&:last-child {
-				float: right;
 			}
 		}
 

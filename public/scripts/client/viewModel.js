@@ -12,6 +12,7 @@ function createViewModel(conversationsData, desktopData) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){
       if(data.conversationId === conversation.id){
         conversation.receiveMessage(data);
+        self.desktop.add(conversation);
       }
     });
   });
@@ -57,7 +58,6 @@ function createViewModel(conversationsData, desktopData) {
     var conversation = createConversation(data);
     self.conversations.push(conversation);
     self.desktop.add(conversation);
-    self.desktop.focus();
   });
 
   self.addNewConversation = function(){

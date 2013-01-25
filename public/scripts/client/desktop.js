@@ -25,14 +25,16 @@ function createDesktop(data, allConversations){
   self.rightConversation = ko.observable(null);
 
   function getConversationAt(index){
-    var conversation = self.conversations()[index];
-    if(conversation){
+    if (index >= self.conversations().length) {
+      return null;
+    } else {
+      var conversation = self.conversations()[index];
       if(conversation.unreadCounter() > 0){
         conversation.unreadCounter(0);
         socket.emit('mark_as_read', conversation.id);
       }
+      return conversation;
     }
-    return conversation;
   }
 
   self.hasLeftConversation = ko.computed(function(){
@@ -113,26 +115,18 @@ function createDesktop(data, allConversations){
   }
 
   function focusRightConversationBy(index) {
-    self.rightConversation(slideInto(index));
+    self.rightConversation(getConversationAt(index));
     if (self.hasRightConversation()) {
       self.rightConversation().focus('#convo-right');
     }
   }
 
   function focusLeftConversationBy(index) {
-    self.leftConversation(slideInto(index));
+    self.leftConversation(getConversationAt(index));
     if (self.hasLeftConversation()) {
       self.leftConversation().focus('#convo-left');
       self.leftConversation().focusElement.newMessage();
     }
-  }
-
-  function slideInto(index) {
-    if (index >= self.conversations().length) {
-        return null;
-      } else {
-        return getConversationAt(index);
-      }
   }
 
   function isRight(conversation) {
@@ -148,12 +142,16 @@ function createDesktop(data, allConversations){
     var leftIndex = self.conversations.indexOf(self.leftConversation());
 
     if (index !== leftIndex) {
-      clearFocus();
-      focusLeftConversationBy(index);
-      focusRightConversationBy(index + 1);
-      updateActiveConversations();
+      changeFocusedConversations(index);
     }
   };
+
+  function changeFocusedConversations(leftIndex) {
+    clearFocus();
+    focusLeftConversationBy(leftIndex);
+    focusRightConversationBy(leftIndex + 1);
+    updateActiveConversations();
+  }
 
   function updateActiveConversations(){
     var activeConversations = [];
@@ -232,15 +230,36 @@ function createDesktop(data, allConversations){
       },
       stop: function(event, ui){
         currentSort.stopIndex = ui.item.index();
-        socket.emit('update_strip_order', { id: self.id, currentSort: currentSort });
-        reorder();
+
+        if (currentSort.startIndex !== currentSort.stopIndex) {
+          socket.emit('update_strip_order', { id: self.id, currentSort: currentSort });
+          var conversation = self.conversations()[currentSort.startIndex];
+          reorder(conversation);
+          if (conversation.focused()) {
+            changeFocusedConversations(currentSort.stopIndex);
+          }
+          else {
+            checkIfItNeedsFocus();
+          }
+        }
       },
     });
 
-    function reorder(){
-      var conversation = self.conversations()[currentSort.startIndex];
+    function reorder(conversation) {      
       self.conversations.splice(currentSort.startIndex, 1);
       self.conversations.splice(currentSort.stopIndex, 0, conversation);
+    }
+
+    function checkIfItNeedsFocus() {
+      var leftFocusIndex = self.conversations.indexOf(self.leftConversation());
+
+      if (leftFocusIndex + 1 === currentSort.stopIndex) {
+        if (self.hasRightConversation()) {
+          self.rightConversation().resetFocus();
+        }
+        focusRightConversationBy(leftFocusIndex + 1);
+        updateActiveConversations();
+      }
     }
 
     $('.film-strip').disableSelection();

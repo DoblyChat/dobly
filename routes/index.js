@@ -8,13 +8,15 @@ var Conversation = require('../models/conversation'),
 exports.config = function(app){
 	app.get('/', home);
 
-	app.post('/log-in', authenticate());
+	app.post('/login', authenticate());
+
+	app.get('/logout', logOut);
 
 	app.get('/sign-up', signUp);
 
 	app.post('/create-user', createUser);
 
-	app.get('/conversations/', checkUserIsLoggedIn, renderDesktop);
+	app.get('/conversations', checkUserIsLoggedIn, renderDesktop);
 
 	app.get('/admin/groups', checkUserIsLoggedIn, getGroups);
 
@@ -30,16 +32,26 @@ function checkUserIsLoggedIn(req, res, next) {
 }
 
 function home(req, res){
-  res.render('index', { title: 'Welcome to Fluid Talk! '});
+	if(req.user){
+		res.redirect('/conversations');
+	}else{
+		res.render('index', { title: 'Welcome to Fluid Talk! '});		
+	}
 }
 
 function authenticate(){
-	return passport.authenticate('local', { successRedirect: '/conversations/',
+	return passport.authenticate('local', { successRedirect: '/conversations',
 									 		failureRedirect: '/' });
 }
 
+function logOut(req, res){
+	req.logOut();
+  	res.redirect('/');
+}
+
 function signUp(req, res){
-	Group.find({}, { lean: true }, function(err, groups){
+	Group.find({}, null, { lean: true }, function(err, groups){
+		debugger;
 		res.render('sign-up', { groups: groups, title: 'Sign up - Fluid Talk' });
 	});
 }

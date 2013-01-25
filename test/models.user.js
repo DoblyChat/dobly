@@ -97,10 +97,8 @@ describe('User', function() {
 	});
 
 	afterEach(function(done){
-		User.find({ username: { $in: [ 'test', 'test-2' ] } }).remove(function(err) {
-			Group.findOneAndRemove({ name: 'test'}, function(err){
-				done(err);
-			});
+		group.remove(function(err){
+			done(err);
 		});
 	});
 });

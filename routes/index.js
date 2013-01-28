@@ -68,13 +68,7 @@ function renderDesktop(req, res) {
 		Desktop.findOrCreateByUserId(req.user._id, function(err, desktop){
 			UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, function(err, markers){
 				conversations.forEach(function(conversation){
-					conversation.unread = 0;
-					
-					markers.forEach(function(marker){
-						if(marker.conversationId.equals(conversation._id)){
-							conversation.unread = marker.count;
-						}
-					});
+					addUnread(conversation, markers, desktop);
 				});
 					
 				res.render('conversations/active', 
@@ -88,6 +82,20 @@ function renderDesktop(req, res) {
 			});
 		});
 	});
+
+	function addUnread(conversation, markers, desktop){
+		conversation.unread = 0;
+					
+		markers.forEach(function(marker){
+			if(marker.conversationId.equals(conversation._id)){
+				conversation.unread = marker.count;
+
+				if(desktop.conversations.indexOf(conversation._id) < 0){
+					desktop.conversations.push(conversation._id);
+				}
+			}
+		});
+	}
 }
 
 function getGroups(req, res){

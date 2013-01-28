@@ -56,9 +56,9 @@ describe('User', function() {
 		});
 	});
 
-	describe('#indexes', function(){
+	describe('#username', function(){
 		
-		it('requires usernames to be unique', function(done) {
+		it('must be unique', function(done) {
 			User.create(userData, function(err, user) {
 				should.not.exist(err);
 
@@ -69,6 +69,16 @@ describe('User', function() {
 
 					done();
 				});
+			});
+		});
+
+		it('are lower cased automatically', function(done){
+			userData.username = 'TEST';
+
+			User.create(userData, function(err, user){
+				user.username.should.not.eql('TEST');
+				user.username.should.eql('test');
+				done();
 			});
 		});
 	});

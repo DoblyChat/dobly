@@ -4,6 +4,7 @@ var LocalStrategy = require('passport-local').Strategy
 exports.config = function(passport){
 	passport.use(new LocalStrategy(
 		function(username, password, done){
+			username = username.toLowerCase();
 			User.findOne({ username: username }, function(err, user){
 				if(err) { done(err); }
 

@@ -51,7 +51,6 @@ function logOut(req, res){
 
 function signUp(req, res){
 	Group.find({}, null, { lean: true }, function(err, groups){
-		debugger;
 		res.render('sign-up', { groups: groups, title: 'Sign up - Fluid Talk' });
 	});
 }

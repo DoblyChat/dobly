@@ -35,13 +35,20 @@ function home(req, res) {
 	if(req.user) {
 		res.redirect('/conversations');
 	} else {
-		res.render('index', { title: 'Fluidtalk', layout: '' });	
+		var flash = req.flash('error');
+		res.render('index', {  	
+								title: 'Fluidtalk', 
+								layout: '', 
+								info: flash, 
+								showFlash: flash.length > 0 
+							});	
 	}
 }
 
 function authenticate(){
 	return passport.authenticate('local', { successRedirect: '/conversations',
-									 		failureRedirect: '/' });
+									 		failureRedirect: '/',
+									 		failureFlash: 'Username and password does not match.' });
 }
 
 function logOut(req, res){

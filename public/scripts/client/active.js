@@ -22,7 +22,7 @@ $(document).ready(function() {
 $(window).load(function() {
 	desktop.resize.convoBody();
 	desktop.scroll.setup();
-})
+});
 
 $(window).resize(function() {
 	desktop.resize.dualConvo();

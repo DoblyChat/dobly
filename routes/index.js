@@ -30,7 +30,7 @@ function checkUserIsLoggedIn(req, res, next) {
 }
 
 function home(req, res){
-  res.render('index', { title: 'Welcome to Fluid Talk! '});
+  res.render('index', { title: 'Fluidtalk', layout: '' });
 }
 
 function authenticate(){
@@ -68,7 +68,7 @@ function renderDesktop(req, res) {
 					
 				res.render('conversations/active', 
 					{ 
-						title: 'Fluid Talk',
+						title: 'Fluidtalk',
 		    			conversations: JSON.stringify(conversations),
 		    			desktop: JSON.stringify(desktop), 
 		    			currentUser: JSON.stringify(req.user),

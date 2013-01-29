@@ -71,6 +71,10 @@
 			outline: none;
 			.title-font;
 			width: @convo-width - @message-right-padding - @message-left-padding;
+
+			&:-moz-placeholder {
+				color: darken(@light-gray,10%);
+			}
 		}
 	}
 

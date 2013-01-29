@@ -8,13 +8,15 @@ var Conversation = require('../models/conversation'),
 exports.config = function(app){
 	app.get('/', home);
 
-	app.post('/log-in', authenticate());
+	app.post('/login', authenticate());
+
+	app.get('/logout', logOut);
 
 	app.get('/sign-up', signUp);
 
 	app.post('/create-user', createUser);
 
-	app.get('/conversations/', checkUserIsLoggedIn, renderDesktop);
+	app.get('/conversations', checkUserIsLoggedIn, renderDesktop);
 
 	app.get('/admin/groups', checkUserIsLoggedIn, getGroups);
 
@@ -29,17 +31,26 @@ function checkUserIsLoggedIn(req, res, next) {
 	}
 }
 
-function home(req, res){
-  res.render('index', { title: 'Fluidtalk', layout: '' });
+function home(req, res) {
+	if(req.user) {
+		res.redirect('/conversations');
+	} else {
+		res.render('index', { title: 'Fluidtalk', layout: '' });	
+	}
 }
 
 function authenticate(){
-	return passport.authenticate('local', { successRedirect: '/conversations/',
+	return passport.authenticate('local', { successRedirect: '/conversations',
 									 		failureRedirect: '/' });
 }
 
+function logOut(req, res){
+	req.logOut();
+  	res.redirect('/');
+}
+
 function signUp(req, res){
-	Group.find({}, { lean: true }, function(err, groups){
+	Group.find({}, null, { lean: true }, function(err, groups){
 		res.render('sign-up', { groups: groups, title: 'Sign up - Fluid Talk' });
 	});
 }
@@ -57,13 +68,7 @@ function renderDesktop(req, res) {
 		Desktop.findOrCreateByUserId(req.user._id, function(err, desktop){
 			UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, function(err, markers){
 				conversations.forEach(function(conversation){
-					conversation.unread = 0;
-					
-					markers.forEach(function(marker){
-						if(marker.conversationId.equals(conversation._id)){
-							conversation.unread = marker.count;
-						}
-					});
+					addUnread(conversation, markers, desktop);
 				});
 					
 				res.render('conversations/active', 
@@ -77,6 +82,20 @@ function renderDesktop(req, res) {
 			});
 		});
 	});
+
+	function addUnread(conversation, markers, desktop){
+		conversation.unread = 0;
+					
+		markers.forEach(function(marker){
+			if(marker.conversationId.equals(conversation._id)){
+				conversation.unread = marker.count;
+
+				if(desktop.conversations.indexOf(conversation._id) < 0){
+					desktop.conversations.push(conversation._id);
+				}
+			}
+		});
+	}
 }
 
 function getGroups(req, res){

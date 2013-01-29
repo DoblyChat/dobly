@@ -5,20 +5,17 @@ var User = require('../models/user')
 mongo.connect('mongodb://localhost/proto');
 
 function clean(create) {
-
-	User.find({ username: { $in: [ 'Fernando', 'Carlos' ] } }).remove(function(err) {
-		
-		if(!err) {
-			console.log('Users removed');
-
-			Group.findOneAndRemove({ name: 'Founders'}, function(err) {
-				if(!err) {
-					console.log('Group removed');
+	Group.findOne({ name: 'Founders'}, function(err, group){
+		if(!err && group){
+			group.remove(function(err){
+				if(!err){
+					console.log('Group and users removed');
 					create();
-				};
+				}
 			});
+		} else {
+			create();
 		}
-		
 	});
 }
 

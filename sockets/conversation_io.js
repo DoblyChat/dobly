@@ -76,20 +76,18 @@ function sendMessage(socket, data){
             };
 
             emit(socket, 'receive_message', dataToEmit);
-            saveUnreadMarkers(socket.handshake.user._id, data.conversationId);
+            saveUnreadMarkers(socket.handshake.user._id, socket.handshake.user.groupId, data.conversationId);
         });
     });
 };
 
-function saveUnreadMarkers(currentUserId, conversationId){
-    User.find({ _id: { $ne: currentUserId }}, function(err, users){
-        for(var i = 0; i < users.length; i++){
-            if(!userIsActive(users[i]) || !userInConversation(users[i], conversationId)){
-                UnreadMarker.update({ userId: users[i]._id, conversationId: conversationId },
-                                    { $inc: { count: 1 } }, 
-                                    { upsert: true, multi: true }).exec();
+function saveUnreadMarkers(currentUserId, currentGroupId, conversationId){
+    User.find({ _id: { $ne: currentUserId }, groupId: currentGroupId }, function(err, users){
+        users.forEach(function(user){
+            if(!userIsActive(user) || !userInConversation(user, conversationId)){
+                UnreadMarker.increaseCounter(user._id, conversationId);
             }
-        }
+        });
     });
 }
 

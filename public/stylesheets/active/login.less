@@ -1,0 +1,78 @@
+@login-width: 660px;
+@prompt-height: 36px;
+@prompt-margin-bottom: 30px;
+@form-margin-bottom: 30px;
+@field-outer-width: 260px;
+@field-outer-height: 70px;
+@field-padding-left: 20px;
+@field-padding-right: 20px;
+@field-padding-top: 0;
+@field-padding-bottom: 0;
+@field-border-size: 2px;
+@field-margin-right: 20px;
+@field-width: @field-outer-width - (@field-border-size * 2) - @field-margin-right - @field-padding-right - @field-padding-left;
+@field-height: @field-outer-height - (@field-border-size * 2) - @field-padding-top - @field-padding-bottom;
+
+#login {
+	font-family: @sans;
+	font-weight: bold;
+	width: @login-width;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -@prompt-height - @prompt-margin-bottom - @field-outer-height;
+	margin-left: -(@login-width/2);
+
+
+	#prompt {
+		height: @prompt-height;
+		font-size: @prompt-height;
+		line-height: 1;
+		.text-color;
+		margin-bottom: @prompt-margin-bottom;
+	}
+
+	#form {
+		font-size: 24px;
+		.float-parent;
+		margin-bottom: @form-margin-bottom;
+
+		input.field {			
+			width: @field-width;
+			height: @field-height;		
+			margin-right: @field-margin-right;
+			border: @field-border-size solid @blue;
+			float: left;
+			background: @white;
+			.text-color;
+			padding: @field-padding-top @field-padding-right @field-padding-bottom @field-padding-left;
+			outline: none;
+
+			&:-moz-placeholder {
+				.caption-color;
+			}
+		}
+
+		input#sign-in {
+			width: 140px;
+			height: 70px;
+			background: @blue;
+			float: right;
+			color: @white;
+			border: none;
+			line-height: 1;
+		}
+	}
+
+	#flash {
+		width: 500px - @field-padding-left - @field-padding-right;
+		height: 40px;
+		padding-left: @field-padding-left;
+		padding-right: @field-padding-right;
+		font-size: 16px;
+		background: @red;
+		line-height: 2.5;
+		.text-color;
+		display: none;
+	}
+}

@@ -48,7 +48,7 @@ function home(req, res) {
 function authenticate(){
 	return passport.authenticate('local', { successRedirect: '/conversations',
 									 		failureRedirect: '/',
-									 		failureFlash: 'Username and password does not match.' });
+									 		failureFlash: 'Username and password do not match.' });
 }
 
 function logOut(req, res){

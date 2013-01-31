@@ -15,7 +15,8 @@
     "cookie": "0.0.X",
     "passport": "0.1.X",
     "passport-local": "0.1.X",
-    "bcrypt": "0.7.X"
+    "bcrypt": "0.7.X",
+    "async": "~0.1.X"
   },
   "devDependencies": {
     "mocha": "1.8.X",

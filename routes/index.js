@@ -3,7 +3,8 @@ var Conversation = require('../models/conversation'),
     Group = require('../models/group'),
     Desktop = require('../models/desktop'),
     UnreadMarker = require('../models/unread_marker'),
-    passport = require('passport');
+    passport = require('passport'),
+    async = require('async');
 
 exports.config = function(app){
 	app.get('/', home);
@@ -71,28 +72,35 @@ function createUser(req, res){
 }
 
 function renderDesktop(req, res) {
-	Conversation.find({ groupId: req.user.groupId }, null, { lean: true }, function(err, conversations){
-		Desktop.findOrCreateByUserId(req.user._id, function(err, desktop){
-			UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, function(err, markers){
-				conversations.forEach(function(conversation){
-					addUnread(conversation, markers, desktop);
-				});
+	async.parallel({
+	    conversations: function(callback){
+	    	Conversation.find({ groupId: req.user.groupId }, null, { lean: true }, callback);
+	    },
+	    desktop: function(callback){
+	        Desktop.findOrCreateByUserId(req.user._id, callback);
+	    },
+	    markers: function(callback){
+	    	UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, callback);
+	    }
+	},
+	function(err, results) {
+	    results.conversations.forEach(function(conversation){
+			addUnread(conversation, results.markers, results.desktop);
+		});
 					
-				res.render('conversations/active', 
-					{ 
-						title: 'Fluidtalk',
-		    			conversations: JSON.stringify(conversations),
-		    			desktop: JSON.stringify(desktop), 
-		    			currentUser: JSON.stringify(req.user),
-		    			layout: ''
-		    		});
-			});
+		res.render('conversations/active', 
+		{ 
+			title: 'Fluidtalk',
+		    conversations: JSON.stringify(results.conversations),
+		    desktop: JSON.stringify(results.desktop), 
+			currentUser: JSON.stringify(req.user),
+			layout: ''
 		});
 	});
 
 	function addUnread(conversation, markers, desktop){
 		conversation.unread = 0;
-					
+		
 		markers.forEach(function(marker){
 			if(marker.conversationId.equals(conversation._id)){
 				conversation.unread = marker.count;
@@ -100,26 +108,35 @@ function renderDesktop(req, res) {
 				if(desktop.conversations.indexOf(conversation._id) < 0){
 					desktop.conversations.push(conversation._id);
 				}
+
+				break;
 			}
 		});
 	}
 }
 
 function getGroups(req, res){
-	Group.find({}).lean().exec(function(err, groups){
-		User.find({}).lean().exec(function(err, users) {
-			users.forEach(function(user){
-				var group = findGroup(user.groupId);
-				group.users = group.users || [];
-				group.users.push(user);
-			});
+	async.parallel({
+		groups: function(callback){
+			Group.find({}).lean().exec(callback);		
+		},
+		users: function(callback){
+			User.find({}).lean().exec(callback);	
+		}
 
-			res.render('admin/groups', { groups: groups, title: 'groups' });
+	},
+	function(err, results){
+		results.users.forEach(function(user){
+			var group = findGroup(user.groupId);
+			group.users = group.users || [];
+			group.users.push(user);
 		});
+
+		res.render('admin/groups', { groups: results.groups, title: 'groups' });
 
 		function findGroup(groupId){
 			var foundGroup;
-			groups.forEach(function(group){
+			results.groups.forEach(function(group){
 				if(group._id.equals(groupId)){
 					foundGroup = group;
 				}

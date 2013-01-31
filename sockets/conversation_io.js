@@ -2,6 +2,7 @@ var Conversation = require('../models/conversation'),
     Message = require('../models/message'),
     User = require('../models/user'),
     UnreadMarker = require('../models/unread_marker'),
+    async = require('async'),
     active = {};
 
 exports.config = function(socket){
@@ -61,33 +62,44 @@ function removeActiveUser(socket){
 };
 
 function sendMessage(socket, data){
-	Conversation.findById(data.conversationId, function(err, conversation){
-        var msg = new Message();
-        msg.content = data.content;
-        msg.createdBy = socket.handshake.user.username;
-        msg.timestamp = data.timestamp;
-        conversation.messages.push(msg);
-        conversation.save(function(err){
-            var dataToEmit = {
-                content: data.content, 
-                createdBy: socket.handshake.user.username, 
-                conversationId: data.conversationId,
-                timestamp: data.timestamp,
-            };
+    async.parallel([
+        function(callback){
+            Conversation.findById(data.conversationId, function(err, conversation){
+                var msg = new Message();
+                msg.content = data.content;
+                msg.createdBy = socket.handshake.user.username;
+                msg.timestamp = data.timestamp;
+                conversation.messages.push(msg);
+                conversation.save(function(err){
+                    var dataToEmit = {
+                        content: data.content, 
+                        createdBy: socket.handshake.user.username, 
+                        conversationId: data.conversationId,
+                        timestamp: data.timestamp,
+                    };
 
-            emit(socket, 'receive_message', dataToEmit);
-            saveUnreadMarkers(socket.handshake.user._id, socket.handshake.user.groupId, data.conversationId);
-        });
-    });
+                    emit(socket, 'receive_message', dataToEmit);
+                    callback(err);
+                });
+            });
+        },
+        function(callback){
+            saveUnreadMarkers(socket.handshake.user._id, socket.handshake.user.groupId, data.conversationId, callback);
+        }
+    ]);
 };
 
-function saveUnreadMarkers(currentUserId, currentGroupId, conversationId){
+function saveUnreadMarkers(currentUserId, currentGroupId, conversationId, callback){
     User.find({ _id: { $ne: currentUserId }, groupId: currentGroupId }, function(err, users){
-        users.forEach(function(user){
+        async.forEach(users, save);
+        
+        function save(user, callback){
             if(!userIsActive(user) || !userInConversation(user, conversationId)){
-                UnreadMarker.increaseCounter(user._id, conversationId);
+                UnreadMarker.increaseCounter(user._id, conversationId, callback);
             }
-        });
+        }
+
+        callback(err);
     });
 }
 

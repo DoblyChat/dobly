@@ -109,7 +109,7 @@ function renderDesktop(req, res) {
 					desktop.conversations.push(conversation._id);
 				}
 
-				break;
+				return;
 			}
 		});
 	}

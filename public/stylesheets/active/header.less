@@ -3,37 +3,38 @@
 	height: @header-height;
 	.centered;
 	.margin-bottom;
+
+
+	#logo {
+		font-family: @sans;
+		color: @blue;
+		font-weight: bold;
+		text-align: left;
+		font-size: @header-height - 10px;
+		text-shadow: @gray 0px 1px 2px;
+		float: left;
+		margin-top: 5px;
+		.logo-font-chrome-ubuntu-fix;
+	}
+
+	.top-links {
+		float: right;
+		.margin-top;
+		text-align: center;
+		line-height: 41px;
+
+		span, a {
+			cursor: pointer;
+			color: @blue;
+			text-decoration: none;
+			font-size: 1.3em;
+			.margin-left;
+			.margin-right;
+			font-weight: bold;
+		}
+	}
 }
 
 .logo-font-chrome-ubuntu-fix {
 	width: 50px;
-}
-
-#logo {
-	font-family: @sans;
-	color: @blue;
-	font-weight: bold;
-	text-align: left;
-	font-size: @header-height - 10px;
-	text-shadow: @gray 0px 1px 2px;
-	float: left;
-	margin-top: 5px;
-	.logo-font-chrome-ubuntu-fix;
-}
-
-.top-button {
-	color: @gray;
-	float: right;
-	width: 180px;
-	height: @header-height - @standard-margin;
-	.margin-left;
-	.margin-top;
-	background: @light-gray;
-	text-align: center;
-	line-height: 41px;
-}
-
-.top-button a {
-	display: block;	
-	cursor: pointer;
 }

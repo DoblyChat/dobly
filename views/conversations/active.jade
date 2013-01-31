@@ -10,11 +10,12 @@ html
 	body
 		#header
 			#logo Fluidtalk
-			#user-name.top-button
-			.top-button(data-bind="visible: navigation.showingDesktop")
-				a(data-bind="click: navigation.all") All Conversations
-			.top-button(data-bind="visible: !navigation.showingDesktop()")
-				a(data-bind="click: navigation.desktop") Back to Conversations
+			.top-links
+				a(data-bind="click: navigation.desktop, visible: !navigation.showingDesktop()") Back to Conversations
+				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
+				span |
+				a(href="/logout") Logout
+				
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")

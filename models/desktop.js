@@ -1,7 +1,7 @@
 var mongo = require('mongoose');
 
 var schema = new mongo.Schema({
-	conversations: [ mongo.Schema.Types.ObjectId ],
+	conversations: { type: [ mongo.Schema.Types.ObjectId ], default: [] },
 	userId: { type: mongo.Schema.Types.ObjectId, required: true },
 });
 
@@ -19,7 +19,9 @@ schema.statics.findOrCreateByUserId = function(userId, callback){
 		if(desktop === null){
 			desktop = new model();
 			desktop.userId = userId;
-			desktop.save(callback);
+			desktop.save(function(err, savedDesktop){
+				callback(err, savedDesktop);
+			});
 		}
 		else{
 			callback(err, desktop);

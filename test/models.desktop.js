@@ -48,12 +48,11 @@ describe('Desktop', function(){
 
 		it('creates desktop entry if one for user does not exist', function(done){
 
-			Desktop.findOrCreateByUserId(userId, function(){ 
-				Desktop.find({ userId: userId }, function(err, savedDesktops){
-					savedDesktops.length.should.equal(1)
-					savedDesktops[0].userId.should.eql(userId);
-					done();
-				});
+			Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){ 
+				arguments.length.should.eql(2);
+				savedDesktop.userId.should.eql(userId);
+				savedDesktop.conversations.should.not.be.null;
+				done();
 			});
 
 			verifyFindOneCall(findOne);
@@ -88,13 +87,19 @@ describe('Desktop', function(){
 
 	});
 
-	describe('#required fields', function() {
+	describe('#fields', function() {
 
-		it('userId', function(done) {
+		it('userId is required', function(done) {
 			Desktop.create({}, function(err){
 				checkRequiredFieldError(err, 'userId');
 				done();
 			});
+		});
+
+		it('has a default empty array of conversations', function(){
+			var desktop = new Desktop();
+			desktop.conversations.should.not.be.null;
+			desktop.conversations.length.should.equal(0);
 		});
 	});
 });

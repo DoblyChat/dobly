@@ -87,7 +87,7 @@ function renderDesktop(req, res) {
 	    results.conversations.forEach(function(conversation){
 			addUnread(conversation, results.markers, results.desktop);
 		});
-					
+
 		res.render('conversations/active', 
 		{ 
 			title: 'Fluidtalk',

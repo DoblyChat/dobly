@@ -7,12 +7,14 @@ var express = require('express')
   , mongo = require('mongoose')
   , path = require('path')
   , passport = require('passport')
-  , security = require('./security');
+  , security = require('./security')
+  , less = require('less-middleware');
 
 // Configuration
 app.configure(function(){
   app.set('views', path.join(__dirname, 'views'));
   app.set('view engine', 'jade');
+  app.use(less({ src: __dirname + '/public' }));
 
   app.use(express.bodyParser());
 

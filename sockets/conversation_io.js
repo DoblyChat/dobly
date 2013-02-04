@@ -98,7 +98,6 @@ function saveUnreadMarkers(currentUserId, currentGroupId, conversationId, callba
         async.forEach(users, save);
 
         function save(user, callback){
-            debugger;
             if(!userIsActive(user) || !userInConversation(user, conversationId)){
                 UnreadMarker.increaseCounter(user._id, conversationId, callback);
             }

@@ -3,10 +3,10 @@ var desktopIo = require('./desktop_io')
   , User = require('../models/user');
 
 exports.config = function(io, sessionStore){
-    // needed for heroku
     io.configure(function () { 
+      // needed for heroku
       io.set("transports", ["xhr-polling"]); 
-      io.set("polling duration", 10); 
+      io.set("polling duration", 10);
     });
 
     // Socket connections

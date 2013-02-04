@@ -88,6 +88,10 @@ function renderDesktop(req, res) {
 			addUnread(conversation, results.markers, results.desktop);
 		});
 
+	    if(results.desktop.isModified('conversations')){
+	    	results.desktop.save();
+	    }
+
 		res.render('conversations/active', 
 		{ 
 			title: 'Fluidtalk',

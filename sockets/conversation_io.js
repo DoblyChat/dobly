@@ -18,12 +18,16 @@ exports.config = function(socket){
         createConversation(socket, data);
     });
 
-    socket.on('remove_active_conversations', function(){
+    socket.on('remove_active_user', function(){
         removeActiveUser(socket);
     });
 
     socket.on('mark_as_read', function(conversationId){
         markAsRead(socket, conversationId);
+    });
+
+    socket.on('disconnect', function(){
+        removeActiveUser(socket);
     });
 }
 
@@ -92,8 +96,9 @@ function sendMessage(socket, data){
 function saveUnreadMarkers(currentUserId, currentGroupId, conversationId, callback){
     User.find({ _id: { $ne: currentUserId }, groupId: currentGroupId }, function(err, users){
         async.forEach(users, save);
-        
+
         function save(user, callback){
+            debugger;
             if(!userIsActive(user) || !userInConversation(user, conversationId)){
                 UnreadMarker.increaseCounter(user._id, conversationId, callback);
             }

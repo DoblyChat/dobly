@@ -15,7 +15,7 @@ schema.methods.removeConversation = function(conversationId){
 schema.statics.findOrCreateByUserId = function(userId, callback){
 	var model = this;
 
-	this.findOne({ userId: userId }, null, { lean: true }, function(err, desktop){
+	this.findOne({ userId: userId }, function(err, desktop){
 		if(desktop === null){
 			desktop = new model();
 			desktop.userId = userId;

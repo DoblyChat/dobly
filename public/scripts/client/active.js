@@ -29,6 +29,7 @@ $(window).resize(function() {
 	desktop.resize.convoBody();
 });
 
-window.onbeforeunload = function() { 
-	socket.emit('remove_active_user'); 
-};
+$(window).on('beforeunload', function(){
+  socket.emit('remove_active_user');
+  return undefined;
+});

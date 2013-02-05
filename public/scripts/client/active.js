@@ -1,4 +1,7 @@
-var socket = io.connect(window.location.origin);
+var socket = io.connect(window.location.origin, {
+	'sync disconnect on unload': true
+});
+
 var desktop;
 
 $(document).ready(function() {
@@ -27,9 +30,4 @@ $(window).load(function() {
 $(window).resize(function() {
 	desktop.resize.dualConvo();
 	desktop.resize.convoBody();
-});
-
-$(window).on('beforeunload', function(){
-  socket.emit('remove_active_user');
-  return undefined;
 });

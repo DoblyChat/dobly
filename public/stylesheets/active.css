@@ -181,12 +181,15 @@ body {
 #header .top-links span,
 #header .top-links a {
   cursor: pointer;
-  color: #33b5e5;
+  color: #999999;
   text-decoration: none;
-  font-size: 1.3em;
+  font-size: 15px;
   margin-left: 5px;
   margin-right: 5px;
   font-weight: bold;
+}
+#header .top-links a:hover {
+  color: #333333;
 }
 .logo-font-chrome-ubuntu-fix {
   width: 50px;

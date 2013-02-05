@@ -18,10 +18,6 @@ exports.config = function(socket){
         createConversation(socket, data);
     });
 
-    socket.on('remove_active_user', function(){
-        removeActiveUser(socket);
-    });
-
     socket.on('mark_as_read', function(conversationId){
         markAsRead(socket, conversationId);
     });

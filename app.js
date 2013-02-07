@@ -14,7 +14,6 @@ var express = require('express')
 app.configure(function(){
   app.set('views', path.join(__dirname, 'views'));
   app.set('view engine', 'jade');
-  app.use(less({ src: __dirname + '/public' }));
 
   app.use(express.bodyParser());
 
@@ -24,14 +23,27 @@ app.configure(function(){
   app.use(passport.session());
 
   app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function(){
+  app.use(less({ 
+    src: __dirname + '/public',
+    force: true,
+    debug: true
+  }));
+
+  app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
+  app.use(less({ 
+    src: __dirname + '/public',
+    once: true,
+    compress: true
+  }));
+
+  app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.errorHandler());
 });
 

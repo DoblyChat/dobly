@@ -39,6 +39,8 @@ function createViewModel(conversationsData, desktopData) {
 
   self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
 
+  self.addingNewConversation = ko.observable(false);
+
   socket.on('my_new_conversation', function(data) {
     for(var c = 0; c < self.conversations().length; c++){
       if(self.conversations()[c].id == 0){
@@ -52,21 +54,27 @@ function createViewModel(conversationsData, desktopData) {
         break;
       }
     }
+
+    self.addingNewConversation(false);
+    $('#new-convo-tile').removeClass('disabled');
   });
 
   socket.on('new_conversation', function(data){
     var conversation = createConversation(data);
     self.conversations.push(conversation);
-    self.desktop.add(conversation);
+    self.desktop.add(conversation); 
   });
 
   self.addNewConversation = function(){
-    var conversation = createConversation({});
-    self.conversations.push(conversation);
-    conversation.settingTopic(true);
+    if(!self.addingNewConversation()){
+      var conversation = createConversation({});
+      self.conversations.push(conversation);
+      conversation.settingTopic(true);
 
-    self.desktop.addEmptyConversation(conversation);
-    conversation.focusElement.topic();    
+      self.desktop.addEmptyConversation(conversation);
+      conversation.focusElement.topic();
+      self.addingNewConversation(true);
+    }
   }
 
   return self;

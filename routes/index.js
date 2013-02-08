@@ -38,8 +38,7 @@ function home(req, res) {
 	} else {
 		var flash = req.flash('error');
 		res.render('index', {  	
-								title: 'Fluidtalk', 
-								layout: '', 
+								title: 'Fluidtalk',
 								info: flash, 
 								showFlash: flash.length > 0 
 							});	

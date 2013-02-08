@@ -1,20 +1,9 @@
-doctype
-html
-	head
-		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/active.css")
-		title= title
-	body
-		#login
-			#prompt Sign In to Fluidtalk			
-			#form
-				form(method='post', action="/login")					
-					input#username.field(type="text", name="username", placeholder="Username")
-					input#password.field(type="password", name="password", placeholder="Password")
-					input#sign-in(type="submit", value="Sign In")
-			if showFlash
-				#flash= info
-
-script(type="text/javascript", src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
-script(type="text/javascript", src="/scripts/client/index.js")
+#login
+	#prompt Sign In to Fluidtalk			
+	#form
+		form(method='post', action="/login")					
+			input#username.field(type="text", name="username", placeholder="Username")
+			input#password.field(type="password", name="password", placeholder="Password")
+			input#sign-in(type="submit", value="Sign In")
+		if showFlash
+			#flash= info

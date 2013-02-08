@@ -1,9 +1,11 @@
-!!!
+doctype
 html
-  head
-    title= title
-    link(rel='stylesheet', type='text/css', href='http://twitter.github.com/bootstrap/assets/css/bootstrap.css')
-    link(rel='stylesheet', type='text/css', href='/stylesheets/lib/nanoscroller.css')
-    link(rel='stylesheet', type='text/css', href='/stylesheets/style.css')     
-    meta(charset='utf-8')
-  body!=body
+	head
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
+		title= title
+	body!=body
+
+	script(type="text/javascript", src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
+	script(type="text/javascript", src="/scripts/client/index.js")

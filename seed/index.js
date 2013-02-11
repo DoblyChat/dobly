@@ -2,15 +2,21 @@ var User = require('../models/user')
   , Group = require('../models/group')
   , mongo = require('mongoose');
 
-mongo.connect('mongodb://localhost/proto');
+var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
+mongo.connect(databaseUri);
 
 function clean(create) {
 	Group.findOne({ name: 'Founders'}, function(err, group){
+		if (err) {
+			console.log(err);
+		}
 		if(!err && group){
 			group.remove(function(err){
 				if(!err){
 					console.log('Group and users removed');
 					create();
+				} else {
+					console.log(err);
 				}
 			});
 		} else {
@@ -34,6 +40,8 @@ function create() {
 				function(err){
 					if(!err){
 						console.log('Users added');
+					} else {
+						console.log(err);
 					}
 					process.exit(0);
 				}

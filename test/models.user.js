@@ -72,7 +72,7 @@ describe('User', function() {
 			});
 		});
 
-		it('are lower cased automatically', function(done){
+		it('is lower cased automatically', function(done){
 			userData.username = 'TEST';
 
 			User.create(userData, function(err, user){

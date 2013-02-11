@@ -13,7 +13,7 @@ exports.config = function(app){
 
 	app.get('/logout', logOut);
 
-	app.get('/sign-up', signUp);
+	app.get('/sign-up/:group', signUp);
 
 	app.post('/create-user', createUser);
 
@@ -57,17 +57,17 @@ function logOut(req, res){
 }
 
 function signUp(req, res){
-	Group.find({}, null, { lean: true }, function(err, groups){
-		res.render('sign-up', { groups: groups, title: 'Sign up - Fluid Talk' });
-	});
+	res.render('sign-up', { group: req.params.group, title: 'Sign up - Fluid Talk', showFlash: false });
 }
 
 function createUser(req, res){
-	User.create(
-		{ username: req.body.username, groupId: req.body.group, password: req.body.password },
-		function(err){
-			res.redirect('/');
-		});
+	Group.findOne({ name: req.body.group }, function(err, group){
+		User.create(
+			{ username: req.body.username, groupId: group._id, password: req.body.password },
+			function(err){
+				res.redirect('/');
+			});
+	});
 }
 
 function renderDesktop(req, res) {

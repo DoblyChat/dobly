@@ -20,26 +20,24 @@ function clean(create) {
 }
 
 function create() {
-	Group.create({ name: 'Founders' }, function(err) {
+	Group.create({ name: 'Founders' }, function(err, group) {
 		if(!err) {
 			console.log('Group created');
 		}
 
-		Group.findOne({ name: 'Founders'}, function(err, group){
-			var users = [ 
-							{ username: 'Fernando', password: 'pass', groupId: group._id }, 
-							{ username: 'Carlos', password: 'pass', groupId: group._id } 
-						];
+		var users = [ 
+			{ username: 'Fernando', password: 'pass', groupId: group._id }, 
+			{ username: 'Carlos', password: 'pass', groupId: group._id } 
+		];
 
-			User.create(users, 
-					function(err){
-						if(!err){
-							console.log('Users added');
-						}
-						process.exit(0);
+		User.create(users, 
+				function(err){
+					if(!err){
+						console.log('Users added');
 					}
-				);
-			});
+					process.exit(0);
+				}
+		);
 	});
 }
 

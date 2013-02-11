@@ -1,14 +1,13 @@
-form(method='post', action='/create-user')
-	div
-		label(for='group')
-		select(name='group')
-			each group in groups
-				option(value=group._id)= group.name
-	div
-		label(for='username') Username:
-		input(type='text', name='username')
-	div
-		label(for='password') Password:
-		input(type='password', name='password')
-	div
-		input(type='submit')
+#sign-up
+	.prompt 
+		span Sign up for group 
+		span= group
+	.form-container
+		form(method='post', action='/create-user')
+			input(type='hidden', name='group', value=group)
+			input#username.field(type="text", name="username", placeholder="Username")
+			input.field(type="password", name="password", placeholder="Password")
+			input.field(type="password", name="password2", placeholder="Verify password")
+			input.button(type="submit", value="Sign Up")
+		if showFlash
+			.flash= info

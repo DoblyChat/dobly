@@ -1,4 +1,5 @@
 @login-width: 660px;
+@sign-up-width: 960px;
 @prompt-height: 36px;
 @prompt-margin-bottom: 30px;
 @form-margin-bottom: 30px;
@@ -13,16 +14,13 @@
 @field-width: @field-outer-width - (@field-border-size * 2) - @field-margin-right - @field-padding-right - @field-padding-left;
 @field-height: @field-outer-height - (@field-border-size * 2) - @field-padding-top - @field-padding-bottom;
 
-#login {
+.simple-form {
 	font-family: @sans;
 	font-weight: bold;
-	width: @login-width;
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	margin-top: -@prompt-height - @prompt-margin-bottom - @field-outer-height;
-	margin-left: -(@login-width/2);
-
 
 	#prompt {
 		height: @prompt-height;
@@ -32,7 +30,7 @@
 		margin-bottom: @prompt-margin-bottom;
 	}
 
-	#form {
+	.form-container {
 		font-size: 24px;
 		.float-parent;
 		margin-bottom: @form-margin-bottom;
@@ -53,7 +51,7 @@
 			}
 		}
 
-		input#sign-in {
+		input.button {
 			width: 140px;
 			height: 70px;
 			background: @blue;
@@ -74,4 +72,16 @@
 		line-height: 2.5;
 		.text-color;
 	}
+}
+
+#login {
+	.simple-form;
+	width: @login-width;
+	margin-left: -(@login-width/2);
+}
+
+#sign-up {
+	.simple-form;
+	width: @sign-up-width;
+	margin-left: -(@sign-up-width/2);
 }

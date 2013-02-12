@@ -1,5 +1,5 @@
 #sign-up
-	.prompt 
+	#prompt 
 		span Sign up for group 
 		span= group
 	.form-container
@@ -9,5 +9,5 @@
 			input.field(type="password", name="password", placeholder="Password")
 			input.field(type="password", name="password2", placeholder="Verify password")
 			input.button(type="submit", value="Sign Up")
-		if showFlash
-			.flash= info
+	if showFlash
+		#flash= info

@@ -6,6 +6,8 @@ var Conversation = require('../models/conversation'),
     passport = require('passport'),
     async = require('async');
 
+var flashKey = 'error';
+
 exports.config = function(app){
 	app.get('/', home);
 
@@ -36,7 +38,7 @@ function home(req, res) {
 	if(req.user) {
 		res.redirect('/conversations');
 	} else {
-		var flash = req.flash('error');
+		var flash = req.flash(flashKey);
 		res.render('index', {  	
 								title: 'Fluidtalk',
 								info: flash, 
@@ -57,17 +59,32 @@ function logOut(req, res){
 }
 
 function signUp(req, res){
-	res.render('sign-up', { group: req.params.group, title: 'Sign up - Fluid Talk', showFlash: false });
+	var flash = req.flash(flashKey);
+	var showFlash = flash.length > 0;
+	res.render('sign-up', { group: req.params.group, title: 'Sign up - Fluid Talk', showFlash: showFlash, info: flash });
 }
 
 function createUser(req, res){
-	Group.findOne({ name: req.body.group }, function(err, group){
-		User.create(
-			{ username: req.body.username, groupId: group._id, password: req.body.password },
-			function(err){
-				res.redirect('/');
-			});
-	});
+	if(req.body.password === req.body.password2){
+		Group.findOne({ name: req.body.group }, function(err, group){
+			User.create(
+				{ username: req.body.username, groupId: group._id, password: req.body.password },
+				function(err){
+					if(err){
+						redirectToSignUp('Username is already in use');
+					}else{
+						res.redirect('/');	
+					}
+				});
+		});
+	}else{
+		redirectToSignUp('Password does not match');
+	}
+
+	function redirectToSignUp(flash){
+		req.flash(flashKey, flash);
+		res.redirect(req.header('Referrer'));
+	}
 }
 
 function renderDesktop(req, res) {

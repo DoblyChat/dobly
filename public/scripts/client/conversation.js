@@ -14,7 +14,7 @@ function createConversation(data) {
 
   if(data.messages){
     for(var i = 0; i < data.messages.length; i++){
-      addMessage(data.messages[i]);
+      self.messages.push(createMessage(data.messages[i]));
     }
   }
 

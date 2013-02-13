@@ -7,8 +7,6 @@ function createNotifier(){
 
 	var notifications = window.webkitNotifications;
 
-	// consider adding a function that on load we ask the user for permission
-	
 	self.setup = function() {
 		if(Modernizr.notifications){
 			if(notifications.checkPermission() !== 0){
@@ -20,8 +18,14 @@ function createNotifier(){
 	self.show = function(title, content){
 		if(Modernizr.notifications){
 			if(notifications.checkPermission() === 0){
-				var notif = notifications.createNotification('icon.png', title, content);
+				var notif = notifications.createNotification(
+					'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
+					title, content);
 				notif.show();
+
+				setTimeout(function(){
+					notif.cancel();
+				}, '3000');
 			}
 		}
 	}

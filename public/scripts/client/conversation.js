@@ -1,4 +1,6 @@
 function createConversation(data) {
+  var notifier = createNotifier();
+  
   var self = {};
 
   self.id = data._id ? data._id : 0;
@@ -71,6 +73,7 @@ function createConversation(data) {
 
   self.sendMessage = function (data, event) {    
     if (enterKeyPressed(event)) {
+      notifier.setup();
       sendMessageToServer();
       return false;
     } else {
@@ -97,6 +100,7 @@ function createConversation(data) {
     } else {
       self.unreadCounter(self.unreadCounter() + 1);
     }
+    notifier.show('New message received', message.content);
   }
 
   self.showUnreadCounter = ko.computed(function(){

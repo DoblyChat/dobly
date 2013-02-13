@@ -69,38 +69,42 @@ function createConversation(data) {
   function addMessage(data){
     var msg = createMessage(data);
     self.messages.push(msg);
+    if (self.focused()) {
+      self.scroll.adjust();
+    } else {
+      self.unreadCounter(self.unreadCounter() + 1);
+    }
   }
 
   self.sendMessage = function (data, event) {    
     if (enterKeyPressed(event)) {
       notifier.setup();
-      sendMessageToServer();
+      var messageData = getMessageData();
+      sendMessageToServer(messageData);
+      addMessage(messageData);
       return false;
     } else {
       return true;
     }
   };
 
-  function sendMessageToServer(){
-    var data = 
-    { 
-        content: self.newMessage(), 
-        conversationId: self.id, 
-        timestamp: new Date(),
-    };
+  function getMessageData(){
+      return { 
+          content: self.newMessage(), 
+          conversationId: self.id, 
+          timestamp: new Date(),
+          createdBy: app.user.username
+      };
+  }
 
+  function sendMessageToServer(messageData){
     self.newMessage('');
-    socket.emit('send_message', data);
+    socket.emit('send_message', messageData);
   }
 
   self.receiveMessage = function(message){
     addMessage(message);
-    if (self.focused()) {
-      self.scroll.adjust();
-    } else {
-      self.unreadCounter(self.unreadCounter() + 1);
-    }
-    notifier.show('New message received', message.content);
+    notifier.show(self.topic(), message.createdBy + ': ' + message.content);
   }
 
   self.showUnreadCounter = ko.computed(function(){

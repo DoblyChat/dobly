@@ -2,7 +2,9 @@ var socket = io.connect(window.location.origin, {
 	'sync disconnect on unload': true
 });
 
-var desktop;
+(function(global){
+	global.app = {};
+})(window);
 
 $(document).ready(function() {
 
@@ -13,21 +15,20 @@ $(document).ready(function() {
 
 	ko.applyBindings(viewModel);
 
-	desktop = viewModel.desktop;
-	desktop.resize.dualConvo();
-	desktop.resize.strip();
-	desktop.setupStripDragAndDrop();
+	app.desktop = viewModel.desktop;
+	app.desktop.resize.dualConvo();
+	app.desktop.resize.strip();
+	app.desktop.setupStripDragAndDrop();
 
-	var currentUserData = JSON.parse($('#currentUser').val());
-	$('#user-name').text(currentUserData.username);
+	app.user = JSON.parse($('#currentUser').val());
 });
 
 $(window).load(function() {
-	desktop.resize.convoBody();
-	desktop.scroll.setup();
+	app.desktop.resize.convoBody();
+	app.desktop.scroll.setup();
 });
 
 $(window).resize(function() {
-	desktop.resize.dualConvo();
-	desktop.resize.convoBody();
+	app.desktop.resize.dualConvo();
+	app.desktop.resize.convoBody();
 });

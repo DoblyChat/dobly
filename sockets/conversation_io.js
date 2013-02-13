@@ -47,11 +47,6 @@ function createConversation(socket, data) {
     );
 }
 
-function emit(socket, event, dataToEmit){
-    socket.emit(event, dataToEmit);
-    socket.broadcast.emit(event, dataToEmit);
-}
-
 function addNewActiveConversations(socket, data){
     var userId = socket.handshake.user._id;
     active[userId] = data;
@@ -78,7 +73,7 @@ function sendMessage(socket, data){
                         timestamp: data.timestamp,
                     };
 
-                    emit(socket, 'receive_message', dataToEmit);
+                    socket.broadcast.emit('receive_message', dataToEmit);
                     callback(err);
                 });
             });

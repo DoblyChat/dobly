@@ -9,7 +9,8 @@ var socket = io.connect(window.location.origin, {
 $(document).ready(function() {
 	app.user = JSON.parse($('#currentUser').val());
 	app.notifier = createNotifier();
-	
+	app.inFocus = true;
+
 	var desktopData = JSON.parse($('#desktop').val());
 	var conversationData = JSON.parse($('#conversations').val());
 	
@@ -36,4 +37,12 @@ $(window).load(function() {
 $(window).resize(function() {
 	app.desktop.resize.dualConvo();
 	app.desktop.resize.convoBody();
+});
+
+$(window).focus(function() {
+	app.inFocus = true;
+});
+
+$(window).blur(function() {
+	app.inFocus = false;
 });

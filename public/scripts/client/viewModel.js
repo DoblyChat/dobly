@@ -17,6 +17,15 @@ function createViewModel(conversationsData, desktopData) {
     });
   });
 
+  self.unreadCounter = ko.computed(function(){
+    var unread = 0;
+    ko.utils.arrayForEach(self.conversations(), function(conversation){
+      unread += conversation.unreadCounter();
+    });
+
+    app.notifier.updateTitle(unread);
+  });
+
   self.navigation = function(){
     var nav = {};
 

@@ -110,7 +110,7 @@ function renderDesktop(req, res) {
 
 		res.render('conversations/active', 
 		{ 
-			title: 'Fluidtalk',
+			title: 'FluidTalk',
 		    conversations: JSON.stringify(results.conversations),
 		    desktop: JSON.stringify(results.desktop), 
 			currentUser: JSON.stringify(req.user),

@@ -1,6 +1,4 @@
 function createConversation(data) {
-  var notifier = createNotifier();
-  
   var self = {};
 
   self.id = data._id ? data._id : 0;
@@ -66,28 +64,6 @@ function createConversation(data) {
     return keyCode === 13;
   }
 
-  function addMessage(data){
-    var msg = createMessage(data);
-    self.messages.push(msg);
-    if (self.focused()) {
-      self.scroll.adjust();
-    } else {
-      self.unreadCounter(self.unreadCounter() + 1);
-    }
-  }
-
-  self.sendMessage = function (data, event) {    
-    if (enterKeyPressed(event)) {
-      notifier.setup();
-      var messageData = getMessageData();
-      sendMessageToServer(messageData);
-      addMessage(messageData);
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   function getMessageData(){
       return { 
           content: self.newMessage(), 
@@ -102,9 +78,31 @@ function createConversation(data) {
     socket.emit('send_message', messageData);
   }
 
+  function addMessage(data){
+    var msg = createMessage(data);
+    self.messages.push(msg);
+    if (self.focused()) {
+      self.scroll.adjust();
+    } else {
+      self.unreadCounter(self.unreadCounter() + 1);
+    }
+  }
+
+  self.sendMessage = function (data, event) {    
+    if (enterKeyPressed(event)) {
+      app.notifier.setup();
+      var messageData = getMessageData();
+      sendMessageToServer(messageData);
+      addMessage(messageData);
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   self.receiveMessage = function(message){
     addMessage(message);
-    notifier.show(self.topic(), message.createdBy + ': ' + message.content);
+    app.notifier.showDeskopNotification(self.topic(), message.createdBy + ': ' + message.content);
   }
 
   self.showUnreadCounter = ko.computed(function(){

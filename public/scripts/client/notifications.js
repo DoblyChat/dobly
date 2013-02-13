@@ -15,7 +15,7 @@ function createNotifier(){
 		}
 	}
 
-	self.show = function(title, content){
+	self.showDeskopNotification = function(title, content){
 		if(Modernizr.notifications){
 			if(notifications.checkPermission() === 0){
 				var notif = notifications.createNotification(
@@ -28,6 +28,16 @@ function createNotifier(){
 				}, '3000');
 			}
 		}
+	}
+
+	self.updateTitle = function(unreadCount){
+		var title;
+		if(unreadCount > 0){
+			title = '(' + unreadCount + ') unread - FluidTalk';
+		}else{
+			title = 'FluidTalk';
+		}
+		document.title = title;
 	}
 
 	return self;

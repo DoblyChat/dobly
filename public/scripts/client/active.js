@@ -7,7 +7,9 @@ var socket = io.connect(window.location.origin, {
 })(window);
 
 $(document).ready(function() {
-
+	app.user = JSON.parse($('#currentUser').val());
+	app.notifier = createNotifier();
+	
 	var desktopData = JSON.parse($('#desktop').val());
 	var conversationData = JSON.parse($('#conversations').val());
 	
@@ -16,12 +18,15 @@ $(document).ready(function() {
 	ko.applyBindings(viewModel);
 
 	app.desktop = viewModel.desktop;
+
+	setupDesktopUI();
+});
+
+function setupDesktopUI(){
 	app.desktop.resize.dualConvo();
 	app.desktop.resize.strip();
 	app.desktop.setupStripDragAndDrop();
-
-	app.user = JSON.parse($('#currentUser').val());
-});
+}
 
 $(window).load(function() {
 	app.desktop.resize.convoBody();

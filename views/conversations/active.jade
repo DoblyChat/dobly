@@ -17,7 +17,8 @@ html
 				a(href="/logout") Logout
 				
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
-			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation")
+			
+			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation, click: leftConversation().markAsRead")
 				.convo-header-topic-set(data-bind="visible: settingTopic")
 					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: create }")
 				.convo-header(data-bind="visible: !settingTopic()")
@@ -32,8 +33,9 @@ html
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
 				.convo-new-message(data-bind="visible: !settingTopic()")
-					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")	
-			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation")
+					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")	
+			
+			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation, click: rightConversation().markAsRead")
 				.convo-header
 					.topic(data-bind="text: topic")
 					.created-by 
@@ -46,7 +48,8 @@ html
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
 				.convo-new-message
-					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }")
+					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
+
 		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-tiles(data-bind="foreach: conversations")
 				.tile(data-bind="css: { highlight: focused }, click: $parent.focus")

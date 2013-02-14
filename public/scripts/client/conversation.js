@@ -12,6 +12,8 @@ function createConversation(data) {
 
   self.focused = ko.observable(false);
 
+  self.hasFocus = ko.observable(false);
+
   if(data.messages){
     for(var i = 0; i < data.messages.length; i++){
       self.messages.push(createMessage(data.messages[i]));
@@ -83,9 +85,9 @@ function createConversation(data) {
     self.messages.push(msg);
     if (self.focused()) {
       self.scroll.adjust();
-    } else {
-      self.unreadCounter(self.unreadCounter() + 1);
-    }
+    } 
+    
+    self.unreadCounter(self.unreadCounter() + 1);
   }
 
   self.sendMessage = function (data, event) {    
@@ -108,6 +110,17 @@ function createConversation(data) {
   self.showUnreadCounter = ko.computed(function(){
     return self.unreadCounter() > 0;
   });  
+
+  self.hasFocus.subscribe(function(hasFocus){
+    if(hasFocus){
+        self.markAsRead();
+    }
+  });
+
+  self.markAsRead = function(){
+    self.unreadCounter(0);
+    socket.emit('mark_as_read', self.id);
+  }
 
   return self;
 }

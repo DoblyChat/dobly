@@ -24,19 +24,6 @@ function createDesktop(data, allConversations){
 
   self.rightConversation = ko.observable(null);
 
-  function getConversationAt(index){
-    if (index >= self.conversations().length) {
-      return null;
-    } else {
-      var conversation = self.conversations()[index];
-      if(conversation.unreadCounter() > 0){
-        conversation.unreadCounter(0);
-        socket.emit('mark_as_read', conversation.id);
-      }
-      return conversation;
-    }
-  }
-
   self.hasLeftConversation = ko.computed(function(){
     return self.leftConversation() !== null;
   });
@@ -129,6 +116,14 @@ function createDesktop(data, allConversations){
     }
   }
 
+  function getConversationAt(index){
+    if (index >= self.conversations().length) {
+      return null;
+    } else {
+      return self.conversations()[index];
+    }
+  }
+
   function isRight(conversation) {
     return conversation === self.rightConversation();
   }
@@ -150,14 +145,6 @@ function createDesktop(data, allConversations){
     clearFocus();
     focusLeftConversationBy(leftIndex);
     focusRightConversationBy(leftIndex + 1);
-    updateActiveConversations();
-  }
-
-  function updateActiveConversations(){
-    var activeConversations = [];
-    if(self.hasLeftConversation()) activeConversations.push(self.leftConversation().id);
-    if(self.hasRightConversation()) activeConversations.push(self.rightConversation().id);
-    socket.emit('new_active_conversation', activeConversations);
   }
 
   function clearFocus(){
@@ -218,7 +205,6 @@ function createDesktop(data, allConversations){
 
   focusLeftConversationBy(0);
   focusRightConversationBy(1);
-  updateActiveConversations();
 
   self.setupStripDragAndDrop = function(){
     var currentSort;
@@ -258,7 +244,6 @@ function createDesktop(data, allConversations){
           self.rightConversation().resetFocus();
         }
         focusRightConversationBy(leftFocusIndex + 1);
-        updateActiveConversations();
       }
     }
 

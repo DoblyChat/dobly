@@ -118,8 +118,10 @@ function createConversation(data) {
   });
 
   self.markAsRead = function(){
-    self.unreadCounter(0);
-    socket.emit('mark_as_read', self.id);
+    if(self.unreadCounter() > 0){
+      self.unreadCounter(0);
+      socket.emit('mark_as_read', self.id);  
+    }
   }
 
   return self;

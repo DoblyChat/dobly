@@ -96,9 +96,7 @@ function createDesktop(data, allConversations){
     }
     else if (isRight(conversation)) {
       focusRightConversationBy(index);
-    }   
-
-    updateActiveConversations();
+    }
   }
 
   function focusRightConversationBy(index) {

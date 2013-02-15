@@ -26,46 +26,49 @@ function createViewModel(conversationsData, desktopData) {
     app.notifier.updateTitle(unread);
   });
 
-  self.navigation = function(){
+  self.navigation = function() {
     var nav = {};
 
     nav.showingDesktop = ko.observable(true);
+    nav.showingAll = ko.observable(false);
+    nav.showingNewConvo = ko.observable(false);
 
-    nav.all = function(){
+    nav.all = function() {
       self.allConversations.refresh();
       nav.showingDesktop(false);
+      nav.showingNewConvo(false);
+      nav.showingAll(true);
     };
 
-    nav.desktop = function(){
+    nav.desktop = function() {
+      nav.showingNewConvo(false);
+      nav.showingAll(false);
       nav.showingDesktop(true);
       self.desktop.resize.convoBody();
       self.desktop.scroll.setup();
       self.desktop.setupStripDragAndDrop();
     };
 
+    nav.newConvo = function() {
+      nav.showingAll(false);
+      nav.showingDesktop(false);
+      nav.showingNewConvo(true);
+    }
+
     return nav;
   }();
 
   self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
 
+  self.newConversation = createNewConversation(self.navigation);
+
   self.addingNewConversation = ko.observable(false);
 
   socket.on('my_new_conversation', function(data) {
-    for(var c = 0; c < self.conversations().length; c++){
-      if(self.conversations()[c].id == 0){
-        var conversation = self.conversations()[c];
-        conversation.id = data._id;
-        conversation.topic(data.topic);
-        conversation.createdBy(data.createdBy);
-        desktop.persistNewConversation(conversation);
-        conversation.settingTopic(false);
-        conversation.focusElement.newMessage();
-        break;
-      }
-    }
-
-    self.addingNewConversation(false);
-    $('#new-convo-tile').removeClass('disabled');
+    var conversation = createConversation(data);
+    self.conversations.push(conversation);
+    self.desktop.addAndFocus(conversation);
+    conversation.focusElement.newMessage();
   });
 
   socket.on('new_conversation', function(data){
@@ -75,15 +78,8 @@ function createViewModel(conversationsData, desktopData) {
   });
 
   self.addNewConversation = function(){
-    if(!self.addingNewConversation()){
-      var conversation = createConversation({});
-      self.conversations.push(conversation);
-      conversation.settingTopic(true);
-
-      self.desktop.addEmptyConversation(conversation);
-      conversation.focusElement.topic();
-      self.addingNewConversation(true);
-    }
+    self.navigation.newConvo();
+    self.newConversation.focusTopic();
   }
 
   return self;

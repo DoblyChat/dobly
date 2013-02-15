@@ -71,16 +71,6 @@ function createDesktop(data, allConversations){
     updateActiveConversations();
   }
 
-  self.addEmptyConversation = function(conversation) {
-    self.conversations.push(conversation);
-    self.resize.strip();
-    self.focus(conversation);
-    conversation.settingTopic.subscribe(function(newValue){
-      self.resize.convoBody();
-      self.scroll.setup();
-    });
-  };
-
   self.persistNewConversation = function(conversation) {
     socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
   };

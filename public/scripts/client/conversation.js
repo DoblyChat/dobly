@@ -48,22 +48,7 @@ function createConversation(data) {
 
     self.focused(false);
   };
-
-  self.create = function(data, event) {
-    if (enterKeyPressed(event) && self.topic().length > 0) {
-      socket.emit('create_conversation', { topic: self.topic() });
-      return false;
-    }
-    else {
-      return true;
-    }
-  };
-
-  function enterKeyPressed(event) {
-    var keyCode = (event.which ? event.which : event.keyCode);
-    return keyCode === 13;
-  }
-
+  
   function getMessageData(){
       return { 
           content: self.newMessage(), 
@@ -89,7 +74,7 @@ function createConversation(data) {
   }
 
   self.sendMessage = function (data, event) {    
-    if (enterKeyPressed(event)) {
+    if (common.enterKeyPressed(event)) {
       app.notifier.setup();
       var messageData = getMessageData();
       sendMessageToServer(messageData);
@@ -117,10 +102,6 @@ function createFocusElement(getSelector) {
 
   self.newMessage = function() {
     setTimeout(function () { $(getSelector('.convo-new-message textarea')).focus(); }, 400);
-  };
-
-  self.topic = function() {
-    setTimeout(function () { $(getSelector('.convo-header-topic-set input')).focus(); }, 400);
   };
 
   return self;

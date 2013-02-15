@@ -18,41 +18,41 @@ html
 				
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			
-			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation, click: leftConversation().markAsRead")
+			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation")
 				.convo-header-topic-set(data-bind="visible: settingTopic")
 					input(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: create }")
-				.convo-header(data-bind="visible: !settingTopic()")
+				.convo-header(data-bind="visible: !settingTopic(), click: markAsRead")
 					.topic(data-bind="text: topic")
 					.created-by 
 						span by 
 						span(data-bind="text: createdBy")
-				.nano.convo-body
+				.nano.convo-body(data-bind="click: markAsRead")
 					.content(data-bind="foreach: messages, visible: !settingTopic()")
 						.message
 							.author(data-bind="text: createdBy")
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
-				.convo-new-message(data-bind="visible: !settingTopic()")
+				.convo-new-message(data-bind="visible: !settingTopic(), click: markAsRead")
 					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")	
 			
-			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation, click: rightConversation().markAsRead")
-				.convo-header
+			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation")
+				.convo-header(data-bind="click: markAsRead")
 					.topic(data-bind="text: topic")
 					.created-by 
 						span by 
 						span(data-bind="text: createdBy")
-				.nano.convo-body
+				.nano.convo-body(data-bind="click: markAsRead")
 					.content(data-bind="foreach: messages")
 						.message
 							.author(data-bind="text: createdBy")
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
-				.convo-new-message
+				.convo-new-message(data-bind="click: markAsRead")
 					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
 
 		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-tiles(data-bind="foreach: conversations")
-				.tile(data-bind="css: { highlight: focused }, click: $parent.focus")
+				.tile(data-bind="css: { highlight: active }, click: $parent.activate")
 					.tile-text(data-bind="text:topic")
 					.tile-icons
 						.icon-move-handle(data-bind="click: function(){}, clickBubble: false")

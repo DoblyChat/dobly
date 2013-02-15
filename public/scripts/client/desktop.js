@@ -42,26 +42,24 @@ function createDesktop(data, allConversations){
       self.conversations.push(conversation);
       self.resize.strip();
       if (!self.hasLeftConversation() || !self.hasRightConversation()) {
-        focusLastConversation();
+        activateLastConversation();
       }
     }
   };
 
-  function focusLastConversation() {
+  function activateLastConversation() {
     if (!self.hasLeftConversation()) {
-      focusLeftConversationBy(self.conversations().length - 1);
+      activateLeftConversationBy(self.conversations().length - 1);
     } 
     else if (!self.hasRightConversation()) {
-      focusRightConversationBy(self.conversations().length - 1);
+      activateRightConversationBy(self.conversations().length - 1);
     }
-
-    updateActiveConversations();
   }
 
   self.addEmptyConversation = function(conversation) {
     self.conversations.push(conversation);
     self.resize.strip();
-    self.focus(conversation);
+    self.activate(conversation);
     conversation.settingTopic.subscribe(function(newValue){
       self.resize.convoBody();
       self.scroll.setup();
@@ -72,9 +70,9 @@ function createDesktop(data, allConversations){
     socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
   };
 
-  self.addAndFocus = function(conversation) {
+  self.addAndActivate = function(conversation) {
     self.add(conversation);
-    self.focus(conversation);
+    self.activate(conversation);
   }
 
   self.remove = function(conversation) {
@@ -82,34 +80,34 @@ function createDesktop(data, allConversations){
     var index = self.conversations.indexOf(conversation);
     self.conversations.splice(index, 1);
     self.resize.strip();
-    if(conversation.focused()) {
-      removeFocused(conversation, index);
+    if(conversation.active()) {
+      removeActive(conversation, index);
     }
   };
 
-  function removeFocused(conversation, index) {
-    conversation.resetFocus();
+  function removeActive(conversation, index) {
+    conversation.deactivate();
 
     if (isLeft(conversation)) {
-      focusLeftConversationBy(index);      
-      focusRightConversationBy(index + 1);
+      activateLeftConversationBy(index);      
+      activateRightConversationBy(index + 1);
     }
     else if (isRight(conversation)) {
-      focusRightConversationBy(index);
+      activateRightConversationBy(index);
     }
   }
 
-  function focusRightConversationBy(index) {
+  function activateRightConversationBy(index) {
     self.rightConversation(getConversationAt(index));
     if (self.hasRightConversation()) {
-      self.rightConversation().focus('#convo-right');
+      self.rightConversation().activate('#convo-right');
     }
   }
 
-  function focusLeftConversationBy(index) {
+  function activateLeftConversationBy(index) {
     self.leftConversation(getConversationAt(index));
     if (self.hasLeftConversation()) {
-      self.leftConversation().focus('#convo-left');
+      self.leftConversation().activate('#convo-left');
       self.leftConversation().focusElement.newMessage();
     }
   }
@@ -130,24 +128,24 @@ function createDesktop(data, allConversations){
     return conversation === self.leftConversation();
   }
 
-  self.focus = function(conversation) {
+  self.activate = function(conversation) {
     var index = self.conversations.indexOf(conversation);
     var leftIndex = self.conversations.indexOf(self.leftConversation());
 
     if (index !== leftIndex) {
-      changeFocusedConversations(index);
+      changeActiveConversations(index);
     }
   };
 
-  function changeFocusedConversations(leftIndex) {
-    clearFocus();
-    focusLeftConversationBy(leftIndex);
-    focusRightConversationBy(leftIndex + 1);
+  function changeActiveConversations(leftIndex) {
+    closeConversations();
+    activateLeftConversationBy(leftIndex);
+    activateRightConversationBy(leftIndex + 1);
   }
 
-  function clearFocus(){
+  function closeConversations(){
     ko.utils.arrayForEach(self.conversations(), function(conversation){
-      conversation.resetFocus();
+      conversation.deactivate();
     });
   };
 
@@ -201,8 +199,8 @@ function createDesktop(data, allConversations){
     return scr;
   }();
 
-  focusLeftConversationBy(0);
-  focusRightConversationBy(1);
+  activateLeftConversationBy(0);
+  activateRightConversationBy(1);
 
   self.setupStripDragAndDrop = function(){
     var currentSort;
@@ -219,11 +217,11 @@ function createDesktop(data, allConversations){
           socket.emit('update_strip_order', { id: self.id, currentSort: currentSort });
           var conversation = self.conversations()[currentSort.startIndex];
           reorder(conversation);
-          if (conversation.focused()) {
-            changeFocusedConversations(currentSort.stopIndex);
+          if (conversation.active()) {
+            changeActiveConversations(currentSort.stopIndex);
           }
           else {
-            checkIfItNeedsFocus();
+            checkIfItNeedsToBeActivated();
           }
         }
       },
@@ -234,14 +232,18 @@ function createDesktop(data, allConversations){
       self.conversations.splice(currentSort.stopIndex, 0, conversation);
     }
 
-    function checkIfItNeedsFocus() {
-      var leftFocusIndex = self.conversations.indexOf(self.leftConversation());
+    function checkIfItNeedsToBeActivated() {
+      var leftActiveIndex = self.conversations.indexOf(self.leftConversation());
 
-      if (leftFocusIndex + 1 === currentSort.stopIndex) {
+      if (movedToTheRightOfActiveConversation(leftActiveIndex)) {
         if (self.hasRightConversation()) {
-          self.rightConversation().resetFocus();
+          self.rightConversation().deactivate();
         }
-        focusRightConversationBy(leftFocusIndex + 1);
+        activateRightConversationBy(leftActiveIndex + 1);
+      }
+
+      function movedToTheRightOfActiveConversation(leftActiveIndex){
+        return leftActiveIndex + 1 === currentSort.stopIndex;
       }
     }
 

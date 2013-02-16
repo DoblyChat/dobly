@@ -47,7 +47,7 @@ function createConversation(data) {
     if (self.scroll !== undefined) {
       self.scroll.stop();
     }
-
+    
     self.active(false);
   };
 
@@ -131,10 +131,6 @@ function createConversation(data) {
 
 function createFocusElement(getSelector) {
   var self = {};
-
-  self.newMessage = function() {
-    setTimeout(function () { $(getSelector('.convo-new-message textarea')).focus(); }, 400);
-  };
 
   self.topic = function() {
     setTimeout(function () { $(getSelector('.convo-header-topic-set input')).focus(); }, 400);

@@ -33,7 +33,7 @@ html
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
 				.convo-new-message(data-bind="visible: !settingTopic(), click: markAsRead")
-					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")	
+					textarea(tabindex="1", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")	
 			
 			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation")
 				.convo-header(data-bind="click: markAsRead")
@@ -48,7 +48,7 @@ html
 							.time(data-bind="text: timestamp")
 							.text(data-bind="text: content")
 				.convo-new-message(data-bind="click: markAsRead")
-					textarea(placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
+					textarea(tabindex="2", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
 
 		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
 			#convo-tiles(data-bind="foreach: conversations")

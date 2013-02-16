@@ -97,18 +97,18 @@ function createDesktop(data, allConversations){
     }
   }
 
-  function activateRightConversationBy(index) {
-    self.rightConversation(getConversationAt(index));
-    if (self.hasRightConversation()) {
-      self.rightConversation().activate('#convo-right');
-    }
-  }
-
   function activateLeftConversationBy(index) {
     self.leftConversation(getConversationAt(index));
     if (self.hasLeftConversation()) {
       self.leftConversation().activate('#convo-left');
-      self.leftConversation().focusElement.newMessage();
+      setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
+    }
+  }
+
+  function activateRightConversationBy(index) {
+    self.rightConversation(getConversationAt(index));
+    if (self.hasRightConversation()) {
+      self.rightConversation().activate('#convo-right');
     }
   }
 
@@ -138,14 +138,15 @@ function createDesktop(data, allConversations){
   };
 
   function changeActiveConversations(leftIndex) {
-    closeConversations();
+    deactivateConversations();
     activateLeftConversationBy(leftIndex);
     activateRightConversationBy(leftIndex + 1);
   }
 
-  function closeConversations(){
+  function deactivateConversations(){
     ko.utils.arrayForEach(self.conversations(), function(conversation){
       conversation.deactivate();
+      conversation.hasFocus(false);
     });
   };
 

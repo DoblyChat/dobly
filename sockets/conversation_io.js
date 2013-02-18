@@ -2,14 +2,9 @@ var Conversation = require('../models/conversation'),
     Message = require('../models/message'),
     User = require('../models/user'),
     UnreadMarker = require('../models/unread_marker'),
-    async = require('async'),
-    active = {};
+    async = require('async');
 
 exports.config = function(socket){
-    socket.on('new_active_conversation', function(data){
-        addNewActiveConversations(socket, data);
-    });
-
     socket.on('send_message', function(data) {
         sendMessage(socket, data);
     });
@@ -20,10 +15,6 @@ exports.config = function(socket){
 
     socket.on('mark_as_read', function(conversationId){
         markAsRead(socket, conversationId);
-    });
-
-    socket.on('disconnect', function(){
-        removeActiveUser(socket);
     });
 }
 
@@ -46,15 +37,6 @@ function createConversation(socket, data) {
             }
     );
 }
-
-function addNewActiveConversations(socket, data){
-    var userId = socket.handshake.user._id;
-    active[userId] = data;
-};
-
-function removeActiveUser(socket){
-    delete active[socket.handshake.user._id];
-};
 
 function sendMessage(socket, data){
     async.parallel([
@@ -89,21 +71,11 @@ function saveUnreadMarkers(currentUserId, currentGroupId, conversationId, callba
         async.forEach(users, save);
 
         function save(user, callback){
-            if(!userIsActive(user) || !userInConversation(user, conversationId)){
-                UnreadMarker.increaseCounter(user._id, conversationId, callback);
-            }
+            UnreadMarker.increaseCounter(user._id, conversationId, callback);
         }
 
         callback(err);
     });
-}
-
-function userIsActive(user){
-    return active[user._id] !== undefined;
-}
-
-function userInConversation(user, conversationId){
-    return active[user._id].indexOf(conversationId) > -1;
 }
 
 function markAsRead(socket, conversationId){

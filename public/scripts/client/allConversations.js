@@ -3,7 +3,7 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
 
   self.open = function(conversation){
     navigation.desktop();
-    desktop.addAndFocus(conversation);
+    desktop.addAndActivate(conversation);
   };
 
   self.pairs = [];

@@ -10,7 +10,9 @@ function createConversation(data) {
   
   self.messages = ko.observableArray([]);
 
-  self.focused = ko.observable(false);
+  self.active = ko.observable(false);
+
+  self.hasFocus = ko.observable(false);
 
   if(data.messages){
     for(var i = 0; i < data.messages.length; i++){
@@ -26,8 +28,8 @@ function createConversation(data) {
     }
   });
 
-  self.focus = function(convoSelector) {
-    self.focused(true);
+  self.activate = function(convoSelector) {
+    self.active(true);
 
     var getSelector = function getSelector(cssSelector) {
       return convoSelector + ' > ' + cssSelector;
@@ -41,12 +43,12 @@ function createConversation(data) {
     self.scroll.setup();
   };  
 
-  self.resetFocus = function() {
+  self.deactivate = function() {
     if (self.scroll !== undefined) {
       self.scroll.stop();
     }
-
-    self.focused(false);
+    
+    self.active(false);
   };
   
   function getMessageData(){
@@ -66,10 +68,12 @@ function createConversation(data) {
   function addMessage(data){
     var msg = createMessage(data);
     self.messages.push(msg);
-    if (self.focused()) {
+    if (self.active()) {
       self.scroll.adjust();
-    } else {
-      self.unreadCounter(self.unreadCounter() + 1);
+    } 
+    
+    if(!(app.inFocus && self.hasFocus())){
+      self.unreadCounter(self.unreadCounter() + 1);  
     }
   }
 
@@ -93,6 +97,19 @@ function createConversation(data) {
   self.showUnreadCounter = ko.computed(function(){
     return self.unreadCounter() > 0;
   });  
+
+  self.hasFocus.subscribe(function(hasFocus){
+    if(hasFocus){
+        self.markAsRead();
+    }
+  });
+
+  self.markAsRead = function(){
+    if(self.unreadCounter() > 0){
+      self.unreadCounter(0);
+      socket.emit('mark_as_read', self.id);  
+    }
+  }
 
   return self;
 }

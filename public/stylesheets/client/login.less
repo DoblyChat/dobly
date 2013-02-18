@@ -17,9 +17,7 @@
 .simple-form {
 	font-family: @sans;
 	font-weight: bold;
-	position: fixed;
-	top: 50%;
-	left: 50%;
+	.middle-of-screen;
 	margin-top: -@prompt-height - @prompt-margin-bottom - @field-outer-height;
 
 	#prompt {
@@ -53,12 +51,9 @@
 
 		input.button {
 			width: 140px;
-			height: 70px;
-			background: @blue;
+			height: 70px;			
 			float: right;
-			color: @white;
-			border: none;
-			line-height: 1;
+			.blue-button;			
 		}
 	}
 

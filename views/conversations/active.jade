@@ -59,6 +59,7 @@ html
 			#new-convo-tile(data-bind="click: $parent.addNewConversation")				
 				.icon-plus
 				#new-convo-text New Conversation
+
 		#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.pairs")
 			.convo-pair(data-bind="foreach: $data")				
 				.convo(data-bind="click: $root.allConversations.open")
@@ -77,11 +78,13 @@ html
 							.text(data-bind="text: content")
 					.no-messages(data-bind="visible: lastMessages().length <= 0")
 						.message There aren't any messages in this conversation.
+
 		#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
-			textarea(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
-			button(type="button", data-bind="click: createOnClick") Create
-			button(type="button", data-bind="click: cancel") Cancel
-				
+			#topic
+				textarea(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
+			#buttons				
+				button#cancel(type="button", data-bind="click: cancel") Cancel
+				button#create(type="button", data-bind="click: createOnClick") Create
 
 input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop)

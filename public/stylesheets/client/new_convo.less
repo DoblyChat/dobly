@@ -1,0 +1,83 @@
+@new-convo-width: 620px;
+@new-convo-border-size: 2px;
+@new-convo-padding-right: 20px;
+@new-convo-padding-left: 20px;
+@new-convo-padding-top: 15px;
+@new-convo-padding-bottom: 0;
+
+#new-convo {
+	width: @new-convo-width;
+	font-family: @sans;
+	font-weight: bold;
+	font-size: 20px;
+	.middle-of-screen;
+	margin-left: -(@new-convo-width/2);
+
+	#topic {
+		textarea {
+			width: @new-convo-width - (@new-convo-border-size * 2) - @new-convo-padding-right - @new-convo-padding-left;
+			height: 90px;
+			border: @field-border-size solid @blue;
+			.text-color;
+			padding: @new-convo-padding-top @new-convo-padding-right @new-convo-padding-bottom @new-convo-padding-left;
+			resize: none;
+			line-height: 1.3;
+			margin-bottom: 20px;
+
+			&:focus {
+				outline: none;
+			}
+		}
+	}
+
+	#buttons {
+		float: right;
+
+		#create {
+			width: 220px;
+			height: 50px;
+			.blue-button;			
+		}
+
+		#cancel {
+			width: 140px;
+			height: 50px;
+			.light-gray-button;
+			margin-right: 20px;
+		}
+	}
+}
+
+
+// .convo-new-message {
+// 	padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
+// 	border-top: @thick-gray-border;
+
+// 	textarea {
+// 		border: none;
+// 		resize: none;
+// 		width: (@convo-width - 4px) - @new-message-right-padding - @new-message-left-padding;
+// 		height: @textarea-height;
+// 		font-size: @text-size + 4px;
+
+// 		&:focus{
+// 			outline: none;
+// 		}
+// 	}
+// }
+
+// .convo-header-topic-set {
+// 	.message-padding;
+// 	border-bottom: @thick-gray-border;
+
+// 	input {
+// 		border: none;
+// 		outline: none;
+// 		.title-font;
+// 		width: @convo-width - @message-right-padding - @message-left-padding;
+
+// 		&:-moz-placeholder {
+// 			color: darken(@light-gray,10%);
+// 		}
+// 	}
+// }

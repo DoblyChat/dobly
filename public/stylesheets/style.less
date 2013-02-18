@@ -37,6 +37,12 @@ body {
 	margin: 0 auto;
 }
 
+.middle-of-screen {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+}
+
 .margin-bottom {
 	margin-bottom: @standard-margin;
 }
@@ -92,6 +98,20 @@ body {
 	color: @gray;
 }
 
+.blue-button {
+	background: @blue;
+	color: @white;
+	border: none;
+	line-height: 1;
+}
+
+.light-gray-button {
+	background: @light-gray;
+	color: @white;
+	border: none;
+	line-height: 1;	
+}
+
 @import "client/login";
 
 @import "client/icons";
@@ -103,3 +123,5 @@ body {
 @import "client/strip";
 
 @import "client/all_convos";
+
+@import "client/new_convo";

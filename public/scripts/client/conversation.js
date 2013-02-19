@@ -78,6 +78,7 @@ function createConversation(data) {
   }
 
   self.sendMessage = function (data, event) {    
+    self.unreadCounter(0);
     if (common.enterKeyPressed(event)) {
       app.notifier.setup();
       var messageData = getMessageData();
@@ -91,7 +92,7 @@ function createConversation(data) {
 
   self.receiveMessage = function(message){
     addMessage(message);
-    app.notifier.showDeskopNotification(self.topic(), message.createdBy + ': ' + message.content);
+    app.notifier.showDeskopNotification(self, message.createdBy + ': ' + message.content);
   }
 
   self.showUnreadCounter = ko.computed(function(){

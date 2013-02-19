@@ -35,7 +35,6 @@ function createConversation(data) {
       return convoSelector + ' > ' + cssSelector;
     }
 
-    self.focusElement = createFocusElement(getSelector);
     self.resize = createConversationResizing(getSelector);
     self.scroll = createConversationScrolling(getSelector);
     
@@ -111,16 +110,6 @@ function createConversation(data) {
       socket.emit('mark_as_read', self.id);  
     }
   }
-
-  return self;
-}
-
-function createFocusElement(getSelector) {
-  var self = {};
-
-  self.newMessage = function() {
-    setTimeout(function () { $(getSelector('.convo-new-message textarea')).focus(); }, 400);
-  };
 
   return self;
 }

@@ -15,17 +15,24 @@ function createNotifier(){
 		}
 	}
 
-	self.showDeskopNotification = function(title, content){
+	self.showDeskopNotification = function(conversation, content){
 		if(Modernizr.notifications && !app.inFocus){
 			if(notifications.checkPermission() === 0){
 				var notif = notifications.createNotification(
 					'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
-					title, content);
+					conversation.topic(), content);
+
+				notif.onclick = function(){
+					window.focus();
+					conversation.activate();
+					conversation.hasFocus(true);
+				}
+
 				notif.show();
 
 				setTimeout(function(){
 					notif.cancel();
-				}, '3000');
+				}, '5000');
 			}
 		}
 	}

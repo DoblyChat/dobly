@@ -21,6 +21,7 @@ $(document).ready(function() {
 	app.desktop = viewModel.desktop;
 
 	setupDesktopUI();
+	$('body').show();
 });
 
 function setupDesktopUI(){

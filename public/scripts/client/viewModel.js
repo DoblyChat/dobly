@@ -68,7 +68,7 @@ function createViewModel(conversationsData, desktopData) {
     var conversation = createConversation(data);
     self.conversations.push(conversation);
     self.desktop.addAndActivate(conversation);
-    conversation.focusElement.newMessage();
+    conversation.hasFocus(true);
   });
 
   socket.on('new_conversation', function(data){

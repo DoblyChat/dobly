@@ -11,9 +11,9 @@ html
 		#header
 			#logo Fluidtalk
 			.top-links
-				a(data-bind="click: navigation.desktop, visible: !navigation.showingDesktop()") Back to Conversations
+				a(data-bind="click: navigation.desktop, visible: navigation.showingAll") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
-				span |
+				span(data-bind="visible: navigation.showingDesktop() || navigation.showingAll()") |
 				a(href="/logout") Logout
 				
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")

@@ -1,4 +1,5 @@
-@new-convo-width: 620px;
+@new-convo-outer-width: 620px;
+@new-convo-outer-height: 109px;
 @new-convo-border-size: 2px;
 @new-convo-padding-right: 20px;
 @new-convo-padding-left: 20px;
@@ -6,17 +7,18 @@
 @new-convo-padding-bottom: 0;
 
 #new-convo {
-	width: @new-convo-width;
+	width: @new-convo-outer-width;
 	font-family: @sans;
 	font-weight: bold;
 	font-size: 20px;
 	.middle-of-screen;
-	margin-left: -(@new-convo-width/2);
+	margin-top: -@new-convo-outer-height;
+	margin-left: -(@new-convo-outer-width/2);
 
 	#topic {
 		textarea {
-			width: @new-convo-width - (@new-convo-border-size * 2) - @new-convo-padding-right - @new-convo-padding-left;
-			height: 90px;
+			width: @new-convo-outer-width - (@new-convo-border-size * 2) - @new-convo-padding-right - @new-convo-padding-left;
+			height: @new-convo-outer-height - (@new-convo-border-size * 2) - @new-convo-padding-top - @new-convo-padding-bottom;
 			border: @field-border-size solid @blue;
 			.text-color;
 			padding: @new-convo-padding-top @new-convo-padding-right @new-convo-padding-bottom @new-convo-padding-left;

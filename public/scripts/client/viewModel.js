@@ -78,8 +78,8 @@ function createViewModel(conversationsData, desktopData) {
   });
 
   self.addNewConversation = function(){
-    self.navigation.newConvo();
-    self.newConversation.focusTopic();
+    self.navigation.newConvo();    
+    self.newConversation.setup();
   }
 
   return self;

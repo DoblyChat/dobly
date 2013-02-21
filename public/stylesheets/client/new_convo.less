@@ -29,6 +29,14 @@
 			&:focus {
 				outline: none;
 			}
+
+			&:-moz-placeholder {
+				.placeholder-color;
+			}
+
+			&.placeholder {
+				.placeholder-color;
+			}
 		}
 	}
 
@@ -49,37 +57,3 @@
 		}
 	}
 }
-
-
-// .convo-new-message {
-// 	padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
-// 	border-top: @thick-gray-border;
-
-// 	textarea {
-// 		border: none;
-// 		resize: none;
-// 		width: (@convo-width - 4px) - @new-message-right-padding - @new-message-left-padding;
-// 		height: @textarea-height;
-// 		font-size: @text-size + 4px;
-
-// 		&:focus{
-// 			outline: none;
-// 		}
-// 	}
-// }
-
-// .convo-header-topic-set {
-// 	.message-padding;
-// 	border-bottom: @thick-gray-border;
-
-// 	input {
-// 		border: none;
-// 		outline: none;
-// 		.title-font;
-// 		width: @convo-width - @message-right-padding - @message-left-padding;
-
-// 		&:-moz-placeholder {
-// 			color: darken(@light-gray,10%);
-// 		}
-// 	}
-// }

@@ -64,7 +64,7 @@ function createConversation(data) {
     socket.emit('send_message', messageData);
   }
 
-  function addMessage(data){
+  self.addMessage = function(data){
     var msg = createMessage(data);
     self.messages.push(msg);
     if (self.active()) {
@@ -77,22 +77,16 @@ function createConversation(data) {
   }
 
   self.sendMessage = function (data, event) {    
-    self.unreadCounter(0);
+    self.markAsRead();
     if (common.enterKeyPressed(event)) {
-      app.notifier.setup();
       var messageData = getMessageData();
       sendMessageToServer(messageData);
-      addMessage(messageData);
+      self.addMessage(messageData);
       return false;
     } else {
       return true;
     }
   };
-
-  self.receiveMessage = function(message){
-    addMessage(message);
-    app.notifier.showDeskopNotification(self, message.createdBy + ': ' + message.content);
-  }
 
   self.showUnreadCounter = ko.computed(function(){
     return self.unreadCounter() > 0;

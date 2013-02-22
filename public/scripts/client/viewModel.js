@@ -8,14 +8,21 @@ function createViewModel(conversationsData, desktopData) {
 
   self.desktop = createDesktop(desktopData, self.conversations());
 
-  socket.on('receive_message', function(data) {
+  self.notifier = createNotifier(self.desktop);
+
+  socket.on('receive_message', function(message) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){
-      if(data.conversationId === conversation.id){
-        conversation.receiveMessage(data);
-        self.desktop.add(conversation);
+      if(message.conversationId === conversation.id){
+        receiveMessage(conversation, message);
       }
     });
   });
+
+  function receiveMessage(conversation, message){
+    conversation.addMessage(message);
+    self.notifier.showDeskopNotification(conversation, message.createdBy + ': ' + message.content);
+    self.desktop.add(conversation);
+  }
 
   self.unreadCounter = ko.computed(function(){
     var unread = 0;
@@ -23,7 +30,7 @@ function createViewModel(conversationsData, desktopData) {
       unread += conversation.unreadCounter();
     });
 
-    app.notifier.updateTitle(unread);
+    self.notifier.updateTitle(unread);
   });
 
   self.navigation = function() {
@@ -32,18 +39,21 @@ function createViewModel(conversationsData, desktopData) {
     nav.showingDesktop = ko.observable(true);
     nav.showingAll = ko.observable(false);
     nav.showingNewConvo = ko.observable(false);
+    nav.showingNotificationSetup = ko.observable(false);
 
     nav.all = function() {
       self.allConversations.refresh();
       nav.showingDesktop(false);
       nav.showingNewConvo(false);
       nav.showingAll(true);
+      nav.showingNotificationSetup(false);
     };
 
     nav.desktop = function() {
       nav.showingNewConvo(false);
       nav.showingAll(false);
       nav.showingDesktop(true);
+      nav.showingNotificationSetup(false);
       self.desktop.resize.convoBody();
       self.desktop.scroll.setup();
       self.desktop.setupStripDragAndDrop();
@@ -53,6 +63,14 @@ function createViewModel(conversationsData, desktopData) {
       nav.showingAll(false);
       nav.showingDesktop(false);
       nav.showingNewConvo(true);
+      nav.showingNotificationSetup(false);
+    }
+
+    nav.notificationSetup = function(){
+      nav.showingDesktop(false);
+      nav.showingNewConvo(false);
+      nav.showingAll(false);
+      nav.showingNotificationSetup(true);
     }
 
     return nav;
@@ -80,6 +98,19 @@ function createViewModel(conversationsData, desktopData) {
   self.addNewConversation = function(){
     self.navigation.newConvo();
     self.newConversation.focusTopic();
+  }
+
+  if(self.notifier.needsToAskForPermission()){
+    self.navigation.notificationSetup();
+  }
+
+  self.cancelNotificationsSetup = function(){
+    self.navigation.desktop();
+  }
+
+  self.allowNotificationsSetup = function(){
+    self.notifier.setup();
+    self.navigation.desktop();
   }
 
   return self;

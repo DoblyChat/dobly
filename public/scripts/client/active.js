@@ -8,7 +8,6 @@ var socket = io.connect(window.location.origin, {
 
 $(document).ready(function() {
 	app.user = JSON.parse($('#currentUser').val());
-	app.notifier = createNotifier();
 	app.inFocus = true;
 
 	var desktopData = JSON.parse($('#desktop').val());

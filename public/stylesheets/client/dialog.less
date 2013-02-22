@@ -1,0 +1,59 @@
+@new-convo-outer-width: 620px;
+@new-convo-outer-height: 109px;
+@new-convo-border-size: 2px;
+@new-convo-padding-right: 20px;
+@new-convo-padding-left: 20px;
+@new-convo-padding-top: 15px;
+@new-convo-padding-bottom: 0;
+
+.dialog {
+	width: @new-convo-outer-width;
+	font-family: @sans;
+	font-weight: bold;
+	font-size: 20px;
+	.middle-of-screen;
+	margin-top: -@new-convo-outer-height;
+	margin-left: -(@new-convo-outer-width/2);
+
+	.buttons {
+		float: right;
+
+		.button-left {
+			width: 140px;
+			height: 50px;
+			.light-gray-button;
+			margin-right: 20px;
+		}
+
+		.button-right {
+			width: 220px;
+			height: 50px;
+			.blue-button;			
+		}
+	}
+}
+
+#new-convo {
+	.dialog;
+
+	#topic {
+		textarea {
+			width: @new-convo-outer-width - (@new-convo-border-size * 2) - @new-convo-padding-right - @new-convo-padding-left;
+			height: @new-convo-outer-height - (@new-convo-border-size * 2) - @new-convo-padding-top - @new-convo-padding-bottom;
+			border: @field-border-size solid @blue;
+			.text-color;
+			padding: @new-convo-padding-top @new-convo-padding-right @new-convo-padding-bottom @new-convo-padding-left;
+			resize: none;
+			line-height: 1.3;
+			margin-bottom: 20px;
+
+			&:focus {
+				outline: none;
+			}
+		}
+	}
+}
+
+#notification-setup {
+	.dialog;
+}

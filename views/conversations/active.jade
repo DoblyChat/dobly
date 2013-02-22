@@ -82,9 +82,16 @@ html
 		#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
 			#topic
 				textarea(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
-			#buttons				
-				button#cancel(type="button", data-bind="click: cancel") Cancel
-				button#create(type="button", data-bind="click: createOnClick") Create
+			.buttons				
+				button.button-left(type="button", data-bind="click: cancel") Cancel
+				button.button-right(type="button", data-bind="click: createOnClick") Create
+
+		#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
+			p For a better experience, please allow Fluidtalk to provide rich notifications
+
+			.buttons
+				button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
+				button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
 
 input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop)

@@ -1,10 +1,15 @@
 function createMessage(data) {
   var self = {};
 
-  self.content = ko.observable(data.content);
+  self.lines = formatContent(data.content);
   self.timestamp = formatTimestamp(data.timestamp, "h:mm tt", "M/d h:mm tt");
   self.createdBy = data.createdBy;
   self.simpleTimestamp = formatTimestamp(data.timestamp, "h:mm tt", "M/d");
+
+  function formatContent(content){
+    return content.split('\n');
+    //return content.replace(/\n/g, '<br />');
+  }
 
   function formatTimestamp(timestampString, todayFormat, otherFormat) {
     var timestamp = new Date(timestampString);

@@ -18,22 +18,10 @@ html
 				
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			
-			#convo-left.convo(data-bind="with: leftConversation, visible: hasLeftConversation")
-				.convo-header
-					.topic(data-bind="text: topic")
-					.created-by 
-						span by 
-						span(data-bind="text: createdBy")
-				.nano.convo-body(data-bind="click: markAsRead")
-					.content(data-bind="foreach: messages, visible: !settingTopic()")
-						.message
-							.author(data-bind="text: createdBy")
-							.time(data-bind="text: timestamp")
-							.text(data-bind="text: content")
-				.convo-new-message(data-bind="visible: !settingTopic(), click: markAsRead")
-					textarea(tabindex="1", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")	
-			
-			#convo-right.convo(data-bind="with: rightConversation, visible: hasRightConversation")
+			#convo-left.convo(data-bind="template: { if: hasLeftConversation, name: 'conversation-template', data: leftConversation }, visible: hasLeftConversation")			
+			#convo-right.convo(data-bind="template: { if: hasRightConversation, name: 'conversation-template', data: rightConversation }, visible: hasRightConversation")
+				
+			script(type="text/html", id="conversation-template")
 				.convo-header(data-bind="click: markAsRead")
 					.topic(data-bind="text: topic")
 					.created-by 
@@ -44,7 +32,8 @@ html
 						.message
 							.author(data-bind="text: createdBy")
 							.time(data-bind="text: timestamp")
-							.text(data-bind="text: content")
+							.text(data-bind="foreach: lines")
+								div(data-bind="text: $data")
 				.convo-new-message(data-bind="click: markAsRead")
 					textarea(tabindex="2", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
 
@@ -87,7 +76,7 @@ html
 				button.button-right(type="button", data-bind="click: createOnClick") Create
 
 		#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
-			p For a better experience, please allow Fluidtalk to provide rich notifications
+			p For a better experience, please allow Fluidtalk to request permissions to show rich notifications
 
 			.buttons
 				button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow

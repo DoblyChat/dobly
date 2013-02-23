@@ -3,7 +3,6 @@ function createConversation(data) {
 
   self.id = data._id ? data._id : 0;
   self.topic = ko.observable(data.topic);
-  self.settingTopic = ko.observable(false);
   self.createdBy = ko.observable(data.createdBy);
   self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
   self.newMessage = ko.observable('');
@@ -50,6 +49,10 @@ function createConversation(data) {
     self.active(false);
   };
   
+  function thereIsANewMessage(){
+    return self.newMessage().trim() !== '';
+  }
+
   function getMessageData(){
       return { 
           content: self.newMessage(), 
@@ -78,7 +81,7 @@ function createConversation(data) {
 
   self.sendMessage = function (data, event) {    
     self.markAsRead();
-    if (common.enterKeyPressed(event)) {
+    if (thereIsANewMessage() && common.enterKeyPressed(event) && !event.shiftKey) {
       var messageData = getMessageData();
       sendMessageToServer(messageData);
       self.addMessage(messageData);

@@ -9,11 +9,7 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
   self.pairs = [];
 
   self.refresh = function () {
-    var filteredConversations = ko.utils.arrayFilter(conversationsObservable(), function(conversation){
-      return !conversation.settingTopic();
-    });
-
-    var sortedConversations = filteredConversations.sort(function(left, right){
+    var sortedConversations = conversationsObservable().sort(function(left, right){
       if (left.unreadCounter() == right.unreadCounter()) {
         return left.topic().toLowerCase().localeCompare(right.topic().toLowerCase());
       } else {

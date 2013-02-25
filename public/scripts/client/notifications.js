@@ -9,6 +9,7 @@ function createNotifier(desktop){
 	var NOT_SET = 1;
 
 	var notifications = window.webkitNotifications;
+	var titleBlinkTimer;
 
 	self.needsToAskForPermission = function(){
 		return Modernizr.notifications && permissionsNotSet();
@@ -57,13 +58,23 @@ function createNotifier(desktop){
 	}
 
 	self.updateTitle = function(unreadCount){
-		var title;
+		var appTitle = 'FluidTalk';
+
 		if(unreadCount > 0){
-			title = '(' + unreadCount + ') unread - FluidTalk';
+			titleBlinkTimer = setInterval(blink, '1500');
 		}else{
-			title = 'FluidTalk';
+			clearInterval(titleBlinkTimer);
+			document.title = appTitle;
 		}
-		document.title = title;
+
+		function blink(){
+			var currentTitle = document.title;
+			if(currentTitle === appTitle){
+				document.title = '(' + unreadCount + ') unread - FluidTalk';
+			}else{
+				document.title = appTitle;
+			}
+		}
 	}
 
 	return self;

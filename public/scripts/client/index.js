@@ -1,4 +1,4 @@
 $(document).ready(function(){
-  $("#username").focus();
+  common.focus("#username");
   $('input, textarea').placeholder();
 });

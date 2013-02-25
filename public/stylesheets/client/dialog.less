@@ -50,10 +50,35 @@
 			&:focus {
 				outline: none;
 			}
+
+			&:-moz-placeholder {
+				.placeholder-color;
+			}
+
+			&.placeholder {
+				.placeholder-color;
+			}
 		}
 	}
 }
 
 #notification-setup {
 	.dialog;
+
+	#buttons {
+		float: right;
+
+		#create {
+			width: 220px;
+			height: 50px;
+			.blue-button;			
+		}
+
+		#cancel {
+			width: 140px;
+			height: 50px;
+			.light-gray-button;
+			margin-right: 20px;
+		}
+	}
 }

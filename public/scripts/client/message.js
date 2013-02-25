@@ -8,7 +8,6 @@ function createMessage(data) {
 
   function formatContent(content){
     return content.split('\n');
-    //return content.replace(/\n/g, '<br />');
   }
 
   function formatTimestamp(timestampString, todayFormat, otherFormat) {

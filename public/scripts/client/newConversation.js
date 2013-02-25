@@ -3,8 +3,9 @@ function createNewConversation(navigation) {
 
 	self.topic = ko.observable();
 
-	self.focusTopic = function() {
-    setTimeout(function () { $('#new-convo textarea').focus(); }, 400);
+	self.setup = function() {
+    $('#new-convo textarea').placeholder();
+    setTimeout(function () { common.focus('#new-convo textarea'); }, 400);
   };
 
 	self.createOnEnter = function(data, event) {

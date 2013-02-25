@@ -28,25 +28,32 @@ function createNotifier(desktop){
 	}
 
 	self.showDeskopNotification = function(conversation, content){
-		if(Modernizr.notifications && !app.inFocus){
-			if(notifications.checkPermission() === ALLOWED){
-				var notif = notifications.createNotification(
-					'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
-					conversation.topic(), content);
+		if(!app.inFocus){
+			if(Modernizr.notifications){
+				if(notifications.checkPermission() === ALLOWED){
+					var notif = notifications.createNotification(
+						'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
+						conversation.topic(), content);
 
-				notif.onclick = function(){
-					window.focus();
-					desktop.activate(conversation);
-					conversation.hasFocus(true);
+					notif.onclick = function(){
+						window.focus();
+						desktop.activate(conversation);
+						conversation.hasFocus(true);
+					}
+
+					notif.show();
+
+					setTimeout(function(){
+						notif.cancel();
+					}, '5000');
 				}
-
-				notif.show();
-
-				setTimeout(function(){
-					notif.cancel();
-				}, '5000');
 			}
+			playSound();
 		}
+	}
+
+	function playSound(){
+		document.getElementById('notification-sound').play();
 	}
 
 	self.updateTitle = function(unreadCount){

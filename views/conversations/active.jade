@@ -82,6 +82,10 @@ html
 				button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
 				button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
 
+audio#notification-sound
+	source(src="audio/bell.mp3", type="audio/mpeg")
+	source(src="audio/bell.ogg", type="audio/ogg")
+
 input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop)
 input#currentUser(type="hidden", value=currentUser)

@@ -59,11 +59,11 @@ function createNotifier(desktop){
 
 	self.updateTitle = function(unreadCount){
 		var appTitle = 'FluidTalk';
+		clearInterval(titleBlinkTimer);
 
 		if(unreadCount > 0){
 			titleBlinkTimer = setInterval(blink, '1500');
 		}else{
-			clearInterval(titleBlinkTimer);
 			document.title = appTitle;
 		}
 

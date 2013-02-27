@@ -33,48 +33,7 @@ function createViewModel(conversationsData, desktopData) {
     self.notifier.updateTitle(unread);
   });
 
-  self.navigation = function() {
-    var nav = {};
-
-    nav.showingDesktop = ko.observable(true);
-    nav.showingAll = ko.observable(false);
-    nav.showingNewConvo = ko.observable(false);
-    nav.showingNotificationSetup = ko.observable(false);
-
-    nav.all = function() {
-      self.allConversations.refresh();
-      nav.showingDesktop(false);
-      nav.showingNewConvo(false);
-      nav.showingAll(true);
-      nav.showingNotificationSetup(false);
-    };
-
-    nav.desktop = function() {
-      nav.showingNewConvo(false);
-      nav.showingAll(false);
-      nav.showingDesktop(true);
-      nav.showingNotificationSetup(false);
-      self.desktop.resize.convoBody();
-      self.desktop.scroll.setup();
-      self.desktop.setupStripDragAndDrop();
-    };
-
-    nav.newConvo = function() {
-      nav.showingAll(false);
-      nav.showingDesktop(false);
-      nav.showingNewConvo(true);
-      nav.showingNotificationSetup(false);
-    }
-
-    nav.notificationSetup = function(){
-      nav.showingDesktop(false);
-      nav.showingNewConvo(false);
-      nav.showingAll(false);
-      nav.showingNotificationSetup(true);
-    }
-
-    return nav;
-  }();
+  self.navigation = createNavigationModule(self);
 
   self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
 
@@ -112,6 +71,9 @@ function createViewModel(conversationsData, desktopData) {
     self.notifier.setup();
     self.navigation.desktop();
   }
+
+  self.onlineUsers = createOnlineUsersModule();
+  self.onlineUsers.request();
 
   return self;
 }

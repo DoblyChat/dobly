@@ -15,7 +15,10 @@ html
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
 				span(data-bind="visible: navigation.showingDesktop() || navigation.showingAll()") |
 				a(href="/logout") Logout
-				
+		
+		ul#onlineUsers(data-bind="foreach: onlineUsers.list")
+			li(data-bind="text: $data")
+
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			
 			#convo-left.convo(data-bind="template: { if: hasLeftConversation, name: 'conversation-template', data: leftConversation }, visible: hasLeftConversation")			
@@ -100,11 +103,13 @@ script(type="text/javascript", src="http://modernizr.com/downloads/modernizr-lat
 script(type="text/javascript", src="/scripts/lib/date.js")
 script(type="text/javascript", src="/socket.io/socket.io.js")
 script(type="text/javascript", src="/scripts/client/common.js")
+script(type="text/javascript", src="/scripts/client/onlineUsers.js")
 script(type="text/javascript", src="/scripts/client/message.js")
 script(type="text/javascript", src="/scripts/client/notifications.js")
 script(type="text/javascript", src="/scripts/client/conversation.js")
 script(type="text/javascript", src="/scripts/client/desktop.js")
 script(type="text/javascript", src="/scripts/client/allConversations.js")
 script(type="text/javascript", src="/scripts/client/newConversation.js")
+script(type="text/javascript", src="/scripts/client/navigation.js")
 script(type="text/javascript", src="/scripts/client/viewModel.js")
 script(type="text/javascript", src="/scripts/client/active.js")

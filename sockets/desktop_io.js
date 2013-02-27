@@ -1,6 +1,20 @@
 var Desktop = require('../models/desktop');
 
-exports.add = function(data){
+exports.config = function(socket){
+    socket.on('add_to_desktop', function(data){
+        desktopIo.add(data);
+    });
+
+    socket.on('remove_from_desktop', function(data){
+        desktopIo.remove(data);
+    });
+
+    socket.on('update_strip_order', function(data){
+        desktopIo.updateStripOrder(data);
+    });
+}
+
+function add(data){
     updateDesktop(data.id, function(desktop){
         if(desktop.conversations.indexOf(data.conversationId) < 0){
             desktop.conversations.push(data.conversationId);            
@@ -8,13 +22,13 @@ exports.add = function(data){
     });
 }
 
-exports.remove = function(data){
+function remove(data){
     updateDesktop(data.id, function(desktop) {
         desktop.removeConversation(data.conversationId);
     });
 }
 
-exports.updateStripOrder = function(data){
+function updateStripOrder(data){
     updateDesktop(data.id, function(desktop) {
         var conversation = desktop.conversations[data.currentSort.startIndex];
         desktop.conversations.splice(data.currentSort.startIndex, 1);

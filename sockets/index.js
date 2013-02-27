@@ -15,19 +15,17 @@ exports.config = function(io, sessionStore){
     });
 
     io.sockets.on('connection', function (socket) {
-
       conversationIo.config(socket);
+      desktopIo.config(socket);
 
-      socket.on('add_to_desktop', function(data){
-        desktopIo.add(data);
+      userConnected(socket);
+
+      socket.on('request_online_users', function(){
+        requestOnlineUsers(socket, io.sockets)
       });
 
-      socket.on('remove_from_desktop', function(data){
-        desktopIo.remove(data);
-      });
-
-      socket.on('update_strip_order', function(data){
-        desktopIo.updateStripOrder(data);
+      socket.on('disconnect', function(){
+        userDisconnected(socket);
       });
     });
 };
@@ -52,3 +50,23 @@ function authorize(data, accept, sessionStore){
        return accept('No cookie transmitted.', false);
     }
 };
+
+function userConnected(socket){
+  socket.broadcast.emit('user_connected', socket.handshake.user.username);
+}
+
+function userDisconnected(socket){
+  socket.broadcast.emit('user_disconnected', socket.handshake.user.username);
+}
+
+function requestOnlineUsers(currentSocket, sockets){
+  var connectedUsers = [];
+  var socketsArray = sockets.clients();
+  for(var i = 0; i < socketsArray.length; i++){
+    if(socketsArray[i].id !== currentSocket.id){
+      connectedUsers.push(socketsArray[i].handshake.user.username);
+    }
+  }
+
+  currentSocket.emit('receive_online_users', connectedUsers);
+}

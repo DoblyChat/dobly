@@ -52,11 +52,11 @@ function authorize(data, accept, sessionStore){
 };
 
 function userConnected(socket){
-  socket.broadcast.emit('user_connected', socket.handshake.user.username);
+  socket.broadcast.emit('user_connected', socket.handshake.user._id);
 }
 
 function userDisconnected(socket){
-  socket.broadcast.emit('user_disconnected', socket.handshake.user.username);
+  socket.broadcast.emit('user_disconnected', socket.handshake.user._id);
 }
 
 function requestOnlineUsers(currentSocket, sockets){

@@ -12,8 +12,9 @@ $(document).ready(function() {
 
 	var desktopData = JSON.parse($('#desktop').val());
 	var conversationData = JSON.parse($('#conversations').val());
+	var groupData = JSON.parse($('#group').val());
 	
-	var viewModel = createViewModel(conversationData, desktopData);
+	var viewModel = createViewModel(conversationData, desktopData, groupData);
 
 	ko.applyBindings(viewModel);
 

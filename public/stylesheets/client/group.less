@@ -1,0 +1,29 @@
+@online-green: #00FF00;
+
+#group-info{
+	ul{
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.circle {
+		-webkit-border-radius: 5px;
+	    -moz-border-radius: 5px;
+	    border-radius: 5px; 
+	    width: 10px;
+	    height: 10px;
+	    display: inline-block;
+	    margin-right: 10px;
+	}
+
+	.green-circle {
+		.circle;
+		background-color: @online-green;
+	}
+
+	.gray-circle {
+		.circle;
+		background-color: @gray;
+	}
+}

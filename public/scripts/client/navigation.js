@@ -1,42 +1,62 @@
 function createNavigationModule(viewModel) {
-    var nav = {};
+    var self = {};
 
-    nav.showingDesktop = ko.observable(true);
-    nav.showingAll = ko.observable(false);
-    nav.showingNewConvo = ko.observable(false);
-    nav.showingNotificationSetup = ko.observable(false);
+    self.showingDesktop = ko.observable(true);
+    self.showingAll = ko.observable(false);
+    self.showingNewConvo = ko.observable(false);
+    self.showingNotificationSetup = ko.observable(false);
+    self.showingGroup = ko.observable(false);
 
-    nav.all = function() {
+    self.all = function() {
       viewModel.allConversations.refresh();
-      nav.showingDesktop(false);
-      nav.showingNewConvo(false);
-      nav.showingAll(true);
-      nav.showingNotificationSetup(false);
+      self.showingDesktop(false);
+      self.showingNewConvo(false);
+      self.showingAll(true);
+      self.showingNotificationSetup(false);
+      self.showingGroup(false);
     };
 
-    nav.desktop = function() {
-      nav.showingNewConvo(false);
-      nav.showingAll(false);
-      nav.showingDesktop(true);
-      nav.showingNotificationSetup(false);
+    self.desktop = function() {
+      self.showingNewConvo(false);
+      self.showingAll(false);
+      self.showingDesktop(true);
+      self.showingNotificationSetup(false);
+      self.showingGroup(false);
       viewModel.desktop.resize.convoBody();
       viewModel.desktop.scroll.setup();
       viewModel.desktop.setupStripDragAndDrop();
     };
 
-    nav.newConvo = function() {
-      nav.showingAll(false);
-      nav.showingDesktop(false);
-      nav.showingNewConvo(true);
-      nav.showingNotificationSetup(false);
-    }
+    self.newConvo = function() {
+      self.showingAll(false);
+      self.showingDesktop(false);
+      self.showingNewConvo(true);
+      self.showingNotificationSetup(false);
+      self.showingGroup(false);
+    };
 
-    nav.notificationSetup = function(){
-      nav.showingDesktop(false);
-      nav.showingNewConvo(false);
-      nav.showingAll(false);
-      nav.showingNotificationSetup(true);
-    }
+    self.notificationSetup = function(){
+      self.showingDesktop(false);
+      self.showingNewConvo(false);
+      self.showingAll(false);
+      self.showingNotificationSetup(true);
+      self.showingGroup(false);
+    };
 
-    return nav;
+    self.group = function(){
+      self.showingDesktop(false);
+      self.showingNewConvo(false);
+      self.showingAll(false);
+      self.showingNotificationSetup(false);
+      self.showingGroup(true);
+    };
+
+    self.showBack = function(){
+      return self.showingAll() 
+          || self.showingNewConvo() 
+          || self.showingNotificationSetup()
+          || self.showingGroup();
+    };
+
+    return self;
 }

@@ -2,15 +2,15 @@ var Desktop = require('../models/desktop');
 
 exports.config = function(socket){
     socket.on('add_to_desktop', function(data){
-        desktopIo.add(data);
+        add(data);
     });
 
     socket.on('remove_from_desktop', function(data){
-        desktopIo.remove(data);
+        remove(data);
     });
 
     socket.on('update_strip_order', function(data){
-        desktopIo.updateStripOrder(data);
+        updateStripOrder(data);
     });
 }
 

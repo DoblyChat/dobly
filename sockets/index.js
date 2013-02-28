@@ -63,9 +63,9 @@ function requestOnlineUsers(currentSocket, sockets){
   var connectedUsers = [];
   var socketsArray = sockets.clients();
   for(var i = 0; i < socketsArray.length; i++){
-    if(socketsArray[i].id !== currentSocket.id){
-      connectedUsers.push(socketsArray[i].handshake.user.username);
-    }
+    //if(socketsArray[i].id !== currentSocket.id){
+      connectedUsers.push(socketsArray[i].handshake.user._id);
+    //}
   }
 
   currentSocket.emit('receive_online_users', connectedUsers);

@@ -1,4 +1,4 @@
-function createViewModel(conversationsData, desktopData) {
+function createViewModel(conversationsData, desktopData, groupData) {
   var self = {};
   
   self.conversations = ko.observableArray([]);
@@ -39,8 +39,6 @@ function createViewModel(conversationsData, desktopData) {
 
   self.newConversation = createNewConversation(self.navigation);
 
-  self.addingNewConversation = ko.observable(false);
-
   socket.on('my_new_conversation', function(data) {
     var conversation = createConversation(data);
     self.conversations.push(conversation);
@@ -72,8 +70,7 @@ function createViewModel(conversationsData, desktopData) {
     self.navigation.desktop();
   }
 
-  self.onlineUsers = createOnlineUsersModule();
-  self.onlineUsers.request();
+  self.group = createGroup(groupData);
 
   return self;
 }

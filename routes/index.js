@@ -97,6 +97,12 @@ function renderDesktop(req, res) {
 	    },
 	    markers: function(callback){
 	    	UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, callback);
+	    },
+	    group: function(callback){
+	    	Group.findById(req.user.groupId, 'name', { lean: true }, callback)
+	    },
+	    users: function(callback){
+	    	User.find({ groupId: req.user.groupId}, '_id username', { lean: true }, callback);
 	    }
 	},
 	function(err, results) {
@@ -108,12 +114,15 @@ function renderDesktop(req, res) {
 	    	results.desktop.save();
 	    }
 
+	    results.group.users = results.users;
+
 		res.render('conversations/active', 
 		{ 
 			title: 'FluidTalk',
 		    conversations: JSON.stringify(results.conversations),
 		    desktop: JSON.stringify(results.desktop), 
 			currentUser: JSON.stringify(req.user),
+			group: JSON.stringify(results.group),
 			layout: ''
 		});
 	});

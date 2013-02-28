@@ -11,13 +11,12 @@ html
 		#header
 			#logo Fluidtalk
 			.top-links
-				a(data-bind="click: navigation.desktop, visible: navigation.showingAll") Back to Conversations
+				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
-				span(data-bind="visible: navigation.showingDesktop() || navigation.showingAll()") |
+				span(data-bind="visible: navigation.showingDesktop() || navigation.showBack()") |
+				a(data-bind="text: group.name, click: navigation.group, visible: !navigation.showingGroup()")
+				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
-		
-		ul#onlineUsers(data-bind="foreach: onlineUsers.list")
-			li(data-bind="text: $data")
 
 		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
 			
@@ -67,7 +66,7 @@ html
 						.message
 							.author(data-bind="text: createdBy")
 							.time(data-bind="text: simpleTimestamp")
-							.text(data-bind="text: content")
+							.text(data-bind="text: lines")
 					.no-messages(data-bind="visible: lastMessages().length <= 0")
 						.message There aren't any messages in this conversation.
 
@@ -85,6 +84,16 @@ html
 				button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
 				button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
 
+		#group-info(data-bind="with: group, visible: navigation.showingGroup")
+			h2 
+				span Group: 
+				span(data-bind="text: name")
+			ul(data-bind="foreach: users")
+				li
+					.green-circle(data-bind="visible: online")
+					.gray-circle(data-bind="visible: !online()")
+					span(data-bind="text: username")
+
 audio#notification-sound
 	source(src="audio/bell.mp3", type="audio/mpeg")
 	source(src="audio/bell.ogg", type="audio/ogg")
@@ -92,6 +101,7 @@ audio#notification-sound
 input#conversations(type="hidden", value=conversations)
 input#desktop(type="hidden", value=desktop)
 input#currentUser(type="hidden", value=currentUser)
+input#group(type="hidden", value=group)
 
 script(type="text/javascript", src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
 script(type="text/javascript", src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js")
@@ -103,7 +113,7 @@ script(type="text/javascript", src="http://modernizr.com/downloads/modernizr-lat
 script(type="text/javascript", src="/scripts/lib/date.js")
 script(type="text/javascript", src="/socket.io/socket.io.js")
 script(type="text/javascript", src="/scripts/client/common.js")
-script(type="text/javascript", src="/scripts/client/onlineUsers.js")
+script(type="text/javascript", src="/scripts/client/group.js")
 script(type="text/javascript", src="/scripts/client/message.js")
 script(type="text/javascript", src="/scripts/client/notifications.js")
 script(type="text/javascript", src="/scripts/client/conversation.js")

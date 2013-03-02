@@ -14,7 +14,7 @@ html
 				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
 				span(data-bind="visible: navigation.showingDesktop() || navigation.showBack()") |
-				a(data-bind="text: group.name, click: navigation.group, visible: !navigation.showingGroup()")
+				a(data-bind="click: navigation.group, visible: !navigation.showingGroup()") Group
 				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
 
@@ -85,14 +85,15 @@ html
 				button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
 
 		#group-info(data-bind="with: group, visible: navigation.showingGroup")
-			h2 
-				span Group: 
-				span(data-bind="text: name")
-			ul(data-bind="foreach: users")
-				li
-					.green-circle(data-bind="visible: online")
-					.gray-circle(data-bind="visible: !online()")
-					span(data-bind="text: username")
+			h2(data-bind="text: name")
+
+			table.users(data-bind="foreach: users")
+				tr
+					td.name(data-bind="text: username")
+					td.status
+						span.online(data-bind="visible: online") online
+						span.offline(data-bind="visible: !online()") offline
+					
 
 audio#notification-sound
 	source(src="audio/bell.mp3", type="audio/mpeg")

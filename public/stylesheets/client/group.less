@@ -1,29 +1,38 @@
 @online-green: #00FF00;
+@users-width: 400px;
 
 #group-info{
-	ul{
-		list-style-type: none;
+	.middle-of-screen;
+	width: @users-width;
+	margin-left: -150px;
+	margin-top: -120px;
+
+	h2 {
+		color: @gray;
 		margin: 0;
-		padding: 0;
+		text-transform: capitalize;
+		font-size: 4em;
+		padding-bottom: 10px
 	}
 
-	.circle {
-		-webkit-border-radius: 5px;
-	    -moz-border-radius: 5px;
-	    border-radius: 5px; 
-	    width: 10px;
-	    height: 10px;
-	    display: inline-block;
-	    margin-right: 10px;
-	}
+	.users {
+		margin: 0 0 15px 15px;
+		font-size: 2.5em;
 
-	.green-circle {
-		.circle;
-		background-color: @online-green;
-	}
+		.name{
+			width: 200px;
+		}
 
-	.gray-circle {
-		.circle;
-		background-color: @gray;
+		.status{
+			width: 200px;
+		}
+
+		.online {
+			color: @online-green;
+		}
+
+		.offline {
+			color: @light-gray;
+		}	
 	}
 }

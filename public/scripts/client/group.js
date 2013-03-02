@@ -2,6 +2,7 @@ function createGroup(data){
 	var self = {};
 
 	self.name = data.name;
+
 	self.users = ko.observableArray([]);
 
 	ko.utils.arrayForEach(data.users, function(userData){

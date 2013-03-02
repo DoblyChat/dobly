@@ -32,8 +32,8 @@ function createConversation(socket, data) {
                     createdBy: conversation.createdBy 
                 };
 
-                socket.emit('my_new_conversation', dataToEmit);
-                socket.broadcast.emit('new_conversation', dataToEmit);
+                socket.emitToGroup('my_new_conversation', dataToEmit);
+                socket.broadcastToGroup('new_conversation', dataToEmit);
             }
     );
 }
@@ -55,7 +55,7 @@ function sendMessage(socket, data){
                         timestamp: data.timestamp,
                     };
 
-                    socket.broadcast.emit('receive_message', dataToEmit);
+                    socket.broadcastToGroup('receive_message', dataToEmit);
                     callback(err);
                 });
             });

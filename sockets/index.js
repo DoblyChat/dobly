@@ -9,12 +9,14 @@ exports.config = function(io, sessionStore){
       io.set("polling duration", 10);
     });
 
-    // Socket connections
     io.set('authorization', function (data, accept) {
         authorize(data, accept, sessionStore);
     });
 
     io.sockets.on('connection', function (socket) {
+      socket.emitToGroup = emitToGroup;
+      socket.broadcastToGroup = broadcastToGroup;
+
       conversationIo.config(socket);
       desktopIo.config(socket);
 
@@ -29,6 +31,14 @@ exports.config = function(io, sessionStore){
       });
     });
 };
+
+function emitToGroup(event, data){
+  this.in(this.handshake.user.groupId).emit(event, data);
+}
+
+function broadcastToGroup(event, data){
+  this.in(this.handshake.user.groupId).broadcast.emit(event, data);
+}
 
 function authorize(data, accept, sessionStore){
 	if (data.headers.cookie) {
@@ -52,20 +62,20 @@ function authorize(data, accept, sessionStore){
 };
 
 function userConnected(socket){
-  socket.broadcast.emit('user_connected', socket.handshake.user._id);
+  socket.join(socket.handshake.user.groupId);
+  socket.broadcastToGroup('user_connected', socket.handshake.user._id);
 }
 
 function userDisconnected(socket){
-  socket.broadcast.emit('user_disconnected', socket.handshake.user._id);
+  socket.leave(socket.handshake.user.groupId);
+  socket.broadcastToGroup('user_disconnected', socket.handshake.user._id);
 }
 
 function requestOnlineUsers(currentSocket, sockets){
   var connectedUsers = [];
-  var socketsArray = sockets.clients();
+  var socketsArray = sockets.clients(currentSocket.groupId);
   for(var i = 0; i < socketsArray.length; i++){
-    //if(socketsArray[i].id !== currentSocket.id){
       connectedUsers.push(socketsArray[i].handshake.user._id);
-    //}
   }
 
   currentSocket.emit('receive_online_users', connectedUsers);

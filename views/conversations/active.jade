@@ -25,7 +25,9 @@ html
 				
 			script(type="text/html", id="conversation-template")
 				.convo-header(data-bind="click: markAsRead")
-					.topic(data-bind="text: topic")
+					.topic
+						span(data-bind="text: topic, click: editTopic, visible: !editingTopic()")
+						input(data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateTopic }, visible: editingTopic, hasfocus: editingTopic")
 					.created-by 
 						span by 
 						span(data-bind="text: createdBy")
@@ -117,6 +119,7 @@ script(type="text/javascript", src="/scripts/client/common.js")
 script(type="text/javascript", src="/scripts/client/group.js")
 script(type="text/javascript", src="/scripts/client/message.js")
 script(type="text/javascript", src="/scripts/client/notifications.js")
+script(type="text/javascript", src="/scripts/client/conversation.ui.js")
 script(type="text/javascript", src="/scripts/client/conversation.js")
 script(type="text/javascript", src="/scripts/client/desktop.js")
 script(type="text/javascript", src="/scripts/client/allConversations.js")

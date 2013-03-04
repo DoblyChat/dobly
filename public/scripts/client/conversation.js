@@ -3,6 +3,8 @@ function createConversation(data) {
 
   self.id = data._id ? data._id : 0;
   self.topic = ko.observable(data.topic);
+  self.newTopic = ko.observable(data.topic);
+  self.editingTopic = ko.observable(false);
   self.createdBy = ko.observable(data.createdBy);
   self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
   self.newMessage = ko.observable('');
@@ -79,7 +81,7 @@ function createConversation(data) {
     }
   }
 
-  self.sendMessage = function (data, event) {    
+  self.sendMessage = function (conversation, event) {    
     self.markAsRead();
     if (thereIsANewMessage() && common.enterKeyPressed(event) && !event.shiftKey) {
       var messageData = getMessageData();
@@ -106,58 +108,27 @@ function createConversation(data) {
       self.unreadCounter(0);
       socket.emit('mark_as_read', self.id);  
     }
-  }
-
-  return self;
-}
-
-function createConversationResizing(getSelector) {
-  var self = {};
-
-  self.body = function() {
-    var convoHeight = $('#convos').innerHeight();
-    var titleHeightLeft = $(getSelector('.convo-header')).outerHeight();
-    var newMessageHeightLeft = $(getSelector('.convo-new-message')).outerHeight();  
-    $(getSelector('.convo-body')).height(convoHeight - titleHeightLeft - newMessageHeightLeft);
   };
 
-  return self;
-}
-
-function createConversationScrolling(getSelector) {
-  var self = {};
-
-  self.setup = function() {
-      self.adjust();
-      setupHoverIntent();
-    };
-
-  function setupHoverIntent() {
-    var config = {
-      over: thickBar,
-      timeout: 1000,
-      out: thinBar,
-    };
-    $(getSelector(".nano > .pane")).hoverIntent(config);
-  }
-
-  function thickBar() {
-    $(this).addClass("thickBar");
-    $(this).siblings(".pane").addClass("thickBar");
-  }
-
-  function thinBar() {
-    $(this).removeClass("thickBar");
-    $(this).siblings(".pane").removeClass("thickBar");
-  }
-
-  self.adjust = function() {
-    $(getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
+  self.editTopic = function() {
+    self.editingTopic(true);
   };
 
-  self.stop = function() {
-    $(getSelector('.nano')).nanoScroller({ stop: true });
+  self.updateTopic = function(conversation, event){
+    if(common.enterKeyPressed(event)){
+      socket.emit('update_topic', { conversationId: conversation.id, newTopic: self.newTopic() })
+      self.topic(self.newTopic());
+      self.editingTopic(false);
+    } else {
+      return true;
+    }
   };
+
+  self.editingTopic.subscribe(function(editingTopic){
+    if(!editingTopic){
+      self.newTopic(self.topic());
+    }
+  })
 
   return self;
 }

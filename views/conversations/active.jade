@@ -18,12 +18,8 @@ html
 				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
 
-		#convos(data-bind="with: desktop, visible: navigation.showingDesktop")
-			
-			#convo-left.convo(data-bind="template: { if: hasLeftConversation, name: 'conversation-template', data: leftConversation }, visible: hasLeftConversation")			
-			#convo-right.convo(data-bind="template: { if: hasRightConversation, name: 'conversation-template', data: rightConversation }, visible: hasRightConversation")
-				
-			script(type="text/html", id="conversation-template")
+		#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.conversations")
+			.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
 				.convo-header(data-bind="click: markAsRead")
 					.topic(data-bind="text: topic")
 					.created-by 

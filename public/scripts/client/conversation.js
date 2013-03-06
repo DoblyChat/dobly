@@ -6,6 +6,8 @@ function createConversation(data) {
   self.createdBy = ko.observable(data.createdBy);
   self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
   self.newMessage = ko.observable('');
+  self.isLeft = ko.observable(false);
+  self.isRight = ko.observable(false);
   
   self.messages = ko.observableArray([]);
 
@@ -27,6 +29,18 @@ function createConversation(data) {
     }
   });
 
+  self.activateOnTheLeft = function() {
+    self.isLeft(true);
+    self.isRight(false);
+    self.activate(".convo-left");
+  };
+
+  self.activateOnTheRight = function() {
+    self.isRight(true);
+    self.isLeft(false);
+    self.activate(".convo-right");
+  };
+
   self.activate = function(convoSelector) {
     self.active(true);
 
@@ -47,6 +61,8 @@ function createConversation(data) {
     }
     
     self.active(false);
+    self.isRight(false);
+    self.isLeft(false);
   };
   
   function thereIsANewMessage(){

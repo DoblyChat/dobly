@@ -74,6 +74,7 @@ function createConversation(data) {
     self.messages.push(msg);
     if (self.active()) {
       self.scroll.adjust();
+      self.markAsRead();
     } 
     
     if(!(app.inFocus && self.hasFocus())){
@@ -128,7 +129,7 @@ function createConversation(data) {
     if(!editingTopic){
       self.newTopic(self.topic());
     }
-  })
+  });
 
   return self;
 }

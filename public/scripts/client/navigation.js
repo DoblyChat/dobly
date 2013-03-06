@@ -24,7 +24,7 @@ function createNavigationModule(viewModel) {
       self.showingGroup(false);
       viewModel.desktop.resize.convoBody();
       viewModel.desktop.scroll.setup();
-      viewModel.desktop.setupStripDragAndDrop();
+      setupStripDragAndDrop(viewModel.desktop);
     };
 
     self.newConvo = function() {

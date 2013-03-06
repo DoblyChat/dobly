@@ -27,7 +27,7 @@ $(document).ready(function() {
 function setupDesktopUI(){
 	app.desktop.resize.dualConvo();
 	app.desktop.resize.strip();
-	app.desktop.setupStripDragAndDrop();
+	setupStripDragAndDrop(app.desktop);
 }
 
 $(window).load(function() {

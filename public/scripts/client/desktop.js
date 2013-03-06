@@ -149,106 +149,11 @@ function createDesktop(data, allConversations){
     });
   };
 
-  self.resize = function() {
-    var res = {};
-
-    res.dualConvo = function() {
-      var includeMargin = true;
-      var bodyHeight = $('body').outerHeight(includeMargin);
-      var headerHeight = $('#header').outerHeight(includeMargin);
-      var stripHeight = $('#strip').outerHeight(includeMargin);
-      var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
-
-      $('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
-    };
-
-    res.convoBody = function() {
-      if (self.hasLeftConversation()) {
-        self.leftConversation().resize.body();
-      }
-      
-      if (self.hasRightConversation()) {
-        self.rightConversation().resize.body();
-      }
-    };
-
-    res.strip = function() {
-      var tileWidth = $('#new-convo-tile').outerWidth();
-      var standardMargin = 10;
-      var newConvoTile = 1;
-      var tileCount = self.conversations().length + newConvoTile;
-      $('#strip').width((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
-    };
-
-    return res;
-  }();
-
-  self.scroll = function() {
-    var scr = {};
-
-    scr.setup = function() {
-      if (self.hasLeftConversation()) {
-        self.leftConversation().scroll.setup();
-      }
-      
-      if (self.hasRightConversation()) {
-        self.rightConversation().scroll.setup();
-      }
-    };
-
-    return scr;
-  }();
+  self.resize = createDesktopResize(self);
+  self.scroll = createDesktopScroll(self);
 
   activateLeftConversationBy(0);
   activateRightConversationBy(1);
-
-  self.setupStripDragAndDrop = function(){
-    var currentSort;
-
-    $('#convo-tiles').sortable({      
-      handle: ".icon-move-handle",
-      start: function(event, ui){
-        currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
-      },
-      stop: function(event, ui){
-        currentSort.stopIndex = ui.item.index();
-
-        if (currentSort.startIndex !== currentSort.stopIndex) {
-          socket.emit('update_strip_order', { id: self.id, currentSort: currentSort });
-          var conversation = self.conversations()[currentSort.startIndex];
-          reorder(conversation);
-          if (conversation.active()) {
-            changeActiveConversations(currentSort.stopIndex);
-          }
-          else {
-            checkIfItNeedsToBeActivated();
-          }
-        }
-      },
-    });
-
-    function reorder(conversation) {      
-      self.conversations.splice(currentSort.startIndex, 1);
-      self.conversations.splice(currentSort.stopIndex, 0, conversation);
-    }
-
-    function checkIfItNeedsToBeActivated() {
-      var leftActiveIndex = self.conversations.indexOf(self.leftConversation());
-
-      if (movedToTheRightOfActiveConversation(leftActiveIndex)) {
-        if (self.hasRightConversation()) {
-          self.rightConversation().deactivate();
-        }
-        activateRightConversationBy(leftActiveIndex + 1);
-      }
-
-      function movedToTheRightOfActiveConversation(leftActiveIndex){
-        return leftActiveIndex + 1 === currentSort.stopIndex;
-      }
-    }
-
-    $('.film-strip').disableSelection();
-  };
 
   return self;
 }

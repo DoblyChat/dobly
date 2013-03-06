@@ -91,7 +91,7 @@ function createDesktop(data, allConversations){
   function activateLeftConversationBy(index) {
     self.leftConversation(getConversationAt(index));
     if (self.hasLeftConversation()) {
-      addToRenderedConversationsIfNeeded(self.leftConversation());
+      renderConversationIfNeeded(self.leftConversation());
       self.leftConversation().activateOnTheLeft();
       setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
     }
@@ -100,12 +100,12 @@ function createDesktop(data, allConversations){
   function activateRightConversationBy(index) {
     self.rightConversation(getConversationAt(index));
     if (self.hasRightConversation()) {
-      addToRenderedConversationsIfNeeded(self.rightConversation());
+      renderConversationIfNeeded(self.rightConversation());
       self.rightConversation().activateOnTheRight();
     }
   }
 
-  function addToRenderedConversationsIfNeeded(conversation) {
+  function renderConversationIfNeeded(conversation) {
     if (self.renderedConversations.indexOf(conversation) <= -1) {
       self.renderedConversations.push(conversation);
     }

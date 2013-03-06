@@ -16,4 +16,7 @@ test-debug:
 seed:
 	@NODE_ENV=development node seed/index.js
 
-.PHONY: test test-debug seed
+blast:
+	@NODE_ENV=development node seed/blast.js	
+
+.PHONY: test test-debug seed blast

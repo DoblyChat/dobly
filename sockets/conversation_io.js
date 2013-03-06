@@ -75,7 +75,7 @@ function sendMessage(socket, data){
 
     function saveUnreadMarkers(callback){
         User.find({ _id: { $ne: socket.handshake.user._id }, groupId: socket.handshake.user.groupId }, function(err, users){
-            async.forEach(users, save);
+            async.each(users, save);
 
             function save(user, callback){
                 UnreadMarker.increaseCounter(user._id, data.conversationId, callback);

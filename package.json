@@ -16,7 +16,7 @@
     "passport": "0.1.X",
     "passport-local": "0.1.X",
     "bcrypt": "0.7.X",
-    "async": "~0.1.X",
+    "async": "~0.2.X",
     "less-middleware": "~0.1.X"
   },
   "devDependencies": {

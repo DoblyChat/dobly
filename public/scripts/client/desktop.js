@@ -4,6 +4,7 @@ function createDesktop(data, allConversations){
   self.id = data._id;
 
   self.conversations = ko.observableArray([]);
+  self.renderedConversations = ko.observableArray([]);
 
   for(var i = 0; i < data.conversations.length; i++){
     var conversation = getConversationBy(data.conversations[i]);
@@ -90,6 +91,7 @@ function createDesktop(data, allConversations){
   function activateLeftConversationBy(index) {
     self.leftConversation(getConversationAt(index));
     if (self.hasLeftConversation()) {
+      addToRenderedConversationsIfNeeded(self.leftConversation());
       self.leftConversation().activateOnTheLeft();
       setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
     }
@@ -98,7 +100,14 @@ function createDesktop(data, allConversations){
   function activateRightConversationBy(index) {
     self.rightConversation(getConversationAt(index));
     if (self.hasRightConversation()) {
+      addToRenderedConversationsIfNeeded(self.rightConversation());
       self.rightConversation().activateOnTheRight();
+    }
+  }
+
+  function addToRenderedConversationsIfNeeded(conversation) {
+    if (self.renderedConversations.indexOf(conversation) <= -1) {
+      self.renderedConversations.push(conversation);
     }
   }
 

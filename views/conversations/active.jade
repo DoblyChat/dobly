@@ -18,7 +18,7 @@ html
 				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
 
-		#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.conversations")
+		#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
 			.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
 				.convo-header(data-bind="click: markAsRead")
 					.topic

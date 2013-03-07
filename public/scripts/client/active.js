@@ -53,6 +53,6 @@ $(window).blur(function() {
 
 socket.on('reconnecting', function(delay, attempt) {
 	if (attempt === maxReconnects) {
-		window.location.href = window.location.origin + "/timeout";
+		window.location.href = "http://" + window.location.host + "/timeout";
 	}
 });

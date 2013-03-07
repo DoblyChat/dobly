@@ -8,12 +8,14 @@ var Conversation = require('../models/conversation'),
 
 var flashKey = 'error';
 
-exports.config = function(app){
+exports.config = function(app) {
 	app.get('/', home);
 
 	app.post('/login', authenticate());
 
 	app.get('/logout', logOut);
+
+	app.get('/timeout', timeOut);
 
 	app.get('/sign-up/:group', signUp);
 
@@ -47,26 +49,31 @@ function home(req, res) {
 	}
 }
 
-function authenticate(){
+function authenticate() {
 	return passport.authenticate('local', { successRedirect: '/conversations',
 									 		failureRedirect: '/',
 									 		failureFlash: 'Username and password do not match.' });
 }
 
-function logOut(req, res){
+function logOut(req, res) {
 	req.logOut();
   	res.redirect('/');
 }
 
-function signUp(req, res){
+function timeOut(req, res) {
+	req.flash(flashKey, 'Your session timed out.');
+	res.redirect('/');
+}
+
+function signUp(req, res) {
 	var flash = req.flash(flashKey);
 	var showFlash = flash.length > 0;
 	res.render('sign-up', { group: req.params.group, title: 'Sign up - Fluid Talk', showFlash: showFlash, info: flash });
 }
 
-function createUser(req, res){
-	if(req.body.password === req.body.password2){
-		Group.findOne({ name: req.body.group }, function(err, group){
+function createUser(req, res) {
+	if(req.body.password === req.body.password2) {
+		Group.findOne({ name: req.body.group }, function(err, group) {
 			User.create(
 				{ username: req.body.username, groupId: group._id, password: req.body.password },
 				function(err){
@@ -77,11 +84,11 @@ function createUser(req, res){
 					}
 				});
 		});
-	}else{
+	} else {
 		redirectToSignUp('Password does not match');
 	}
 
-	function redirectToSignUp(flash){
+	function redirectToSignUp(flash) {
 		req.flash(flashKey, flash);
 		res.redirect(req.header('Referrer'));
 	}

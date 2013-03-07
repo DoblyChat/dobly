@@ -1,4 +1,7 @@
+var maxReconnects = 5;
+
 var socket = io.connect(window.location.origin, {
+	'max reconnection attempts': maxReconnects,
 	'sync disconnect on unload': true
 });
 
@@ -46,4 +49,10 @@ $(window).focus(function() {
 
 $(window).blur(function() {
 	app.inFocus = false;
+});
+
+socket.on('reconnecting', function(delay, attempt) {
+	if (attempt === maxReconnects) {
+		window.location.href = window.location.origin + "/timeout";
+	}
 });

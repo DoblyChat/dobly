@@ -18,6 +18,18 @@ html
 				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
 
+		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
+			#new-convo-tile(data-bind="click: $parent.addNewConversation")				
+				.icon-plus
+				#new-convo-text New Conversation
+			#convo-tiles(data-bind="foreach: conversations")
+				.tile(data-bind="css: { highlight: active }, click: $parent.activate")
+					.tile-text(data-bind="text:topic")
+					.tile-icons
+						.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
+						.icon-dismiss(data-bind="click: $parent.remove")
+						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
+
 		#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
 			.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
 				.convo-header(data-bind="click: markAsRead")
@@ -36,18 +48,6 @@ html
 								div(data-bind="text: $data")
 				.convo-new-message(data-bind="click: markAsRead")
 					textarea(tabindex="2", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
-
-		#strip(data-bind="with: desktop, visible: navigation.showingDesktop")
-			#convo-tiles(data-bind="foreach: conversations")
-				.tile(data-bind="css: { highlight: active }, click: $parent.activate")
-					.tile-text(data-bind="text:topic")
-					.tile-icons
-						.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
-						.icon-dismiss(data-bind="click: $parent.remove")
-						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
-			#new-convo-tile(data-bind="click: $parent.addNewConversation")				
-				.icon-plus
-				#new-convo-text New Conversation
 
 		#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.pairs")
 			.convo-pair(data-bind="foreach: $data")				

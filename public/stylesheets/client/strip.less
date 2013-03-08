@@ -16,16 +16,19 @@
 @tile-icons-height: @tile-inner-height - (@tile-text-height + @tile-text-top-padding + @tile-text-bottom-padding);
 
 #strip {
-	width: (@tile-width * @tile-count) + (@standard-margin * (@tile-count - 1));
-	.centered;
-	height: @tile-height;
-	.margin-bottom;
+	width: 13%; //(@tile-width * @tile-count) + (@standard-margin * (@tile-count - 1));
+	//.centered;
+	//height: @tile-height;
+	//.margin-bottom;
+	left: 10px;
+	position: absolute;
 }
 
 .tile-common {
 	background: @light-gray;
 	color: @gray;
-	float: left;
+	//float: left;
+	.margin-bottom;
 	cursor: pointer;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -44,7 +47,6 @@
 
 .tile {
 	.tile-common;
-	.margin-right;
 	border: @tile-border-size solid @light-gray;
 	height: @tile-inner-height;
 	width: @tile-inner-width;

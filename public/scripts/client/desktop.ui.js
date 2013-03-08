@@ -5,10 +5,11 @@ function createDesktopResize(desktop) {
     var includeMargin = true;
     var bodyHeight = $('body').outerHeight(includeMargin);
     var headerHeight = $('#header').outerHeight(includeMargin);
-    var stripHeight = $('#strip').outerHeight(includeMargin);
     var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
 
-    $('#convos').height(bodyHeight - headerHeight - stripHeight - convosMargin);
+    var height = bodyHeight - headerHeight - convosMargin;
+    $('#convos').height(height);
+    $('#strip').height(height);
   };
 
   res.convoBody = function() {
@@ -26,7 +27,7 @@ function createDesktopResize(desktop) {
     var standardMargin = 10;
     var newConvoTile = 1;
     var tileCount = desktop.conversations().length + newConvoTile;
-    $('#strip').width((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
+    //((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
   };
 
   return res;
@@ -43,6 +44,8 @@ function createDesktopScroll(desktop) {
     if (desktop.hasRightConversation()) {
       desktop.rightConversation().scroll.setup();
     }
+
+    $('#strip').nanoScroller();
   };
 
   return scr;

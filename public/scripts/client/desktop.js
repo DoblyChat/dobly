@@ -132,11 +132,11 @@ function createDesktop(data, allConversations){
     var leftIndex = self.conversations.indexOf(self.leftConversation());
 
     if (index !== leftIndex) {
-      changeActiveConversations(index);
+      self.changeActiveConversations(index);
     }
   };
 
-  function changeActiveConversations(leftIndex) {
+  self.changeActiveConversations = function(leftIndex) {
     deactivateConversations();
     activateLeftConversationBy(leftIndex);
     activateRightConversationBy(leftIndex + 1);

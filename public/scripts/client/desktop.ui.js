@@ -67,7 +67,7 @@ function setupStripDragAndDrop(desktop){
         var conversation = desktop.conversations()[currentSort.startIndex];
         reorder(conversation);
         if (conversation.active()) {
-          changeActiveConversations(currentSort.stopIndex);
+          desktop.changeActiveConversations(currentSort.stopIndex);
         }
         else {
           checkIfItNeedsToBeActivated();
@@ -84,14 +84,11 @@ function setupStripDragAndDrop(desktop){
   function checkIfItNeedsToBeActivated() {
     var leftActiveIndex = desktop.conversations.indexOf(desktop.leftConversation());
 
-    if (movedToTheRightOfActiveConversation(leftActiveIndex)) {
-      if (desktop.hasRightConversation()) {
-        desktop.rightConversation().deactivate();
-      }
-      activateRightConversationBy(leftActiveIndex + 1);
+    if (movedAfterActiveConversation(leftActiveIndex)) {
+      desktop.changeActiveConversations(leftActiveIndex);
     }
 
-    function movedToTheRightOfActiveConversation(leftActiveIndex){
+    function movedAfterActiveConversation(leftActiveIndex){
       return leftActiveIndex + 1 === currentSort.stopIndex;
     }
   }

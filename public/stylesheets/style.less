@@ -5,6 +5,7 @@
 
 @tile-width: 130px;
 @strip-width: @tile-width + 20px;
+@convos-left: @strip-width + 20px;
 
 @blue: #33B5E5;
 @red: #ffafbf;
@@ -128,6 +129,13 @@ audio{
 	-webkit-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
 	-o-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
 	box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
+}
+
+.convos-container {
+	width: @dual-convo-width;
+	.margin-bottom;
+	position: absolute;
+	left: @strip-width + 20px;;
 }
 
 @import "client/login";

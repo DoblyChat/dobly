@@ -18,7 +18,7 @@ html
 				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
 
-		#strip.nano(data-bind="with: desktop, visible: navigation.showingDesktop")
+		#strip.nano(data-bind="with: desktop")
 			.content
 				#new-convo-tile(data-bind="click: $parent.addNewConversation")				
 					.icon-plus

@@ -1,5 +1,4 @@
 @tile-height: 90px;
-@tile-width: 130px;
 @tile-padding: 5px;
 
 @tile-text-top-padding: 2px;
@@ -16,18 +15,14 @@
 @tile-icons-height: @tile-inner-height - (@tile-text-height + @tile-text-top-padding + @tile-text-bottom-padding);
 
 #strip {
-	width: 12%; //(@tile-width * @tile-count) + (@standard-margin * (@tile-count - 1));
-	//.centered;
-	//height: @tile-height;
-	//.margin-bottom;
-	left: 10px;
+	width: @strip-width;
+	left: @standard-margin;
 	position: absolute;
 }
 
 .tile-common {
 	background: @light-gray;
 	color: @gray;
-	//float: left;
 	.margin-bottom;
 	cursor: pointer;
 	text-overflow: ellipsis;

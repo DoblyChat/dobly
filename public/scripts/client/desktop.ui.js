@@ -22,14 +22,6 @@ function createDesktopResize(desktop) {
     }
   };
 
-  res.strip = function() {
-    var tileWidth = $('#new-convo-tile').outerWidth();
-    var standardMargin = 10;
-    var newConvoTile = 1;
-    var tileCount = desktop.conversations().length + newConvoTile;
-    //((tileWidth * tileCount) + (standardMargin * (tileCount - 1)));
-  };
-
   return res;
 };
 

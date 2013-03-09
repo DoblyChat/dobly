@@ -24,15 +24,15 @@
 	.centered;
 	.margin-bottom;
 	position: absolute;
-	left: 14%;
+	left: @strip-width + 20px;
 }
 
 .convo-left {
-	float: left;
+	margin-right: @standard-margin * 2;
 }
 
 .convo-right {
-	float:right;
+	
 }
 
 .message-padding {
@@ -44,6 +44,7 @@
 	height: 100%;
 	background: @white;
 	.box-shadow;
+	float: left;
 
 	.convo-header {	
 		.message-padding;
@@ -62,10 +63,6 @@
 			.caption-color;
 			padding-top: 5px;
 		}
-	}
-
-	.convo-body{
-		// possibly use it for scroll	
 	}
 
 	.message {
@@ -102,7 +99,7 @@
 		textarea {
 			border: none;
 			resize: none;
-			width: (@convo-width - 4px) - @new-message-right-padding - @new-message-left-padding;
+			width: 100%;
 			height: @textarea-height;
 			font-size: @text-size + 4px;
 

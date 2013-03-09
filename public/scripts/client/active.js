@@ -29,7 +29,6 @@ $(document).ready(function() {
 
 function setupDesktopUI(){
 	app.desktop.resize.dualConvo();
-	// app.desktop.resize.strip();
 	setupStripDragAndDrop(app.desktop);
 }
 

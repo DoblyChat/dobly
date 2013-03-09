@@ -70,7 +70,6 @@ function createDesktop(data, allConversations){
     socket.emit('remove_from_desktop', { id: self.id, conversationId: conversation.id });
     var index = self.conversations.indexOf(conversation);
     self.conversations.splice(index, 1);
-    // self.resize.strip();
     if(conversation.active()) {
       removeActive(conversation, index);
     }

@@ -30,14 +30,18 @@ function createConversation(socket, data) {
                 groupId: socket.handshake.user.groupId 
             }, 
             function(err, conversation){
-                var dataToEmit = { 
-                    _id: conversation.id, 
-                    topic: conversation.topic, 
-                    createdBy: conversation.createdBy 
-                };
+                if(err){
+                    console.error('Error creating conversation', err);
+                }else{
+                    var dataToEmit = { 
+                        _id: conversation.id, 
+                        topic: conversation.topic, 
+                        createdBy: conversation.createdBy 
+                    };
 
-                socket.emitToGroup('my_new_conversation', dataToEmit);
-                socket.broadcastToGroup('new_conversation', dataToEmit);
+                    socket.emitToGroup('my_new_conversation', dataToEmit);
+                    socket.broadcastToGroup('new_conversation', dataToEmit);    
+                }
             }
     );
 }
@@ -50,7 +54,14 @@ function sendMessage(socket, data){
         function(callback){
             saveUnreadMarkers(callback);
         }
-    ]);
+    ], 
+    function(err, dataToEmit){
+        if(err){
+            console.error('Error sending message', err);
+        }else{
+            socket.broadcastToGroup('receive_message', dataToEmit);    
+        }
+    });
 
     function saveMessage(callback){
         Conversation.findById(data.conversationId, function(err, conversation){
@@ -66,9 +77,7 @@ function sendMessage(socket, data){
                     conversationId: data.conversationId,
                     timestamp: data.timestamp,
                 };
-
-                socket.broadcastToGroup('receive_message', dataToEmit);
-                callback(err);
+                callback(err, dataToEmit);
             });
         });
     }
@@ -88,9 +97,17 @@ function sendMessage(socket, data){
 
 
 function markAsRead(socket, conversationId){
-    UnreadMarker.remove({ conversationId: conversationId, userId: socket.handshake.user._id }).exec();
+    UnreadMarker.remove({ conversationId: conversationId, userId: socket.handshake.user._id }, function(err){
+        if(err){
+            console.error('Error marking as read', err);
+        }
+    });
 }
 
 function updateTopic(data){
-    Conversation.update({ _id: data.conversationId }, { topic: data.newTopic }).exec();
+    Conversation.update({ _id: data.conversationId }, { topic: data.newTopic }, function(err){
+        if(err){
+            console.error('Error updating topic', err);
+        }
+    });
 }

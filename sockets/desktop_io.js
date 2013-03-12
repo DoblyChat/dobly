@@ -38,7 +38,13 @@ function updateStripOrder(data){
 
 function updateDesktop(id, update){
     Desktop.findById(id, function(err, desktop){
-        update(desktop);
-        desktop.save();
+        if(err){
+            console.error('Desktop update error: find', err);
+        }else{
+            update(desktop);
+            desktop.save(function(err){
+                console.error('Desktop update error: save', err);
+            });    
+        }
     });
 }

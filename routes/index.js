@@ -113,25 +113,39 @@ function renderDesktop(req, res) {
 	    }
 	},
 	function(err, results) {
+		if(err){
+			console.error('Error rendering desktop', err);
+		}
+
+		results.group.users = results.users;
+
 	    results.conversations.forEach(function(conversation){
 			addUnread(conversation, results.markers, results.desktop);
 		});
 
 	    if(results.desktop.isModified('conversations')){
-	    	results.desktop.save();
+	    	results.desktop.save(function(err){
+	    		if(err){
+	    			console.error('Error updating desktop when rendering', err);
+	    		}else{
+	    			render();	
+	    		}
+	    	});
+	    }else{
+	    	render();
 	    }
 
-	    results.group.users = results.users;
-
-		res.render('conversations/active', 
-		{ 
-			title: 'FluidTalk',
-		    conversations: JSON.stringify(results.conversations),
-		    desktop: JSON.stringify(results.desktop), 
-			currentUser: JSON.stringify(req.user),
-			group: JSON.stringify(results.group),
-			layout: ''
-		});
+	    function render() {
+	    	res.render('conversations/active', 
+			{ 
+				title: 'FluidTalk',
+			    conversations: JSON.stringify(results.conversations),
+			    desktop: JSON.stringify(results.desktop), 
+				currentUser: JSON.stringify(req.user),
+				group: JSON.stringify(results.group),
+				layout: ''
+			});	
+	    }
 	});
 
 	function addUnread(conversation, markers, desktop){
@@ -162,6 +176,10 @@ function getGroups(req, res){
 
 	},
 	function(err, results){
+		if(err){
+			console.error('Error getting groups/users', err);
+		}
+
 		results.users.forEach(function(user){
 			var group = findGroup(user.groupId);
 			group.users = group.users || [];
@@ -185,6 +203,9 @@ function getGroups(req, res){
 
 function createGroup(req, res){
 	Group.create({ name: req.body.name }, function(err){
+		if(err){
+			console.error('Error creating group', err);
+		}
 		res.redirect('/admin/groups');
 	});
 }

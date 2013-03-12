@@ -3,10 +3,15 @@ var desktopIo = require('./desktop_io')
   , User = require('../models/user');
 
 exports.config = function(io, sessionStore){
-    io.configure(function () { 
+    io.configure('production', function () { 
       // needed for heroku
       io.set("transports", ["xhr-polling"]); 
       io.set("polling duration", 10);
+
+      io.enable('browser client minification');
+      io.enable('browser client etag');
+      io.enable('browser client gzip');
+      io.set('log level', 1);  
     });
 
     io.set('authorization', function (data, accept) {
@@ -48,9 +53,14 @@ function authorize(data, accept, sessionStore){
 
         sessionStore.load(sessionID, function (err, session) {
             if (err || !session) {
+                console.warn('Session not found', err);
                 return accept("Can't find session", false);
             } else {
                 User.findById(session.passport.user, function(err, user){
+                  if(err){
+                    console.error('Error retrieving user', err);
+                  }
+
                   data.user = user._doc;
                   return accept(null, true);
                 });

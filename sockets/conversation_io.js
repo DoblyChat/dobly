@@ -55,11 +55,12 @@ function sendMessage(socket, data){
             saveUnreadMarkers(callback);
         }
     ], 
-    function(err, dataToEmit){
+    function(err, data){
+        debugger;
         if(err){
             console.error('Error sending message', err);
         }else{
-            socket.broadcastToGroup('receive_message', dataToEmit);    
+            socket.broadcastToGroup('receive_message', data[0]);    
         }
     });
 

@@ -17,7 +17,7 @@ function createGroup(data){
 		};
 	}
 
-	socket.on('receive_online_users', function(onlineUsers){
+	app.socket.on('receive_online_users', function(onlineUsers){
 		ko.utils.arrayForEach(self.users(), function(user){
 			if (onlineUsers.indexOf(user.id) >= 0){
 				user.online(true);
@@ -25,7 +25,7 @@ function createGroup(data){
 		});
 	});
 
-	socket.on('user_connected', function(connectedUser){
+	app.socket.on('user_connected', function(connectedUser){
 		ko.utils.arrayForEach(self.users(), function(user){
 			if (user.id === connectedUser){
 				user.online(true);
@@ -33,7 +33,7 @@ function createGroup(data){
 		});
 	});
 
-	socket.on('user_disconnected', function(disconnectedUser){
+	app.socket.on('user_disconnected', function(disconnectedUser){
 		ko.utils.arrayForEach(self.users(), function(user){
 			if (user.id === disconnectedUser){
 				user.online(false);
@@ -41,7 +41,7 @@ function createGroup(data){
 		});
 	});
 
-	socket.emit('request_online_users');
+	app.socket.emit('request_online_users');
 
 	return self;
 }

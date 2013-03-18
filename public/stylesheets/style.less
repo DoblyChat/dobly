@@ -37,8 +37,12 @@ body {
 	height: 100%;
 }
 
-audio{
+.hidden{
 	display: none;
+}
+
+audio{
+	.hidden;
 }
 
 .centered {
@@ -136,6 +140,20 @@ audio{
 	.margin-bottom;
 	position: absolute;
 	left: @strip-width + 20px;;
+}
+
+#spinner{
+	.middle-of-screen;
+
+	@spinner-dimension: 75px;
+
+	margin-left:-@spinner-dimension/2;
+	margin-top:-@spinner-dimension/2;
+
+	img{
+		width:@spinner-dimension;
+		height:@spinner-dimension;	
+	}
 }
 
 @import "client/login";

@@ -7,10 +7,10 @@ html
 		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/nanoscroller.css")
 		link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
 		title= title
-	body(style="display:none")
+	body
 		#header
-			#logo Fluidtalk
-			.top-links
+			#logo Dobly
+			.top-links.hidden
 				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
 				span(data-bind="visible: navigation.showingDesktop() || navigation.showBack()") |
@@ -18,7 +18,10 @@ html
 				span(data-bind="visible: !navigation.showingGroup()") |
 				a(href="/logout") Logout
 
-		#strip.nano(data-bind="with: desktop, visible: navigation.showingDesktop")
+		#spinner
+			img(src="/images/spinner.gif", alt="loading...")
+
+		#strip.nano(data-bind="with: desktop, visible: navigation.showingDesktop", style="display: none;")
 			.content
 				#new-convo-tile(data-bind="click: $parent.addNewConversation")				
 					.icon-plus
@@ -31,67 +34,68 @@ html
 							.icon-dismiss(data-bind="click: $parent.remove")
 							.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
 
-		#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
-			.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
-				.convo-header(data-bind="click: markAsRead")
-					.topic
-						span(data-bind="text: topic, click: editTopic, visible: !editingTopic()")
-						input(data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateTopic }, visible: editingTopic, hasfocus: editingTopic")
-					.created-by 
-						span by 
-						span(data-bind="text: createdBy")
-				.nano.convo-body(data-bind="click: markAsRead")
-					.content(data-bind="foreach: messages")
-						.message
-							.author(data-bind="text: createdBy")
-							.time(data-bind="text: timestamp")
-							.text(data-bind="foreach: lines")
-								div(data-bind="text: $data")
-				.convo-new-message(data-bind="click: markAsRead")
-					textarea(tabindex="2", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
+		#content.hidden
+			#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
+				.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
+					.convo-header(data-bind="click: markAsRead")
+						.topic
+							span(data-bind="text: topic, click: editTopic, visible: !editingTopic()")
+							input(data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateTopic }, visible: editingTopic, hasfocus: editingTopic")
+						.created-by 
+							span by 
+							span(data-bind="text: createdBy")
+					.nano.convo-body(data-bind="click: markAsRead")
+						.content(data-bind="foreach: messages")
+							.message
+								.author(data-bind="text: createdBy")
+								.time(data-bind="text: timestamp")
+								.text(data-bind="foreach: lines")
+									div(data-bind="text: $data")
+					.convo-new-message(data-bind="click: markAsRead")
+						textarea(tabindex="2", placeholder="Write a new message", rows="2", data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
 
-		#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.pairs")
-			.convo-pair(data-bind="foreach: $data")				
-				.convo(data-bind="click: $root.allConversations.open")
-					.header
-						.left(data-bind="css: { 'with-out-counter': unreadCounter() <= 0, 'with-counter': unreadCounter() > 0 }")
-							.topic(data-bind="text: topic")
-							.created-by
-								span by 
-								span(data-bind="text: createdBy")
-						.right(data-bind="visible: unreadCounter() > 0")
-							.counter(data-bind="text: unreadCounter")
-					.messages(data-bind="foreach: lastMessages")
-						.message
-							.author(data-bind="text: createdBy")
-							.time(data-bind="text: simpleTimestamp")
-							.text(data-bind="text: lines")
-					.no-messages(data-bind="visible: lastMessages().length <= 0")
-						.message There aren't any messages in this conversation.
+			#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.pairs")
+				.convo-pair(data-bind="foreach: $data")				
+					.convo(data-bind="click: $root.allConversations.open")
+						.header
+							.left(data-bind="css: { 'with-out-counter': unreadCounter() <= 0, 'with-counter': unreadCounter() > 0 }")
+								.topic(data-bind="text: topic")
+								.created-by
+									span by 
+									span(data-bind="text: createdBy")
+							.right(data-bind="visible: unreadCounter() > 0")
+								.counter(data-bind="text: unreadCounter")
+						.messages(data-bind="foreach: lastMessages")
+							.message
+								.author(data-bind="text: createdBy")
+								.time(data-bind="text: simpleTimestamp")
+								.text(data-bind="text: lines")
+						.no-messages(data-bind="visible: lastMessages().length <= 0")
+							.message There aren't any messages in this conversation.
 
-		#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
-			#topic
-				textarea(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
-			.buttons				
-				button.button-left(type="button", data-bind="click: cancel") Cancel
-				button.button-right(type="button", data-bind="click: createOnClick") Create
+			#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
+				#topic
+					textarea(placeholder="Write a topic or question", data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
+				.buttons				
+					button.button-left(type="button", data-bind="click: cancel") Cancel
+					button.button-right(type="button", data-bind="click: createOnClick") Create
 
-		#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
-			p For a better experience, please allow Fluidtalk to request permissions to show rich notifications
+			#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
+				p For a better experience, please allow Dobly to request permissions to show rich notifications
 
-			.buttons
-				button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
-				button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
+				.buttons
+					button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
+					button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
 
-		#group-info(data-bind="with: group, visible: navigation.showingGroup")
-			h2(data-bind="text: name")
+			#group-info(data-bind="with: group, visible: navigation.showingGroup")
+				h2(data-bind="text: name")
 
-			table.users(data-bind="foreach: users")
-				tr
-					td.name(data-bind="text: username")
-					td.status
-						span.online(data-bind="visible: online") online
-						span.offline(data-bind="visible: !online()") offline
+				table.users(data-bind="foreach: users")
+					tr
+						td.name(data-bind="text: username")
+						td.status
+							span.online(data-bind="visible: online") online
+							span.offline(data-bind="visible: !online()") offline
 					
 
 audio#notification-sound

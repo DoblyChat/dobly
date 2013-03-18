@@ -25,7 +25,7 @@ function createNewConversation(navigation) {
   }
 
   function create() {
-    socket.emit('create_conversation', { topic: self.topic() });
+    app.socket.emit('create_conversation', { topic: self.topic() });
     self.topic('');
     navigation.desktop();  
   }

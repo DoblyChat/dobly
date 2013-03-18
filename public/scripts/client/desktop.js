@@ -41,7 +41,6 @@ function createDesktop(data, allConversations){
     if(!hasConversation(conversation)){
       self.persistNewConversation(conversation);
       self.conversations.push(conversation);
-      // self.resize.strip();
       if (!self.hasLeftConversation() || !self.hasRightConversation()) {
         activateLastConversation();
       }
@@ -58,7 +57,7 @@ function createDesktop(data, allConversations){
   }
   
   self.persistNewConversation = function(conversation) {
-    socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
+    app.socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
   };
 
   self.addAndActivate = function(conversation) {
@@ -67,7 +66,7 @@ function createDesktop(data, allConversations){
   }
 
   self.remove = function(conversation) {
-    socket.emit('remove_from_desktop', { id: self.id, conversationId: conversation.id });
+    app.socket.emit('remove_from_desktop', { id: self.id, conversationId: conversation.id });
     var index = self.conversations.indexOf(conversation);
     self.conversations.splice(index, 1);
     if(conversation.active()) {

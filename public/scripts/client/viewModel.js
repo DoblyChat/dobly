@@ -10,7 +10,7 @@ function createViewModel(conversationsData, desktopData, groupData) {
 
   self.notifier = createNotifier(self.desktop);
 
-  socket.on('receive_message', function(message) {
+  app.socket.on('receive_message', function(message) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){
       if(message.conversationId === conversation.id){
         receiveMessage(conversation, message);
@@ -39,14 +39,14 @@ function createViewModel(conversationsData, desktopData, groupData) {
 
   self.newConversation = createNewConversation(self.navigation);
 
-  socket.on('my_new_conversation', function(data) {
+  app.socket.on('my_new_conversation', function(data) {
     var conversation = createConversation(data);
     self.conversations.push(conversation);
     self.desktop.addAndActivate(conversation);
     conversation.hasFocus(true);
   });
 
-  socket.on('new_conversation', function(data){
+  app.socket.on('new_conversation', function(data){
     var conversation = createConversation(data);
     self.conversations.push(conversation);
     self.desktop.add(conversation); 

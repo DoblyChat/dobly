@@ -42,7 +42,7 @@ function home(req, res) {
 	} else {
 		var flash = req.flash(flashKey);
 		res.render('index', {  	
-								title: 'Fluidtalk',
+								title: 'Dobly',
 								info: flash, 
 								showFlash: flash.length > 0 
 							});	
@@ -68,7 +68,7 @@ function timeOut(req, res) {
 function signUp(req, res) {
 	var flash = req.flash(flashKey);
 	var showFlash = flash.length > 0;
-	res.render('sign-up', { group: req.params.group, title: 'Sign up - Fluid Talk', showFlash: showFlash, info: flash });
+	res.render('sign-up', { group: req.params.group, title: 'Sign up - Dobly', showFlash: showFlash, info: flash });
 }
 
 function createUser(req, res) {
@@ -138,7 +138,7 @@ function renderDesktop(req, res) {
 	    function render() {
 	    	res.render('conversations/active', 
 			{ 
-				title: 'FluidTalk',
+				title: 'Dobly',
 			    conversations: JSON.stringify(results.conversations),
 			    desktop: JSON.stringify(results.desktop), 
 				currentUser: JSON.stringify(req.user),

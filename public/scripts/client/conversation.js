@@ -82,15 +82,16 @@ function createConversation(data) {
 
   function sendMessageToServer(messageData){
     self.newMessage('');
-    socket.emit('send_message', messageData);
+    app.socket.emit('send_message', messageData);
   }
 
   self.addMessage = function(data){
     var msg = createMessage(data);
     self.messages.push(msg);
+    
     if (self.active()) {
       self.scroll.adjust();
-      self.markAsRead();
+      emitMarkAsRead();
     } 
     
     if(!(app.inFocus && self.hasFocus())){
@@ -123,9 +124,13 @@ function createConversation(data) {
   self.markAsRead = function(){
     if(self.unreadCounter() > 0){
       self.unreadCounter(0);
-      socket.emit('mark_as_read', self.id);  
+      emitMarkAsRead();
     }
   };
+
+  function emitMarkAsRead(){
+    app.socket.emit('mark_as_read', self.id);
+  }
 
   self.editTopic = function() {
     self.editingTopic(true);
@@ -133,7 +138,7 @@ function createConversation(data) {
 
   self.updateTopic = function(conversation, event){
     if(common.enterKeyPressed(event)){
-      socket.emit('update_topic', { conversationId: conversation.id, newTopic: self.newTopic() })
+      app.socket.emit('update_topic', { conversationId: conversation.id, newTopic: self.newTopic() })
       self.topic(self.newTopic());
       self.editingTopic(false);
     } else {

@@ -55,7 +55,7 @@ function setupStripDragAndDrop(desktop){
       currentSort.stopIndex = ui.item.index();
 
       if (currentSort.startIndex !== currentSort.stopIndex) {
-        socket.emit('update_strip_order', { id: desktop.id, currentSort: currentSort });
+        app.socket.emit('update_strip_order', { id: desktop.id, currentSort: currentSort });
         var conversation = desktop.conversations()[currentSort.startIndex];
         reorder(conversation);
         if (conversation.active()) {

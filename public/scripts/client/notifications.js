@@ -58,7 +58,7 @@ function createNotifier(desktop){
 	}
 
 	self.updateTitle = function(unreadCount){
-		var appTitle = 'FluidTalk';
+		var appTitle = 'Dobly';
 		clearInterval(titleBlinkTimer);
 
 		if(unreadCount > 0){
@@ -70,7 +70,7 @@ function createNotifier(desktop){
 		function blink(){
 			var currentTitle = document.title;
 			if(currentTitle === appTitle){
-				document.title = '(' + unreadCount + ') unread - FluidTalk';
+				document.title = '(' + unreadCount + ') unread - Dobly';
 			}else{
 				document.title = appTitle;
 			}

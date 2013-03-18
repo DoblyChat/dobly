@@ -7,6 +7,7 @@ var Conversation = require('../models/conversation'),
     async = require('async');
 
 var flashKey = 'error';
+var title = 'Dobly';
 
 exports.config = function(app) {
 	app.get('/', home);
@@ -42,7 +43,7 @@ function home(req, res) {
 	} else {
 		var flash = req.flash(flashKey);
 		res.render('index', {  	
-								title: 'Dobly',
+								title: title,
 								info: flash, 
 								showFlash: flash.length > 0 
 							});	
@@ -68,7 +69,7 @@ function timeOut(req, res) {
 function signUp(req, res) {
 	var flash = req.flash(flashKey);
 	var showFlash = flash.length > 0;
-	res.render('sign-up', { group: req.params.group, title: 'Sign up - Dobly', showFlash: showFlash, info: flash });
+	res.render('sign-up', { group: req.params.group, title: 'Sign up - ' + title, showFlash: showFlash, info: flash });
 }
 
 function createUser(req, res) {
@@ -138,7 +139,7 @@ function renderDesktop(req, res) {
 	    function render() {
 	    	res.render('conversations/active', 
 			{ 
-				title: 'Dobly',
+				title: title,
 			    conversations: JSON.stringify(results.conversations),
 			    desktop: JSON.stringify(results.desktop), 
 				currentUser: JSON.stringify(req.user),
@@ -186,7 +187,7 @@ function getGroups(req, res){
 			group.users.push(user);
 		});
 
-		res.render('admin/groups', { groups: results.groups, title: 'groups' });
+		res.render('admin/groups', { groups: results.groups, title: title });
 
 		function findGroup(groupId){
 			var foundGroup;

@@ -58,7 +58,7 @@ function createNotifier(desktop){
 	}
 
 	self.updateTitle = function(unreadCount){
-		var appTitle = 'Dobly';
+		var appTitle = $('title').text();
 		clearInterval(titleBlinkTimer);
 
 		if(unreadCount > 0){
@@ -70,7 +70,7 @@ function createNotifier(desktop){
 		function blink(){
 			var currentTitle = document.title;
 			if(currentTitle === appTitle){
-				document.title = '(' + unreadCount + ') unread - Dobly';
+				document.title = '(' + unreadCount + ') unread - ' + appTitle;
 			}else{
 				document.title = appTitle;
 			}

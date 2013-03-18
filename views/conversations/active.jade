@@ -9,7 +9,7 @@ html
 		title= title
 	body
 		#header
-			#logo Dobly
+			#logo= title
 			.top-links.hidden
 				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
@@ -81,7 +81,10 @@ html
 					button.button-right(type="button", data-bind="click: createOnClick") Create
 
 			#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
-				p For a better experience, please allow Dobly to request permissions to show rich notifications
+				p 
+					span For a better experience, please allow 
+					span= title
+					span  to request permissions to show rich notifications
 
 				.buttons
 					button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow

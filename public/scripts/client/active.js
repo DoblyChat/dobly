@@ -27,18 +27,18 @@
 	});
 
 	function setupDesktopUI(){
-		app.desktop.resize.dualConvo();
+		app.desktop.resize.stripAndConvos();
 		setupStripDragAndDrop(app.desktop);
 	}
 
 	$(global).load(function() {
-		app.desktop.resize.convoBody();
+		app.desktop.resize.tilesAndConversationBodies();
 		app.desktop.scroll.setup();
 	});
 
 	$(global).resize(function() {
-		app.desktop.resize.dualConvo();
-		app.desktop.resize.convoBody();
+		app.desktop.resize.stripAndConvos();
+		app.desktop.resize.tilesAndConversationBodies();
 	});
 
 	$(global).focus(function() {
@@ -58,7 +58,6 @@
 	function showRenderedElements(){
 		$('#spinner').hide();
 		$('.top-links').show();
-		$('#strip').show();
 		$('#content').show();
 	}
 })(window);

@@ -1,7 +1,7 @@
 function createDesktopResize(desktop) {
   var res = {};
 
-  res.dualConvo = function() {
+  res.stripAndConvos = function() {
     var includeMargin = true;
     var bodyHeight = $('body').outerHeight(includeMargin);
     var headerHeight = $('#header').outerHeight(includeMargin);
@@ -12,7 +12,12 @@ function createDesktopResize(desktop) {
     $('#strip').height(height);
   };
 
-  res.convoBody = function() {
+  res.tilesAndConversationBodies = function() {
+    conversationBodies();
+    tiles();
+  };
+
+  function conversationBodies() {
     if (desktop.hasLeftConversation()) {
       desktop.leftConversation().resize.body();
     }
@@ -20,6 +25,13 @@ function createDesktopResize(desktop) {
     if (desktop.hasRightConversation()) {
       desktop.rightConversation().resize.body();
     }
+  };
+
+  function tiles() {    
+    var stripHeight = $('#strip').outerHeight();
+    var newTileHeight = $('#new-convo-tile').outerHeight();
+
+    $('#convo-tiles').height(stripHeight - newTileHeight);
   };
 
   return res;
@@ -37,8 +49,16 @@ function createDesktopScroll(desktop) {
       desktop.rightConversation().scroll.setup();
     }
 
-    $('#strip').nanoScroller();
+    scr.tiles();
   };
+
+  scr.tiles = function() {
+    $('#convo-tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
+  };
+
+  scr.bottomTile = function() {
+    $('#convo-tiles').nanoScroller({ scroll: 'bottom' });
+  }
 
   return scr;
 };
@@ -46,7 +66,7 @@ function createDesktopScroll(desktop) {
 function setupStripDragAndDrop(desktop){
   var currentSort;
 
-  $('#convo-tiles').sortable({      
+  $('#convo-tiles .content').sortable({      
     handle: ".icon-move-handle",
     start: function(event, ui){
       currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
@@ -85,5 +105,5 @@ function setupStripDragAndDrop(desktop){
     }
   }
 
-  $('.film-strip').disableSelection();
+  $('#convo-tiles').disableSelection();
 };

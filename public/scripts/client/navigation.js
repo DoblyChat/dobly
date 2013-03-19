@@ -22,7 +22,7 @@ function createNavigationModule(viewModel) {
       self.showingDesktop(true);
       self.showingNotificationSetup(false);
       self.showingGroup(false);
-      viewModel.desktop.resize.convoBody();
+      viewModel.desktop.resize.tilesAndConversationBodies();
       viewModel.desktop.scroll.setup();
       setupStripDragAndDrop(viewModel.desktop);
     };

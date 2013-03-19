@@ -41,7 +41,7 @@ function createDesktop(data, allConversations){
     if(!hasConversation(conversation)){
       self.persistNewConversation(conversation);
       self.conversations.push(conversation);
-      // self.resize.strip();
+      self.scroll.tiles();
       if (!self.hasLeftConversation() || !self.hasRightConversation()) {
         activateLastConversation();
       }
@@ -73,6 +73,7 @@ function createDesktop(data, allConversations){
     if(conversation.active()) {
       removeActive(conversation, index);
     }
+    self.scroll.tiles();
   };
 
   function removeActive(conversation, index) {

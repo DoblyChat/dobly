@@ -11,7 +11,6 @@
 @new-message-right-padding: 13px;
 
 @textarea-height: 46px;
-@thick-gray-border: 2px solid @light-gray;
 
 .title-font {
 	font-size: @convo-title-text-size;
@@ -19,16 +18,12 @@
 	.title-color;
 }
 
-#convos {
-	.convos-container
-}
-
 .convo-left {
-	margin-right: @standard-margin * 2;
+	float: left;
 }
 
 .convo-right {
-	
+	float: right;
 }
 
 .message-padding {
@@ -40,7 +35,6 @@
 	height: 100%;
 	background: @white;
 	.box-shadow;
-	float: left;
 
 	.convo-header {	
 		.message-padding;

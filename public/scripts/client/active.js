@@ -28,18 +28,18 @@ $(document).ready(function() {
 });
 
 function setupDesktopUI(){
-	app.desktop.resize.dualConvo();
+	app.desktop.resize.stripAndConvos();
 	setupStripDragAndDrop(app.desktop);
 }
 
 $(window).load(function() {
-	app.desktop.resize.convoBody();
+	app.desktop.resize.tilesAndConversationBodies();
 	app.desktop.scroll.setup();
 });
 
 $(window).resize(function() {
-	app.desktop.resize.dualConvo();
-	app.desktop.resize.convoBody();
+	app.desktop.resize.stripAndConvos();
+	app.desktop.resize.tilesAndConversationBodies();
 });
 
 $(window).focus(function() {

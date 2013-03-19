@@ -1,39 +1,32 @@
-@tile-height: 90px;
+@tile-height: 79px;
 @tile-padding: 5px;
 
-@tile-text-top-padding: 2px;
+@tile-text-top-padding: 10px;
 @tile-text-bottom-padding: 2px;
-@tile-text-left-padding: 4px;
-@tile-text-right-padding: 4px;
-@tile-border-size: 3px;
+@tile-text-left-padding: 9px;
+@tile-text-right-padding: 9px;
+@tile-bottom-border-size: 1px;
+@tile-highlight-border-size: 5px;
 
 @tile-count: 2;
 
-@tile-inner-height: @tile-height - (@tile-border-size * 2);
-@tile-inner-width: @tile-width - (@tile-border-size * 2);
-@tile-text-height: 55px;
+@tile-inner-height: @tile-height - (@tile-bottom-border-size);
+@tile-inner-width: @tile-width;
+@tile-text-height: 35px;
 @tile-icons-height: @tile-inner-height - (@tile-text-height + @tile-text-top-padding + @tile-text-bottom-padding);
 
-#strip {
-	width: @strip-width;
-	left: @standard-margin;
-	position: absolute;
-}
-
 .tile-common {
-	background: @light-gray;
-	color: @gray;
-	.margin-bottom;
 	cursor: pointer;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	background-color: @white;
 }
 
 .tile-icons-common {
 	float: left;
 	font-size: 14px;
 	color: lighten(@gray, 40%);
-	padding: 4px;
+	padding: 4px 4px 10px 4px;
 }
 
 .tile-icons-common-hover {
@@ -42,63 +35,83 @@
 
 .tile {
 	.tile-common;
-	border: @tile-border-size solid @light-gray;
+	border-bottom: @tile-bottom-border-size solid @light-gray;
 	height: @tile-inner-height;
-	width: @tile-inner-width;
+	width: @tile-inner-width;	
 
-	.tile-text {
-		padding: @tile-text-top-padding @tile-text-right-padding @tile-text-bottom-padding @tile-text-left-padding;
-		height: @tile-text-height;
-		overflow: hidden;
+	.highlight-placeholder {
+		border-left: @tile-highlight-border-size solid @white;
+		border-right: @tile-highlight-border-size solid @white;
+
+		.tile-text {
+			padding: @tile-text-top-padding @tile-text-right-padding @tile-text-bottom-padding @tile-text-left-padding;
+			height: @tile-text-height;
+			overflow: hidden;
+		}
+
+		.tile-icons {
+			height: @tile-icons-height;
+
+			.icon-move-handle {
+				cursor: move;
+				.tile-icons-common;
+				padding-left: 9px;
+
+				&:hover {
+					.tile-icons-common-hover;
+				}
+			}		
+
+			.icon-dismiss {
+				.tile-icons-common;
+
+				&:hover {
+					.tile-icons-common-hover;
+				}
+			}
+
+			.tile-counter {
+				.counter-common;
+				padding: 0 7px;
+				height: 25px;
+				float: right;			
+				font-size: 20px;
+				line-height: 1.1;
+				margin-right: 1px;
+			}
+		}
 	}
 
-	.tile-icons {
-		height: @tile-icons-height;
-
-		.icon-move-handle {
-			cursor: move;
-			.tile-icons-common;
-
-			&:hover {
-				.tile-icons-common-hover;
-			}
-		}		
-
-		.icon-dismiss {
-			.tile-icons-common;
-
-			&:hover {
-				.tile-icons-common-hover;
-			}
-		}
-
-		.tile-counter {
-			.counter-common;
-			width: 25px;
-			height: @tile-icons-height - 2px;
-			float: right;			
-			font-size: 20px;
-			line-height: 1.1;
-			margin-right: 1px;
-		}
+	&:last-child {
+		border-bottom: 0;
 	}
 }
 
 .tile.highlight {
-	border: @tile-border-size solid @blue;
+
+	.highlight-placeholder {
+		border-left: @tile-highlight-border-size solid @blue;
+	}
 }
 
-@new-convo-tile-top-padding: 18px;
-@new-convo-tile-bottom-padding: 5px;
-@new-convo-tile-left-padding: 5px;
-@new-convo-tile-right-padding: 5px;
+.tile.ui-sortable-helper {
+	border: @tile-bottom-border-size solid @light-gray;
+}
+
+.ui-sortable-placeholder + .tile {
+	border-top: @tile-bottom-border-size solid @light-gray;
+}
+
+@new-convo-tile-height: 67px;
+@new-convo-tile-top-padding: 8px;
 
 #new-convo-tile {
 	.tile-common;
-	height: @tile-height - @new-convo-tile-top-padding - @new-convo-tile-bottom-padding;
-	width: @tile-width - @new-convo-tile-left-padding - @new-convo-tile-right-padding;
-	padding: @new-convo-tile-top-padding @new-convo-tile-right-padding @new-convo-tile-bottom-padding @new-convo-tile-left-padding;
+	height: @new-convo-tile-height - @new-convo-tile-top-padding;
+	width: @tile-width;
+	padding-top: @new-convo-tile-top-padding;
 	text-align: center;
+	border-top: @thick-gray-border;
 }
 
 #new-convo-tile.disabled {

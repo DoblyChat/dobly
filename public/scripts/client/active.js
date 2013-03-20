@@ -24,6 +24,8 @@
 
 		setupDesktopUI();
 		showRenderedElements();
+		
+		startPing();
 	});
 
 	function setupDesktopUI(){
@@ -49,16 +51,30 @@
 		app.inFocus = false;
 	});
 
-	global.app.socket.on('reconnecting', function(delay, attempt) {
-		if (attempt === maxReconnects) {
-			global.location.href = "http://" + global.location.host + "/timeout";
-		}
-	});
-
 	function showRenderedElements(){
 		$('#spinner').hide();
 		$('.top-links').show();
 		$('#content').show();
+	}
+
+	global.app.socket.on('reconnecting', function(delay, attempt) {
+		if (attempt === maxReconnects) {
+			timeout();
+		}
+	});
+
+	function timeout(){
+		global.location.href = "http://" + global.location.host + "/timeout";
+	}
+
+	function startPing(){
+		setInterval(function(){
+			global.app.socket.emit('ping');
+		}, 2000);
+
+		global.app.socket.on('timeout', function(){
+			timeout();
+		});
 	}
 })(window);
 

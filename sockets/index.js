@@ -21,6 +21,7 @@ exports.config = function(io, sessionStore){
     io.sockets.on('connection', function (socket) {
       socket.emitToGroup = emitToGroup;
       socket.broadcastToGroup = broadcastToGroup;
+      socket.whenUser = whenUser;
 
       conversationIo.config(socket);
       desktopIo.config(socket);
@@ -34,6 +35,10 @@ exports.config = function(io, sessionStore){
       socket.on('disconnect', function(){
         userDisconnected(socket);
       });
+
+      socket.on('ping', function(){
+        checkForActiveSession(socket);
+      });
     });
 };
 
@@ -45,6 +50,11 @@ function broadcastToGroup(event, data){
   this.in(this.handshake.user.groupId).broadcast.emit(event, data);
 }
 
+function whenUser(event, callback){
+  this.handshake.session.touch();
+  this.on(event, callback);
+}
+
 function authorize(data, accept, sessionStore){
 	if (data.headers.cookie) {
         var cookieParser = require('cookie');
@@ -54,20 +64,21 @@ function authorize(data, accept, sessionStore){
         sessionStore.load(sessionID, function (err, session) {
             if (err || !session) {
                 console.warn('Session not found', err);
-                return accept("Can't find session", false);
+                accept("Can't find session", false);
             } else {
                 User.findById(session.passport.user, function(err, user){
-                  if(err){
+                  if(err || !user){
                     console.error('Error retrieving user', err);
                   }
 
+                  data.session = session;
                   data.user = user._doc;
-                  return accept(null, true);
+                  accept(null, true);
                 });
             }
         });
     } else {
-       return accept('No cookie transmitted.', false);
+        accept('No cookie transmitted.', false);
     }
 };
 
@@ -89,4 +100,10 @@ function requestOnlineUsers(currentSocket, sockets){
   }
 
   currentSocket.emit('receive_online_users', connectedUsers);
+}
+
+function checkForActiveSession(socket){
+  if(socket.handshake.session.cookie._expires < Date.now()){
+    socket.emit('timeout');
+  }
 }

@@ -5,19 +5,19 @@ var Conversation = require('../models/conversation'),
     async = require('async');
 
 exports.config = function(socket){
-    socket.on('send_message', function(data) {
+    socket.whenUser('send_message', function(data) {
         sendMessage(socket, data);
     });
 
-    socket.on('create_conversation', function(data){
+    socket.whenUser('create_conversation', function(data){
         createConversation(socket, data);
     });
 
-    socket.on('mark_as_read', function(conversationId){
+    socket.whenUser('mark_as_read', function(conversationId){
         markAsRead(socket, conversationId);
     });
 
-    socket.on('update_topic', function(data){
+    socket.whenUser('update_topic', function(data){
         updateTopic(data);
     });
 }
@@ -56,7 +56,6 @@ function sendMessage(socket, data){
         }
     ], 
     function(err, data){
-        debugger;
         if(err){
             console.error('Error sending message', err);
         }else{

@@ -1,15 +1,15 @@
 var Desktop = require('../models/desktop');
 
 exports.config = function(socket){
-    socket.on('add_to_desktop', function(data){
+    socket.whenUser('add_to_desktop', function(data){
         add(data);
     });
 
-    socket.on('remove_from_desktop', function(data){
+    socket.whenUser('remove_from_desktop', function(data){
         remove(data);
     });
 
-    socket.on('update_strip_order', function(data){
+    socket.whenUser('update_strip_order', function(data){
         updateStripOrder(data);
     });
 }

@@ -6,7 +6,7 @@ describe('Message', function() {
 		var messageData;
 
 		beforeEach(function() {
-			messageData = { createdBy: 'creator', timestamp: Date.now() }
+			messageData = { content: 'hi there', createdBy: 'creator', timestamp: Date.now() }
 		});
 
 		function requiredFieldTest(field, done) {
@@ -16,6 +16,10 @@ describe('Message', function() {
 				done();
 			});
 		};
+
+		it('content', function(done) {
+			requiredFieldTest('content', done);
+		});		
 
 		it('createdBy', function(done) {
 			requiredFieldTest('createdBy', done);
@@ -30,7 +34,7 @@ describe('Message', function() {
 		var messageData;
 
 		beforeEach(function() {
-			messageData = { createdBy: 'creator', timestamp: Date.now() }
+			messageData = { content: 'hi there', createdBy: 'creator', timestamp: Date.now() }
 		});
 
 		it('saves with 1999', function(done) {

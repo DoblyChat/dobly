@@ -25,4 +25,30 @@ describe('Message', function() {
 			requiredFieldTest('timestamp', done);
 		});
 	});
+
+	describe('#content max length', function() {
+		var messageData;
+
+		beforeEach(function() {
+			messageData = { createdBy: 'creator', timestamp: Date.now() }
+		});
+
+		it('saves with 1999', function(done) {
+			messageData.content = stringOfLength(1999);
+			Message.create(messageData, done);
+		});
+
+		it('saves with 2000', function(done) {
+			messageData.content = stringOfLength(2000);
+			Message.create(messageData, done);
+		});
+
+		it('does not save with 2001', function(done) {
+			messageData.content = stringOfLength(2001);
+			Message.create(messageData, function(err) {
+				err.should.not.be.null;
+				done();
+			});
+		});
+	});
 });

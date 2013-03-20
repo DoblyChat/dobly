@@ -1,7 +1,7 @@
 var mongo = require('mongoose');
 
 function contentMaxLength(value) {
-	return value.length <= 2000;
+	return typeof value !== 'undefined' && value.length <= 2000;
 }
 
 var schema = new mongo.Schema({

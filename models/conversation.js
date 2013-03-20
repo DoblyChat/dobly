@@ -2,7 +2,7 @@ var mongo = require('mongoose'),
 	message = require('./message');
 
 function topicMaxLength(value) {
-	return value.length <= 500;
+	return typeof value !== 'undefined' && value.length <= 500;
 }
 
 var schema = new mongo.Schema({

@@ -74,4 +74,34 @@ describe('Conversation', function(){
 			requiredFieldTest('groupId', done);
 		});
 	});
+
+	describe('#topic max length', function() {
+		var conversationData;
+
+		beforeEach(function () {
+			conversationData = { 
+					createdBy: 'Pepe',
+					timestamp: Date.now(),
+					groupId: new mongo.Types.ObjectId()
+				};
+		});
+
+		it('saves with 499', function(done) {
+			conversationData.topic = stringOfLength(499);
+			Conversation.create(conversationData, done);
+		});
+
+		it('saves with 500', function(done) {
+			conversationData.topic = stringOfLength(500);
+			Conversation.create(conversationData, done);
+		});
+
+		it('does not save with 501', function(done) {
+			conversationData.topic = stringOfLength(501);
+			Conversation.create(conversationData, function(err) {
+				err.should.not.be.null;
+				done();
+			});
+		});
+	});
 });

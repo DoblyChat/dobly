@@ -11,6 +11,8 @@ function createNotifier(desktop){
 	var notifications = window.webkitNotifications;
 	var titleBlinkTimer;
 
+	var appTitle = document.title;
+
 	self.needsToAskForPermission = function(){
 		return Modernizr.notifications && permissionsNotSet();
 	}
@@ -58,7 +60,6 @@ function createNotifier(desktop){
 	}
 
 	self.updateTitle = function(unreadCount){
-		var appTitle = $('title').text();
 		clearInterval(titleBlinkTimer);
 
 		if(unreadCount > 0){

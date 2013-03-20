@@ -70,7 +70,7 @@
 	function startPing(){
 		setInterval(function(){
 			global.app.socket.emit('ping');
-		}, 2000);
+		}, 5000);
 
 		global.app.socket.on('timeout', function(){
 			timeout();

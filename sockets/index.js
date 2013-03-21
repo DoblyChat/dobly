@@ -51,8 +51,10 @@ function broadcastToGroup(event, data){
 }
 
 function whenUser(event, callback){
-  this.handshake.session.touch();
-  this.on(event, callback);
+  this.on(event, function(data){
+    this.handshake.session.touch();
+    callback(data);
+  });
 }
 
 function authorize(data, accept, sessionStore){
@@ -103,7 +105,8 @@ function requestOnlineUsers(currentSocket, sockets){
 }
 
 function checkForActiveSession(socket){
-  if(socket.handshake.session.cookie._expires < Date.now()){
+  if(socket.handshake.session.cookie._expires < new Date()){
+    console.error('Session expired for %s where cookie expired at %s at %s', socket.handshake.user.username, socket.handshake.session.cookie._expires, new Date())
     socket.emit('timeout');
   }
 }

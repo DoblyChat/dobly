@@ -93,7 +93,6 @@ function createDesktop(data, allConversations){
     if (self.hasLeftConversation()) {
       renderConversationIfNeeded(self.leftConversation());
       self.leftConversation().activateOnTheLeft();
-      setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
     }
   }
 
@@ -140,6 +139,7 @@ function createDesktop(data, allConversations){
     deactivateConversations();
     activateLeftConversationBy(leftIndex);
     activateRightConversationBy(leftIndex + 1);
+    setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
   }
 
   function deactivateConversations(){

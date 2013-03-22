@@ -42,10 +42,23 @@
 
 		.topic {
 			.title-font;
-			
-			input{
+			width: 100%;
+
+			*{
+				width: 80%;
+			}
+
+			div{
+				border: 2px solid white;
+
+				&:hover{
+					border-color: @blue;
+				}
+			}
+
+			textarea{
 				padding: 0;
-				border: 1px;
+				border: 2px;
 			}
 		}
 

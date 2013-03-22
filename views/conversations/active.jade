@@ -40,8 +40,7 @@ html
 					.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
 						.convo-header(data-bind="click: markAsRead")
 							.topic
-								span(data-bind="text: topic, click: editTopic, visible: !editingTopic()")
-								input(data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateTopic }, visible: editingTopic, hasfocus: editingTopic")
+								span(data-bind="text: topic, click: $root.changeTopic.click")
 							.created-by 
 								span by 
 								span(data-bind="text: createdBy")
@@ -74,12 +73,19 @@ html
 						.no-messages(data-bind="visible: lastMessages().length <= 0")
 							.message There aren't any messages in this conversation.
 
-			#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
+			#new-convo.text-input-dialog(data-bind="with: newConversation, visible: navigation.showingNewConvo")
 				#topic
 					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: createOnClick") Create
+
+			#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
+				#topic
+					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateOnEnter }")
+				.buttons				
+					button.button-left(type="button", data-bind="click: cancel") Cancel
+					button.button-right(type="button", data-bind="click: updateOnClick") Create
 
 			#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
 				p 

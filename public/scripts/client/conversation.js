@@ -3,8 +3,6 @@ function createConversation(data) {
 
   self.id = data._id ? data._id : 0;
   self.topic = ko.observable(data.topic);
-  self.newTopic = ko.observable(data.topic);
-  self.editingTopic = ko.observable(false);
   self.createdBy = ko.observable(data.createdBy);
   self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
   self.newMessage = ko.observable('');
@@ -131,26 +129,6 @@ function createConversation(data) {
   function emitMarkAsRead(){
     app.socket.emit('mark_as_read', self.id);
   }
-
-  self.editTopic = function() {
-    self.editingTopic(true);
-  };
-
-  self.updateTopic = function(conversation, event){
-    if(common.enterKeyPressed(event)){
-      app.socket.emit('update_topic', { conversationId: conversation.id, newTopic: self.newTopic() })
-      self.topic(self.newTopic());
-      self.editingTopic(false);
-    } else {
-      return true;
-    }
-  };
-
-  self.editingTopic.subscribe(function(editingTopic){
-    if(!editingTopic){
-      self.newTopic(self.topic());
-    }
-  });
 
   return self;
 }

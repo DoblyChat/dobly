@@ -72,6 +72,50 @@ function createViewModel(conversationsData, desktopData, groupData) {
   }
 
   self.group = createGroup(groupData);
+  self.conversationToChangeTopic = ko.observable();
+
+  self.changeTopic = (function(nav){
+    var change = {};
+
+    var conversation;
+
+    change.newTopic = ko.observable('');
+
+    change.click = function(conversationToChange){
+      conversation = conversationToChange;
+      change.newTopic(conversation.topic());
+      nav.changeTopic();
+    };
+
+    change.updateOnEnter = function(obj, event){
+      if(common.enterKeyPressed(event)){
+        update();
+      } else {
+        return true;
+      }
+    };
+
+    change.updateOnClick = function(obj, event){
+      update();
+    };
+
+    function update(){
+      app.socket.emit('update_topic', { conversationId: conversation.id, newTopic: change.newTopic() })
+      conversation.topic(change.newTopic());
+      close();
+    }
+
+    function close(){
+      change.newTopic('');
+      nav.desktop();
+    }
+
+    change.cancel = function(){
+      close();
+    };
+
+    return change;
+  })(self.navigation);
 
   return self;
 }

@@ -6,6 +6,7 @@ function createNavigationModule(viewModel) {
     self.showingNewConvo = ko.observable(false);
     self.showingNotificationSetup = ko.observable(false);
     self.showingGroup = ko.observable(false);
+    self.changingTopic = ko.observable(false);
 
     self.all = function() {
       viewModel.allConversations.refresh();
@@ -14,6 +15,7 @@ function createNavigationModule(viewModel) {
       self.showingAll(true);
       self.showingNotificationSetup(false);
       self.showingGroup(false);
+      self.changingTopic(false);
     };
 
     self.desktop = function() {
@@ -22,6 +24,7 @@ function createNavigationModule(viewModel) {
       self.showingDesktop(true);
       self.showingNotificationSetup(false);
       self.showingGroup(false);
+      self.changingTopic(false);
       viewModel.desktop.resize.tilesAndConversationBodies();
       viewModel.desktop.scroll.setup();
       setupStripDragAndDrop(viewModel.desktop);
@@ -33,6 +36,7 @@ function createNavigationModule(viewModel) {
       self.showingNewConvo(true);
       self.showingNotificationSetup(false);
       self.showingGroup(false);
+      self.changingTopic(false);
     };
 
     self.notificationSetup = function(){
@@ -41,6 +45,7 @@ function createNavigationModule(viewModel) {
       self.showingAll(false);
       self.showingNotificationSetup(true);
       self.showingGroup(false);
+      self.changingTopic(false);
     };
 
     self.group = function(){
@@ -49,6 +54,7 @@ function createNavigationModule(viewModel) {
       self.showingAll(false);
       self.showingNotificationSetup(false);
       self.showingGroup(true);
+      self.changingTopic(false);
     };
 
     self.showBack = function(){
@@ -57,6 +63,15 @@ function createNavigationModule(viewModel) {
           || self.showingNotificationSetup()
           || self.showingGroup();
     };
+
+    self.changeTopic = function(){
+      self.showingAll(false);
+      self.showingDesktop(false);
+      self.showingNewConvo(false);
+      self.showingNotificationSetup(false);
+      self.showingGroup(false);
+      self.changingTopic(true);
+    }
 
     return self;
 }

@@ -85,8 +85,8 @@ function createConversation(data) {
     });
   }
 
-  self.addMessage = function(data){
-    var msg = createMessage(data, false);
+  self.addMessage = function(data, confirmed){
+    var msg = createMessage(data, confirmed);
     self.messages.push(msg);
     
     if (self.active()) {
@@ -105,7 +105,7 @@ function createConversation(data) {
     self.markAsRead();
     if (thereIsANewMessage() && common.enterKeyPressed(event) && !event.shiftKey) {
       var messageData = getMessageData();
-      var msgObj = self.addMessage(messageData);
+      var msgObj = self.addMessage(messageData, false);
       sendMessageToServer(messageData, msgObj);
       return false;
     } else {

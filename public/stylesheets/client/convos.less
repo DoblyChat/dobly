@@ -45,26 +45,27 @@
 			width: 100%;
 
 			*{
-				width: 80%;
+				float:left;
 			}
 
-			div{
-				border: 2px solid white;
+			img {
+				display: none;
+				width: 25px;
+				height: 25px;
+				cursor: pointer;
+			}
 
-				&:hover{
-					border-color: @blue;
+			&:hover{
+				img{
+					display: inline;
 				}
-			}
-
-			textarea{
-				padding: 0;
-				border: 2px;
 			}
 		}
 
 		.created-by {
 			.caption-color;
 			padding-top: 5px;
+			clear: both;
 		}
 	}
 

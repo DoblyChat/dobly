@@ -40,7 +40,8 @@ html
 					.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
 						.convo-header(data-bind="click: markAsRead")
 							.topic
-								span(data-bind="text: topic, click: $root.changeTopic.click")
+								span(data-bind="text: topic")
+								img(src="/images/blue-pencil.png", alt="change topic", data-bind="click: $root.changeTopic.click")
 							.created-by 
 								span by 
 								span(data-bind="text: createdBy")
@@ -74,18 +75,20 @@ html
 							.message There aren't any messages in this conversation.
 
 			#new-convo.text-input-dialog(data-bind="with: newConversation, visible: navigation.showingNewConvo")
-				#topic
+				div
 					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: createOnClick") Create
 
 			#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
-				#topic
+				p 
+					span Set a new topic for this conversation
+				div
 					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateOnEnter }")
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
-					button.button-right(type="button", data-bind="click: updateOnClick") Create
+					button.button-right(type="button", data-bind="click: updateOnClick") Save
 
 			#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
 				p 
@@ -136,6 +139,7 @@ script(type="text/javascript", src="/scripts/client/desktop.ui.js")
 script(type="text/javascript", src="/scripts/client/desktop.js")
 script(type="text/javascript", src="/scripts/client/allConversations.js")
 script(type="text/javascript", src="/scripts/client/newConversation.js")
+script(type="text/javascript", src="/scripts/client/changeTopic.js")
 script(type="text/javascript", src="/scripts/client/navigation.js")
 script(type="text/javascript", src="/scripts/client/viewModel.js")
 script(type="text/javascript", src="/scripts/client/active.js")

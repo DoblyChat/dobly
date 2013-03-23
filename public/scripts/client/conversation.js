@@ -17,7 +17,7 @@ function createConversation(data) {
 
   if(data.messages){
     for(var i = 0; i < data.messages.length; i++){
-      self.messages.push(createMessage(data.messages[i]));
+      self.messages.push(createMessage(data.messages[i], true));
     }
   }
 
@@ -78,13 +78,15 @@ function createConversation(data) {
       };
   }
 
-  function sendMessageToServer(messageData){
+  function sendMessageToServer(messageData, messageObj){
     self.newMessage('');
-    app.socket.emit('send_message', messageData);
+    app.socket.emit('send_message', messageData, function(){
+      messageObj.confirmedSent(true);
+    });
   }
 
   self.addMessage = function(data){
-    var msg = createMessage(data);
+    var msg = createMessage(data, false);
     self.messages.push(msg);
     
     if (self.active()) {
@@ -95,14 +97,16 @@ function createConversation(data) {
     if(!(app.inFocus && self.hasFocus())){
       self.unreadCounter(self.unreadCounter() + 1);  
     }
+
+    return msg;
   }
 
   self.sendMessage = function (conversation, event) {    
     self.markAsRead();
     if (thereIsANewMessage() && common.enterKeyPressed(event) && !event.shiftKey) {
       var messageData = getMessageData();
-      sendMessageToServer(messageData);
-      self.addMessage(messageData);
+      var msgObj = self.addMessage(messageData);
+      sendMessageToServer(messageData, msgObj);
       return false;
     } else {
       return true;

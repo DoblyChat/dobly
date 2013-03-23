@@ -49,7 +49,9 @@ html
 							.content(data-bind="foreach: messages")
 								.message
 									.author(data-bind="text: createdBy")
-									.time(data-bind="text: timestamp")
+									.time
+										span(data-bind="text: timestamp, visible: confirmedSent")
+										img.pending-spinner(src="/images/spinner.gif", alt="waiting for confirmation...", data-bind="visible: !confirmedSent()")
 									.text(data-bind="foreach: lines")
 										div(data-bind="text: $data")
 						.convo-new-message(data-bind="click: markAsRead")

@@ -83,9 +83,17 @@
 		}
 
 		.time {
-			.caption-color;
 			float: right;
-			font-size: @text-size - 1px;
+
+			span{
+				font-size: @text-size - 1px;
+				.caption-color;
+			}
+			
+			.pending-spinner{
+				width: 20px;
+				height: 20px;
+			}
 		}
 
 		.text {

@@ -5,8 +5,8 @@ var Conversation = require('../models/conversation'),
     async = require('async');
 
 exports.config = function(socket){
-    socket.whenUser('send_message', function(data) {
-        sendMessage(socket, data);
+    socket.whenUser('send_message', function(data, confirm) {
+        sendMessage(socket, data, confirm);
     });
 
     socket.whenUser('create_conversation', function(data){
@@ -46,7 +46,7 @@ function createConversation(socket, data) {
     );
 }
 
-function sendMessage(socket, data){
+function sendMessage(socket, data, confirm){
     async.parallel([
         function(callback){
             saveMessage(callback);
@@ -59,7 +59,8 @@ function sendMessage(socket, data){
         if(err){
             console.error('Error sending message', err);
         }else{
-            socket.broadcastToGroup('receive_message', data[0]);    
+            socket.broadcastToGroup('receive_message', data[0]);
+            confirm();  
         }
     });
 

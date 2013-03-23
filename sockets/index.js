@@ -51,9 +51,9 @@ function broadcastToGroup(event, data){
 }
 
 function whenUser(event, callback){
-  this.on(event, function(data){
+  this.on(event, function(data, confirm){
     this.handshake.session.touch();
-    callback(data);
+    callback(data, confirm);
   });
 }
 

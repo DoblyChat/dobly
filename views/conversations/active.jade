@@ -41,7 +41,7 @@ html
 						.convo-header(data-bind="click: markAsRead")
 							.topic
 								span(data-bind="text: topic")
-								img(src="/images/blue-pencil.png", alt="change topic", data-bind="click: $root.changeTopic.click")
+								span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")
 							.created-by 
 								span by 
 								span(data-bind="text: createdBy")

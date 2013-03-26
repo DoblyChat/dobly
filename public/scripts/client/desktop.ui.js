@@ -12,12 +12,7 @@ function createDesktopResize(desktop) {
     $('#strip').height(height);
   };
 
-  res.tilesAndConversationBodies = function() {
-    conversationBodies();
-    tiles();
-  };
-
-  function conversationBodies() {
+  res.conversationBodies = function() {
     if (desktop.hasLeftConversation()) {
       desktop.leftConversation().resize.body();
     }
@@ -34,6 +29,11 @@ function createDesktopResize(desktop) {
     $('#convo-tiles').height(stripHeight - newTileHeight);
   };
 
+  res.tilesAndConversationBodies = function() {
+    res.conversationBodies();
+    tiles();
+  };
+
   return res;
 };
 
@@ -41,6 +41,11 @@ function createDesktopScroll(desktop) {
   var scr = {};
 
   scr.setup = function() {
+    scr.setupConvos();
+    scr.tiles();
+  };
+
+  scr.setupConvos = function(){
     if (desktop.hasLeftConversation()) {
       desktop.leftConversation().scroll.setup();
     }
@@ -48,9 +53,7 @@ function createDesktopScroll(desktop) {
     if (desktop.hasRightConversation()) {
       desktop.rightConversation().scroll.setup();
     }
-
-    scr.tiles();
-  };
+  }
 
   scr.tiles = function() {
     $('#convo-tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });

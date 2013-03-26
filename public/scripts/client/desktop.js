@@ -5,6 +5,10 @@ function createDesktop(data, allConversations){
 
   self.conversations = ko.observableArray([]);
   self.renderedConversations = ko.observableArray([]);
+  self.leftConversation = ko.observable(null);
+  self.rightConversation = ko.observable(null);
+  self.resize = createDesktopResize(self);
+  self.scroll = createDesktopScroll(self);
 
   for(var i = 0; i < data.conversations.length; i++){
     var conversation = getConversationBy(data.conversations[i]);
@@ -20,10 +24,6 @@ function createDesktop(data, allConversations){
       }
     }
   }
-
-  self.leftConversation = ko.observable(null);
-
-  self.rightConversation = ko.observable(null);
 
   self.hasLeftConversation = ko.computed(function(){
     return self.leftConversation() !== null;
@@ -55,6 +55,7 @@ function createDesktop(data, allConversations){
     else if (!self.hasRightConversation()) {
       activateRightConversationBy(self.conversations().length - 1);
     }
+    adjustConversationUi();
   }
   
   self.persistNewConversation = function(conversation) {
@@ -86,6 +87,7 @@ function createDesktop(data, allConversations){
     else if (isRight(conversation)) {
       activateRightConversationBy(index);
     }
+    adjustConversationUi();
   }
 
   function activateLeftConversationBy(index) {
@@ -136,9 +138,12 @@ function createDesktop(data, allConversations){
   };
 
   self.changeActiveConversations = function(leftIndex) {
+    toggleTimer();
     deactivateConversations();
     activateLeftConversationBy(leftIndex);
     activateRightConversationBy(leftIndex + 1);
+    toggleTimer();
+    adjustConversationUi();
     setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
   }
 
@@ -149,8 +154,15 @@ function createDesktop(data, allConversations){
     });
   };
 
-  self.resize = createDesktopResize(self);
-  self.scroll = createDesktopScroll(self);
+  function toggleTimer(){
+    $('#convos').toggle();
+    $('#content-timer').toggle();
+  }
+
+  function adjustConversationUi(){
+    self.resize.conversationBodies();
+    self.scroll.setupConvos();
+  }
 
   activateLeftConversationBy(0);
   activateRightConversationBy(1);

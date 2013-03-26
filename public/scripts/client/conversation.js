@@ -32,16 +32,16 @@ function createConversation(data) {
   self.activateOnTheLeft = function() {
     self.isLeft(true);
     self.isRight(false);
-    self.activate(".convo-left");
+    activate(".convo-left");
   };
 
   self.activateOnTheRight = function() {
     self.isRight(true);
     self.isLeft(false);
-    self.activate(".convo-right");
+    activate(".convo-right");
   };
 
-  self.activate = function(convoSelector) {
+  function activate(convoSelector) {
     self.active(true);
 
     var getSelector = function getSelector(cssSelector) {
@@ -50,9 +50,6 @@ function createConversation(data) {
 
     self.resize = createConversationResizing(getSelector);
     self.scroll = createConversationScrolling(getSelector);
-    
-    self.resize.body();
-    self.scroll.setup();
   };  
 
   self.deactivate = function() {

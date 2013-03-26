@@ -133,18 +133,31 @@ audio{
 	box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
 }
 
-#spinner{
+.timer{
 	.middle-of-screen;
 
-	@spinner-dimension: 75px;
-
-	margin-left:-@spinner-dimension/2;
-	margin-top:-@spinner-dimension/2;
+	@timer-dimension: 75px;
 
 	img{
-		width:@spinner-dimension;
-		height:@spinner-dimension;	
+		width:@timer-dimension;
+		height:@timer-dimension;	
 	}
+}
+
+#main-timer{
+	.timer;
+
+	margin-left:-@timer-dimension/2;
+	margin-top:-@timer-dimension/2;
+}
+
+#content-timer{
+	.timer;
+
+	margin-left:0;
+	margin-right:0;
+	
+	z-index:100;
 }
 
 @import "client/login";

@@ -52,7 +52,7 @@
 	});
 
 	function showRenderedElements(){
-		$('#spinner').hide();
+		$('#main-timer').hide();
 		$('.top-links').show();
 		$('#content').show();
 	}

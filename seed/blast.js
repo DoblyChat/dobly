@@ -28,7 +28,7 @@ function blast(callback){
 				for(var a = 1; a < arguments.length; a++){
 					var conversation = arguments[a];
 
-					for(var j = 0; j < 200; j++){
+					for(var j = 0; j < 1000; j++){
 						var msg = new Message();
 						msg.content = 'this\nis\na\ntest';
 						msg.createdBy = user.username;

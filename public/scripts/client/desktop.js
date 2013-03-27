@@ -155,7 +155,7 @@ function createDesktop(data, allConversations){
   };
 
   function toggleTimer(){
-    $('#convos').toggle();
+    $('#content').toggle();
     $('#content-timer').toggle();
   }
 

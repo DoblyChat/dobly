@@ -137,6 +137,7 @@ audio{
 	.middle-of-screen;
 
 	@timer-dimension: 75px;
+	margin-top:-@timer-dimension/2;
 
 	img{
 		width:@timer-dimension;
@@ -148,16 +149,12 @@ audio{
 	.timer;
 
 	margin-left:-@timer-dimension/2;
-	margin-top:-@timer-dimension/2;
+	
 }
 
 #content-timer{
 	.timer;
-
-	margin-left:0;
-	margin-right:0;
-	
-	z-index:100;
+	margin-left:@timer-dimension/2;
 }
 
 @import "client/login";

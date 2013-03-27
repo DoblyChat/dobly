@@ -22,6 +22,9 @@ html
 			img(src="/images/spinner.gif", alt="loading...")
 
 		#content.hidden
+			#content-timer.hidden
+				img(src="/images/spinner.gif", alt="loading...")
+				
 			#strip-convos
 				#strip(data-bind="with: desktop, visible: navigation.showingDesktop")					
 					.nano#convo-tiles
@@ -56,8 +59,6 @@ html
 										div(data-bind="text: $data")
 						.convo-new-message(data-bind="click: markAsRead")
 							textarea(tabindex="2", placeholder="Write a new message", rows="2", maxlength=2000, data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
-				#content-timer.hidden
-					img(src="/images/spinner.gif", alt="loading...")
 			#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.pairs")
 				.convo-pair(data-bind="foreach: $data")				
 					.convo(data-bind="click: $root.allConversations.open")

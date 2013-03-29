@@ -1,56 +1,50 @@
-function createConversationResizing(getSelector) {
+function createConversationUi(getSelector) {
   var self = {};
 
-  self.body = function() {
+  self.resizeBody = function() {
     var convoHeight = $('#convos').innerHeight();
     var titleHeightLeft = $(getSelector('.convo-header')).outerHeight();
     var newMessageHeightLeft = $(getSelector('.convo-new-message')).outerHeight();  
     $(getSelector('.convo-body')).height(convoHeight - titleHeightLeft - newMessageHeightLeft);
   };
 
-  return self;
-}
+  self.scroll = (function(){
+    var scroll = {};
 
-function createConversationScrolling(getSelector) {
-  var self = {};
-
-  self.setup = function() {
-    self.adjust();
-    setupHoverIntent();
-  };
-
-  function setupHoverIntent() {
-    var config = {
-      over: thickBar,
-      timeout: 1000,
-      out: thinBar,
+    scroll.setup = function() {
+      scroll.adjust();
+      setupHoverIntent();
     };
-    $(getSelector(".nano > .pane")).hoverIntent(config);
-  }
 
-  function thickBar() {
-    $(this).addClass("thickBar");
-    $(this).siblings(".pane").addClass("thickBar");
-  }
+    function setupHoverIntent() {
+      var config = {
+        over: thickBar,
+        timeout: 1000,
+        out: thinBar,
+      };
+      $(getSelector(".nano > .pane")).hoverIntent(config);
+    }
 
-  function thinBar() {
-    $(this).removeClass("thickBar");
-    $(this).siblings(".pane").removeClass("thickBar");
-  }
+    function thickBar() {
+      $(this).addClass("thickBar");
+      $(this).siblings(".pane").addClass("thickBar");
+    }
 
-  self.adjust = function() {
-    $(getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
-  };
+    function thinBar() {
+      $(this).removeClass("thickBar");
+      $(this).siblings(".pane").removeClass("thickBar");
+    }
 
-  self.stop = function() {
-    $(getSelector('.nano')).nanoScroller({ stop: true });
-  };
+    scroll.adjust = function() {
+      $(getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
+    };
 
-  return self;
-}
+    scroll.stop = function() {
+      $(getSelector('.nano')).nanoScroller({ stop: true });
+    };
 
-function createConversationHighlight(getSelector){
-  var self = {};
+    return scroll;
+  })();
 
   self.highlight = function(messageCount){
     $(getSelector('.convo-body .content .message')).slice(-messageCount).effect("highlight", {}, 1000);

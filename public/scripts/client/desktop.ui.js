@@ -14,11 +14,11 @@ function createDesktopResize(desktop) {
 
   res.conversationBodies = function() {
     if (desktop.hasLeftConversation()) {
-      desktop.leftConversation().resize.body();
+      desktop.leftConversation().ui.resizeBody();
     }
     
     if (desktop.hasRightConversation()) {
-      desktop.rightConversation().resize.body();
+      desktop.rightConversation().ui.resizeBody();
     }
   };
 
@@ -47,11 +47,11 @@ function createDesktopScroll(desktop) {
 
   scr.setupConvos = function(){
     if (desktop.hasLeftConversation()) {
-      desktop.leftConversation().scroll.setup();
+      desktop.leftConversation().ui.scroll.setup();
     }
     
     if (desktop.hasRightConversation()) {
-      desktop.rightConversation().scroll.setup();
+      desktop.rightConversation().ui.scroll.setup();
     }
   }
 
@@ -74,11 +74,11 @@ function createHighlighter(desktop){
 
   high.highlight = function(){
     if (desktop.hasLeftConversation() && leftObs().unreadCounter() > 0) {
-      leftObs().highlight.highlight(leftObs().unreadCounter());
+      leftObs().ui.highlight(leftObs().unreadCounter());
     }
     
     if (desktop.hasRightConversation() && rightObs().unreadCounter() > 0) {
-      rightObs().highlight.highlight(rightObs().unreadCounter());
+      rightObs().ui.highlight(rightObs().unreadCounter());
     }
   }
 

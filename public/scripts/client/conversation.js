@@ -48,9 +48,7 @@ function createConversation(data) {
       return convoSelector + ' > ' + cssSelector;
     }
 
-    self.resize = createConversationResizing(getSelector);
-    self.scroll = createConversationScrolling(getSelector);
-    self.highlight = createConversationHighlight(getSelector);
+    self.ui = createConversationUi(getSelector);
   };  
 
   self.deactivate = function() {

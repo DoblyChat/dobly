@@ -50,6 +50,7 @@ function createConversation(data) {
 
     self.resize = createConversationResizing(getSelector);
     self.scroll = createConversationScrolling(getSelector);
+    self.highlight = createConversationHighlight(getSelector);
   };  
 
   self.deactivate = function() {

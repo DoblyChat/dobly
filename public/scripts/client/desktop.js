@@ -9,6 +9,7 @@ function createDesktop(data, allConversations){
   self.rightConversation = ko.observable(null);
   self.resize = createDesktopResize(self);
   self.scroll = createDesktopScroll(self);
+  self.highlighter = createHighlighter(self);
 
   for(var i = 0; i < data.conversations.length; i++){
     var conversation = getConversationBy(data.conversations[i]);
@@ -143,7 +144,7 @@ function createDesktop(data, allConversations){
     activateLeftConversationBy(leftIndex);
     activateRightConversationBy(leftIndex + 1);
     toggleTimer();
-    adjustConversationUi();
+    updateConversationUi();
     setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
   }
 
@@ -159,9 +160,10 @@ function createDesktop(data, allConversations){
     $('#content-timer').toggle();
   }
 
-  function adjustConversationUi(){
+  function updateConversationUi(){
     self.resize.conversationBodies();
     self.scroll.setupConvos();
+    self.highlighter.highlight();
   }
 
   activateLeftConversationBy(0);

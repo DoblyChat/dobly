@@ -66,6 +66,25 @@ function createDesktopScroll(desktop) {
   return scr;
 };
 
+function createHighlighter(desktop){
+  var high = {};
+
+  var leftObs = desktop.leftConversation;
+  var rightObs = desktop.rightConversation;
+
+  high.highlight = function(){
+    if (desktop.hasLeftConversation() && leftObs().unreadCounter() > 0) {
+      leftObs().highlight.highlight(leftObs().unreadCounter());
+    }
+    
+    if (desktop.hasRightConversation() && rightObs().unreadCounter() > 0) {
+      rightObs().highlight.highlight(rightObs().unreadCounter());
+    }
+  }
+
+  return high;
+}
+
 function setupStripDragAndDrop(desktop){
   var currentSort;
 

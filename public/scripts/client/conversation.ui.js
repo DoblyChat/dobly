@@ -48,3 +48,13 @@ function createConversationScrolling(getSelector) {
 
   return self;
 }
+
+function createConversationHighlight(getSelector){
+  var self = {};
+
+  self.highlight = function(messageCount){
+    $(getSelector('.convo-body .content .message')).slice(-messageCount).effect("highlight", {}, 1000);
+  }
+
+  return self;
+}

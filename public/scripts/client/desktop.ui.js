@@ -73,13 +73,15 @@ function createDesktopUi(desktop){
     var leftObs = desktop.leftConversation;
     var rightObs = desktop.rightConversation;
 
-    if (desktop.hasLeftConversation() && leftObs().unreadCounter() > 0) {
-      leftObs().ui.highlight(leftObs().unreadCounter());
-    }
-    
-    if (desktop.hasRightConversation() && rightObs().unreadCounter() > 0) {
-      rightObs().ui.highlight(rightObs().unreadCounter());
-    }
+    setTimeout(function(){
+      if (desktop.hasLeftConversation() && leftObs().unreadCounter() > 0) {
+        leftObs().ui.highlight(leftObs().unreadCounter());
+      }
+      
+      if (desktop.hasRightConversation() && rightObs().unreadCounter() > 0) {
+        rightObs().ui.highlight(rightObs().unreadCounter());
+      }
+    }, 200);
   };
 
   self.setupStripDragAndDrop = function (){

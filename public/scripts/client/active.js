@@ -39,9 +39,7 @@
 		$('#main-timer').hide();
 		$('.top-links').show();
 		$('#content').show();
-		setTimeout(function(){
-			app.desktop.ui.highlight();
-		}, 1000);
+		app.desktop.ui.highlight();
 	}
 
 	global.app.socket.on('reconnecting', function(delay, attempt) {

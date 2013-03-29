@@ -53,7 +53,7 @@ function createConversationUi() {
   self.highlight = function(messageCount){
     $(self.getSelector('.convo-body .content .message'))
           .slice(-messageCount)
-          .effect("highlight", { color: '#65E7FF' }, 1000);
+          .effect("highlight", { color: '#E5FBFF' }, 2000);
   }
 
   return self;

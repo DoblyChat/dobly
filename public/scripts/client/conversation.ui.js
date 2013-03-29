@@ -1,11 +1,15 @@
-function createConversationUi(getSelector) {
+function createConversationUi() {
   var self = {};
+
+  self.init = function(getSelector){
+    self.getSelector = getSelector;
+  };
 
   self.resizeBody = function() {
     var convoHeight = $('#convos').innerHeight();
-    var titleHeightLeft = $(getSelector('.convo-header')).outerHeight();
-    var newMessageHeightLeft = $(getSelector('.convo-new-message')).outerHeight();  
-    $(getSelector('.convo-body')).height(convoHeight - titleHeightLeft - newMessageHeightLeft);
+    var titleHeightLeft = $(self.getSelector('.convo-header')).outerHeight();
+    var newMessageHeightLeft = $(self.getSelector('.convo-new-message')).outerHeight();  
+    $(self.getSelector('.convo-body')).height(convoHeight - titleHeightLeft - newMessageHeightLeft);
   };
 
   self.scroll = (function(){
@@ -22,7 +26,7 @@ function createConversationUi(getSelector) {
         timeout: 1000,
         out: thinBar,
       };
-      $(getSelector(".nano > .pane")).hoverIntent(config);
+      $(self.getSelector(".nano > .pane")).hoverIntent(config);
     }
 
     function thickBar() {
@@ -36,18 +40,18 @@ function createConversationUi(getSelector) {
     }
 
     scroll.adjust = function() {
-      $(getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
+      $(self.getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
     };
 
     scroll.stop = function() {
-      $(getSelector('.nano')).nanoScroller({ stop: true });
+      $(self.getSelector('.nano')).nanoScroller({ stop: true });
     };
 
     return scroll;
   })();
 
   self.highlight = function(messageCount){
-    $(getSelector('.convo-body .content .message')).slice(-messageCount).effect("highlight", {}, 1000);
+    $(self.getSelector('.convo-body .content .message')).slice(-messageCount).effect("highlight", {}, 1000);
   }
 
   return self;

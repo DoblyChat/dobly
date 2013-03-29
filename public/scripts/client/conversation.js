@@ -8,12 +8,10 @@ function createConversation(data) {
   self.newMessage = ko.observable('');
   self.isLeft = ko.observable(false);
   self.isRight = ko.observable(false);
-  
   self.messages = ko.observableArray([]);
-
   self.active = ko.observable(false);
-
   self.hasFocus = ko.observable(false);
+  self.ui = createConversationUi();
 
   if(data.messages){
     for(var i = 0; i < data.messages.length; i++){
@@ -48,7 +46,7 @@ function createConversation(data) {
       return convoSelector + ' > ' + cssSelector;
     }
 
-    self.ui = createConversationUi(getSelector);
+    self.ui.init(getSelector);
   };  
 
   self.deactivate = function() {

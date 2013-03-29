@@ -56,7 +56,7 @@ function createDesktop(data, allConversations){
     else if (!self.hasRightConversation()) {
       activateRightConversationBy(self.conversations().length - 1);
     }
-    adjustConversationUi();
+    updateConversationUi();
   }
   
   self.persistNewConversation = function(conversation) {
@@ -88,7 +88,7 @@ function createDesktop(data, allConversations){
     else if (isRight(conversation)) {
       activateRightConversationBy(index);
     }
-    adjustConversationUi();
+    updateConversationUi();
   }
 
   function activateLeftConversationBy(index) {

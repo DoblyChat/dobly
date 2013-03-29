@@ -1,78 +1,78 @@
-function createDesktopResize(desktop) {
-  var res = {};
+function createDesktopUi(desktop){
+  var self = {};
 
-  res.stripAndConvos = function() {
-    var includeMargin = true;
-    var bodyHeight = $('body').outerHeight(includeMargin);
-    var headerHeight = $('#header').outerHeight(includeMargin);
-    var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
+  self.resize = (function createDesktopResize(desktop) {
+    var res = {};
 
-    var height = bodyHeight - headerHeight - convosMargin;
-    $('#convos').height(height);
-    $('#strip').height(height);
-  };
+    res.stripAndConvos = function() {
+      var includeMargin = true;
+      var bodyHeight = $('body').outerHeight(includeMargin);
+      var headerHeight = $('#header').outerHeight(includeMargin);
+      var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
 
-  res.conversationBodies = function() {
-    if (desktop.hasLeftConversation()) {
-      desktop.leftConversation().ui.resizeBody();
+      var height = bodyHeight - headerHeight - convosMargin;
+      $('#convos').height(height);
+      $('#strip').height(height);
+    };
+
+    res.conversationBodies = function() {
+      if (desktop.hasLeftConversation()) {
+        desktop.leftConversation().ui.resizeBody();
+      }
+      
+      if (desktop.hasRightConversation()) {
+        desktop.rightConversation().ui.resizeBody();
+      }
+    };
+
+    function tiles() {    
+      var stripHeight = $('#strip').outerHeight();
+      var newTileHeight = $('#new-convo-tile').outerHeight();
+
+      $('#convo-tiles').height(stripHeight - newTileHeight);
+    };
+
+    res.tilesAndConversationBodies = function() {
+      res.conversationBodies();
+      tiles();
+    };
+
+    return res;
+  })();
+
+  self.scroll = (function createDesktopScroll(desktop) {
+    var scr = {};
+
+    scr.setup = function() {
+      scr.setupConvos();
+      scr.tiles();
+    };
+
+    scr.setupConvos = function(){
+      if (desktop.hasLeftConversation()) {
+        desktop.leftConversation().ui.scroll.setup();
+      }
+      
+      if (desktop.hasRightConversation()) {
+        desktop.rightConversation().ui.scroll.setup();
+      }
     }
-    
-    if (desktop.hasRightConversation()) {
-      desktop.rightConversation().ui.resizeBody();
+
+    scr.tiles = function() {
+      $('#convo-tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
+    };
+
+    scr.bottomTile = function() {
+      $('#convo-tiles').nanoScroller({ scroll: 'bottom' });
     }
-  };
 
-  function tiles() {    
-    var stripHeight = $('#strip').outerHeight();
-    var newTileHeight = $('#new-convo-tile').outerHeight();
+    return scr;
+  })();
 
-    $('#convo-tiles').height(stripHeight - newTileHeight);
-  };
+  self.highlight = function(){
+    var leftObs = desktop.leftConversation;
+    var rightObs = desktop.rightConversation;
 
-  res.tilesAndConversationBodies = function() {
-    res.conversationBodies();
-    tiles();
-  };
-
-  return res;
-};
-
-function createDesktopScroll(desktop) {
-  var scr = {};
-
-  scr.setup = function() {
-    scr.setupConvos();
-    scr.tiles();
-  };
-
-  scr.setupConvos = function(){
-    if (desktop.hasLeftConversation()) {
-      desktop.leftConversation().ui.scroll.setup();
-    }
-    
-    if (desktop.hasRightConversation()) {
-      desktop.rightConversation().ui.scroll.setup();
-    }
-  }
-
-  scr.tiles = function() {
-    $('#convo-tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
-  };
-
-  scr.bottomTile = function() {
-    $('#convo-tiles').nanoScroller({ scroll: 'bottom' });
-  }
-
-  return scr;
-};
-
-function createHighlighter(desktop){
-  var high = {};
-
-  var leftObs = desktop.leftConversation;
-  var rightObs = desktop.rightConversation;
-
-  high.highlight = function(){
     if (desktop.hasLeftConversation() && leftObs().unreadCounter() > 0) {
       leftObs().ui.highlight(leftObs().unreadCounter());
     }
@@ -80,52 +80,67 @@ function createHighlighter(desktop){
     if (desktop.hasRightConversation() && rightObs().unreadCounter() > 0) {
       rightObs().ui.highlight(rightObs().unreadCounter());
     }
-  }
+  };
 
-  return high;
-}
+  self.setupStripDragAndDrop = function (){
+    var currentSort;
 
-function setupStripDragAndDrop(desktop){
-  var currentSort;
+    $('#convo-tiles .content').sortable({      
+      handle: ".icon-move-handle",
+      start: function(event, ui){
+        currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
+      },
+      stop: function(event, ui){
+        currentSort.stopIndex = ui.item.index();
 
-  $('#convo-tiles .content').sortable({      
-    handle: ".icon-move-handle",
-    start: function(event, ui){
-      currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
-    },
-    stop: function(event, ui){
-      currentSort.stopIndex = ui.item.index();
-
-      if (currentSort.startIndex !== currentSort.stopIndex) {
-        app.socket.emit('update_strip_order', { id: desktop.id, currentSort: currentSort });
-        var conversation = desktop.conversations()[currentSort.startIndex];
-        reorder(conversation);
-        if (conversation.active()) {
-          desktop.changeActiveConversations(currentSort.stopIndex);
+        if (currentSort.startIndex !== currentSort.stopIndex) {
+          app.socket.emit('update_strip_order', { id: desktop.id, currentSort: currentSort });
+          var conversation = desktop.conversations()[currentSort.startIndex];
+          reorder(conversation);
+          if (conversation.active()) {
+            desktop.changeActiveConversations(currentSort.stopIndex);
+          }
+          else {
+            checkIfItNeedsToBeActivated();
+          }
         }
-        else {
-          checkIfItNeedsToBeActivated();
-        }
+      },
+    });
+
+    function reorder(conversation) {      
+      desktop.conversations.splice(currentSort.startIndex, 1);
+      desktop.conversations.splice(currentSort.stopIndex, 0, conversation);
+    }
+
+    function checkIfItNeedsToBeActivated() {
+      var leftActiveIndex = desktop.conversations.indexOf(desktop.leftConversation());
+
+      if (movedAfterActiveConversation(leftActiveIndex)) {
+        desktop.changeActiveConversations(leftActiveIndex);
       }
-    },
+
+      function movedAfterActiveConversation(leftActiveIndex){
+        return leftActiveIndex + 1 === currentSort.stopIndex;
+      }
+    }
+
+    $('#convo-tiles').disableSelection();
+  };
+
+  $(window).load(function() {
+    self.resize.tilesAndConversationBodies();
+    self.scroll.setup();
   });
 
-  function reorder(conversation) {      
-    desktop.conversations.splice(currentSort.startIndex, 1);
-    desktop.conversations.splice(currentSort.stopIndex, 0, conversation);
+  $(window).resize(function() {
+    self.resize.stripAndConvos();
+    self.resize.tilesAndConversationBodies();
+  });
+
+  self.setup = function(){
+    self.resize.stripAndConvos();
+    self.setupStripDragAndDrop();
   }
 
-  function checkIfItNeedsToBeActivated() {
-    var leftActiveIndex = desktop.conversations.indexOf(desktop.leftConversation());
-
-    if (movedAfterActiveConversation(leftActiveIndex)) {
-      desktop.changeActiveConversations(leftActiveIndex);
-    }
-
-    function movedAfterActiveConversation(leftActiveIndex){
-      return leftActiveIndex + 1 === currentSort.stopIndex;
-    }
-  }
-
-  $('#convo-tiles').disableSelection();
-};
+  return self;
+}

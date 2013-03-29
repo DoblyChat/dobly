@@ -19,28 +19,10 @@
 		var viewModel = createViewModel(conversationData, desktopData, groupData);
 
 		ko.applyBindings(viewModel);
-
-		app.desktop = viewModel.desktop;
-
-		setupDesktopUI();
+		viewModel.desktop.ui.setup();
 		showRenderedElements();
 		
 		startPing();
-	});
-
-	function setupDesktopUI(){
-		app.desktop.resize.stripAndConvos();
-		setupStripDragAndDrop(app.desktop);
-	}
-
-	$(global).load(function() {
-		app.desktop.resize.tilesAndConversationBodies();
-		app.desktop.scroll.setup();
-	});
-
-	$(global).resize(function() {
-		app.desktop.resize.stripAndConvos();
-		app.desktop.resize.tilesAndConversationBodies();
 	});
 
 	$(global).focus(function() {

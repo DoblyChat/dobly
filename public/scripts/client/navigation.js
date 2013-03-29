@@ -25,9 +25,7 @@ function createNavigationModule(viewModel) {
       self.showingNotificationSetup(false);
       self.showingGroup(false);
       self.changingTopic(false);
-      viewModel.desktop.resize.tilesAndConversationBodies();
-      viewModel.desktop.scroll.setup();
-      setupStripDragAndDrop(viewModel.desktop);
+      viewModel.desktop.ui.show();
     };
 
     self.newConvo = function() {

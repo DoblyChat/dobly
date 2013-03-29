@@ -1,7 +1,7 @@
 function createDesktopUi(desktop){
   var self = {};
 
-  self.resize = (function createDesktopResize(desktop) {
+  self.resize = (function createDesktopResize() {
     var res = {};
 
     res.stripAndConvos = function() {
@@ -40,7 +40,7 @@ function createDesktopUi(desktop){
     return res;
   })();
 
-  self.scroll = (function createDesktopScroll(desktop) {
+  self.scroll = (function createDesktopScroll() {
     var scr = {};
 
     scr.setup = function() {
@@ -139,6 +139,18 @@ function createDesktopUi(desktop){
 
   self.setup = function(){
     self.resize.stripAndConvos();
+    self.setupStripDragAndDrop();
+  }
+
+  self.updateConversationUi = function(){
+    self.resize.conversationBodies();
+    self.scroll.setupConvos();
+    self.highlight();
+  };
+
+  self.show = function(){
+    self.resize.tilesAndConversationBodies();
+    self.scroll.setup();
     self.setupStripDragAndDrop();
   }
 

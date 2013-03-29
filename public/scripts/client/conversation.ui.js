@@ -51,7 +51,9 @@ function createConversationUi() {
   })();
 
   self.highlight = function(messageCount){
-    $(self.getSelector('.convo-body .content .message')).slice(-messageCount).effect("highlight", {}, 1000);
+    $(self.getSelector('.convo-body .content .message'))
+          .slice(-messageCount)
+          .effect("highlight", { color: '#65E7FF' }, 1000);
   }
 
   return self;

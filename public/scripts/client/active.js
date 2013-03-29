@@ -19,7 +19,9 @@
 		var viewModel = createViewModel(conversationData, desktopData, groupData);
 
 		ko.applyBindings(viewModel);
-		viewModel.desktop.ui.setup();
+		app.desktop = viewModel.desktop;
+
+		app.desktop.ui.setup();
 		showRenderedElements();
 		
 		startPing();
@@ -37,6 +39,9 @@
 		$('#main-timer').hide();
 		$('.top-links').show();
 		$('#content').show();
+		setTimeout(function(){
+			app.desktop.ui.highlight();
+		}, 1000);
 	}
 
 	global.app.socket.on('reconnecting', function(delay, attempt) {

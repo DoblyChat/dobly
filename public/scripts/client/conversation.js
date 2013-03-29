@@ -50,13 +50,15 @@ function createConversation(data) {
   };  
 
   self.deactivate = function() {
-    if (self.scroll !== undefined) {
-      self.scroll.stop();
+    if(self.active()){
+      if (self.ui.scroll !== undefined) {
+        self.ui.scroll.stop();
+      }
+      
+      self.active(false);
+      self.isRight(false);
+      self.isLeft(false);
     }
-    
-    self.active(false);
-    self.isRight(false);
-    self.isLeft(false);
   };
   
   function thereIsANewMessage(){
@@ -84,7 +86,7 @@ function createConversation(data) {
     self.messages.push(msg);
     
     if (self.active()) {
-      self.scroll.adjust();
+      self.ui.scroll.adjust();
       emitMarkAsRead();
     } 
     

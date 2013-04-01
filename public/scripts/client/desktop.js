@@ -8,6 +8,7 @@ function createDesktop(data, allConversations){
   self.leftConversation = ko.observable(null);
   self.rightConversation = ko.observable(null);
   self.ui = createDesktopUi(self);
+  self.loading =ko.observable(false);
 
   for(var i = 0; i < data.conversations.length; i++){
     var conversation = getConversationBy(data.conversations[i]);
@@ -132,16 +133,16 @@ function createDesktop(data, allConversations){
     var leftIndex = self.conversations.indexOf(self.leftConversation());
 
     if (index !== leftIndex) {
-      self.changeActiveConversations(index);
+      self.loading(true);
+      setTimeout(function() { self.changeActiveConversations(index); }, 0);
     }
   };
 
   self.changeActiveConversations = function(leftIndex) {
-    toggleTimer();
     deactivateConversations();
     activateLeftConversationBy(leftIndex);
     activateRightConversationBy(leftIndex + 1);
-    toggleTimer();
+    self.loading(false);
     self.ui.updateConversationUi();
     setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
   }
@@ -152,11 +153,6 @@ function createDesktop(data, allConversations){
       conversation.hasFocus(false);
     });
   };
-
-  function toggleTimer(){
-    $('#content').toggle();
-    $('#content-timer').toggle();
-  }
 
   activateLeftConversationBy(0);
   activateRightConversationBy(1);

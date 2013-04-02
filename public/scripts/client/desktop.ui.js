@@ -28,8 +28,9 @@ function createDesktopUi(desktop){
     function tiles() {    
       var stripHeight = $('#strip').outerHeight();
       var newTileHeight = $('#new-convo-tile').outerHeight();
+      var newMesageBar = $('#new-message-bar').outerHeight();
 
-      $('#convo-tiles').height(stripHeight - newTileHeight);
+      $('#convo-tiles').height(stripHeight - newTileHeight - newMesageBar);
     };
 
     res.tilesAndConversationBodies = function() {

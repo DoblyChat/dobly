@@ -36,6 +36,7 @@ html
 										.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
 										.icon-dismiss(data-bind="click: $parent.remove")
 										.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
+					#new-message-bar(data-bind="css: { active: $root.hasUnread }")
 					#new-convo-tile(data-bind="click: $parent.addNewConversation")				
 						.icon-plus
 						#new-convo-text New Conversation

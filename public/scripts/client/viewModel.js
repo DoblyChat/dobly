@@ -30,7 +30,15 @@ function createViewModel(conversationsData, desktopData, groupData) {
       unread += conversation.unreadCounter();
     });
 
+    return unread;
+  });
+
+  self.unreadCounter.subscribe(function(unread){
     self.notifier.updateTitle(unread);
+  });
+
+  self.hasUnread = ko.computed(function(){
+    return self.unreadCounter() > 0;
   });
 
   self.navigation = createNavigationModule(self);

@@ -97,14 +97,14 @@
 
 @new-convo-tile-height: 67px;
 @new-convo-tile-top-padding: 8px;
+@new-message-bar-height: 4px;
 
 #new-convo-tile {
 	.tile-common;
-	height: @new-convo-tile-height - @new-convo-tile-top-padding;
+	height: @new-convo-tile-height - @new-convo-tile-top-padding - @new-message-bar-height;
 	width: @tile-width;
 	padding-top: @new-convo-tile-top-padding;
 	text-align: center;
-	border-top: @thick-gray-border;
 	color: lighten(@gray, 40%);
 
 	&:hover {
@@ -114,4 +114,16 @@
 
 #new-convo-tile .icon-plus {
 	font-size: 20px;
+}
+
+#new-message-bar{
+	border-top: @gray-border;
+	height: @new-message-bar-height;
+	width: @tile-width;
+	background-color: @white;
+
+	&.active{
+		background-color: @blue;
+		border-top-color: @blue;
+	}
 }

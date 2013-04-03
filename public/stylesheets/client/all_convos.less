@@ -18,103 +18,100 @@
 	height: auto;
     .centered;
     padding-bottom: @standard-margin;
+	
+	.convo {
+		width: @convo-width;
+		height: 171px;
+		background: @white;
+		.box-shadow;	
+		cursor: pointer;
 
-	.convo-pair {
-		margin-bottom: @standard-margin * 2;	
+		.header {
+			.message-padding;
+			border-bottom: @thick-gray-border;
 
-		.convo {
-			width: @convo-width;
-			height: 171px;
-			background: @white;
-			.box-shadow;	
-			cursor: pointer;
-
-			.header {
-				.message-padding;
-				border-bottom: @thick-gray-border;
-
-				.left {
-					float: left;
-
-					.topic {
-						.title-font;
-						.ellipsis;
-					}
-
-					.created-by {
-						.caption-color;
-						padding-top: 1px;
-					}
-				}
-
-				.right {
-					float: right;					
-
-					.counter {						
-						.counter-common;
-						width: @all-convos-counter-width;
-						height: 35px;
-						margin-right: -14px;
-						font-size: 26px;
-						line-height: 1.3;						
-					}
-				}
-
-				&:after {
-					.float-parent
-				}
-			}
-
-			.messages {
-
-				.message {
-					.thin-message-padding;
-					border-bottom: 1px solid @light-gray;
-
-					&:last-child {
-						border-bottom: 0;
-					}
-
-					.author {
-						.caption-color;
-						float: left;
-					}
-
-					.time {
-						.caption-color;
-						float: right;
-						font-size: @text-size - 1px;
-					}
-
-					.text {
-						.text-color;
-						clear: both;
-						padding-top: 1px;
-						line-height: 1.5;
-						.ellipsis
-					}
-				}
-			}
-
-			.no-messages {
-
-				.message {
-					padding: 26px 25px 10px 25px;
-					.caption-color;
-				}
-			}			
-
-			&:last-child {
-				float: right;
-			}
-
-			&:first-child {
+			.left {
 				float: left;
+
+				.topic {
+					.title-font;
+					.ellipsis;
+				}
+
+				.created-by {
+					.caption-color;
+					padding-top: 1px;
+				}
+			}
+
+			.right {
+				float: right;					
+
+				.counter {						
+					.counter-common;
+					width: @all-convos-counter-width;
+					height: 35px;
+					margin-right: -14px;
+					font-size: 26px;
+					line-height: 1.3;						
+				}
+			}
+
+			&:after {
+				.float-parent
 			}
 		}
 
-		&:after {
-			.float-parent
+		.messages {
+
+			.message {
+				.thin-message-padding;
+				border-bottom: 1px solid @light-gray;
+
+				&:last-child {
+					border-bottom: 0;
+				}
+
+				.author {
+					.caption-color;
+					float: left;
+				}
+
+				.time {
+					.caption-color;
+					float: right;
+					font-size: @text-size - 1px;
+				}
+
+				.text {
+					.text-color;
+					clear: both;
+					padding-top: 1px;
+					line-height: 1.5;
+					.ellipsis
+				}
+			}
+		}
+
+		.no-messages {
+
+			.message {
+				padding: 26px 25px 10px 25px;
+				.caption-color;
+			}
+		}			
+
+		&:last-child {
+			float: right;
+		}
+
+		&:first-child {
+			float: left;
 		}
 	}
+
+	&:after {
+		.float-parent
+	}
+
 }

@@ -51,7 +51,7 @@ function createViewModel(conversationsData, desktopData, groupData) {
     var conversation = createConversation(data);
     self.conversations.push(conversation);
     self.desktop.addAndActivate(conversation);
-    self.desktop.scroll.bottomTile();
+    self.desktop.ui.scroll.bottomTile();
     conversation.hasFocus(true);
   });
 

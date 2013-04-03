@@ -7,8 +7,10 @@ function createChangeTopic(nav){
 
     self.click = function(conversationToChange){
       conversation = conversationToChange;
-      self.newTopic(conversation.topic());
       nav.changeTopic();
+      common.delayedFocus('#change-topic textarea', 100, function(){
+        self.newTopic(conversation.topic());
+      });
     };
 
     self.updateOnEnter = function(obj, event){

@@ -9,6 +9,13 @@ var common = {
       $(selector).focus();
 		}
 	},
+
+  delayedFocus: function(selector, delay, hook){
+    setTimeout(function () { 
+      common.focus(selector);
+      if(hook) hook();
+    }, delay ? delay : 400);
+  },
 };
 
 var browser = {

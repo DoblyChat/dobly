@@ -5,7 +5,7 @@ function createNewConversation(navigation) {
 
 	self.setup = function() {
     $('#new-convo textarea').placeholder();
-    setTimeout(function () { common.focus('#new-convo textarea'); }, 400);
+    common.delayedFocus('#new-convo textarea');
   };
 
 	self.createOnEnter = function(data, event) {

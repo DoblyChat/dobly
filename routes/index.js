@@ -12,6 +12,8 @@ var title = 'Dobly';
 exports.config = function(app) {
 	app.get('/', home);
 
+	app.get('/login', login);
+
 	app.post('/login', authenticate());
 
 	app.get('/logout', logOut);
@@ -38,21 +40,33 @@ function checkUserIsLoggedIn(req, res, next) {
 }
 
 function home(req, res) {
-	if(req.user) {
-		res.redirect('/conversations');
-	} else {
+	routeIfLoggedIn(req, res, function(){
+		res.render('index', { title: title, layout: '' });
+	});	
+}
+
+function login(req, res){
+	routeIfLoggedIn(req, res, function(){
 		var flash = req.flash(flashKey);
-		res.render('index', {  	
+		res.render('security/login', {  	
 								title: title,
 								info: flash, 
 								showFlash: flash.length > 0 
 							});	
+	});
+}
+
+function routeIfLoggedIn(req, res, render){
+	if(req.user) {
+		res.redirect('/conversations');
+	} else {
+		render();
 	}
 }
 
 function authenticate() {
 	return passport.authenticate('local', { successRedirect: '/conversations',
-									 		failureRedirect: '/',
+									 		failureRedirect: '/login',
 									 		failureFlash: 'Username and password do not match.' });
 }
 
@@ -63,13 +77,13 @@ function logOut(req, res) {
 
 function timeOut(req, res) {
 	req.flash(flashKey, 'Your session timed out.');
-	res.redirect('/');
+	res.redirect('/login');
 }
 
 function signUp(req, res) {
 	var flash = req.flash(flashKey);
 	var showFlash = flash.length > 0;
-	res.render('sign-up', { group: req.params.group, title: 'Sign up - ' + title, showFlash: showFlash, info: flash });
+	res.render('security/sign-up', { group: req.params.group, title: 'Sign up - ' + title, showFlash: showFlash, info: flash });
 }
 
 function createUser(req, res) {
@@ -81,7 +95,7 @@ function createUser(req, res) {
 					if(err){
 						redirectToSignUp('Username is already in use');
 					}else{
-						res.redirect('/');	
+						res.redirect('/login');	
 					}
 				});
 		});

@@ -1,0 +1,11 @@
+#login
+	#prompt 
+		span Sign In to 
+		span= title
+	.form-container
+		form(method='post', action="/login")					
+			input#username.field(type="text", name="username", placeholder="Username")
+			input.field(type="password", name="password", placeholder="Password")
+			input.button(type="submit", value="Sign In")
+	if showFlash
+		#flash= info

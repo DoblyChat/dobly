@@ -72,7 +72,7 @@ function authenticate() {
 
 function logOut(req, res) {
 	req.logOut();
-  	res.redirect('/');
+  	res.redirect('/login');
 }
 
 function timeOut(req, res) {

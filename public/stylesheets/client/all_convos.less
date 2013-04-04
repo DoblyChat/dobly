@@ -8,7 +8,7 @@
 }
 
 #all-convos {
-	width: @dual-convo-width;
+	width: @convo-width + 100;
 	height: auto;
     .centered;
     padding-bottom: @standard-margin;
@@ -24,8 +24,9 @@
 		}
 
 		.header {
+
 			.message-padding;
-			border-bottom: @thick-gray-border;
+			// border-bottom: @thick-gray-border;
 
 			.icons{
 				float: left;
@@ -47,6 +48,10 @@
 
 					span{
 						cursor: pointer;
+
+						&:hover {
+							text-decoration: underline;
+						}
 					}
 				}
 
@@ -91,10 +96,11 @@
 			.messages-margin;
 			.message {
 				.thin-message-padding;
-				border-bottom: 1px solid @light-gray;
+				// border-bottom: 1px solid @light-gray;
 
 				&:last-child {
 					border-bottom: 0;
+					padding-bottom: 20px;
 				}
 
 				.author {

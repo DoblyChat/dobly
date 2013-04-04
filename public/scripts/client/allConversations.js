@@ -18,5 +18,18 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
     });
   };
 
+  self.toggleMessages = function(conversation, event){
+    if(conversation.messages().length > 0){
+      toggle('.messages');
+    }else{
+      toggle('.no-messages');
+    }
+
+    function toggle(selector){
+      $(event.currentTarget).closest('.header').siblings(selector).toggle('slideDown');
+      $(event.currentTarget).hide().siblings().show();
+    }
+  };
+
   return self;
 }

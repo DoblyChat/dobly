@@ -12,6 +12,7 @@ function createConversation(data) {
   self.active = ko.observable(false);
   self.hasFocus = ko.observable(false);
   self.ui = createConversationUi();
+  self.timestamp = common.formatTimestamp(data.timestamp);
 
   if(data.messages){
     for(var i = 0; i < data.messages.length; i++){

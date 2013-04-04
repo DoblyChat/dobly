@@ -36,7 +36,8 @@ function createConversation(socket, data) {
                     var dataToEmit = { 
                         _id: conversation.id, 
                         topic: conversation.topic, 
-                        createdBy: conversation.createdBy 
+                        createdBy: conversation.createdBy,
+                        timestamp: conversation.timestamp
                     };
 
                     socket.emitToGroup('my_new_conversation', dataToEmit);

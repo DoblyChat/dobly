@@ -61,21 +61,27 @@ html
 						.convo-new-message(data-bind="click: markAsRead")
 							textarea(tabindex="2", placeholder="Write a new message", rows="2", maxlength=2000, data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
 			#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.sortedConversations")
-				.convo(data-bind="click: $root.allConversations.open")
+				.convo
 					.header
-						.left(data-bind="css: { 'with-out-counter': unreadCounter() <= 0, 'with-counter': unreadCounter() > 0 }")
-							.topic(data-bind="text: topic")
+						.icons
+							span.icon-expand(data-bind="click: $root.allConversations.toggleMessages")
+							span.icon-collapse.hidden(data-bind="click: $root.allConversations.toggleMessages")
+						.info
+							.topic
+								span(data-bind="text: topic, click: $root.allConversations.open")
 							.created-by
-								span by 
 								span(data-bind="text: createdBy")
-						.right(data-bind="visible: unreadCounter() > 0")
-							.counter(data-bind="text: unreadCounter")
-					.messages(data-bind="foreach: lastMessages", class="hidden")
+								span |
+								span(data-bind="text: timestamp")
+						.counter-container
+							.counter(data-bind="visible: unreadCounter() > 0, text: unreadCounter")
+
+					.messages.hidden(data-bind="foreach: lastMessages")
 						.message
 							.author(data-bind="text: createdBy")
 							.time(data-bind="text: simpleTimestamp")
 							.text(data-bind="text: lines")
-					.no-messages(data-bind="visible: lastMessages().length <= 0")
+					.no-messages.hidden
 						.message There aren't any messages in this conversation.				
 					
 

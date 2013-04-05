@@ -201,7 +201,7 @@ function getGroups(req, res){
 			group.users.push(user);
 		});
 
-		res.render('admin/groups', { groups: results.groups, title: title });
+		res.render('admin/groups', { groups: results.groups, title: title, layout: '' });
 
 		function findGroup(groupId){
 			var foundGroup;

@@ -9,7 +9,8 @@ html
 		title= title
 	body
 		#header
-			#logo= title
+			#logo
+				img(src="/images/logo.png", alt="Dobly")
 			.top-links.hidden
 				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations

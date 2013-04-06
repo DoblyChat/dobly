@@ -25,31 +25,21 @@ body {
 	}
 }
 
+@-ms-viewport {
+  width: device-width;
+}
 
-
-/* Tablet to desktop
-------------------------- */
-@media (min-width: 768px) and (max-width: 979px) {
-  /* Remove any padding from the body */
-	body {
+@media (max-width: 979px) {
+  	body {
     	padding-top: 0;
   	}
 }
 
-/* Tablet
-------------------------- */
-@media (max-width: 767px) {
-  /* Remove any padding from the body */
-  body {
-    padding-top: 0;
-  }
+@media (max-width: 320px) {
+	.hero-unit {
+		h1 {
+			font-size: 80px;
+		}
+	}
 }
 
-/* Landscape phones
-------------------------- */
-@media (max-width: 480px) {
-  /* Remove padding above jumbotron */
-  body {
-    padding-top: 0;
-  }
-}

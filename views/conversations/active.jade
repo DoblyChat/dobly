@@ -9,7 +9,8 @@ html
 		title= title
 	body
 		#header
-			#logo= title
+			#logo
+				img(src="/images/logo.png", alt="Dobly")
 			.top-links.hidden
 				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
 				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
@@ -59,7 +60,7 @@ html
 									.text(data-bind="foreach: lines")
 										div(data-bind="text: $data")
 						.convo-new-message(data-bind="click: markAsRead")
-							textarea(tabindex="2", placeholder="Write a new message", rows="2", maxlength=2000, data-bind="value: newMessage, valueUpdate: 'afterkeydown', event: { keypress: sendMessage }, hasfocus: hasFocus")
+							textarea(tabindex="2", placeholder="Write a new message", rows="2", maxlength=2000, data-bind="value: newMessage, valueUpdate: 'input', event: { keypress: sendMessage }, hasfocus: hasFocus")
 			#all-convos(data-bind="visible: navigation.showingAll, foreach: allConversations.sortedConversations")
 				.convo
 					.header
@@ -87,7 +88,7 @@ html
 
 			#new-convo.text-input-dialog(data-bind="with: newConversation, visible: navigation.showingNewConvo")
 				div
-					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: topic, valueUpdate: 'afterkeydown', event: { keypress: createOnEnter }")
+					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: createOnClick") Create
@@ -96,7 +97,7 @@ html
 				p 
 					span Set a new topic for this conversation
 				div
-					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'afterkeydown', event: { keypress: updateOnEnter }")
+					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'input', event: { keypress: updateOnEnter }")
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: updateOnClick") Save

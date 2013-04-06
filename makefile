@@ -1,13 +1,13 @@
 REPORTER = spec
 
 test:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
 		--require test/test_helper.js \
 		--timeout 1000 \
 
 test-debug:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		debug \
 		--reporter $(REPORTER) \
 		--require test/test_helper.js \

@@ -6,8 +6,8 @@ describe('Group', function() {
 	describe('#name', function(){
 		it('is lower cased automatically', function(done){
 			Group.create({ name: 'TEST' }, function(err, group){
-				group.name.should.not.eql('TEST');
-				group.name.should.eql('test');
+				expect(group.name).not.toBe('TEST');
+				expect(group.name).toBe('test');
 				done();
 			});
 		});
@@ -31,7 +31,7 @@ describe('Group', function() {
 				function(err, users){
 					group.remove(function(err){
 						User.count({ groupId: group._id }, function(err, count){
-							count.should.eql(0);
+							expect(count).toBe(0);
 							done();
 						});
 					});

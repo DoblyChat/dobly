@@ -50,7 +50,7 @@ describe('Message', function() {
 		it('does not save with 2001', function(done) {
 			messageData.content = stringOfLength(2001);
 			Message.create(messageData, function(err) {
-				err.should.not.be.null;
+				expect(err).not.toBe(null);
 				done();
 			});
 		});

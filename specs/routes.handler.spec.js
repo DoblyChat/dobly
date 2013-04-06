@@ -5,16 +5,16 @@ describe('Routes handler', function(){
 	describe('#check user session', function(){
 		it('continues processing if user in session', function(){
 			var req = { user: {} };
-			var next = sinon.spy();
+			var next = jasmine.createSpy();
 
 			handler.checkUserIsLoggedIn(req, null, next);
 
-			next.called.should.equal.true;
+			expect(next).toHaveBeenCalled();
 		});
 
 		it('recirects to login route if no current session', function(){
 			var req = {};
-			var res = { redirect: sinon.spy() };
+			var res = { redirect: jasmine.createSpy() };
 		});
 	});
 });

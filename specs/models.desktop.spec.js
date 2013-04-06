@@ -14,15 +14,17 @@ describe('Desktop', function(){
 			var conversationId = new mongo.Types.ObjectId();
 			desktop.conversations.push(conversationId);
 
-			desktop.conversations.should.include(conversationId);
+			expect(desktop.conversations).toContain(conversationId);
 			desktop.removeConversation(conversationId);
-			desktop.conversations.should.not.include(conversationId);
+			expect(desktop.conversations).not.toContain(conversationId);
 		});
 
 		it('does not throw error if conversation list empty', function(){
-			(function(){ 
+			function remove(){ 
 				desktop.removeConversation('dummy');
-			}).should.not.throw();
+			}
+
+			expect(remove).not.toThrow();
 		});
 
 		it('does not remove any conversation if requested conversation is not present in list', function(){
@@ -30,10 +32,10 @@ describe('Desktop', function(){
 			var otherId = new mongo.Types.ObjectId();
 
 			desktop.conversations.push(conversationId);
-			desktop.conversations.length.should.equal(1);
+			expect(desktop.conversations.length).toBe(1);
 
 			desktop.removeConversation(otherId);
-			desktop.conversations.length.should.equal(1);
+			expect(desktop.conversations.length).toBe(1);
 		});
 	});
 
@@ -42,39 +44,39 @@ describe('Desktop', function(){
 
 		beforeEach(function(){
 			userId = new mongo.Types.ObjectId();
-			findOne = sinon.spy();
+			findOne = jasmine.createSpy();
 			Desktop.findOne = findOne;
 		});
 
 		it('creates desktop entry if one for user does not exist', function(done){
 
 			Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){ 
-				arguments.length.should.eql(2);
-				savedDesktop.userId.should.eql(userId);
-				savedDesktop.conversations.should.not.be.null;
+				expect(arguments.length).toBe(2);
+				expect(savedDesktop.userId).toBe(userId);
+				expect(savedDesktop.conversations).not.toBe(null);
 				done();
 			});
 
 			verifyFindOneCall(findOne);
-			var findOneCallback = findOne.args[0][1];
+			var findOneCallback = findOne.mostRecentCall.args[1];
 
 			findOneCallback(null, null);
 		});
 
 		function verifyFindOneCall(findOne){
-			findOne.called.should.equal(true);
-			findOne.args[0][0].userId.should.eql(userId);
+			expect(findOne).toHaveBeenCalled();
+			expect(findOne.mostRecentCall.args[0].userId).toBe(userId);
 		}
 
 		it('returns desktop entry if one for user already exists', function(){
 			desktop.userId = userId;
 
 			Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){
-				savedDesktop.userId.should.eql(userId);
+				expect(savedDesktop.userId).toBe(userId);
 			});
 
 			verifyFindOneCall(findOne);
-			var findOneCallback = findOne.args[0][1];
+			var findOneCallback = findOne.mostRecentCall.args[1];
 
 			findOneCallback(null, desktop);
 		});
@@ -96,8 +98,8 @@ describe('Desktop', function(){
 
 		it('has a default empty array of conversations', function(){
 			var desktop = new Desktop();
-			desktop.conversations.should.not.be.null;
-			desktop.conversations.length.should.equal(0);
+			expect(desktop.conversations).not.toBe(null);
+			expect(desktop.conversations.length).toBe(0);
 		});
 	});
 });

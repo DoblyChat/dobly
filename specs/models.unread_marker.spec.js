@@ -13,7 +13,7 @@ describe('Unread Marker', function() {
 		it('creates a new counter with 1 if none exists', function(done){
 			UnreadMarker.increaseCounter(userId, conversationId, function(err){
 				UnreadMarker.findOne({ userId: userId, conversationId: conversationId }, function(err, marker){
-					marker.count.should.eql(1);
+					expect(marker.count).toBe(1);
 					done();
 				});
 			});
@@ -23,7 +23,7 @@ describe('Unread Marker', function() {
 			UnreadMarker.increaseCounter(userId, conversationId, function(err){
 				UnreadMarker.increaseCounter(userId, conversationId, function(err){
 					UnreadMarker.findOne({ userId: userId, conversationId: conversationId }, function(err, marker){
-						marker.count.should.eql(2);
+						expect(marker.count).toBe(2);
 						done();
 					});
 				});

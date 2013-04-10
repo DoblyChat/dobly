@@ -20,8 +20,6 @@
     "less-middleware": "~0.1.X"
   },
   "devDependencies": {
-    "mocha": "1.8.X",
-    "sinon": "1.5.X",
-    "chai": "1.4.X"
+    "jasmine-node": "1.5.X"
   }
 }

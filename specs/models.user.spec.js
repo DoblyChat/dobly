@@ -17,8 +17,8 @@ describe('User', function() {
 
 		it('encrypts password before save', function(done) {
 			User.create(userData, function(err, user){
-				user.password.should.not.be.empty;
-				user.password.should.not.eql('cleartext');
+				expect(user.password).not.toBe('');
+				expect(user.password).not.toBe('cleartext');
 				done(err);
 			});
 		});
@@ -29,8 +29,8 @@ describe('User', function() {
 					
 				user.save(function(err){
 					User.findOne({ username: 'test-2' }, function(err, updatedUser) {
-						updatedUser.username.should.not.eql('test');
-						updatedUser.password.should.eql(user.password);
+						expect(updatedUser.username).not.toBe('test');
+						expect(updatedUser.password).toBe(user.password);
 						done(err);
 					});
 				});
@@ -40,7 +40,7 @@ describe('User', function() {
 		it('can compare password to determine successfull match', function(done){
 			User.create(userData, function(err, user){
 					user.comparePassword('cleartext', function(err, isMatch) {
-					isMatch.should.be.ok;
+					expect(isMatch).toBeTruthy();
 					done(err);
 				});
 			});
@@ -49,7 +49,7 @@ describe('User', function() {
 		it('can compare password to determine unsuccessfull match', function(done){
 			User.create(userData, function(err, user){
 				user.comparePassword('wrong', function(err, isMatch) {
-					isMatch.should.not.be.ok;
+					expect(isMatch).not.toBeTruthy();
 					done(err);
 				});
 			});
@@ -60,12 +60,12 @@ describe('User', function() {
 		
 		it('must be unique', function(done) {
 			User.create(userData, function(err, user) {
-				should.not.exist(err);
+				expect(err).toBeNull();
 
 				userData.password = 'something else'
 				User.create(userData, function(err) {
-					err.should.not.be.null;
-					err.err.should.include('dup key: { : "test" }')
+					expect(err).not.toBe(null);
+					expect(err.err).toContain('dup key: { : "test" }')
 
 					done();
 				});
@@ -76,8 +76,8 @@ describe('User', function() {
 			userData.username = 'TEST';
 
 			User.create(userData, function(err, user){
-				user.username.should.not.eql('TEST');
-				user.username.should.eql('test');
+				expect(user.username).not.toBe('TEST');
+				expect(user.username).toBe('test');
 				done();
 			});
 		});

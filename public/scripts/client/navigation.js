@@ -8,67 +8,49 @@ function createNavigationModule(viewModel) {
     self.showingGroup = ko.observable(false);
     self.changingTopic = ko.observable(false);
 
+    var flags = [ self.showingDesktop, self.showingAll, self.showingNewConvo, self.showingNotificationSetup, self.showingGroup, self.changingTopic ];
+
     self.all = function() {
-      viewModel.allConversations.refresh();
-      self.showingDesktop(false);
-      self.showingNewConvo(false);
-      self.showingAll(true);
-      self.showingNotificationSetup(false);
-      self.showingGroup(false);
-      self.changingTopic(false);
+		viewModel.allConversations.refresh();
+		onlyShow(self.showingAll);
     };
 
+    function onlyShow(flagToShow) {
+		for (var i = flags.length - 1; i >= 0; i--) {
+			if (flags[i] === flagToShow) {
+				flags[i](true);
+			} else {
+				flags[i](false);
+			}
+		};
+    }
+
     self.desktop = function() {
-      self.showingNewConvo(false);
-      self.showingAll(false);
-      self.showingDesktop(true);
-      self.showingNotificationSetup(false);
-      self.showingGroup(false);
-      self.changingTopic(false);
-      viewModel.desktop.ui.show();
+		onlyShow(self.showingDesktop);
+		viewModel.desktop.ui.show();
     };
 
     self.newConvo = function() {
-      self.showingAll(false);
-      self.showingDesktop(false);
-      self.showingNewConvo(true);
-      self.showingNotificationSetup(false);
-      self.showingGroup(false);
-      self.changingTopic(false);
+		onlyShow(self.showingNewConvo);
     };
 
     self.notificationSetup = function(){
-      self.showingDesktop(false);
-      self.showingNewConvo(false);
-      self.showingAll(false);
-      self.showingNotificationSetup(true);
-      self.showingGroup(false);
-      self.changingTopic(false);
+		onlyShow(self.showingNotificationSetup);
     };
 
     self.group = function(){
-      self.showingDesktop(false);
-      self.showingNewConvo(false);
-      self.showingAll(false);
-      self.showingNotificationSetup(false);
-      self.showingGroup(true);
-      self.changingTopic(false);
+		onlyShow(self.showingGroup);
     };
 
     self.showBack = function(){
-      return self.showingAll() 
-          || self.showingNewConvo() 
-          || self.showingNotificationSetup()
-          || self.showingGroup();
+		return self.showingAll() 
+			|| self.showingNewConvo() 
+			|| self.showingNotificationSetup()
+			|| self.showingGroup();
     };
 
     self.changeTopic = function(){
-      self.showingAll(false);
-      self.showingDesktop(false);
-      self.showingNewConvo(false);
-      self.showingNotificationSetup(false);
-      self.showingGroup(false);
-      self.changingTopic(true);
+		onlyShow(self.changingTopic);
     }
 
     return self;

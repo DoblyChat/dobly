@@ -1,15 +1,17 @@
-var Conversation = require('../models/conversation'),
-    User = require('../models/user'),
-    Group = require('../models/group'),
-    Desktop = require('../models/desktop'),
-    UnreadMarker = require('../models/unread_marker'),
-    passport = require('passport'),
-    async = require('async');
 
-module.exports = (function routeHandler(){
-	var flashKey = 'error';
-	var title = 'Dobly';
-	var self = {};
+
+module.exports = function RouteHandler(){
+	
+	var Conversation = require('../models/conversation'),
+	    User = require('../models/user'),
+	    Group = require('../models/group'),
+	    Desktop = require('../models/desktop'),
+	    UnreadMarker = require('../models/unread_marker'),
+	    passport = require('passport'),
+	    async = require('async'),
+	    flashKey = 'error',
+	    title = 'Dobly',
+	    self = this;
 
 	self.checkUserIsLoggedIn = function(req, res, next) {
 		if(req.user) {
@@ -44,10 +46,10 @@ module.exports = (function routeHandler(){
 		}
 	}
 
-	self.authenticate = function() {
+	self.authenticate = function(req, res) {
 		return passport.authenticate('local', { successRedirect: '/conversations',
 										 		failureRedirect: '/login',
-										 		failureFlash: 'Username and password do not match.' });
+										 		failureFlash: 'Username and password do not match.' })(req, res);
 	}
 
 	self.logOut = function(req, res) {
@@ -73,14 +75,14 @@ module.exports = (function routeHandler(){
 					{ username: req.body.username, groupId: group._id, password: req.body.password },
 					function(err){
 						if(err){
-							redirectToSignUp('Username is already in use');
+							redirectToSignUp('Username is already in use.');
 						}else{
 							res.redirect('/login');	
 						}
 					});
 			});
 		} else {
-			redirectToSignUp('Password does not match');
+			redirectToSignUp('Password does not match.');
 		}
 
 		function redirectToSignUp(flash) {
@@ -110,65 +112,64 @@ module.exports = (function routeHandler(){
 		function(err, results) {
 			if(err){
 				console.error('Error rendering desktop', err);
-			}
+			}else{
+				results.group.users = results.users;
 
-			results.group.users = results.users;
+			    results.conversations.forEach(function(conversation){
+					addUnread(conversation, results.markers, results.desktop);
+				});
 
-		    results.conversations.forEach(function(conversation){
-				addUnread(conversation, results.markers, results.desktop);
-			});
+			    if(results.desktop.isModified('conversations')){
+			    	results.desktop.save(function(err){
+			    		if(err){
+			    			console.error('Error updating desktop when rendering', err);
+			    		}else{
+			    			render();	
+			    		}
+			    	});
+			    }else{
+			    	render();
+			    }
 
-		    if(results.desktop.isModified('conversations')){
-		    	results.desktop.save(function(err){
-		    		if(err){
-		    			console.error('Error updating desktop when rendering', err);
-		    		}else{
-		    			render();	
-		    		}
-		    	});
-		    }else{
-		    	render();
-		    }
+				function addUnread(conversation){
+					conversation.unread = 0;
+					
+					results.markers.forEach(function(marker){
+						if(marker.conversationId.equals(conversation._id)){
+							conversation.unread = marker.count;
 
-		    function render() {
-		    	res.render('conversations/active', 
-				{ 
-					title: title,
-				    conversations: JSON.stringify(results.conversations),
-				    desktop: JSON.stringify(results.desktop), 
-					currentUser: JSON.stringify(req.user),
-					group: JSON.stringify(results.group),
-					layout: ''
-				});	
-		    }
-		});
+							if(results.desktop.conversations.indexOf(conversation._id) < 0){
+								results.desktop.conversations.push(conversation._id);
+							}
 
-		function addUnread(conversation, markers, desktop){
-			conversation.unread = 0;
-			
-			markers.forEach(function(marker){
-				if(marker.conversationId.equals(conversation._id)){
-					conversation.unread = marker.count;
-
-					if(desktop.conversations.indexOf(conversation._id) < 0){
-						desktop.conversations.push(conversation._id);
-					}
-
-					return;
+							return;
+						}
+					});
 				}
-			});
-		}
+
+			    function render() {
+			    	res.render('conversations/active', 
+					{ 
+						title: title,
+					    conversations: JSON.stringify(results.conversations),
+					    desktop: JSON.stringify(results.desktop), 
+						currentUser: JSON.stringify(req.user),
+						group: JSON.stringify(results.group),
+						layout: ''
+					});	
+			    }
+			}			
+		});
 	}
 
 	self.getGroups = function(req, res){
 		async.parallel({
 			groups: function(callback){
-				Group.find({}).lean().exec(callback);		
+				Group.find({}, null, { lean: true }, callback);		
 			},
 			users: function(callback){
-				User.find({}).lean().exec(callback);	
+				User.find({}, null, { lean: true }, callback);	
 			}
-
 		},
 		function(err, results){
 			if(err){
@@ -204,6 +205,4 @@ module.exports = (function routeHandler(){
 			res.redirect('/admin/groups');
 		});
 	}
-
-	return self;
-})();
+};

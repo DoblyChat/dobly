@@ -1,4 +1,4 @@
-module.exports = function UserIo(){
+module.exports = (function (){
   var User = require('../models/user'),
       self = this;
 
@@ -28,4 +28,6 @@ module.exports = function UserIo(){
       socket.emit('timeout');
     }
   }
-};
+
+  return self;
+})();

@@ -24,9 +24,7 @@ describe('Routes configuration', function(){
 			createGroup: jasmine.createSpy('createGroup')
 		};
 
-		mockery.registerMock('./handler', function(){
-			return handlerMock;
-		});
+		mockery.registerMock('./handler', handlerMock);
 
 		config(appMock);
 	});

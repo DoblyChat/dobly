@@ -1,4 +1,4 @@
-module.exports = function DesktopIo(){
+module.exports = (function (){
     var Desktop = require('../models/desktop'),
         self = this;
 
@@ -37,6 +37,8 @@ module.exports = function DesktopIo(){
                 });    
             }
         });
-    } 
-};
+    }
+
+    return self; 
+})();
 

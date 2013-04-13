@@ -1,7 +1,6 @@
 exports.config = function(app) {
 	
-	var Handler = require('./handler');
-	var handler = new Handler();
+	var handler = require('./handler');
 
 	app.get('/', handler.home);
 

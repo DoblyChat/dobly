@@ -1,6 +1,4 @@
-
-
-module.exports = function RouteHandler(){
+module.exports = (function (){
 	
 	var Conversation = require('../models/conversation'),
 	    User = require('../models/user'),
@@ -11,7 +9,7 @@ module.exports = function RouteHandler(){
 	    async = require('async'),
 	    flashKey = 'error',
 	    title = 'Dobly',
-	    self = this;
+	    self = {};
 
 	self.checkUserIsLoggedIn = function(req, res, next) {
 		if(req.user) {
@@ -205,4 +203,6 @@ module.exports = function RouteHandler(){
 			res.redirect('/admin/groups');
 		});
 	}
-};
+
+	return self;
+})();

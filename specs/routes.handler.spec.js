@@ -5,8 +5,6 @@ describe('Routes handler', function(){
 
 	var APP_TITLE = 'Dobly';
 
-	var Handler = require('../routes/handler');
-
 	beforeEach(function(){
 		req = {};
 		res = { 
@@ -14,8 +12,9 @@ describe('Routes handler', function(){
 			render: jasmine.createSpy(),
 		};
 
-		mockery.enable();
-
+		mockery.enable({ useCleanCache: true });
+		mockery.registerAllowable('../routes/handler');
+		
 		passportMock = (function(){
 			var self = {};
 			self.authenticator = jasmine.createSpy();
@@ -33,18 +32,12 @@ describe('Routes handler', function(){
 
 		mockery.registerMock('passport', passportMock);
 
-		handler = new Handler();
+		handler = require('../routes/handler');
 	});
 
 	afterEach(function(){
 		mockery.disable();
-		mockery.deregisterMock('../models/group');
-		mockery.deregisterMock('../models/user');
-		mockery.deregisterMock('../models/desktop');
-		mockery.deregisterMock('../models/unread_marker');
-		mockery.deregisterMock('async');
-		mockery.deregisterMock('../models/conversation');
-		mockery.deregisterMock('passport');
+		mockery.deregisterAll();
 	});
 
 	describe('#check user session', function(){

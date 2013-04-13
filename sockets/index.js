@@ -1,8 +1,7 @@
-var desktopIo = require('./desktop_io')
-  , conversationIo = require('./conversation_io')
-  , User = require('../models/user');
+var User = require('../models/user');
 
 exports.config = function(io, sessionStore){
+    
     io.configure('production', function () { 
       // needed for heroku
       io.set("transports", ["xhr-polling"]); 
@@ -14,6 +13,13 @@ exports.config = function(io, sessionStore){
       io.set('log level', 1);  
     });
 
+    var conversationIo = require('./conversation_io'),
+        UserIo = require('./user_io'),
+        DesktopIo = new require('./desktop_io');
+
+    var userIo = new UserIo();
+    var desktopIo = new DesktopIo();
+
     io.set('authorization', function (data, accept) {
         authorize(data, accept, sessionStore);
     });
@@ -24,21 +30,24 @@ exports.config = function(io, sessionStore){
       socket.whenUser = whenUser;
 
       conversationIo.config(socket);
-      desktopIo.config(socket);
 
-      userConnected(socket);
+      userIo.userConnected(socket);
 
       socket.on('request_online_users', function(){
-        requestOnlineUsers(socket, io.sockets)
+        userIo.requestOnlineUsers(socket, io.sockets)
       });
 
       socket.on('disconnect', function(){
-        userDisconnected(socket);
+        userIo.userDisconnected(socket);
       });
 
       socket.on('ping', function(){
-        checkForActiveSession(socket);
+        userIo.checkForActiveSession(socket);
       });
+
+      socket.whenUser('add_to_desktop', desktopIo.add);
+      socket.whenUser('remove_from_desktop', desktopIo.remove);
+      socket.whenUser('update_strip_order', desktopIo.updateStripOrder);
     });
 };
 
@@ -83,30 +92,3 @@ function authorize(data, accept, sessionStore){
         accept('No cookie transmitted.', false);
     }
 };
-
-function userConnected(socket){
-  socket.join(socket.handshake.user.groupId);
-  socket.broadcastToGroup('user_connected', socket.handshake.user._id);
-}
-
-function userDisconnected(socket){
-  socket.leave(socket.handshake.user.groupId);
-  socket.broadcastToGroup('user_disconnected', socket.handshake.user._id);
-}
-
-function requestOnlineUsers(currentSocket, sockets){
-  var connectedUsers = [];
-  var socketsArray = sockets.clients(currentSocket.groupId);
-  for(var i = 0; i < socketsArray.length; i++){
-      connectedUsers.push(socketsArray[i].handshake.user._id);
-  }
-
-  currentSocket.emit('receive_online_users', connectedUsers);
-}
-
-function checkForActiveSession(socket){
-  if(socket.handshake.session.cookie._expires < new Date()){
-    console.error('Session expired for %s where cookie expired at %s at %s', socket.handshake.user.username, socket.handshake.session.cookie._expires, new Date())
-    socket.emit('timeout');
-  }
-}

@@ -27,7 +27,7 @@ module.exports = function RouteHandler(){
 		});	
 	}
 
-	self.login = function(req, res){
+	self.logIn = function(req, res){
 		routeIfLoggedIn(req, res, function(){
 			var flash = req.flash(flashKey);
 			res.render('security/login', {  	

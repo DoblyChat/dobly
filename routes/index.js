@@ -1,11 +1,11 @@
-var Handler = require('./handler');
-
 exports.config = function(app) {
+	
+	var Handler = require('./handler');
 	var handler = new Handler();
 
 	app.get('/', handler.home);
 
-	app.get('/login', handler.login);
+	app.get('/login', handler.logIn);
 
 	app.post('/login', handler.authenticate);
 

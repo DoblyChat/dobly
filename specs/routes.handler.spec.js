@@ -86,21 +86,21 @@ describe('Routes handler', function(){
 	describe('#login', function(){
 		it('renders login page if not logged in', function(){
 			req.flash = jasmine.createSpy().andReturn('');
-			handler.login(req, res);
+			handler.logIn(req, res);
 
 			expect(res.render).toHaveBeenCalledWith('security/login', { title: APP_TITLE, info: '', showFlash: false });
 		});
 
 		it('sets flash if available', function(){
 			req.flash = jasmine.createSpy().andReturn('flash');
-			handler.login(req, res);
+			handler.logIn(req, res);
 
 			expect(res.render).toHaveBeenCalledWith('security/login', { title: APP_TITLE, info: 'flash', showFlash: true });
 		});
 
 		it('redirects to conversations if already logged in', function(){
 			req.user = {};
-			handler.login(req, res);
+			handler.logIn(req, res);
 
 			expect(res.redirect).toHaveBeenCalledWith('/conversations');
 		});
@@ -149,7 +149,7 @@ describe('Routes handler', function(){
 			expect(req.flash).toHaveBeenCalledWith('error');
 			expect(res.render).toHaveBeenCalledWith('security/sign-up', {
 				group: 'gru',
-				title: 'Sign up - Dobly',
+				title: 'Sign up - ' + APP_TITLE,
 				showFlash: true,
 				info: 'flash message'
 			});
@@ -163,7 +163,7 @@ describe('Routes handler', function(){
 			expect(req.flash).toHaveBeenCalledWith('error');
 			expect(res.render).toHaveBeenCalledWith('security/sign-up', {
 				group: 'grup',
-				title: 'Sign up - Dobly',
+				title: 'Sign up - ' + APP_TITLE,
 				showFlash: false,
 				info: ''
 			});
@@ -368,7 +368,7 @@ describe('Routes handler', function(){
 
 				var renderData = args[1];
 
-				expect(renderData.title).toBe('Dobly');
+				expect(renderData.title).toBe(APP_TITLE);
 				expect(renderData.conversations).toBe(JSON.stringify(data.conversations));
 				expect(renderData.desktop).toBe(JSON.stringify(data.desktop));
 				expect(renderData.currentUser).toBe(JSON.stringify(req.user));
@@ -453,7 +453,7 @@ describe('Routes handler', function(){
 
 			it('renders groups', function(){
 				render(null, data);
-				expect(res.render).toHaveBeenCalledWith('admin/groups', { groups: data.groups, title: 'Dobly', layout: ''});
+				expect(res.render).toHaveBeenCalledWith('admin/groups', { groups: data.groups, title: APP_TITLE, layout: ''});
 			});
 		});
 	});

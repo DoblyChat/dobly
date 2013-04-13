@@ -1,33 +1,31 @@
 function createChangeTopic(nav){
 	var self = {};
 
-    var conversation;
-
     self.newTopic = ko.observable('');
 
     self.click = function(conversationToChange){
-      conversation = conversationToChange;
+      self.conversation = conversationToChange;
       nav.changeTopic();
       common.delayedFocus('#change-topic textarea', 100, function(){
-        self.newTopic(conversation.topic());
+        self.newTopic(self.conversation.topic());
       });
     };
 
     self.updateOnEnter = function(obj, event){
       if(common.enterKeyPressed(event)){
-        update();
+        self.update();
       } else {
         return true;
       }
     };
 
     self.updateOnClick = function(obj, event){
-      update();
+      self.update();
     };
 
-    function update(){
-      app.socket.emit('update_topic', { conversationId: conversation.id, newTopic: self.newTopic() })
-      conversation.topic(self.newTopic());
+    self.update = function(){
+      app.socket.emit('update_topic', { conversationId: self.conversation.id, newTopic: self.newTopic() })
+      self.conversation.topic(self.newTopic());
       close();
     }
 

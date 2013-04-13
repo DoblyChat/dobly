@@ -1,6 +1,11 @@
 describe("common", function() {
-	it("formats some time stamp", function() {
+	it("formats time stamp when date", function() {
 		var april9 = Date.parse('2013.04.09 22:13:34');
+		expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
+	});
+
+	it("formats time stamp when string", function() {
+		var april9 = '2013.04.09 22:13:34';
 		expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
 	});
 
@@ -9,13 +14,18 @@ describe("common", function() {
 		expect(common.formatTimestamp(now)).toBe(now.toString('h:mm tt'));
 	});
 
-	it("formats some simple time stamp", function() {
+	it("formats simple time stamp when date", function() {
 		var april9 = Date.parse('2013.04.09 22:13:34');
 		expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
 	});
 
+	it("formats simple time stamp when string", function() {
+		var april9 = '2013.04.09 22:13:34';
+		expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
+	});
+
 	it("formats today's simple time stamp", function() {
-		var now = Date.now();  	
+		var now = Date.now();
 		expect(common.formatSimpleTimestamp(now)).toBe(now.toString('h:mm tt'));
 	});
 

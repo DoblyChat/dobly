@@ -39,6 +39,62 @@ describe('Desktop', function(){
 		});
 	});
 
+	describe('#addConversation', function(){
+		it('adds a conversation', function(){
+			desktop.conversations.push(new mongo.Types.ObjectId());
+			desktop.conversations.push(new mongo.Types.ObjectId());
+			
+			var conversationId = new mongo.Types.ObjectId();
+			desktop.addConversation(conversationId);
+			expect(desktop.conversations.length).toBe(3);
+			expect(desktop.conversations).toContain(conversationId);
+		});
+
+		it('does not add the same conversation twice', function(){
+			var conversationId = new mongo.Types.ObjectId();
+			desktop.conversations.push(conversationId);
+
+			desktop.addConversation(conversationId);
+			expect(desktop.conversations.length).toBe(1);
+		});
+	});
+
+	describe('#moveConversation', function(){
+		it('moves conversation to new location', function(){
+			var convo1 = new mongo.Types.ObjectId();
+			var convo2 = new mongo.Types.ObjectId();
+			var convo3 = new mongo.Types.ObjectId();
+
+			desktop.conversations.push(convo1);
+			desktop.conversations.push(convo2);
+			desktop.conversations.push(convo3);
+
+			verifyOrder(convo1, convo2, convo3);
+
+			desktop.moveConversation(0, 1);
+
+			verifyOrder(convo2, convo1, convo3);
+
+			desktop.moveConversation(0, 2);
+
+			verifyOrder(convo1, convo3, convo2);
+
+			desktop.moveConversation(1, 1);
+
+			verifyOrder(convo1, convo3, convo2);
+
+			desktop.moveConversation(1, 2);
+
+			verifyOrder(convo1, convo2, convo3);
+		});
+
+		function verifyOrder(first, second, third){
+			expect(desktop.conversations[0]).toBe(first);
+			expect(desktop.conversations[1]).toBe(second);
+			expect(desktop.conversations[2]).toBe(third);
+		}
+	});
+
 	describe('#findOrCreateByUserId', function(){
 		var userId, findOne;
 

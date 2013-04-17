@@ -43,31 +43,28 @@ module.exports = (function(){
         });
 
         function saveMessage(callback){
-            // is there a way to add a message without loading the entire conversation?
-            Conversation.findById(data.conversationId, function(err, conversation){
-                var msg = new Message();
-                msg.content = data.content;
-                msg.createdBy = socket.handshake.user.username;
-                msg.timestamp = data.timestamp;
-                conversation.messages.push(msg);
-                conversation.save(function(err){
-                    var dataToEmit = {
-                        content: data.content, 
-                        createdBy: socket.handshake.user.username, 
-                        conversationId: data.conversationId,
-                        timestamp: data.timestamp,
-                    };
-                    callback(err, dataToEmit);
-                });
+            var msg = new Message();
+            msg.content = data.content;
+            msg.createdBy = socket.handshake.user.username;
+            msg.timestamp = data.timestamp;
+
+            Conversation.addMessage(data.conversationId, msg, function(err){
+                var dataToEmit = {
+                    content: data.content, 
+                    createdBy: socket.handshake.user.username, 
+                    conversationId: data.conversationId,
+                    timestamp: data.timestamp,
+                };
+                callback(err, dataToEmit);
             });
         }
 
         function saveUnreadMarkers(callback){
-            User.find({ _id: { $ne: socket.handshake.user._id }, groupId: socket.handshake.user.groupId }, function(err, users){
+            User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
                 async.each(users, save);
 
-                function save(user, callback){
-                    UnreadMarker.increaseCounter(user._id, data.conversationId, callback);
+                function save(user, saveCallback){
+                    UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
                 }
 
                 callback(err);

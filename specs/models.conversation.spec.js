@@ -104,4 +104,77 @@ describe('Conversation', function(){
 			});
 		});
 	});
+
+	describe('#addMessage', function(){
+		var conversation;
+
+		beforeEach(function(done){
+			Conversation.create({
+				topic: 'add message test',
+				groupId: new mongo.Types.ObjectId(),
+				createdBy: 'test-user'
+			}, function(err, newConversation){
+				conversation = newConversation;
+				done(err);
+			});
+		});
+
+		it('adds one message', function(done){
+			var msg = new Message();
+			msg.content = 'first message';
+			msg.createdBy = 'first creator';
+			msg.timestamp = new Date();
+
+			Conversation.addMessage(conversation._id, msg, function(err){
+				Conversation.findById(conversation._id, function(err, savedConversation){
+					expect(savedConversation.messages.length).toBe(1);
+
+					var savedMessage = savedConversation.messages[0];
+					expect(savedMessage.content).toBe('first message');
+					expect(savedMessage.createdBy).toBe('first creator');
+					expect(savedMessage.timestamp).toBeDefined();
+
+					done(err);
+				});
+			});
+		});
+
+		it('adds two messages', function(done){
+			var first = new Message();
+			first.content = 'first message';
+			first.createdBy = 'first creator';
+			first.timestamp = new Date();
+
+			var second = new Message();
+			second.content = 'second message';
+			second.createdBy = 'second creator';
+			second.timestamp = new Date();
+
+			Conversation.addMessage(conversation._id, first, function(err){
+				Conversation.addMessage(conversation._id, second, function(err){
+					Conversation.findById(conversation._id, function(err, savedConversation){
+						expect(savedConversation.messages.length).toBe(2);
+
+						var firstSaved = savedConversation.messages[0];
+						expect(firstSaved.content).toBe('first message');
+						expect(firstSaved.createdBy).toBe('first creator');
+						expect(firstSaved.timestamp).toBeDefined();
+
+						var secondMessage = savedConversation.messages[1];
+						expect(secondMessage.content).toBe('second message');
+						expect(secondMessage.createdBy).toBe('second creator');
+						expect(secondMessage.timestamp).toBeDefined();
+
+						done(err);
+					});
+				});
+			});
+		});
+		
+		afterEach(function(done){
+			conversation.remove(function(err){
+				done(err);
+			});
+		});
+	});
 });

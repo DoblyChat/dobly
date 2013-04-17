@@ -17,15 +17,8 @@ module.exports = (function(){
                     if(err){
                         console.error('Error creating conversation', err);
                     }else{
-                        var dataToEmit = { 
-                            _id: conversation.id, 
-                            topic: conversation.topic, 
-                            createdBy: conversation.createdBy,
-                            timestamp: conversation.timestamp
-                        };
-
-                        socket.emitToGroup('my_new_conversation', dataToEmit);
-                        socket.broadcastToGroup('new_conversation', dataToEmit);    
+                        socket.emit('my_new_conversation', conversation);
+                        socket.broadcastToGroup('new_conversation', conversation);    
                     }
                 }
         );
@@ -50,6 +43,7 @@ module.exports = (function(){
         });
 
         function saveMessage(callback){
+            // is there a way to add a message without loading the entire conversation?
             Conversation.findById(data.conversationId, function(err, conversation){
                 var msg = new Message();
                 msg.content = data.content;

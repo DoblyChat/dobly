@@ -1,5 +1,7 @@
 module.exports = function authorize(data, accept, sessionStore){
-	if (data.headers.cookie) {
+	var User = require('../models/user');
+
+  if (data.headers.cookie) {
         var cookieParser = require('cookie');
         var cookie = cookieParser.parse(data.headers.cookie);
         var sessionID = unescape(cookie['express.sid']);

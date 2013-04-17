@@ -21,7 +21,6 @@ exports.config = function(io, sessionStore){
     });
 
     io.sockets.on('connection', function (socket) {
-      socket.emitToGroup = emitToGroup;
       socket.broadcastToGroup = broadcastToGroup;
       socket.whenUser = whenUser;
 
@@ -60,10 +59,6 @@ exports.config = function(io, sessionStore){
       });
     });
 };
-
-function emitToGroup(event, data){
-  this.in(this.handshake.user.groupId).emit(event, data);
-}
 
 function broadcastToGroup(event, data){
   this.in(this.handshake.user.groupId).broadcast.emit(event, data);

@@ -65,8 +65,10 @@ function broadcastToGroup(event, data){
 }
 
 function whenUser(event, callback){
-  this.on(event, function(data, confirm){
-    this.handshake.session.touch();
+  var socket = this;
+
+  socket.on(event, function(data, confirm){
+    socket.handshake.session.touch();
     callback(data, confirm);
   });
 }

@@ -17,7 +17,9 @@
     "passport-local": "0.1.X",
     "bcrypt": "0.7.X",
     "async": "~0.2.X",
-    "less-middleware": "~0.1.X"
+    "less-middleware": "~0.1.X",
+    "connect-mongo": "~0.3.2",
+    "mongo-connect": "0.0.6"
   },
   "devDependencies": {
     "jasmine-node": "1.5.X",

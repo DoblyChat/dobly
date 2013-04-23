@@ -1,7 +1,7 @@
 var express = require('express')
   , routes = require('./routes')
   , sockets = require('./sockets')
-  , sessionStore = new express.session.MemoryStore()
+  , MongoStore = require('connect-mongo')(express)
   , app = express.createServer()
   , io = require('socket.io').listen(app)
   , mongo = require('mongoose')
@@ -9,6 +9,14 @@ var express = require('express')
   , passport = require('passport')
   , security = require('./security')
   , less = require('less-middleware');
+
+
+var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
+mongo.connect(databaseUri);
+
+var sessionStore = new MongoStore({
+  mongoose_connection: mongo.connections[0],
+});
 
 // Configuration
 app.configure(function(){
@@ -49,9 +57,6 @@ app.configure('production', function(){
 
 var port = process.env.PORT || 3000;
 app.listen(port);
-
-var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
-mongo.connect(databaseUri);
 
 // Security configuration
 security.config(passport);

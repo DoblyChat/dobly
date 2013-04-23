@@ -106,6 +106,44 @@ describe('User', function() {
 		});
 	});
 
+	describe('#findExcept', function(){
+		var firstUser, secondUser, thirdUser;
+
+		beforeEach(function(done){
+			User.create([
+				{ 
+					groupId: group._id,
+					username: 'find-1',
+					password: 'pass'
+				},
+				{
+					groupId: group._id,
+					username: 'find-2',
+					password: 'pass'
+				},
+				{
+					groupId: group._id,
+					username: 'find-3',
+					password: 'pass'
+				}
+			], function(err){
+				firstUser = arguments[1];
+				secondUser = arguments[2];
+				thirdUser = arguments[3];
+				done(err);
+			});
+		});
+
+		it('finds user excluding middle', function(done){
+			User.findExcept(secondUser._id, group._id, function(err, foundUsers){
+				expect(foundUsers.length).toBe(2);
+				expect(foundUsers[0].username).toBe(firstUser.username);
+				expect(foundUsers[1].username).toBe(thirdUser.username);
+				done(err);
+			});
+		});
+	});
+
 	afterEach(function(done){
 		group.remove(function(err){
 			done(err);

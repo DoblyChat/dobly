@@ -33,5 +33,10 @@ schema.methods.comparePassword = function(candidatePassword, callback) {
 	});
 };
 
+schema.statics.findExcept = function(exceptUserId, groupId, callback){
+	this.find({ _id: { $ne: exceptUserId }, groupId: groupId }, function(err, users){
+        callback(err, users);
+    });
+};
 
 module.exports = mongo.model('User', schema);

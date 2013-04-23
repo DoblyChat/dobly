@@ -21,5 +21,14 @@ schema.virtual('lastMessages').get(function(){
 	return sortedMessages.slice(-2);
 });
 
+schema.statics.addMessage = function(conversationId, message, callback){
+	this.update(
+        { _id: conversationId }, 
+        { $push: { messages: message } },
+        function(err){
+            callback(err);
+        });
+};
+
 module.exports = mongo.model('Conversation', schema);
 

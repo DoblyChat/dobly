@@ -1,7 +1,7 @@
-var LocalStrategy = require('passport-local').Strategy
-  , User = require('../models/user');
-
 exports.config = function(passport){
+	var LocalStrategy = require('passport-local').Strategy
+  			, User = require('../models/user');
+
 	passport.use(new LocalStrategy(
 		function(username, password, done){
 			username = username.toLowerCase();

@@ -10,7 +10,19 @@ schema.methods.removeConversation = function(conversationId){
 	if(index >= 0){		
 		this.conversations.splice(index, 1);
 	}
-}
+};
+
+schema.methods.addConversation = function(conversationId){
+	if(this.conversations.indexOf(conversationId) < 0){
+    	this.conversations.push(conversationId);            
+    }
+};
+
+schema.methods.moveConversation = function(currentIndex, newIndex){
+	var conversation = this.conversations[currentIndex];
+    this.conversations.splice(currentIndex, 1);
+    this.conversations.splice(newIndex, 0, conversation);
+};
 
 schema.statics.findOrCreateByUserId = function(userId, callback){
 	var model = this;

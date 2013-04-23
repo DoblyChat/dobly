@@ -18,7 +18,7 @@ app.configure(function(){
   app.use(express.bodyParser());
 
   app.use(express.cookieParser());
-  app.use(express.session({ store: sessionStore, secret: 'viva venezuela!', key: 'express.sid', cookie: { maxAge: 3600000 } }));
+  app.use(express.session({ store: sessionStore, secret: 'viva venezuela!', key: 'express.sid', cookie: { maxAge: 10800000 } }));
   app.use(passport.initialize());
   app.use(passport.session());
 

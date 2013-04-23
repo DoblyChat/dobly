@@ -41,7 +41,7 @@ describe('Socket', function(){
 			})();
 
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../sockets');
+			mockery.registerAllowable('../../sockets');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession');
@@ -50,7 +50,7 @@ describe('Socket', function(){
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
 
-			config = require('../sockets').config
+			config = require('../../sockets').config
 		});
 
 		afterEach(function(){

@@ -20,10 +20,10 @@ describe('Sockets', function(){
 			// Preloading Message module to avoid mockery 
 			// warnings when loading
 			// it after 'require' is intercepted
-			_Message = require('../models/message');
+			_Message = require('../../models/message');
 
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../sockets/conversation_io');
+			mockery.registerAllowable('../../sockets/conversation_io');
 
 			conversationMock = buildMock('../models/conversation', 'create', 'addMessage', 'update');
 			asyncMock = buildMock('async', 'parallel', 'each');
@@ -31,7 +31,7 @@ describe('Sockets', function(){
 			userMock = buildMock('../models/user', 'find', 'findExcept');
 			mockery.registerMock('../models/message', _Message);
 
-			conversationIo = require('../sockets/conversation_io');
+			conversationIo = require('../../sockets/conversation_io');
 		});
 
 		afterEach(function(){

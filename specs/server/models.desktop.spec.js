@@ -1,4 +1,4 @@
-var Desktop = require('../models/desktop');
+var Desktop = require('../../models/desktop');
 
 describe('Desktop', function(){
 

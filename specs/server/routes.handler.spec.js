@@ -13,7 +13,7 @@ describe('Routes handler', function(){
 		};
 
 		mockery.enable({ useCleanCache: true });
-		mockery.registerAllowable('../routes/handler');
+		mockery.registerAllowable('../../routes/handler');
 		
 		passportMock = (function(){
 			var self = {};
@@ -32,7 +32,7 @@ describe('Routes handler', function(){
 
 		mockery.registerMock('passport', passportMock);
 
-		handler = require('../routes/handler');
+		handler = require('../../routes/handler');
 	});
 
 	afterEach(function(){

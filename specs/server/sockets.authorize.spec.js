@@ -24,14 +24,14 @@ describe('Sockets', function(){
 			spyOn(global, 'unescape').andReturn('u-sess-id');
 
 			mockery.enable({ useCleanCache: true});
-			mockery.registerAllowable('../sockets/authorize_io');
+			mockery.registerAllowable('../../sockets/authorize_io');
 
 			cookieParserMock = buildMock('cookie', 'parse');
 			cookieParserMock.parse = cookieParserMock.parse.andReturn(cookieMock);
 
 			userMock = buildMock('../models/user', 'findById');
 
-			authorize = require('../sockets/authorize_io');
+			authorize = require('../../sockets/authorize_io');
 		});
 
 		afterEach(function(){

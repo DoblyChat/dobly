@@ -1,4 +1,4 @@
-var Message = require('../models/message');
+var Message = require('../../models/message');
 
 describe('Message', function() {
 	describe('#required fields', function() {

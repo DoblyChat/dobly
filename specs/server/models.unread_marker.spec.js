@@ -1,4 +1,4 @@
-var UnreadMarker = require('../models/unread_marker');
+var UnreadMarker = require('../../models/unread_marker');
 
 describe('Unread Marker', function() {
 

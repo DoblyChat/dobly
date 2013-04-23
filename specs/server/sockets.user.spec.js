@@ -16,7 +16,7 @@ describe('Sockets', function(){
 				},
 			};
 
-			userIo = require('../sockets/user_io');
+			userIo = require('../../sockets/user_io');
 		});
 
 		it('handles "user connected" event', function(){

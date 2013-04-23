@@ -1,5 +1,5 @@
 describe('Routes configuration', function(){
-	var config = require('../routes/').config;
+	var config = require('../../routes/').config;
 	var appMock, handlerMock;
 
 	beforeEach(function(){

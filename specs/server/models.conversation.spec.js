@@ -1,5 +1,5 @@
-var Conversation = require('../models/conversation'),
-	Message = require('../models/message');
+var Conversation = require('../../models/conversation'),
+	Message = require('../../models/message');
 
 describe('Conversation', function(){
 

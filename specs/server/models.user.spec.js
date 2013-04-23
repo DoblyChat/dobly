@@ -1,5 +1,5 @@
-var User = require('../models/user')
-  , Group = require('../models/group');
+var User = require('../../models/user')
+  , Group = require('../../models/group');
 
 describe('User', function() {
 

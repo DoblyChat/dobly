@@ -53,7 +53,7 @@ describe("message", function() {
 								'<br />' +
 								'e-test <a href="https://myurl.com" target="_blank">https://myurl.com</a>' +
 								'<br />' +
-								'e-another test <a href="www.yahoo.com" target="_blank">www.yahoo.com</a>';
+								'e-another test <a href="http://www.yahoo.com" target="_blank">www.yahoo.com</a>';
 			expect(message.content).toBe(expectedHtml);
 		});
 	});

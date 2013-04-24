@@ -125,6 +125,8 @@ function createConversation(data) {
       self.unreadCounter(0);
       emitMarkAsRead();
     }
+
+    return true;
   };
 
   function emitMarkAsRead(){

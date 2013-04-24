@@ -38,6 +38,11 @@ describe("common", function() {
 		var testEvent = { keyCode: 10 };
 		expect(common.enterKeyPressed(testEvent)).toBe(false);
 	});
+
+	it('html encodes text', function(){
+		var unencodedText = '<script>alert("hello world");</script>';
+		expect(common.htmlEncode(unencodedText)).toBe('&lt;script&gt;alert("hello world");&lt;/script&gt;');
+	});
 });
 
 describe("browser", function() {

@@ -4,7 +4,6 @@ describe("group", function() {
 	var fernando, carlos, fido;
 
 	beforeEach(function() {
-		app.socket = createMockSocket();
 		testData = {
 			name: 'some test group',
 			users: [ 
@@ -14,30 +13,14 @@ describe("group", function() {
 			],
 		};
 
+		app.socket = createMockSocket();
+
 		group = createGroup(testData);
 
 		fernando = group.users()[0];
 		carlos = group.users()[1];
 		fido = group.users()[2];
 	});
-
-	function createMockSocket() {
-		var self = {};
-
-		var handlers = [];
-
-		self.on = function(eventName, handler) {
-			handlers[eventName] = handler;
-		};
-
-		self.emit = jasmine.createSpy();
-
-		self.mockEmit = function(eventName, param) {
-			handlers[eventName](param);
-		};
-
-		return self;
-	}
 
 	it("create group", function() {
 		expect(group.name).toBe('some test group');
@@ -53,7 +36,7 @@ describe("group", function() {
 
 	it("receive online users", function() {
 		var onlineUsers = [ '123', '789' ];
-		app.socket.mockEmit('receive_online_users',onlineUsers);
+		app.socket.mockEmit('receive_online_users', onlineUsers);
 
 		expect(fernando.online()).toBe(true);
 		expect(carlos.online()).toBe(false);

@@ -80,7 +80,7 @@ html
 						.message
 							.author(data-bind="text: createdBy")
 							.time(data-bind="text: simpleTimestamp")
-							.text(data-bind="text: lines")
+							.text(data-bind="html: content")
 					.no-messages.hidden
 						.message There aren't any messages in this conversation.				
 					

@@ -18,7 +18,7 @@ function createMessage(data, confirmed) {
   }
 
   function parseLinks(content){
-    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; 
+    var exp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$])/ig; 
     return content.replace(exp,'<a href="$1" target="_blank">$1</a>'); 
   }
 

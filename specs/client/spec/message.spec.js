@@ -39,7 +39,11 @@ describe("message", function() {
 		});
 
 		it('parses links within message', function(){
-			data.content = "http://www.doblychat.com\nsee: http://www.google.com?query=string\nhello world\ntest https://myurl.com";
+			data.content = 'http://www.doblychat.com\n' +
+							'see: http://www.google.com?query=string\n' +
+							'hello world\n' + 
+							'test https://myurl.com\n' +
+							'another test www.yahoo.com';
 			var message = createMessage(data, true);
 			var expectedHtml = 'e-<a href="http://www.doblychat.com" target="_blank">http://www.doblychat.com</a>' +
 								'<br />' +
@@ -47,7 +51,9 @@ describe("message", function() {
 								'<br />' +
 								'e-hello world' +
 								'<br />' +
-								'e-test <a href="https://myurl.com" target="_blank">https://myurl.com</a>';
+								'e-test <a href="https://myurl.com" target="_blank">https://myurl.com</a>' +
+								'<br />' +
+								'e-another test <a href="www.yahoo.com" target="_blank">www.yahoo.com</a>';
 			expect(message.content).toBe(expectedHtml);
 		});
 	});

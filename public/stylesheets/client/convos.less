@@ -1,5 +1,7 @@
 @convo-title-text-size: 20px;
 
+@load-more-height: 25px;
+
 @message-top-padding: 10px;
 @message-bottom-padding: 10px;
 @message-left-padding: 25px;
@@ -65,6 +67,17 @@
 		}
 	}
 
+	.load-more{
+		height: @load-more-height;
+		text-align: center;
+		padding-top: @load-more-height/4;
+
+		img{
+			width: 25px;
+			height: 25px;
+		}
+	}
+
 	.message {
 		.message-padding;
 		border-bottom: 1px solid @light-gray;
@@ -86,7 +99,7 @@
 				.caption-color;
 			}
 			
-			.pending-spinner{
+			.pending-timer{
 				width: 14px;
 				height: 14px;
 			}

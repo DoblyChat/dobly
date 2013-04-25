@@ -92,7 +92,9 @@ module.exports = (function (){
 	self.renderDesktop = function(req, res) {
 		async.parallel({
 		    conversations: function(callback){
-		    	Conversation.find({ groupId: req.user.groupId }, null, { lean: true }, callback);
+		    	Conversation.find({ groupId: req.user.groupId })
+		    				.populate('messages')
+		    				.exec(callback);
 		    },
 		    desktop: function(callback){
 		        Desktop.findOrCreateByUserId(req.user._id, callback);

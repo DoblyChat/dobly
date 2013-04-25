@@ -133,5 +133,14 @@ function createConversation(data) {
     app.socket.emit('mark_as_read', self.id);
   }
 
+  self.scrolled = function(data, event){
+    console.log(event.target.scrollTop);
+    if(event.target.scrollTop - 50 < 0){
+      self.loadingMore(true);
+    }
+  };
+
+  self.loadingMore = ko.observable(false);
+
   return self;
 }

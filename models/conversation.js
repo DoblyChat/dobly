@@ -10,7 +10,7 @@ var schema = new mongo.Schema({
    	createdBy: { type: String, required: true },
    	groupId: { type: mongo.Schema.Types.ObjectId, required: true },
    	timestamp: { type: Date, default: Date.now, required: true },
-	messages: [message.schema]
+	messages: [{ type: mongo.Schema.Types.ObjectId, ref: 'Message' }]
 });
 
 schema.virtual('lastMessages').get(function(){

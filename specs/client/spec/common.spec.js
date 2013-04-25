@@ -38,6 +38,54 @@ describe("common", function() {
 		var testEvent = { keyCode: 10 };
 		expect(common.enterKeyPressed(testEvent)).toBe(false);
 	});
+
+	it("delayed focus", function() {
+	  	spyOn(window, 'setTimeout');
+	  	common.delayedFocus('.some-selector');
+	  	expect(window.setTimeout).toHaveBeenCalled();
+	  	expect(window.setTimeout.mostRecentCall.args[1]).toBe(400);
+	});
+
+	it("delayed focus with delay", function() {
+	  	spyOn(window, 'setTimeout');
+	  	common.delayedFocus('.some-selector', 1000);
+	  	expect(window.setTimeout).toHaveBeenCalled();
+	  	expect(window.setTimeout.mostRecentCall.args[1]).toBe(1000);
+	});
+
+	describe("focus", function() {
+
+		beforeEach(function() {
+		  	loadFixtures('focus.fixture.html');
+		});
+
+		it("when chrome", function() {
+		  	spyOn(browser, 'isSafari').andReturn(false);
+		  	spyOn(browser, 'isIE').andReturn(false);
+
+		  	common.focus('textarea');
+
+		  	expect($('textarea')).toBeFocused();
+		});
+
+		it("when safari", function() {
+		  	spyOn(browser, 'isSafari').andReturn(true);
+		  	spyOn(browser, 'isIE').andReturn(false);
+
+		  	common.focus('textarea');
+
+		  	expect($('textarea')).not.toBeFocused();
+		});
+
+		it("when ie", function() {
+		  	spyOn(browser, 'isSafari').andReturn(false);
+		  	spyOn(browser, 'isIE').andReturn(true);
+
+		  	common.focus('textarea');
+
+		  	expect($('textarea')).not.toBeFocused();
+		});
+	});
 });
 
 describe("browser", function() {
@@ -47,7 +95,7 @@ describe("browser", function() {
 		expect(browser.isIE()).toBe(false);
 	});
 
-	it("is IE", function() {
+	it("is ie", function() {
 		spyOn(browser, 'getUserAgent').andReturn('msie');
 		expect(browser.isIE()).toBe(true);
 		expect(browser.isSafari()).toBe(false);

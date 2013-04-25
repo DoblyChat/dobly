@@ -20,6 +20,7 @@
     "less-middleware": "~0.1.X"
   },
   "devDependencies": {
-    "jasmine-node": "1.5.X"
+    "jasmine-node": "1.5.X",
+    "connect": "2.7.6"
   }
 }

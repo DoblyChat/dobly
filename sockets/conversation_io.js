@@ -33,30 +33,40 @@ module.exports = (function(){
                 saveUnreadMarkers(callback);
             }
         ], 
-        function(err, data){
+        function(err){
             if(err){
                 console.error('Error sending message', err);
             }else{
-                socket.broadcastToGroup('receive_message', data[0]);
-                confirm();  
-            }
-        });
-
-        function saveMessage(callback){
-            var msg = new Message();
-            msg.content = data.content;
-            msg.createdBy = socket.handshake.user.username;
-            msg.timestamp = data.timestamp;
-
-            Conversation.addMessage(data.conversationId, msg, function(err){
                 var dataToEmit = {
                     content: data.content, 
                     createdBy: socket.handshake.user.username, 
                     conversationId: data.conversationId,
                     timestamp: data.timestamp,
                 };
-                callback(err, dataToEmit);
-            });
+
+                socket.broadcastToGroup('receive_message', dataToEmit);
+                confirm();  
+            }
+        });
+
+        function saveMessage(callback){
+            Message.create(
+            {
+                content: data.content,
+                createdBy: socket.handshake.user.username,
+                timestamp: data.timestamp,
+                conversationId: data.conversationId
+            }, 
+            function(err, message){
+                if(err){
+                    console.error('Error creating message', err);
+                    callback(err);
+                }else{
+                    Conversation.addMessage(data.conversationId, message._id, function(err){
+                        callback(err);
+                    });    
+                }
+            })
         }
 
         function saveUnreadMarkers(callback){

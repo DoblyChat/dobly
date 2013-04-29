@@ -20,7 +20,7 @@ describe('Sockets', function(){
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../sockets/conversation_io');
 
-			conversationMock = buildMock('../models/conversation', 'create', 'addMessage', 'update');
+			conversationMock = buildMock('../models/conversation', 'create', 'update');
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'remove');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
@@ -103,20 +103,7 @@ describe('Sockets', function(){
 					expect(messageData.timestamp).toBe(data.timestamp);
 					expect(messageData.conversationId).toBe(data.conversationId);
 
-					var createCallback = messageMock.create.getCallback();
-					
-					createCallback(null, { _id: 'msg-id' });
-					expect(conversationMock.addMessage).toHaveBeenCalled();
-					var args = conversationMock.addMessage.mostRecentCall.args;
-					expect(args[0]).toBe('convo-id');
-					expect(args[1]).toBe('msg-id');
-					var addCallback = conversationMock.addMessage.getCallback();
-					addCallback('error');
-					expect(callback).toHaveBeenCalledWith('error');
-
-					spyOn(console, 'error');
-					createCallback('create-error', null);
-					expect(console.error).toHaveBeenCalledWith('Error creating message', 'create-error');
+					expect(messageMock.create.getCallback()).toBe(callback);
 				});
 
 				describe('unread', function(){

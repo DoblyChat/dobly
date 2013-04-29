@@ -1,5 +1,6 @@
 module.exports = (function (){
 	var Conversation = require('../models/conversation'),
+		Message = require('../models/message'),
 	    User = require('../models/user'),
 	    Group = require('../models/group'),
 	    Desktop = require('../models/desktop'),
@@ -91,9 +92,45 @@ module.exports = (function (){
 	self.renderDesktop = function(req, res) {
 		async.parallel({
 		    conversations: function(callback){
-		    	Conversation.find({ groupId: req.user.groupId })
-		    				.populate('messages')
-		    				.exec(callback);
+		    	Conversation.find({ groupId: req.user.groupId }, null, { lean: true }, function(err, conversations){
+		    		if(err){
+		    			callback(err);
+		    		}else{
+		    			async.parallel([
+		    				function(callback){
+		    					async.each(conversations, loadMessages, callback);
+
+					    		function loadMessages(conversation, callback){
+					    			Message.find({ conversationId: conversation._id },
+					    					'content createdBy timestamp',
+					    					{ 
+					    						limit: 50, 
+					    						lean: true,
+					    						sort: {
+					    							timestamp: 1
+					    						}
+					    					}, 
+					    					function(err, messages){
+					    						conversation.messages = messages;
+					    						callback(err);
+					    					});
+					    		}
+		    				},
+		    				function(callback){
+		    					async.each(conversations, loadMessageCount, callback);
+
+		    					function loadMessageCount(conversation, callback){
+					    			Message.count({ conversationId: conversation._id }, function(err, count){
+					    				conversation.totalMessages = count;
+					    				callback(err);
+					    			});
+					    		}
+		    				}
+		    			], function(err){
+		    				callback(err, conversations);
+		    			});
+		    		}
+		    	});
 		    },
 		    desktop: function(callback){
 		        Desktop.findOrCreateByUserId(req.user._id, callback);
@@ -194,7 +231,7 @@ module.exports = (function (){
 				return foundGroup;
 			}
 		});
-	}
+	};
 
 	self.createGroup = function(req, res){
 		Group.create({ name: req.body.name }, function(err){
@@ -203,7 +240,7 @@ module.exports = (function (){
 			}
 			res.redirect('/admin/groups');
 		});
-	}
+	};
 
 	return self;
 })();

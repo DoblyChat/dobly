@@ -56,17 +56,7 @@ module.exports = (function(){
                 createdBy: socket.handshake.user.username,
                 timestamp: data.timestamp,
                 conversationId: data.conversationId
-            }, 
-            function(err, message){
-                if(err){
-                    console.error('Error creating message', err);
-                    callback(err);
-                }else{
-                    Conversation.addMessage(data.conversationId, message._id, function(err){
-                        callback(err);
-                    });    
-                }
-            })
+            }, callback);
         }
 
         function saveUnreadMarkers(callback){

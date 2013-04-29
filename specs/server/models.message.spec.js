@@ -1,14 +1,18 @@
 var Message = require('../../models/message');
 
 describe('Message', function() {
+	var messageData;
+
+	beforeEach(function() {
+		messageData = { 
+			content: 'hi there', 
+			createdBy: 'creator', 
+			timestamp: Date.now(),
+			conversationId: new mongo.Types.ObjectId()
+		 }
+	});
+	
 	describe('#required fields', function() {
-
-		var messageData;
-
-		beforeEach(function() {
-			messageData = { content: 'hi there', createdBy: 'creator', timestamp: Date.now() }
-		});
-
 		function requiredFieldTest(field, done) {
 			messageData[field] = null;
 			Message.create(messageData, function(err) {
@@ -28,15 +32,13 @@ describe('Message', function() {
 		it('timestamp', function(done) {
 			requiredFieldTest('timestamp', done);
 		});
+
+		it('conversationId', function(done){
+			requiredFieldTest('conversationId', done);
+		})
 	});
 
 	describe('#content max length', function() {
-		var messageData;
-
-		beforeEach(function() {
-			messageData = { content: 'hi there', createdBy: 'creator', timestamp: Date.now() }
-		});
-
 		it('saves with 1999', function(done) {
 			messageData.content = stringOfLength(1999);
 			Message.create(messageData, done);

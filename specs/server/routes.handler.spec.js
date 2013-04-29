@@ -23,13 +23,26 @@ describe('Routes handler', function(){
 			return self;
 		})();
 
+		conversationMock = (function(){
+			var self = {};
+			self.exec = jasmine.createSpy('exec');
+			self.populate = jasmine.createSpy('populate').andReturn({
+				exec: self.exec
+			});
+			self.find = jasmine.createSpy('find').andReturn({
+				populate: self.populate
+			});
+
+			return self;
+		})()
+
 		groupMock = buildMock('../models/group', 'findOne', 'findById', 'find', 'create');
 		userMock = buildMock('../models/user', 'create', 'find');
 		desktopMock = buildMock('../models/desktop', 'findOrCreateByUserId', 'isModified');
 		unreadMock = buildMock('../models/unread_marker', 'find');
 		asyncMock = buildMock('async', 'parallel');
-		conversationMock = buildMock('../models/conversation', 'find');
 
+		mockery.registerMock('../models/conversation', conversationMock);
 		mockery.registerMock('passport', passportMock);
 
 		handler = require('../../routes/handler');
@@ -233,14 +246,11 @@ describe('Routes handler', function(){
 		describe('loads', function(){
 			it('conversations per group', function(){
 				setup.conversations(dummyCallback);
+				
 				expect(conversationMock.find).toHaveBeenCalled();
-
-				var args = conversationMock.find.mostRecentCall.args;
-
-				expect(args[0].groupId).toBe('groupid');
-				expect(args[1]).toBeNull();
-				expect(args[2].lean).toBe(true);
-				expect(args[3]).toBe(dummyCallback);
+				expect(conversationMock.find.mostRecentCall.args[0].groupId).toBe('groupid');
+				expect(conversationMock.populate).toHaveBeenCalledWith('messages');
+				expect(conversationMock.exec).toHaveBeenCalledWith(dummyCallback);
 			});
 
 			it('users desktop data', function(){

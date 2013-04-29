@@ -13,18 +13,10 @@ var schema = new mongo.Schema({
 	messages: [{ type: mongo.Schema.Types.ObjectId, ref: 'Message' }]
 });
 
-schema.virtual('lastMessages').get(function(){
-	var sortedMessages = this.messages.sort(function(a,b){
-		return b.timestamp < a.timestamp;
-	});
-
-	return sortedMessages.slice(-2);
-});
-
-schema.statics.addMessage = function(conversationId, message, callback){
+schema.statics.addMessage = function(conversationId, messageId, callback){
 	this.update(
         { _id: conversationId }, 
-        { $push: { messages: message } },
+        { $push: { messages: messageId } },
         function(err){
             callback(err);
         });

@@ -1,5 +1,4 @@
 module.exports = (function (){
-	
 	var Conversation = require('../models/conversation'),
 	    User = require('../models/user'),
 	    Group = require('../models/group'),

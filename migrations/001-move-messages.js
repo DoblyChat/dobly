@@ -23,7 +23,7 @@ exports.up = function(next){
 	  		var messageIds = [];
 
 	  		async.each(conversation.messages, moveMessage, function(err){
-	  			console.error(err);
+	  			logError(err);
 	  			conversation.messages = messageIds;
 	  			conversation.save(function(err){
 	  				logError(err);
@@ -52,35 +52,36 @@ exports.down = function(next){
 	Message.find({}, function(err, messages){
 		logError(err);
 		Conversation.find({}, function(err, conversations){
+			conversations.forEach(function(conversation){
+				conversation.messages = [];
+			});
+
 			async.each(messages, moveMessages, function(err){
 				logError(err);
-				async.each(
-					conversations, 
-					function(conversation, callback){
-						conversation.save(function(err){
-							logError(err);
-							callback(err);
-						});
-					}, 
-					function(err){
-						logError(err);
-						messages.remove(function(err){
-							logError(err);
-							next();
-						});
-					}
-				);					
+				async.each(conversations, saveConversation, end);					
 			});
 
 			function moveMessages(message, callback){
 				conversations.forEach(function(conversation){
-					if(conversation._id.equal(message.conversationId)){
+					if(conversation._id.equals(message.conversationId)){
 						conversation.messages.push(message);
 					}
 				});
+
+				message.remove(callback);
 			}
 
+			function saveConversation(conversation, callback){
+				conversation.save(function(err){
+					logError(err);
+					callback(err);
+				});
+			}
+
+			function end(err){
+				logError(err);
+				next();
+			}
 		});		
 	});
-  next();
 };

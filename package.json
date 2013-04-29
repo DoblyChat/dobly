@@ -19,11 +19,11 @@
     "async": "~0.2.X",
     "less-middleware": "~0.1.X",
     "connect-mongo": "~0.3.2",
-    "mongo-connect": "0.0.6"
+    "mongo-connect": "0.0.6",
+    "migrate": "~0.1.3"
   },
   "devDependencies": {
     "jasmine-node": "1.5.X",
-    "mockery": "~1.4.0",
-    "migrate": "~0.1.3"
+    "mockery": "~1.4.0"
   }
 }

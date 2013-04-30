@@ -2,7 +2,7 @@ describe('Sockets', function(){
 	describe('Conversation', function(){
 		var conversationIo, socketMock, 
 			conversationMock, asyncMock,
-			unreadMock, userMock, _Message;
+			unreadMock, userMock, messageMock;
 
 		beforeEach(function(){
 			socketMock = {
@@ -17,19 +17,14 @@ describe('Sockets', function(){
 				broadcastToGroup: jasmine.createSpy(),
 			};
 
-			// Preloading Message module to avoid mockery 
-			// warnings when loading
-			// it after 'require' is intercepted
-			_Message = require('../../models/message');
-
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../sockets/conversation_io');
 
-			conversationMock = buildMock('../models/conversation', 'create', 'addMessage', 'update');
+			conversationMock = buildMock('../models/conversation', 'create', 'update');
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'remove');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
-			mockery.registerMock('../models/message', _Message);
+			messageMock = buildMock('../models/message', 'create', 'find');
 
 			conversationIo = require('../../sockets/conversation_io');
 		});
@@ -100,27 +95,15 @@ describe('Sockets', function(){
 
 				it('saves message', function(){
 					saveMessage(callback);
-					expect(conversationMock.addMessage).toHaveBeenCalled();
+					expect(messageMock.create).toHaveBeenCalled();
+					
+					var messageData = messageMock.create.mostRecentCall.args[0];
+					expect(messageData.content).toBe(data.content);
+					expect(messageData.createdBy).toBe('usr');
+					expect(messageData.timestamp).toBe(data.timestamp);
+					expect(messageData.conversationId).toBe(data.conversationId);
 
-					var args = conversationMock.addMessage.mostRecentCall.args;
-
-					expect(args[0]).toBe('convo-id');
-
-					var msg = args[1];
-					expect(msg.content).toBe('my text');
-					expect(msg.createdBy).toBe('usr');
-					expect(msg.timestamp).toBe(data.timestamp);
-
-					var addCallback = conversationMock.addMessage.getCallback();
-
-					addCallback('error');
-
-					expect(callback).toHaveBeenCalledWith('error', {
-						content: 'my text',
-						createdBy: 'usr',
-						conversationId: 'convo-id',
-						timestamp: data.timestamp
-					});
+					expect(messageMock.create.getCallback()).toBe(callback);
 				});
 
 				describe('unread', function(){
@@ -184,10 +167,16 @@ describe('Sockets', function(){
 				});
 
 				it('broadcasts and confirms', function(){
-					var newMessage = { content: 'new message ' };
-					broadcast(null, [ newMessage ]);
+					broadcast(null);
 
-					expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('receive_message', newMessage);
+					expect(socketMock.broadcastToGroup).toHaveBeenCalled();
+					expect(socketMock.broadcastToGroup.mostRecentCall.args[0]).toBe('receive_message');
+
+					var broadcastedData = socketMock.broadcastToGroup.mostRecentCall.args[1];
+					expect(broadcastedData.content).toBe(data.content);
+					expect(broadcastedData.createdBy).toBe('usr');
+					expect(broadcastedData.conversationId).toBe('convo-id');
+					expect(broadcastedData.timestamp).toBe(data.timestamp);
 					expect(confirm).toHaveBeenCalled();
 				})
 			});
@@ -238,5 +227,33 @@ describe('Sockets', function(){
 				expect(console.error).toHaveBeenCalledWith('Error updating topic', 'update error');
 			})
 		});
+
+		describe('#readMessages', function(){
+			it('reads paged messages', function(){
+				var data = { conversationId: 'convo-id', page: 3 };
+				var confirm = jasmine.createSpy('confirm');
+
+				conversationIo.readMessages(data, confirm);
+				expect(messageMock.find).toHaveBeenCalled();
+
+				var args = messageMock.find.mostRecentCall.args;
+				expect(args[0].conversationId).toBe(data.conversationId);
+				expect(args[1]).toBe('content createdBy timestamp');
+				expect(args[2].limit).toBe(50);
+				expect(args[2].skip).toBe(150);
+				expect(args[2].lean).toBe(true);
+				expect(args[2].sort.timestamp).toBe(1);
+
+				var callback = messageMock.find.getCallback();
+				spyOn(console, 'error');
+
+				var messages = [{ dummy: 'test' }];
+				callback(null, messages);
+				expect(confirm).toHaveBeenCalledWith(messages);
+				expect(console.error).not.toHaveBeenCalled();
+				callback('my error', null);
+				expect(console.error).toHaveBeenCalledWith('Error loading more messages', 'my error');
+			});
+		})
 	});
 })

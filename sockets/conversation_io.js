@@ -33,30 +33,30 @@ module.exports = (function(){
                 saveUnreadMarkers(callback);
             }
         ], 
-        function(err, data){
+        function(err){
             if(err){
                 console.error('Error sending message', err);
             }else{
-                socket.broadcastToGroup('receive_message', data[0]);
-                confirm();  
-            }
-        });
-
-        function saveMessage(callback){
-            var msg = new Message();
-            msg.content = data.content;
-            msg.createdBy = socket.handshake.user.username;
-            msg.timestamp = data.timestamp;
-
-            Conversation.addMessage(data.conversationId, msg, function(err){
                 var dataToEmit = {
                     content: data.content, 
                     createdBy: socket.handshake.user.username, 
                     conversationId: data.conversationId,
                     timestamp: data.timestamp,
                 };
-                callback(err, dataToEmit);
-            });
+
+                socket.broadcastToGroup('receive_message', dataToEmit);
+                confirm();  
+            }
+        });
+
+        function saveMessage(callback){
+            Message.create(
+            {
+                content: data.content,
+                createdBy: socket.handshake.user.username,
+                timestamp: data.timestamp,
+                conversationId: data.conversationId
+            }, callback);
         }
 
         function saveUnreadMarkers(callback){
@@ -87,6 +87,25 @@ module.exports = (function(){
                 console.error('Error updating topic', err);
             }
         });
+    };
+
+
+    self.readMessages = function(data, confirm){
+        Message.find({ conversationId: data.conversationId }, 
+                    'content createdBy timestamp', { 
+                        limit: 50, 
+                        skip: data.page * 50,
+                        lean: true,
+                        sort: {
+                            timestamp: 1
+                        }
+                    }, function(err, messages){
+                        if(err){
+                            console.error('Error loading more messages', err);
+                        }else{
+                            confirm(messages);                            
+                        }
+                    });
     };
 
     return self;

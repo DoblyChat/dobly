@@ -133,5 +133,38 @@ function createConversation(data) {
     app.socket.emit('mark_as_read', self.id);
   }
 
+  self.loadingMore = ko.observable(false);
+
+  var totalMessages = data.totalMessages;
+
+  var allMessagesLoaded = ko.computed(function(){ 
+    totalMessages === self.messages().length;
+  });
+
+  var page = 1;
+
+  self.scrolled = function(data, event){
+    if(!self.loadingMore() && event.target.scrollTop - 40 < 0 && !allMessagesLoaded()){
+      
+      var originalScrollHeight = event.target.scrollHeight;
+
+      app.socket.emit('read_next_messages', { page: page, conversationId: self.id }, function(messages){
+        ko.utils.arrayForEach(messages, function(message){
+          self.messages.unshift(createMessage(message, true));
+        });
+
+        self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);
+        page += 1;
+        self.loadingMore(false);
+      });
+
+      self.loadingMore(true);
+    }
+  };
+
+  function readMessages(messages){
+    
+  }
+
   return self;
 }

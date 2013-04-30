@@ -7,7 +7,8 @@ function contentMaxLength(value) {
 var schema = new mongo.Schema({
    	content: { type: String, required: true, validate: contentMaxLength },
    	createdBy: { type: String, required: true },
-   	timestamp: { type: Date, default: Date.now, required: true }
+   	timestamp: { type: Date, default: Date.now, required: true },
+   	conversationId: { type: mongo.Schema.Types.ObjectId, required: true },
 });
 
 module.exports = mongo.model('Message', schema);

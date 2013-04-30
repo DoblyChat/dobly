@@ -1,7 +1,8 @@
 describe('Routes handler', function(){
 	var handler, req, res, 
 		passportMock, groupMock, userMock, asyncMock,
-		conversationMock, desktopMock, unreadMock;
+		conversationMock, desktopMock, unreadMock,
+		messageMock;
 
 	var APP_TITLE = 'Dobly';
 
@@ -27,8 +28,9 @@ describe('Routes handler', function(){
 		userMock = buildMock('../models/user', 'create', 'find');
 		desktopMock = buildMock('../models/desktop', 'findOrCreateByUserId', 'isModified');
 		unreadMock = buildMock('../models/unread_marker', 'find');
-		asyncMock = buildMock('async', 'parallel');
+		asyncMock = buildMock('async', 'parallel', 'each');
 		conversationMock = buildMock('../models/conversation', 'find');
+		messageMock = buildMock('../models/message', 'find', 'count');
 
 		mockery.registerMock('passport', passportMock);
 
@@ -219,10 +221,10 @@ describe('Routes handler', function(){
 	});
 
 	describe('#renderDesktop', function(){
-		var dummyCallback = function(){};
-		var render, setup;
+		var render, setup, dummyCallback;
 
 		beforeEach(function(){
+			dummyCallback = jasmine.createSpy('callback');
 			handler.renderDesktop(req, res);
 			setup = asyncMock.parallel.mostRecentCall.args[0];
 			render = asyncMock.parallel.getCallback();
@@ -231,16 +233,91 @@ describe('Routes handler', function(){
 		});
 
 		describe('loads', function(){
-			it('conversations per group', function(){
-				setup.conversations(dummyCallback);
-				expect(conversationMock.find).toHaveBeenCalled();
+			describe('conversations', function(){
+				beforeEach(function(){
+					setup.conversations(dummyCallback);
+				});
 
-				var args = conversationMock.find.mostRecentCall.args;
+				it('conversations per group', function(){
+					expect(conversationMock.find).toHaveBeenCalled();
+					var args = conversationMock.find.mostRecentCall.args;
 
-				expect(args[0].groupId).toBe('groupid');
-				expect(args[1]).toBeNull();
-				expect(args[2].lean).toBe(true);
-				expect(args[3]).toBe(dummyCallback);
+					expect(args[0].groupId).toBe('groupid');
+					expect(args[1]).toBeNull();
+					expect(args[2].lean).toBe(true);
+				});
+
+				it('bubbles up error if there is an error finding conversations', function(){
+					var callback = conversationMock.find.getCallback();
+					callback('my-error');
+					expect(dummyCallback).toHaveBeenCalledWith('my-error');
+				});
+
+				describe('messages', function(){
+					var loadMessages, loadMessageCount, 
+						conversations, conversation;
+
+					beforeEach(function(){
+						conversations = [{dummy: 'convo1'}, {dummy: 'convo2'}];
+						conversation = { _id: 'convo-id' };
+
+						var callback = conversationMock.find.getCallback();
+						callback(null, conversations);
+						var funcs = asyncMock.parallel.mostRecentCall.args[0];
+						loadMessages = funcs[0];
+						loadMessageCount = funcs[1];
+					});
+
+					it('loads messages', function(){
+						loadMessages(dummyCallback);
+						expect(asyncMock.each).toHaveBeenCalled();
+						expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversations);
+						expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
+
+						var load = asyncMock.each.mostRecentCall.args[1];
+						load(conversation, dummyCallback);
+						expect(messageMock.find).toHaveBeenCalled();
+						var findArgs = messageMock.find.mostRecentCall.args;
+
+						expect(findArgs[0].conversationId).toBe(conversation._id);
+						expect(findArgs[1]).toBe('content createdBy timestamp');
+						expect(findArgs[2].limit).toBe(50);
+						expect(findArgs[2].lean).toBe(true);
+						expect(findArgs[2].sort.timestamp).toBe(1);
+
+						var callback = messageMock.find.getCallback();
+						var messages = [{ dummyMsg: 'hello world'}];
+						callback('my-error', messages);
+						expect(conversation.messages).toBe(messages);
+						expect(dummyCallback).toHaveBeenCalledWith('my-error');
+					});
+
+					it('loads message count', function(){
+						loadMessageCount(dummyCallback);
+						expect(asyncMock.each).toHaveBeenCalled();
+						expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversations);
+						expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
+
+						var loadCount = asyncMock.each.mostRecentCall.args[1];
+						loadCount(conversation, dummyCallback);
+						expect(messageMock.count).toHaveBeenCalled();
+
+						var countArgs = messageMock.count.mostRecentCall.args;
+
+						expect(countArgs[0].conversationId).toBe(conversation._id);
+
+						var callback = messageMock.count.getCallback();
+						callback('my-error', 123);
+						expect(conversation.totalMessages).toBe(123);
+						expect(dummyCallback).toHaveBeenCalledWith('my-error');
+					});
+
+					it('returns conversations after messages and message counts are loaded', function(){
+						var callback = asyncMock.parallel.getCallback();
+						callback('my-error', conversations);
+						expect(dummyCallback).toHaveBeenCalledWith('my-error', conversations);
+					});
+				});
 			});
 
 			it('users desktop data', function(){

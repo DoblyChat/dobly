@@ -41,6 +41,7 @@ exports.config = function(io, sessionStore){
       socket.whenUser('add_to_desktop', desktopIo.add);
       socket.whenUser('remove_from_desktop', desktopIo.remove);
       socket.whenUser('update_strip_order', desktopIo.updateStripOrder);
+      socket.whenUser('read_next_messages', conversationIo.readMessages);
 
       socket.whenUser('send_message', function(data, confirm) {
         conversationIo.sendMessage(socket, data, confirm);

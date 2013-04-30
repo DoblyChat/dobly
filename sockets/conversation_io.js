@@ -89,6 +89,25 @@ module.exports = (function(){
         });
     };
 
+
+    self.readMessages = function(data, confirm){
+        Message.find({ conversationId: data.conversationId }, 
+                    'content createdBy timestamp', { 
+                        limit: 50, 
+                        skip: data.page * 50,
+                        lean: true,
+                        sort: {
+                            timestamp: 1
+                        }
+                    }, function(err, messages){
+                        if(err){
+                            console.error('Error loading more messages', err);
+                        }else{
+                            confirm(messages);                            
+                        }
+                    });
+    };
+
     return self;
 })();
 

@@ -24,7 +24,7 @@ describe('Sockets', function(){
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'remove');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
-			messageMock = buildMock('../models/message', 'create');
+			messageMock = buildMock('../models/message', 'create', 'find');
 
 			conversationIo = require('../../sockets/conversation_io');
 		});
@@ -227,5 +227,33 @@ describe('Sockets', function(){
 				expect(console.error).toHaveBeenCalledWith('Error updating topic', 'update error');
 			})
 		});
+
+		describe('#readMessages', function(){
+			it('reads paged messages', function(){
+				var data = { conversationId: 'convo-id', page: 3 };
+				var confirm = jasmine.createSpy('confirm');
+
+				conversationIo.readMessages(data, confirm);
+				expect(messageMock.find).toHaveBeenCalled();
+
+				var args = messageMock.find.mostRecentCall.args;
+				expect(args[0].conversationId).toBe(data.conversationId);
+				expect(args[1]).toBe('content createdBy timestamp');
+				expect(args[2].limit).toBe(50);
+				expect(args[2].skip).toBe(150);
+				expect(args[2].lean).toBe(true);
+				expect(args[2].sort.timestamp).toBe(1);
+
+				var callback = messageMock.find.getCallback();
+				spyOn(console, 'error');
+
+				var messages = [{ dummy: 'test' }];
+				callback(null, messages);
+				expect(confirm).toHaveBeenCalledWith(messages);
+				expect(console.error).not.toHaveBeenCalled();
+				callback('my error', null);
+				expect(console.error).toHaveBeenCalledWith('Error loading more messages', 'my error');
+			});
+		})
 	});
 })

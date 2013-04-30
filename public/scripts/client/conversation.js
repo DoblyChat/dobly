@@ -133,31 +133,38 @@ function createConversation(data) {
     app.socket.emit('mark_as_read', self.id);
   }
 
+  self.loadingMore = ko.observable(false);
+
+  var totalMessages = data.totalMessages;
+
+  var allMessagesLoaded = ko.computed(function(){ 
+    totalMessages === self.messages().length;
+  });
+
+  var page = 1;
+
   self.scrolled = function(data, event){
-    if(!self.loadingMore() && event.target.scrollTop - 40 < 0){
+    if(!self.loadingMore() && event.target.scrollTop - 40 < 0 && !allMessagesLoaded()){
       
       var originalScrollHeight = event.target.scrollHeight;
-      console.log(event.target.scrollTop);
 
-      setTimeout(function(){
-
-        for(var i = 0; i < 50; i++){
-          self.messages.unshift(createMessage({ 
-            content: 'Message number ' + i,
-            timestamp: new Date(),
-            createdBy: 'Test'
-          }, true));
-        }
+      app.socket.emit('read_next_messages', { page: page, conversationId: self.id }, function(messages){
+        ko.utils.arrayForEach(messages, function(message){
+          self.messages.unshift(createMessage(message, true));
+        });
 
         self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);
-
+        page += 1;
         self.loadingMore(false);
-      }, 3000);
+      });
+
       self.loadingMore(true);
     }
   };
 
-  self.loadingMore = ko.observable(false);
+  function readMessages(messages){
+    
+  }
 
   return self;
 }

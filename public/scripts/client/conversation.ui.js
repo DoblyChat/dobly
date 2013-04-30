@@ -43,6 +43,10 @@ function createConversationUi() {
       $(self.getSelector('.nano')).nanoScroller({ scroll: 'bottom' });
     };
 
+    scroll.adjustToOffset = function(offset){
+      $(self.getSelector('.nano')).nanoScroller({ scrollTop: offset });
+    };
+
     scroll.stop = function() {
       $(self.getSelector('.nano')).nanoScroller({ stop: true });
     };

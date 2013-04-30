@@ -24,7 +24,6 @@ exports.up = function(next){
 
 	  		async.each(conversation.messages, moveMessage, function(err){
 	  			logError(err);
-	  			conversation.messages = messageIds;
 	  			conversation.save(function(err){
 	  				logError(err);
 	  				callback(err);
@@ -40,7 +39,6 @@ exports.up = function(next){
 				newMessage._id = message._id;
 				newMessage.save(function(err){
 					logError(err);
-					messageIds.push(message._id);
 					callback(err);
 				});
 		  	} 

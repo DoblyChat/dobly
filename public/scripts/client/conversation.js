@@ -134,8 +134,25 @@ function createConversation(data) {
   }
 
   self.scrolled = function(data, event){
-    console.log(event.target.scrollTop);
-    if(event.target.scrollTop - 50 < 0){
+    if(!self.loadingMore() && event.target.scrollTop - 40 < 0){
+      
+      var originalScrollHeight = event.target.scrollHeight;
+      console.log(event.target.scrollTop);
+
+      setTimeout(function(){
+
+        for(var i = 0; i < 50; i++){
+          self.messages.unshift(createMessage({ 
+            content: 'Message number ' + i,
+            timestamp: new Date(),
+            createdBy: 'Test'
+          }, true));
+        }
+
+        self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);
+
+        self.loadingMore(false);
+      }, 3000);
       self.loadingMore(true);
     }
   };

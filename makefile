@@ -7,7 +7,7 @@ seed:
 blast:
 	@NODE_ENV=development node seed/blast.js
 
-test-client-mac:
-	open specs/client/SpecRunner.html
+jasmine:
+	@NODE_ENV=test node specs/client/server.js
 
-.PHONY: test test-debug seed blast test-client-mac
+.PHONY: test test-debug seed blast

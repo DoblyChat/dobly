@@ -4,15 +4,18 @@ describe("change topic", function() {
 
 	beforeEach(function() {
 		nav = jasmine.createSpyObj('nav', ['desktop', 'changeTopic']);
+		app.socket = createMockSocket();
 		changeTopic = createChangeTopic(nav);
 	});
 
 	it("click", function() {
 		var testConversation = createConversation(conversationTestData());
+		spyOn(common, "delayedFocus");
 		changeTopic.click(testConversation);
 
 		expect(changeTopic.conversation).toEqual(testConversation);
 		expect(nav.changeTopic).toHaveBeenCalled();
+		expect(common.delayedFocus).toHaveBeenCalled();
 	});
 
 	it("update", function() {

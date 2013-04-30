@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "jasmine-node": "1.5.X",
-    "mockery": "~1.4.0"
+    "mockery": "~1.4.0",
+    "connect": "2.7.6"
   }
 }

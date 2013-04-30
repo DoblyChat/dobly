@@ -24,7 +24,8 @@
 		app.desktop.ui.setup();
 		showRenderedElements();
 		
-		startPing();
+		var timeout = createTimeout(maxReconnects, global);
+		timeout.startPing();
 	});
 
 	$(global).focus(function() {
@@ -40,26 +41,6 @@
 		$('.top-links').show();
 		$('#content').show();
 		app.desktop.ui.highlight();
-	}
-
-	global.app.socket.on('reconnecting', function(delay, attempt) {
-		if (attempt === maxReconnects) {
-			timeout();
-		}
-	});
-
-	function timeout(){
-		global.location.href = "http://" + global.location.host + "/timeout";
-	}
-
-	function startPing(){
-		setInterval(function(){
-			global.app.socket.emit('ping');
-		}, 5000);
-
-		global.app.socket.on('timeout', function(){
-			timeout();
-		});
 	}
 })(window);
 

@@ -1,108 +1,158 @@
 describe("common", function() {
-	it("formats time stamp when date", function() {
-		var april9 = Date.parse('2013.04.09 22:13:34');
-		expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
-	});
 
-	it("formats time stamp when string", function() {
-		var april9 = '2013.04.09 22:13:34';
-		expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
-	});
+    describe("formats time stamp", function() {
 
-	it("formats today's time stamp", function() {
-		var now = Date.now();  	
-		expect(common.formatTimestamp(now)).toBe(now.toString('h:mm tt'));
-	});
+        it("when date", function() {
+            var april9 = Date.parse('2013.04.09 22:13:34');
+            expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
+        });
 
-	it("formats simple time stamp when date", function() {
-		var april9 = Date.parse('2013.04.09 22:13:34');
-		expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
-	});
+        it("when string", function() {
+            var april9 = '2013.04.09 22:13:34';
+            expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
+        });
 
-	it("formats simple time stamp when string", function() {
-		var april9 = '2013.04.09 22:13:34';
-		expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
-	});
+        it("today's time stamp", function() {
+            var now = Date.now();   
+            expect(common.formatTimestamp(now)).toBe(now.toString('h:mm tt'));
+        });
 
-	it("formats today's simple time stamp", function() {
-		var now = Date.now();
-		expect(common.formatSimpleTimestamp(now)).toBe(now.toString('h:mm tt'));
-	});
+        it("simple time stamp when date", function() {
+            var april9 = Date.parse('2013.04.09 22:13:34');
+            expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
+        });
 
-	it("enter key is pressed", function() {
-		var testEvent = { keyCode: 13 };
-		expect(common.enterKeyPressed(testEvent)).toBe(true);
-	});
+        it("simple time stamp when string", function() {
+            var april9 = '2013.04.09 22:13:34';
+            expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
+        });
 
-	it("enter key is not pressed", function() {
-		var testEvent = { keyCode: 10 };
-		expect(common.enterKeyPressed(testEvent)).toBe(false);
-	});
+        it("today's simple time stamp", function() {
+            var now = Date.now();
+            expect(common.formatSimpleTimestamp(now)).toBe(now.toString('h:mm tt'));
+        });
+    });
 
-	it("delayed focus", function() {
-	  	spyOn(window, 'setTimeout');
-	  	common.delayedFocus('.some-selector');
-	  	expect(window.setTimeout).toHaveBeenCalled();
-	  	expect(window.setTimeout.mostRecentCall.args[1]).toBe(400);
-	});
+    describe("enter key", function() {
 
-	it("delayed focus with delay", function() {
-	  	spyOn(window, 'setTimeout');
-	  	common.delayedFocus('.some-selector', 1000);
-	  	expect(window.setTimeout).toHaveBeenCalled();
-	  	expect(window.setTimeout.mostRecentCall.args[1]).toBe(1000);
-	});
+        it("pressed", function() {
+            var testEvent = { keyCode: 13 };
+            expect(common.enterKeyPressed(testEvent)).toBe(true);
+        });
 
-	describe("focus", function() {
+        it("not pressed", function() {
+            var testEvent = { keyCode: 10 };
+            expect(common.enterKeyPressed(testEvent)).toBe(false);
+        });      
+    });
 
-		beforeEach(function() {
-		  	loadFixtures('focus.fixture.html');
-		});
+    describe("delayed focus", function() {
 
-		it("when chrome", function() {
-		  	spyOn(browser, 'isSafari').andReturn(false);
-		  	spyOn(browser, 'isIE').andReturn(false);
+         it("short delay", function() {
+             var flag = false;
 
-		  	common.focus('textarea');
+             runs(function() {
+                 spyOn(common, "focus").andCallFake(function() {
+                     flag = true;
+                 });
+                 common.delayedFocus('.some-selector', 50);
+             });
 
-		  	expect($('textarea')).toBeFocused();
-		});
+             waitsFor(function() {
+                 return flag;
+             }, "common.focus should have been called.", 50);
 
-		it("when safari", function() {
-		  	spyOn(browser, 'isSafari').andReturn(true);
-		  	spyOn(browser, 'isIE').andReturn(false);
+             runs(function() {
+                 expect(common.focus).toHaveBeenCalledWith('.some-selector');
+             });
+         });
 
-		  	common.focus('textarea');
+        it("default delay", function() {
+            spyOn(window, 'setTimeout');
+            common.delayedFocus('.someselector');
+            expect(window.setTimeout).toHaveBeenCalled();
+            expect(window.setTimeout.mostRecentCall.args[1]).toBe(400);
+        });
 
-		  	expect($('textarea')).not.toBeFocused();
-		});
 
-		it("when ie", function() {
-		  	spyOn(browser, 'isSafari').andReturn(false);
-		  	spyOn(browser, 'isIE').andReturn(true);
+         it("long delay", function() {
+             spyOn(window, 'setTimeout');
+             common.delayedFocus('.some-selector', 1000);
+             expect(window.setTimeout).toHaveBeenCalled();
+             expect(window.setTimeout.mostRecentCall.args[1]).toBe(1000);
+         });
 
-		  	common.focus('textarea');
+         it("hook", function() {
+             var flag = false;
 
-		  	expect($('textarea')).not.toBeFocused();
-		});
-	});
+             runs(function() {
+                 spyOn(common, "focus");
+                 var testHook = function() {
+                     flag = true;
+                 };
+                 common.delayedFocus('.a-selector', 50, testHook);
+             });
+
+             waitsFor(function() {
+                 return flag;
+             }, "hook should have been called.", 50);
+
+             runs(function() {
+                 expect(common.focus).toHaveBeenCalledWith('.a-selector');
+             });
+         });
+    });
+
+    describe("focus", function() {
+
+        beforeEach(function() {
+            loadFixtures('focus.fixture.html');
+        });
+
+        it("when chrome", function() {
+            spyOn(browser, 'isSafari').andReturn(false);
+            spyOn(browser, 'isIE').andReturn(false);
+
+            common.focus('textarea');
+
+            expect($('textarea')).toBeFocused();
+        });
+
+        it("when safari", function() {
+            spyOn(browser, 'isSafari').andReturn(true);
+            spyOn(browser, 'isIE').andReturn(false);
+
+            common.focus('textarea');
+
+            expect($('textarea')).not.toBeFocused();
+        });
+
+        it("when ie", function() {
+            spyOn(browser, 'isSafari').andReturn(false);
+            spyOn(browser, 'isIE').andReturn(true);
+
+            common.focus('textarea');
+
+            expect($('textarea')).not.toBeFocused();
+        });
+    });
 });
 
 describe("browser", function() {
-	it("is safari", function() {
-		spyOn(browser, 'getUserAgent').andReturn('safari');
-		expect(browser.isSafari()).toBe(true);
-		expect(browser.isIE()).toBe(false);
-	});
+    it("is safari", function() {
+        spyOn(browser, 'getUserAgent').andReturn('safari');
+        expect(browser.isSafari()).toBe(true);
+        expect(browser.isIE()).toBe(false);
+    });
 
-	it("is ie", function() {
-		spyOn(browser, 'getUserAgent').andReturn('msie');
-		expect(browser.isIE()).toBe(true);
-		expect(browser.isSafari()).toBe(false);
-	});
+    it("is ie", function() {
+        spyOn(browser, 'getUserAgent').andReturn('msie');
+        expect(browser.isIE()).toBe(true);
+        expect(browser.isSafari()).toBe(false);
+    });
 
-	it("is not safari, it is chrome", function() {
-		spyOn(browser, 'getUserAgent').andReturn('safari chrome');
-		expect(browser.isSafari()).toBe(false);
-	});
+    it("is not safari, it is chrome", function() {
+        spyOn(browser, 'getUserAgent').andReturn('safari chrome');
+        expect(browser.isSafari()).toBe(false);
+    });
 });

@@ -158,6 +158,106 @@ describe("conversation", function() {
         });
     });
 
+    describe('infinite scrolling', function(){
+        var conversation, event;
+
+        beforeEach(function(){
+            conversation = createConversation(testDataConversation());
+            app.socket = createMockSocket();
+            event = {
+                target: {
+                    scrollTop: 0,
+                    scrollHeight: 150,
+                },
+            };
+        });
+
+        afterEach(function(){
+            app.socket = undefined;
+        });
+
+        it('does not initiate request if loading more', function(){
+            conversation.loadingMore(true);
+            conversation.scrolled(null, event);
+            expect(app.socket.emit).not.toHaveBeenCalled();
+        });
+
+        it('does not initiate request if scroll not near the top', function(){
+            event.target.scrollTop = 41;
+            conversation.scrolled(null, event);
+            expect(app.socket.emit).not.toHaveBeenCalled();
+            expect(conversation.loadingMore()).toBe(false);
+        });
+
+        it('does not initiate request if all messages have been loaded', function(){
+            var testData = testDataConversation();
+            testData.totalMessages = 2;
+            conversation = createConversation(testData);
+            conversation.scrolled(null, event);
+            expect(app.socket.emit).not.toHaveBeenCalled();
+            expect(conversation.loadingMore()).toBe(false);
+        });
+
+        it('initiates a request and sets conversation as loading more', function(){
+            conversation.scrolled(null, event);
+            expect(app.socket.emit).toHaveBeenCalled();
+            var args = app.socket.emit.mostRecentCall.args;
+            expect(args[0]).toBe('read_next_messages');
+            expect(args[1].page).toBe(1);
+            expect(args[1].conversationId).toBe(conversation.id);
+            expect(conversation.loadingMore()).toBe(true);
+        });
+
+        describe('read messages', function(){
+            var readMessages;
+
+            beforeEach(function(){
+                conversation.scrolled(null, event);
+                readMessages = app.socket.emit.mostRecentCall.args[2];
+                spyOn(conversation.ui.scroll, 'adjustToOffset');
+            });
+
+            it('adds messages to the beginning of the messages list', function(){
+                var messages = [ testDataMessageCharlie(), testDataMessageDelta() ];
+                readMessages(messages);
+
+                expect(conversation.messages().length).toBe(4);
+                expect(conversation.messages()[0].content).toBe('delta');
+                expect(conversation.messages()[1].content).toBe('charlie');
+                expect(conversation.messages()[2].content).toBe('alpha');
+                expect(conversation.messages()[3].content).toBe('beta');
+            });
+
+            it('adjust the scrollbar to about location where user left of', function(){
+                event.target.scrollHeight = 500;
+                readMessages([]);
+                // new height (500) - old height (150) - 80 = 270
+                expect(conversation.ui.scroll.adjustToOffset).toHaveBeenCalledWith(270);
+            });
+
+            it('marks that loading is complete', function(){
+                conversation.loadingMore(true);
+                readMessages([]);
+                expect(conversation.loadingMore()).toBe(false);
+            });
+
+            it('increases next page by 1', function(){
+                conversation.scrolled(null, event);
+                expect(app.socket.emit.mostRecentCall.args[1].page).toBe(1);
+                
+                readMessages([]);
+
+                conversation.scrolled(null, event);
+                expect(app.socket.emit.mostRecentCall.args[1].page).toBe(2);
+
+                readMessages([]);
+
+                conversation.scrolled(null, event);
+                expect(app.socket.emit.mostRecentCall.args[1].page).toBe(3);
+            });
+        });
+    });
+
     function testDataConversation() {
         return {
             _id: "8",
@@ -167,6 +267,7 @@ describe("conversation", function() {
             timestamp: "2013-02-15T14:36:43.296Z",
             topic: "some topic",
             unread: 1,
+            totalMessages: 3
         };
     }
 

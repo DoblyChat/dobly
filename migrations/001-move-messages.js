@@ -13,21 +13,18 @@ function logError(err){
 }
 
 exports.up = function(next){
+	console.log(typeof Conversation.collection);
   	Conversation.find({}, function(err, conversations){
 	  	async.each(conversations, moveMessages, function(err){
 	  		logError(err);
-	  		next();
+	  		cleanAllMessages(function(){
+	  			next();
+	  		});
 	  	});
 
 	  	function moveMessages(conversation, callback){
-	  		var messageIds = [];
-
-	  		async.each(conversation.messages, moveMessage, function(err){
-	  			logError(err);
-	  			conversation.save(function(err){
-	  				logError(err);
-	  				callback(err);
-	  			});
+	  		async.each(conversation.get('messages'), moveMessage, function(err){
+	  			callback(err);
 	  		});
 
 	  		function moveMessage(message, callback){
@@ -45,6 +42,16 @@ exports.up = function(next){
 	  	} 			
 	});
 };
+
+function cleanAllMessages(callback){
+    Conversation.collection.update({}, { $unset: { 'messages': 1 } }, { multi: true },
+                        function(err) {
+        					if (err) {
+        						logError(err);
+        					}
+        					callback();
+    });
+}
 
 exports.down = function(next){
 	Message.find({}, function(err, messages){

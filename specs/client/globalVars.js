@@ -9,7 +9,7 @@ function createMockSocket() {
 		handlers[eventName] = handler;
 	};
 
-	self.emit = jasmine.createSpy();
+	self.emit = jasmine.createSpy('emit');
 
 	self.mockEmit = function(eventName, param1, param2) {
 		handlers[eventName](param1, param2);

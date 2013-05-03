@@ -58,6 +58,7 @@ describe("timeout", function() {
 		});
 
 		it("handle timeout", function() {
+			spyOn(window, "setInterval");
 			timeout.startPing();
 
 			app.socket.mockEmit('timeout');

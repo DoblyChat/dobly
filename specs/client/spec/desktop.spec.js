@@ -42,12 +42,14 @@ describe("desktop", function() {
 
 		  	it("left conversation", function() {
 		  		expect(desktop.leftConversation()).toEqual(allConversations[0]);
-		  	  	expect(desktop.leftConversation().activateOnTheLeft).toHaveBeenCalled();		  	  	
+		  	  	expect(desktop.leftConversation().activateOnTheLeft).toHaveBeenCalled();
+		  	  	expect(desktop.hasLeftConversation()).toBe(true);		  	  	
 		  	});
 
 		  	it("right conversations", function() {
 		  		expect(desktop.rightConversation()).toEqual(allConversations[2]);
 		  	  	expect(desktop.rightConversation().activateOnTheRight).toHaveBeenCalled();		  	  	
+		  	  	expect(desktop.hasRightConversation()).toBe(true);		  	  	
 		  	});
 		});	  	
 	});
@@ -81,11 +83,13 @@ describe("desktop", function() {
 
 		  	it("left conversation", function() {
 		  		expect(desktop.leftConversation()).toEqual(allConversations[1]);
-		  	  	expect(desktop.leftConversation().activateOnTheLeft).toHaveBeenCalled();		  	  	
+		  	  	expect(desktop.leftConversation().activateOnTheLeft).toHaveBeenCalled();
+		  	  	expect(desktop.hasLeftConversation()).toBe(true);		  	  			  	  	
 		  	});
 
 		  	it("right conversations", function() {
-		  		expect(desktop.rightConversation()).toBeNull();		  	  	
+		  		expect(desktop.rightConversation()).toBeNull();
+		  		expect(desktop.hasRightConversation()).toBe(false);		  	  			  	  	
 		  	});
 		});	  	
 	});

@@ -3,6 +3,7 @@ describe("desktop", function() {
 	var desktop;
 	var desktopData;
 	var allConversations;
+	var testConversation;
 
 	describe("3 conversations", function() {
 
@@ -55,7 +56,7 @@ describe("desktop", function() {
 			it("adds but does not activate", function() {
 				spyDesktopUi(desktop);
 				app.socket = createMockSocket();
-				var testConversation = allConversations[1];
+				testConversation = allConversations[1];
 				expect(desktop.conversations()).not.toContain(testConversation);
 
 			  	desktop.add(testConversation);
@@ -73,7 +74,7 @@ describe("desktop", function() {
 
 			it("does not add same conversation", function() {
 				app.socket = createMockSocket();
-			  	var testConversation = allConversations[0];
+			  	testConversation = allConversations[0];
 			  	expect(desktop.conversations()).toContain(testConversation);
 			  	expect(desktop.conversations().length).toBe(3);
 
@@ -82,7 +83,69 @@ describe("desktop", function() {
 			  	expect(desktop.conversations().length).toBe(3);
 			  	expect(app.socket.emit).not.toHaveBeenCalled();
 			});
-		});  	
+		}); 
+
+		describe("add and activate", function() {
+			it("adds and activates", function() {
+				spyOn(desktop, "add");
+				spyOn(desktop, "activate");
+				testConversation = allConversations[0];
+
+				desktop.addAndActivate(testConversation);
+
+				expect(desktop.add).toHaveBeenCalledWith(testConversation);
+				expect(desktop.activate).toHaveBeenCalledWith(testConversation);
+			}); 	  
+		});
+
+		describe("activate", function() {
+			it("activates", function() {
+				spyDesktopUi(desktop);
+				desktop.add(allConversations[1]);
+				expect(desktop.conversations().length).toBe(4);
+			  	expect(desktop.conversations()[0]).toEqual(allConversations[0]);
+			  	expect(desktop.conversations()[1]).toEqual(allConversations[2]);
+			  	expect(desktop.conversations()[2]).toEqual(allConversations[4]);
+			  	expect(desktop.conversations()[3]).toEqual(allConversations[1]);
+
+				expect(desktop.leftConversation()).toEqual(allConversations[0]);
+				expect(desktop.rightConversation()).toEqual(allConversations[2]);
+
+				var testConversation = desktop.conversations()[2];
+
+				runs(function() {
+				  	desktop.activate(testConversation);
+				});
+
+				waitsFor(function() {
+					return testConversation.hasFocus() === true;
+				}, "test conversation should have focus", 450);
+
+				runs(function() {
+					expect(desktop.conversations()[0].deactivate).toHaveBeenCalled();
+					expect(desktop.conversations()[1].deactivate).toHaveBeenCalled();
+					expect(desktop.conversations()[2].deactivate).toHaveBeenCalled();
+					expect(desktop.conversations()[3].deactivate).toHaveBeenCalled();
+
+					expect(desktop.conversations()[0].hasFocus()).toBe(false);
+					expect(desktop.conversations()[1].hasFocus()).toBe(false);
+					expect(desktop.conversations()[2].hasFocus()).toBe(true);
+					expect(desktop.conversations()[3].hasFocus()).toBe(true);
+
+					expect(desktop.leftConversation()).toEqual(testConversation);
+					expect(desktop.rightConversation()).toEqual(desktop.conversations()[3]);
+
+					expect(desktop.renderedConversations()).toContain(testConversation);
+					expect(desktop.renderedConversations()).toContain(desktop.conversations()[3]);
+
+					expect(testConversation.activateOnTheLeft).toHaveBeenCalled();
+					expect(desktop.conversations()[3].activateOnTheRight).toHaveBeenCalled();
+
+					expect(desktop.loading()).toBe(false);
+					expect(desktop.ui.updateConversationUi).toHaveBeenCalled();					
+				});
+			});	  
+		});	
 	});
 
 	describe("1 conversation", function() {
@@ -127,7 +190,7 @@ describe("desktop", function() {
 			it("activates on the right", function() {
 				spyDesktopUi(desktop);
 				app.socket = createMockSocket();
-				var testConversation = allConversations[4];
+				testConversation = allConversations[4];
 				expect(desktop.conversations()).not.toContain(testConversation);
 
 			  	desktop.add(testConversation);
@@ -182,7 +245,7 @@ describe("desktop", function() {
 			it("activates on the left", function() {
 				spyDesktopUi(desktop);
 				app.socket = createMockSocket();
-				var testConversation = allConversations[2];
+				testConversation = allConversations[2];
 				expect(desktop.conversations()).not.toContain(testConversation);
 
 			  	desktop.add(testConversation);
@@ -207,9 +270,20 @@ describe("desktop", function() {
  			{ id: 'E' }
  		];
 
+ 		var mockConversation;
  		for (var i = conversationsTestData.length - 1; i >= 0; i--) {
- 			conversationsTestData[i].activateOnTheLeft = jasmine.createSpy('activateOnTheLeft');
- 			conversationsTestData[i].activateOnTheRight = jasmine.createSpy('activateOnTheRight');
+ 			mockConversation = conversationsTestData[i];
+ 			mockConversation.activateOnTheLeft = jasmine.createSpy('activateOnTheLeft');
+ 			mockConversation.activateOnTheRight = jasmine.createSpy('activateOnTheRight');
+ 			mockConversation.deactivate = jasmine.createSpy('deactivate');
+ 			mockConversation.hasFocusValue = false;
+ 			mockConversation.hasFocus = function(value) {
+ 				if (value === undefined) {
+ 					return mockConversation.hasFocusValue;
+ 				} else { 					
+ 					mockConversation.hasFocusValue = value;
+ 				}
+ 			};
  		};
 
  		return conversationsTestData;

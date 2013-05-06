@@ -7,7 +7,6 @@ function createDesktop(data, allConversations){
   self.renderedConversations = ko.observableArray([]);
   self.leftConversation = ko.observable(null);
   self.rightConversation = ko.observable(null);
-  self.ui = createDesktopUi(self);
   self.loading =ko.observable(false);
 
   for(var i = 0; i < data.conversations.length; i++){

@@ -7,6 +7,7 @@ function createViewModel(conversationsData, desktopData, groupData) {
   }
 
   self.desktop = createDesktop(desktopData, self.conversations());
+  self.desktop.ui = createDesktopUi(self.desktop);
 
   self.notifier = createNotifier(self.desktop);
 

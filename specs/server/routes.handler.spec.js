@@ -268,7 +268,7 @@ describe('Routes handler', function(){
 						loadMessageCount = funcs[1];
 					});
 
-					it('loads messages', function(){
+					it('loads messages in reverse order', function(){
 						loadMessages(dummyCallback);
 						expect(asyncMock.each).toHaveBeenCalled();
 						expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversations);
@@ -288,7 +288,7 @@ describe('Routes handler', function(){
 						var callback = messageMock.find.getCallback();
 						var messages = [{ dummyMsg: 'hello world'}];
 						callback('my-error', messages);
-						expect(conversation.messages).toBe(messages);
+						expect(conversation.messages).toBe(messages.reverse());
 						expect(dummyCallback).toHaveBeenCalledWith('my-error');
 					});
 

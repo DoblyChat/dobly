@@ -111,7 +111,7 @@ module.exports = (function (){
 					    						}
 					    					}, 
 					    					function(err, messages){
-					    						conversation.messages = messages;
+					    						conversation.messages = messages.reverse();
 					    						callback(err);
 					    					});
 					    		}

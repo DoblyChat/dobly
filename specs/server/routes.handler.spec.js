@@ -283,7 +283,7 @@ describe('Routes handler', function(){
 						expect(findArgs[1]).toBe('content createdBy timestamp');
 						expect(findArgs[2].limit).toBe(50);
 						expect(findArgs[2].lean).toBe(true);
-						expect(findArgs[2].sort.timestamp).toBe(1);
+						expect(findArgs[2].sort.$natural).toBe(-1);
 
 						var callback = messageMock.find.getCallback();
 						var messages = [{ dummyMsg: 'hello world'}];

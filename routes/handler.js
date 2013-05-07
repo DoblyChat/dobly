@@ -107,7 +107,7 @@ module.exports = (function (){
 					    						limit: 50, 
 					    						lean: true,
 					    						sort: {
-					    							timestamp: 1
+					    							$natural: -1
 					    						}
 					    					}, 
 					    					function(err, messages){
@@ -142,7 +142,7 @@ module.exports = (function (){
 		    	Group.findById(req.user.groupId, 'name', { lean: true }, callback)
 		    },
 		    users: function(callback){
-		    	User.find({ groupId: req.user.groupId}, '_id username', { lean: true }, callback);
+		    	User.find({ groupId: req.user.groupId }, '_id username', { lean: true }, callback);
 		    }
 		},
 		function(err, results) {

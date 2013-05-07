@@ -15,7 +15,7 @@ function createConversation(data) {
   self.timestamp = common.formatTimestamp(data.timestamp);
 
   if(data.messages){
-    for(var i = 0; i < data.messages.length; i++){
+    for(var i = data.messages.length - 1; i >= 0; i--){
       self.messages.push(createMessage(data.messages[i], true));
     }
   }

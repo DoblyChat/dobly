@@ -100,8 +100,6 @@ describe('Desktop', function(){
 
 		beforeEach(function(){
 			userId = new mongo.Types.ObjectId();
-			findOne = jasmine.createSpy();
-			Desktop.findOne = findOne;
 		});
 
 		it('creates desktop entry if one for user does not exist', function(done){
@@ -110,31 +108,18 @@ describe('Desktop', function(){
 				expect(arguments.length).toBe(2);
 				expect(savedDesktop.userId).toBe(userId);
 				expect(savedDesktop.conversations).not.toBe(null);
-				done();
+				done(err);
 			});
-
-			verifyFindOneCall(findOne);
-			var findOneCallback = findOne.mostRecentCall.args[1];
-
-			findOneCallback(null, null);
 		});
 
-		function verifyFindOneCall(findOne){
-			expect(findOne).toHaveBeenCalled();
-			expect(findOne.mostRecentCall.args[0].userId).toBe(userId);
-		}
+		it('returns desktop entry if one for user already exists', function(done){
+			Desktop.create({ userId: userId }, function(err, desktop){
 
-		it('returns desktop entry if one for user already exists', function(){
-			desktop.userId = userId;
-
-			Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){
-				expect(savedDesktop.userId).toBe(userId);
+				Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){ 
+					expect(savedDesktop._id).toBe(savedDesktop._id);
+					done(err);
+				});
 			});
-
-			verifyFindOneCall(findOne);
-			var findOneCallback = findOne.mostRecentCall.args[1];
-
-			findOneCallback(null, desktop);
 		});
 
 		afterEach(function(done){

@@ -13,7 +13,6 @@ function logError(err){
 }
 
 exports.up = function(next){
-	console.log(typeof Conversation.collection);
   	Conversation.find({}, function(err, conversations){
 	  	async.each(conversations, moveMessages, function(err){
 	  		logError(err);
@@ -42,6 +41,8 @@ exports.up = function(next){
 						callback(err);
 					});
 			  	} 
+	  		}else{
+	  			callback(null);
 	  		}
 	  	} 			
 	});

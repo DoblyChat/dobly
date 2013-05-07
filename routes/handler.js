@@ -107,7 +107,7 @@ module.exports = (function (){
 					    						limit: 50, 
 					    						lean: true,
 					    						sort: {
-					    							$natural: -1
+					    							timestamp: -1
 					    						}
 					    					}, 
 					    					function(err, messages){

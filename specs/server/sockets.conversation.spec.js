@@ -242,7 +242,7 @@ describe('Sockets', function(){
 				expect(args[2].limit).toBe(50);
 				expect(args[2].skip).toBe(150);
 				expect(args[2].lean).toBe(true);
-				expect(args[2].sort.$natural).toBe(-1);
+				expect(args[2].sort.timestamp).toBe(-1);
 
 				var callback = messageMock.find.getCallback();
 				spyOn(console, 'error');

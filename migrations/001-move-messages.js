@@ -23,22 +23,26 @@ exports.up = function(next){
 	  	});
 
 	  	function moveMessages(conversation, callback){
-	  		async.each(conversation.get('messages'), moveMessage, function(err){
-	  			callback(err);
-	  		});
+	  		var messages = conversation.get('messages');
 
-	  		function moveMessage(message, callback){
-		  		var newMessage = new Message();
-				newMessage.content = message.content;
-				newMessage.createdBy = message.createdBy;
-				newMessage.timestamp = message.timestamp;
-				newMessage.conversationId = conversation._id;
-				newMessage._id = message._id;
-				newMessage.save(function(err){
-					logError(err);
-					callback(err);
-				});
-		  	} 
+	  		if(messages){
+	  			async.each(conversation.get('messages'), moveMessage, function(err){
+		  			callback(err);
+		  		});
+
+		  		function moveMessage(message, callback){
+			  		var newMessage = new Message();
+					newMessage.content = message.content;
+					newMessage.createdBy = message.createdBy;
+					newMessage.timestamp = message.timestamp;
+					newMessage.conversationId = conversation._id;
+					newMessage._id = message._id;
+					newMessage.save(function(err){
+						logError(err);
+						callback(err);
+					});
+			  	} 
+	  		}
 	  	} 			
 	});
 };

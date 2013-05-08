@@ -204,7 +204,7 @@ module.exports = (function (){
 				Group.find({}, null, { lean: true }, callback);		
 			},
 			users: function(callback){
-				User.find({}, null, { lean: true }, callback);	
+				User.find({}, null, { lean: true, sort: { username: 1 } }, callback);	
 			}
 		},
 		function(err, results){
@@ -238,7 +238,7 @@ module.exports = (function (){
 			if(err){
 				console.error('Error creating group', err);
 			}
-			res.redirect('/admin/groups');
+			res.redirect('admin/groups');
 		});
 	};
 

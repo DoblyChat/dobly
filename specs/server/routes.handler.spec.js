@@ -467,7 +467,7 @@ describe('Routes handler', function(){
 
 			it('gets all users', function(){
 				setup.users(dummyCallback);
-				expect(userMock.find).toHaveBeenCalledWith({}, null, { lean: true }, dummyCallback);
+				expect(userMock.find).toHaveBeenCalledWith({}, null, { lean: true, sort: { username: 1 } }, dummyCallback);
 			});
 		});
 
@@ -557,7 +557,7 @@ describe('Routes handler', function(){
 
 			it('redirects to groups', function(){
 				callback(null);
-				expect(res.redirect).toHaveBeenCalledWith('/admin/groups');
+				expect(res.redirect).toHaveBeenCalledWith('admin/groups');
 			});
 		});
 	});

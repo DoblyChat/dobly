@@ -20,7 +20,8 @@ function createViewModel(conversationsData, desktopData, groupData) {
   });
 
   function receiveMessage(conversation, message){
-    conversation.addMessage(message, true);
+    var messageObj = createMessage(message, true);
+    conversation.addMessage(messageObj);
     self.notifier.showDeskopNotification(conversation, message.createdBy + ': ' + message.content);
     self.desktop.add(conversation);
   }

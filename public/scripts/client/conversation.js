@@ -82,9 +82,8 @@ function createConversation(data) {
     });
   }
 
-  self.addMessage = function(data, confirmed){
-    var msg = createMessage(data, confirmed);
-    self.messages.push(msg);
+  self.addMessage = function(messageObj){
+    self.messages.push(messageObj);
     
     if (self.active()) {
       self.ui.scroll.adjust();
@@ -94,16 +93,15 @@ function createConversation(data) {
     if(!(app.inFocus && self.hasFocus())){
       self.unreadCounter(self.unreadCounter() + 1);  
     }
-
-    return msg;
   }
 
   self.sendMessage = function (conversation, event) {    
     self.markAsRead();
     if (thereIsANewMessage() && common.enterKeyPressed(event) && !event.shiftKey) {
       var messageData = getMessageData();
-      var msgObj = self.addMessage(messageData, false);
-      sendMessageToServer(messageData, msgObj);
+      var messageObj = createMessage(messageData, false);
+      self.addMessage(messageObj);
+      sendMessageToServer(messageData, messageObj);
       return false;
     } else {
       return true;

@@ -5,6 +5,7 @@ describe("conversation", function() {
 
     beforeEach(function() {
         testData = testDataConversation();
+        app.socket = createMockSocket();
     });
 
     describe("creation", function() {
@@ -46,6 +47,165 @@ describe("conversation", function() {
             expect(conversation.messages().length).toBe(2);
             expect(conversation.messages()[0].content).toEqual("alpha");
             expect(conversation.messages()[1].content).toEqual("beta");
+        });
+    });
+
+    describe("add message", function() {
+        describe("when app in focus", function() {
+            beforeEach(function() {
+                app.inFocus = true;
+                conversation = createConversation(testData);                
+                expect(conversation.unreadCounter()).toBe(1);                                
+                expect(conversation.messages().length).toBe(2);
+                spyOn(conversation.ui.scroll, 'adjust');
+            });
+
+            it("active and focused conversation", function() {
+                conversation.activateOnTheLeft();
+                conversation.hasFocus(true);
+                expect(conversation.unreadCounter()).toBe(0);                
+
+                var testMessage = createMessage(testDataMessageDelta(), false);
+                conversation.addMessage(testMessage);
+
+                expect(conversation.messages().length).toBe(3);
+                expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
+                expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
+                expect(conversation.unreadCounter()).toBe(0);
+            });
+
+            it("active and unfocused conversation", function() {
+                conversation.activateOnTheLeft();
+                expect(conversation.hasFocus()).toBe(false);
+
+                var testMessage = createMessage(testDataMessageDelta(), true);
+                conversation.addMessage(testMessage);
+
+                expect(conversation.messages().length).toBe(3);
+                expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
+                expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
+                expect(conversation.unreadCounter()).toBe(2);
+            });
+
+            it("inactive conversation", function() {
+                expect(conversation.active()).toBe(false);
+                expect(conversation.hasFocus()).toBe(false);
+
+                var testMessage = createMessage(testDataMessageDelta(), true);
+                conversation.addMessage(testMessage);
+
+                expect(conversation.messages().length).toBe(3);
+                expect(conversation.ui.scroll.adjust).not.toHaveBeenCalled();
+                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(conversation.unreadCounter()).toBe(2);
+            });
+        });
+
+        describe("when app not in focus", function() {
+            beforeEach(function() {
+                app.inFocus = false;
+                conversation = createConversation(testData);                
+                expect(conversation.unreadCounter()).toBe(1);                                
+                expect(conversation.messages().length).toBe(2);
+                spyOn(conversation.ui.scroll, 'adjust');
+            });
+
+            it("active conversation", function() {
+                conversation.activateOnTheLeft();
+
+                var testMessage = createMessage(testDataMessageDelta(), true);
+                conversation.addMessage(testMessage);
+
+                expect(conversation.messages().length).toBe(3);
+                expect(conversation.unreadCounter()).toBe(2);
+            });
+
+            it("inactive conversation", function() {
+                expect(conversation.active()).toBe(false);
+
+                var testMessage = createMessage(testDataMessageDelta(), true);
+                conversation.addMessage(testMessage);
+
+                expect(conversation.messages().length).toBe(3);
+                expect(conversation.unreadCounter()).toBe(2);
+            });
+        });
+    });
+
+    describe("send message", function() {
+        beforeEach(function() {
+            conversation = createConversation(testData);
+            spyOn(conversation, 'markAsRead');
+        });
+
+        afterEach(function() {
+            expect(conversation.markAsRead).toHaveBeenCalled();
+        });
+
+        it("sends message", function() {
+            conversation.newMessage('abc');
+            spyOn(common, 'enterKeyPressed').andReturn(true);
+            var testEvent = { shiftKey: false };
+            spyOn(conversation, 'addMessage');
+            app.user = { username: 'jimmy' };
+
+            var returnValue = conversation.sendMessage(null, testEvent);
+
+            expect(conversation.addMessage).toHaveBeenCalled();   
+
+            var message = conversation.addMessage.mostRecentCall.args[0];
+            expect(message.content).toEqual('abc');
+            expect(message.createdBy).toEqual('jimmy');
+            expect(message.confirmedSent()).toBe(false);
+            
+            expect(app.socket.emit).toHaveBeenCalled();
+
+            var operation = app.socket.emit.mostRecentCall.args[0];
+            expect(operation).toEqual('send_message');
+
+            var messageData = app.socket.emit.mostRecentCall.args[1];
+            expect(messageData.content).toEqual('abc');
+            expect(messageData.conversationId).toEqual('8');
+            expect(messageData.timestamp.clearTime()).toEqual(Date.today());
+            expect(messageData.createdBy).toEqual('jimmy');
+
+            var confirmation = app.socket.emit.mostRecentCall.args[2];
+            expect(message.confirmedSent()).toBe(false);
+            confirmation();
+            expect(message.confirmedSent()).toBe(true);
+
+            expect(conversation.newMessage()).toEqual('');
+            expect(returnValue).toBe(false);
+        });
+
+        it("no new message", function() {
+            conversation.newMessage('');
+            spyOn(common, 'enterKeyPressed').andReturn(true);
+            var testEvent = { shiftKey: false };
+
+            var returnValue = conversation.sendMessage(null, testEvent);
+
+            expect(returnValue).toBe(true);
+        });
+
+        it("enter key not pressed", function() {
+            conversation.newMessage('abc');
+            spyOn(common, 'enterKeyPressed').andReturn(false);
+            var testEvent = { shiftKey: false };
+
+            var returnValue = conversation.sendMessage(null, testEvent);
+
+            expect(returnValue).toBe(true);
+        });
+
+        it("shift key pressed", function() {
+            conversation.newMessage('abc');
+            spyOn(common, 'enterKeyPressed').andReturn(true);
+            var testEvent = { shiftKey: true };
+
+            var returnValue = conversation.sendMessage(null, testEvent);
+
+            expect(returnValue).toBe(true);
         });
     });
 
@@ -97,27 +257,47 @@ describe("conversation", function() {
         });
     });
 
-    describe("has focus", function() {
-        it("marks as read", function() {
+    describe("mark as read", function() {
+        it("when unread counter is 1", function() {
             testData.unread = 1;
             conversation = createConversation(testData);
             expect(conversation.unreadCounter()).toBe(1);
-            app.socket = createMockSocket();
 
-            conversation.hasFocus(true);
+            conversation.markAsRead();
 
             expect(conversation.unreadCounter()).toBe(0);
             expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
         });
 
-        it("does not mark as read", function() {
+        it("when unread counter is 0", function() {
             testData.unread = 0;
             conversation = createConversation(testData);
-            app.socket = createMockSocket();
+            expect(conversation.unreadCounter()).toBe(0);
+
+            conversation.markAsRead();
+
+            expect(conversation.unreadCounter()).toBe(0);            
+            expect(app.socket.emit).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("has focus", function() {
+        it("true", function() {
+            conversation = createConversation(testData);
+            spyOn(conversation, 'markAsRead');
 
             conversation.hasFocus(true);
-            
-            expect(app.socket.emit).not.toHaveBeenCalled();
+
+            expect(conversation.markAsRead).toHaveBeenCalled();
+        });
+
+        it("false", function() {
+            conversation = createConversation(testData);
+            spyOn(conversation, 'markAsRead');
+
+            conversation.hasFocus(false);
+
+            expect(conversation.markAsRead).not.toHaveBeenCalled();
         });
     });
 
@@ -162,18 +342,13 @@ describe("conversation", function() {
         var conversation, event;
 
         beforeEach(function(){
-            conversation = createConversation(testDataConversation());
-            app.socket = createMockSocket();
+            conversation = createConversation(testDataConversation());            
             event = {
                 target: {
                     scrollTop: 0,
                     scrollHeight: 150,
                 },
             };
-        });
-
-        afterEach(function(){
-            app.socket = undefined;
         });
 
         it('does not initiate request if loading more', function(){

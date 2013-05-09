@@ -371,6 +371,11 @@ describe("conversation", function() {
             conversation.scrolled(null, event);
             expect(app.socket.emit).not.toHaveBeenCalled();
             expect(conversation.loadingMore()).toBe(false);
+
+            conversation.messages.push({});
+            conversation.scrolled(null, event);
+            expect(app.socket.emit).not.toHaveBeenCalled();
+            expect(conversation.loadingMore()).toBe(false);
         });
 
         it('initiates a request and sets conversation as loading more', function(){

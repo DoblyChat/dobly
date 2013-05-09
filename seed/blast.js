@@ -22,32 +22,35 @@ function blast(callback){
 				});
 			}
 
-			var conversationsToBeSaved = [];
-
 			Conversation.create(conversationArray, function(err){
-				for(var a = 1; a < arguments.length; a++){
-					var conversation = arguments[a];
+				var conversations = [];
 
-					for(var j = 0; j < 500; j++){
-						var msg = new Message();
-						msg.content = 'this\nis\na\ntest';
-						msg.createdBy = user.username;
-						conversation.messages.push(msg);
-					}
-
-					conversationsToBeSaved.push(conversation);
+				for(var i = 1; i < arguments.length; i++ ){
+					conversations.push(arguments[i]);
 				}
 
-				async.each(conversationsToBeSaved, saveConversation, saveDesktop);
+				async.each(conversations, saveConversation, saveDesktop);
 
 				function saveConversation(conversation, callback){
-					conversation.save(callback);
+					var messages = [];
+
+					for(var j = 0; j < 500; j++){
+						messages.push({ 
+							content: j,
+							createdBy: user.username,
+							conversationId: conversation._id,
+						});
+					}
+
+					Message.create(messages, function(err){
+						conversation.save(callback);
+					});
 				}
 
 				function saveDesktop(err){
 					Desktop.findOrCreateByUserId(user._id, function(err, desktop){
-						for(var j = 0; j < conversationsToBeSaved.length; j++){
-							desktop.conversations.push(conversationsToBeSaved[j]._id);
+						for(var j = 0; j < conversations.length; j++){
+							desktop.conversations.push(conversations[j]._id);
 						}
 
 						desktop.save(function(err){

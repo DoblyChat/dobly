@@ -145,8 +145,6 @@ describe('User', function() {
 	});
 
 	afterEach(function(done){
-		group.remove(function(err){
-			done(err);
-		});
+		group.remove(done);
 	});
 });

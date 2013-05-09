@@ -31,7 +31,7 @@ describe('Routes configuration', function(){
 
 	afterEach(function(){
 		mockery.disable();
-		mockery.deregisterMock('./handler');
+		mockery.deregisterAll();
 	});
 
 	it('configures routes', function(){

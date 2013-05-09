@@ -107,11 +107,11 @@ module.exports = (function (){
 					    						limit: 50, 
 					    						lean: true,
 					    						sort: {
-					    							timestamp: 1
+					    							timestamp: -1
 					    						}
 					    					}, 
 					    					function(err, messages){
-					    						conversation.messages = messages;
+					    						conversation.messages = messages.reverse();
 					    						callback(err);
 					    					});
 					    		}
@@ -142,7 +142,7 @@ module.exports = (function (){
 		    	Group.findById(req.user.groupId, 'name', { lean: true }, callback)
 		    },
 		    users: function(callback){
-		    	User.find({ groupId: req.user.groupId}, '_id username', { lean: true }, callback);
+		    	User.find({ groupId: req.user.groupId }, '_id username', { lean: true }, callback);
 		    }
 		},
 		function(err, results) {
@@ -204,7 +204,7 @@ module.exports = (function (){
 				Group.find({}, null, { lean: true }, callback);		
 			},
 			users: function(callback){
-				User.find({}, null, { lean: true }, callback);	
+				User.find({}, null, { lean: true, sort: { username: 1 } }, callback);	
 			}
 		},
 		function(err, results){
@@ -238,7 +238,7 @@ module.exports = (function (){
 			if(err){
 				console.error('Error creating group', err);
 			}
-			res.redirect('/admin/groups');
+			res.redirect('admin/groups');
 		});
 	};
 

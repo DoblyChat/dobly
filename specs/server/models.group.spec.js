@@ -4,6 +4,10 @@ var Group = require('../../models/group'),
 describe('Group', function() {
 
 	describe('#name', function(){
+		afterEach(function(done){
+			Group.findOneAndRemove({ name: 'test' }, done);
+		});
+
 		it('is lower cased automatically', function(done){
 			Group.create({ name: 'TEST' }, function(err, group){
 				expect(group.name).not.toBe('TEST');
@@ -39,9 +43,7 @@ describe('Group', function() {
 		});
 
 		afterEach(function(done){
-			group.remove(function(err){
-				done();
-			});
+			group.remove(done);
 		});
 	});
 });

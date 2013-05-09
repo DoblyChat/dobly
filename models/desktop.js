@@ -26,7 +26,6 @@ schema.methods.moveConversation = function(currentIndex, newIndex){
 
 schema.statics.findOrCreateByUserId = function(userId, callback){
 	var model = this;
-
 	this.findOne({ userId: userId }, function(err, desktop){
 		if(desktop === null){
 			desktop = new model();

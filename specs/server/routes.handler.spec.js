@@ -268,7 +268,7 @@ describe('Routes handler', function(){
 						loadMessageCount = funcs[1];
 					});
 
-					it('loads messages', function(){
+					it('loads messages in reverse order', function(){
 						loadMessages(dummyCallback);
 						expect(asyncMock.each).toHaveBeenCalled();
 						expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversations);
@@ -283,12 +283,12 @@ describe('Routes handler', function(){
 						expect(findArgs[1]).toBe('content createdBy timestamp');
 						expect(findArgs[2].limit).toBe(50);
 						expect(findArgs[2].lean).toBe(true);
-						expect(findArgs[2].sort.timestamp).toBe(1);
+						expect(findArgs[2].sort.timestamp).toBe(-1);
 
 						var callback = messageMock.find.getCallback();
 						var messages = [{ dummyMsg: 'hello world'}];
 						callback('my-error', messages);
-						expect(conversation.messages).toBe(messages);
+						expect(conversation.messages).toBe(messages.reverse());
 						expect(dummyCallback).toHaveBeenCalledWith('my-error');
 					});
 
@@ -467,7 +467,7 @@ describe('Routes handler', function(){
 
 			it('gets all users', function(){
 				setup.users(dummyCallback);
-				expect(userMock.find).toHaveBeenCalledWith({}, null, { lean: true }, dummyCallback);
+				expect(userMock.find).toHaveBeenCalledWith({}, null, { lean: true, sort: { username: 1 } }, dummyCallback);
 			});
 		});
 
@@ -557,7 +557,7 @@ describe('Routes handler', function(){
 
 			it('redirects to groups', function(){
 				callback(null);
-				expect(res.redirect).toHaveBeenCalledWith('/admin/groups');
+				expect(res.redirect).toHaveBeenCalledWith('admin/groups');
 			});
 		});
 	});

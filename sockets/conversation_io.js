@@ -97,7 +97,7 @@ module.exports = (function(){
                         skip: data.page * 50,
                         lean: true,
                         sort: {
-                            timestamp: 1
+                            timestamp: -1
                         }
                     }, function(err, messages){
                         if(err){

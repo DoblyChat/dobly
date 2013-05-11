@@ -132,19 +132,15 @@ function createConversation(data) {
   }
 
   self.loadingMore = ko.observable(false);
-
-  var totalInitialMessageCount = data.totalMessages;
-  var initialMessageCount = self.messages().length;
-
-  function allMessagesLoaded(){ 
-    return totalInitialMessageCount === initialMessageCount;
-  };
+  
+  var allMessagesLoaded = ko.computed(function(){
+    return data.totalMessages <= self.messages().length;
+  }, self);
 
   var nextPage = 1;
 
-  self.scrolled = function(data, event){
+  self.scrolled = function(conversation, event){
     if(!self.loadingMore() && event.target.scrollTop - 40 < 0 && !allMessagesLoaded()){
-
       var originalScrollHeight = event.target.scrollHeight;
 
       app.socket.emit('read_next_messages', { page: nextPage, conversationId: self.id }, function(messages){

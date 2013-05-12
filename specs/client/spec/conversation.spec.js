@@ -395,6 +395,7 @@ describe("conversation", function() {
                 conversation.scrolled(null, event);
                 readMessages = app.socket.emit.mostRecentCall.args[2];
                 spyOn(conversation.ui.scroll, 'adjustToOffset');
+                spyOn(conversation.ui, 'highlightTopMessages');
             });
 
             it('adds messages to the beginning of the messages list', function(){
@@ -434,6 +435,13 @@ describe("conversation", function() {
 
                 conversation.scrolled(null, event);
                 expect(app.socket.emit.mostRecentCall.args[1].page).toBe(3);
+            });
+
+            it('highlights received messages', function(){
+                var messages = [ testDataMessageCharlie(), testDataMessageDelta() ];
+                readMessages(messages);
+
+                expect(conversation.ui.highlightTopMessages).toHaveBeenCalledWith(2);
             });
         });
     });

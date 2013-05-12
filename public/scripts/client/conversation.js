@@ -151,6 +151,8 @@ function createConversation(data) {
         self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);
         nextPage += 1;
         self.loadingMore(false);
+
+        self.ui.highlightTopMessages(messages.length);
       });
 
       self.loadingMore(true);

@@ -5,7 +5,7 @@ module.exports = (function (){
     self.add = function(data){
         updateDesktop(data.id, function(desktop){
             desktop.addConversation(data.conversationId, function(err){
-                console.error('Desktop error adding conversation', err);
+                if(err) console.error('Desktop error adding conversation', err);
             });
         });
     };
@@ -13,7 +13,7 @@ module.exports = (function (){
     self.remove = function(data){
         updateDesktop(data.id, function(desktop) {
             desktop.removeConversation(data.conversationId, function(err){
-                console.error('Desktop error removing conversation', err);
+                if(err) console.error('Desktop error removing conversation', err);
             });
         });
     };
@@ -21,7 +21,7 @@ module.exports = (function (){
     self.updateStripOrder = function(data){
         updateDesktop(data.id, function(desktop) {
             desktop.moveConversation(data.currentSort.startIndex, data.currentSort.stopIndex, function(err){
-                console.error('Desktop error updating strip order', err);
+                if(err) console.error('Desktop error updating strip order', err);
             });
         });
     };

@@ -15,6 +15,8 @@ describe('Sockets', function(){
 				addConversation: jasmine.createSpy(),
 				moveConversation: jasmine.createSpy(),
 			};
+
+			spyOn(console, 'error');
 		});
 
 		afterEach(function(){
@@ -30,6 +32,8 @@ describe('Sockets', function(){
 				callback(null, desktopMock);
 				expect(desktopMock.addConversation).toHaveBeenCalled();
 				expect(desktopMock.addConversation.mostRecentCall.args[0]).toBe(23);
+
+				expect(console.error).not.toHaveBeenCalled();
 			});
 
 			it('logs an error if find desktop failed', function(){
@@ -42,8 +46,6 @@ describe('Sockets', function(){
 				var callback = modelMock.findById.getCallback();
 				callback(null, desktopMock);
 				expect(desktopMock.addConversation).toHaveBeenCalled();
-
-				spyOn(console, 'error');
 
 				var addCallback = desktopMock.addConversation.getCallback();
 				addCallback('add-error');
@@ -59,6 +61,8 @@ describe('Sockets', function(){
 				callback(null, desktopMock);
 				expect(desktopMock.removeConversation).toHaveBeenCalled();
 				expect(desktopMock.removeConversation.mostRecentCall.args[0]).toBe(34);
+
+				expect(console.error).not.toHaveBeenCalled();
 			});
 
 			it('logs an error if find desktop failed', function(){
@@ -71,8 +75,6 @@ describe('Sockets', function(){
 				var callback = modelMock.findById.getCallback();
 				callback(null, desktopMock);
 				expect(desktopMock.removeConversation).toHaveBeenCalled();
-
-				spyOn(console, 'error');
 
 				var addCallback = desktopMock.removeConversation.getCallback();
 				addCallback('remove-error');
@@ -96,6 +98,8 @@ describe('Sockets', function(){
 				expect(desktopMock.moveConversation).toHaveBeenCalled();
 				expect(desktopMock.moveConversation.mostRecentCall.args[0]).toBe(1);
 				expect(desktopMock.moveConversation.mostRecentCall.args[1]).toBe(2);
+
+				expect(console.error).not.toHaveBeenCalled();
 			});
 
 			it('logs an error if find desktop failed', function(){
@@ -109,8 +113,6 @@ describe('Sockets', function(){
 				callback(null, desktopMock);
 				expect(desktopMock.moveConversation).toHaveBeenCalled();
 
-				spyOn(console, 'error');
-
 				var addCallback = desktopMock.moveConversation.getCallback();
 				addCallback('move-error');
 				expect(console.error).toHaveBeenCalledWith('Desktop error updating strip order', 'move-error');
@@ -119,8 +121,6 @@ describe('Sockets', function(){
 
 		function logsErrorIfFindFailedTest(){
 			var callback = modelMock.findById.getCallback();
-
-			spyOn(console, 'error');
 			callback('find error');
 			expect(console.error).toHaveBeenCalledWith('Desktop update error: find', 'find error');
 		}

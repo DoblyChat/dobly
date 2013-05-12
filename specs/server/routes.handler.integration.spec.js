@@ -95,8 +95,8 @@ describe('Routes handler - integration', function(){
 										data.push({ content: 'test message 2.' + i, createdBy: TEST_USER_NAME, conversationId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) })
 									}
 
-									data.push({ content: 'test message 1', createdBy: TEST_USER_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 10, 31) });
-									data.push({ content: 'test message 1.2', createdBy: TEST_USER_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 11, 1) });
+									data.push({ content: 'test message 1', createdBy: TEST_USER_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 17) });
+									data.push({ content: 'test message 1.2', createdBy: TEST_USER_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 16) });
 
 									data.push({ content: 'test message 3', createdBy: TEST_USER_NAME, conversationId: savedConversations[2]._id });
 

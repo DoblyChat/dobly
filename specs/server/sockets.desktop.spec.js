@@ -11,7 +11,6 @@ describe('Sockets', function(){
 
 			desktopMock = { 
 				isModified: jasmine.createSpy(),
-				save: jasmine.createSpy(),
 				removeConversation: jasmine.createSpy(),
 				addConversation: jasmine.createSpy(),
 				moveConversation: jasmine.createSpy(),
@@ -29,7 +28,8 @@ describe('Sockets', function(){
 				expect(modelMock.findById.mostRecentCall.args[0]).toBe(3);
 				var callback = modelMock.findById.getCallback();
 				callback(null, desktopMock);
-				expect(desktopMock.addConversation).toHaveBeenCalledWith(23);
+				expect(desktopMock.addConversation).toHaveBeenCalled();
+				expect(desktopMock.addConversation.mostRecentCall.args[0]).toBe(23);
 			});
 
 			it('logs an error if find desktop failed', function(){
@@ -37,14 +37,17 @@ describe('Sockets', function(){
 				logsErrorIfFindFailedTest();
 			});
 
-			it('saves if conversations modified', function(){
-				desktopIo.add({ id: 1, conversationId: 2 });
-				saveTest();
-			});
+			it('logs an error if add failed', function(){
+				desktopIo.add({ id: 15 });
+				var callback = modelMock.findById.getCallback();
+				callback(null, desktopMock);
+				expect(desktopMock.addConversation).toHaveBeenCalled();
 
-			it('does not save if conversations not modified', function(){
-				desktopIo.add({ id: 1, conversationId: 2 });
-				notSaveTest();
+				spyOn(console, 'error');
+
+				var addCallback = desktopMock.addConversation.getCallback();
+				addCallback('add-error');
+				expect(console.error).toHaveBeenCalledWith('Desktop error adding conversation', 'add-error');
 			});
 		});
 
@@ -54,7 +57,8 @@ describe('Sockets', function(){
 				expect(modelMock.findById.mostRecentCall.args[0]).toBe('id');
 				var callback = modelMock.findById.getCallback();
 				callback(null, desktopMock);
-				expect(desktopMock.removeConversation).toHaveBeenCalledWith(34);
+				expect(desktopMock.removeConversation).toHaveBeenCalled();
+				expect(desktopMock.removeConversation.mostRecentCall.args[0]).toBe(34);
 			});
 
 			it('logs an error if find desktop failed', function(){
@@ -62,14 +66,17 @@ describe('Sockets', function(){
 				logsErrorIfFindFailedTest();
 			});
 
-			it('saves if conversations modified', function(){
-				desktopIo.remove({ id: 1, conversationId: 2 });
-				saveTest();
-			});
+			it('logs an error if remove conversation failed', function(){
+				desktopIo.remove({ id: 15 });
+				var callback = modelMock.findById.getCallback();
+				callback(null, desktopMock);
+				expect(desktopMock.removeConversation).toHaveBeenCalled();
 
-			it('does not save if conversations not modified', function(){
-				desktopIo.remove({ id: 1, conversationId: 2 });
-				notSaveTest();
+				spyOn(console, 'error');
+
+				var addCallback = desktopMock.removeConversation.getCallback();
+				addCallback('remove-error');
+				expect(console.error).toHaveBeenCalledWith('Desktop error removing conversation', 'remove-error');
 			});
 		});
 
@@ -86,7 +93,9 @@ describe('Sockets', function(){
 				expect(modelMock.findById.mostRecentCall.args[0]).toBe('id');
 				var callback = modelMock.findById.getCallback();
 				callback(null, desktopMock);
-				expect(desktopMock.moveConversation).toHaveBeenCalledWith(1, 2);
+				expect(desktopMock.moveConversation).toHaveBeenCalled();
+				expect(desktopMock.moveConversation.mostRecentCall.args[0]).toBe(1);
+				expect(desktopMock.moveConversation.mostRecentCall.args[1]).toBe(2);
 			});
 
 			it('logs an error if find desktop failed', function(){
@@ -94,14 +103,17 @@ describe('Sockets', function(){
 				logsErrorIfFindFailedTest();
 			});
 
-			it('saves if conversations modified', function(){
+			it('logs an error if remove conversation failed', function(){
 				desktopIo.updateStripOrder(data);
-				saveTest();
-			});
+				var callback = modelMock.findById.getCallback();
+				callback(null, desktopMock);
+				expect(desktopMock.moveConversation).toHaveBeenCalled();
 
-			it('does not save if conversations not modified', function(){
-				desktopIo.updateStripOrder(data);
-				notSaveTest();
+				spyOn(console, 'error');
+
+				var addCallback = desktopMock.moveConversation.getCallback();
+				addCallback('move-error');
+				expect(console.error).toHaveBeenCalledWith('Desktop error updating strip order', 'move-error');
 			});
 		});
 
@@ -111,32 +123,6 @@ describe('Sockets', function(){
 			spyOn(console, 'error');
 			callback('find error');
 			expect(console.error).toHaveBeenCalledWith('Desktop update error: find', 'find error');
-		}
-
-		function saveTest(){
-			expect(modelMock.findById).toHaveBeenCalled();
-			
-			var callback = modelMock.findById.getCallback();
-			desktopMock.isModified = desktopMock.isModified.andReturn(true);
-			callback(null, desktopMock);
-
-			expect(desktopMock.save).toHaveBeenCalled();
-
-			var saveCallback = desktopMock.save.getCallback();
-			spyOn(console, 'error');
-			saveCallback(null);
-			expect(console.error).not.toHaveBeenCalled();
-
-			saveCallback('my error');
-			expect(console.error).toHaveBeenCalledWith('Desktop update error: save', 'my error');
-		}
-
-		function notSaveTest(){
-			var callback = modelMock.findById.getCallback();
-			desktopMock.isModified = desktopMock.isModified.andReturn(false);
-			callback(null, desktopMock);
-
-			expect(desktopMock.save).not.toHaveBeenCalled();
 		}
 	});
 });

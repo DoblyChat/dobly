@@ -4,19 +4,25 @@ module.exports = (function (){
 
     self.add = function(data){
         updateDesktop(data.id, function(desktop){
-            desktop.addConversation(data.conversationId);
+            desktop.addConversation(data.conversationId, function(err){
+                console.error('Desktop error adding conversation', err);
+            });
         });
     };
 
     self.remove = function(data){
         updateDesktop(data.id, function(desktop) {
-            desktop.removeConversation(data.conversationId);
+            desktop.removeConversation(data.conversationId, function(err){
+                console.error('Desktop error removing conversation', err);
+            });
         });
     };
 
     self.updateStripOrder = function(data){
         updateDesktop(data.id, function(desktop) {
-            desktop.moveConversation(data.currentSort.startIndex, data.currentSort.stopIndex);
+            desktop.moveConversation(data.currentSort.startIndex, data.currentSort.stopIndex, function(err){
+                console.error('Desktop error updating strip order', err);
+            });
         });
     };
 
@@ -26,13 +32,6 @@ module.exports = (function (){
                 console.error('Desktop update error: find', err);
             }else{
                 update(desktop);
-                if(desktop.isModified()){
-                    desktop.save(function(err){
-                        if(err){
-                            console.error('Desktop update error: save', err);
-                        }
-                    });   
-                }
             }
         });
     }

@@ -5,23 +5,20 @@ var schema = new mongo.Schema({
 	userId: { type: mongo.Schema.Types.ObjectId, required: true },
 });
 
-schema.methods.removeConversation = function(conversationId){
-	var index = this.conversations.indexOf(conversationId);
-	if(index >= 0){		
-		this.conversations.splice(index, 1);
-	}
+schema.methods.removeConversation = function(conversationId, callback){
+	this.update({ $pull: { conversations: conversationId }}, callback);
 };
 
-schema.methods.addConversation = function(conversationId){
-	if(this.conversations.indexOf(conversationId) < 0){
-    	this.conversations.push(conversationId);            
-    }
+schema.methods.addConversation = function(conversationId, callback){
+	this.update({ $addToSet: { conversations: conversationId }}, callback);
 };
 
-schema.methods.moveConversation = function(currentIndex, newIndex){
+schema.methods.moveConversation = function(currentIndex, newIndex, callback){
 	var conversation = this.conversations[currentIndex];
     this.conversations.splice(currentIndex, 1);
     this.conversations.splice(newIndex, 0, conversation);
+
+    this.save(callback);
 };
 
 schema.statics.findOrCreateByUserId = function(userId, callback){

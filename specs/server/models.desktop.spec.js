@@ -1,6 +1,5 @@
-var Desktop = require('../../models/desktop');
-
 describe('Desktop', function(){
+	var Desktop = require('../../models/desktop');
 
 	var desktop;
 
@@ -9,58 +8,135 @@ describe('Desktop', function(){
 	});
 
 	describe('#removeConversation', function(){
+		beforeEach(function(done){
+			Desktop.create({
+				userId: new mongo.Types.ObjectId()
+			}, function(err, aDesktop){
+				desktop = aDesktop;
+				done(err);
+			});
+		});
 
-		it('removes a conversation', function(){
+		afterEach(function(done){
+			desktop.remove(done);
+		});
+
+		it('removes a conversation', function(done){
 			var conversationId = new mongo.Types.ObjectId();
 			desktop.conversations.push(conversationId);
+			
+			desktop.save(function(err){
+				Desktop.findById(desktop._id, function(err, savedDesktop){
+					expect(savedDesktop.conversations).toContain(conversationId);
 
-			expect(desktop.conversations).toContain(conversationId);
-			desktop.removeConversation(conversationId);
+					desktop.removeConversation(conversationId, function(err){
+						Desktop.findById(desktop._id, function(err, savedDesktop){
+							expect(savedDesktop.conversations).not.toContain(conversationId);
+							done(err);
+						});
+					});
+				});
+			});
+		});
+
+		it('does not throw error if conversation list empty', function(done){
+			var conversationId = new mongo.Types.ObjectId();
 			expect(desktop.conversations).not.toContain(conversationId);
+
+			desktop.removeConversation(conversationId, function(err){
+				expect(err).toBeNull();
+				done(err);
+			});
 		});
 
-		it('does not throw error if conversation list empty', function(){
-			function remove(){ 
-				desktop.removeConversation('dummy');
-			}
-
-			expect(remove).not.toThrow();
-		});
-
-		it('does not remove any conversation if requested conversation is not present in list', function(){
+		it('removes the right conversation', function(done){
 			var conversationId = new mongo.Types.ObjectId();
 			var otherId = new mongo.Types.ObjectId();
 
-			desktop.conversations.push(conversationId);
-			expect(desktop.conversations.length).toBe(1);
+			desktop.update({ $push: { conversations: { $each: [ conversationId, otherId ] }}}, function(err){
+				Desktop.findById(desktop._id, function(err, savedDesktop){
+					expect(savedDesktop.conversations).toContain(conversationId);
+					expect(savedDesktop.conversations).toContain(otherId);
 
-			desktop.removeConversation(otherId);
-			expect(desktop.conversations.length).toBe(1);
+					savedDesktop.removeConversation(otherId, function(err){
+						Desktop.findById(desktop._id, function(err, savedDesktop){
+							expect(savedDesktop.conversations).toContain(conversationId);
+							expect(savedDesktop.conversations).not.toContain(otherId);
+							done(err);
+						});
+					});
+				});
+			});
 		});
 	});
 
 	describe('#addConversation', function(){
-		it('adds a conversation', function(){
-			desktop.conversations.push(new mongo.Types.ObjectId());
-			desktop.conversations.push(new mongo.Types.ObjectId());
-			
-			var conversationId = new mongo.Types.ObjectId();
-			desktop.addConversation(conversationId);
-			expect(desktop.conversations.length).toBe(3);
-			expect(desktop.conversations).toContain(conversationId);
+		beforeEach(function(done){
+			Desktop.create({
+				userId: new mongo.Types.ObjectId()
+			}, function(err, aDesktop){
+				desktop = aDesktop;
+				done(err);
+			});
 		});
 
-		it('does not add the same conversation twice', function(){
-			var conversationId = new mongo.Types.ObjectId();
-			desktop.conversations.push(conversationId);
+		afterEach(function(done){
+			desktop.remove(done);
+		});
 
-			desktop.addConversation(conversationId);
-			expect(desktop.conversations.length).toBe(1);
+		it('adds a conversation', function(done){
+			var conversationId = new mongo.Types.ObjectId();
+
+			desktop.addConversation(conversationId, function(err){
+				Desktop.findById(desktop._id, function(err, savedDesktop){
+					expect(savedDesktop.conversations).toContain(conversationId);
+					
+					var anotherConversationId = new mongo.Types.ObjectId();
+
+					savedDesktop.addConversation(anotherConversationId, function(err){
+						Desktop.findById(desktop._id, function(err, savedDesktop){
+							expect(savedDesktop.conversations.length).toBe(2);
+							expect(savedDesktop.conversations).toContain(anotherConversationId);
+							done(err);
+						})
+					});
+				});
+			});
+		});
+
+		it('does not add the same conversation twice', function(done){
+			var conversationId = new mongo.Types.ObjectId();
+
+			desktop.addConversation(conversationId, function(err){
+				Desktop.findById(desktop._id, function(err, savedDesktop){
+					expect(savedDesktop.conversations).toContain(conversationId);
+
+					savedDesktop.addConversation(conversationId, function(err){
+						Desktop.findById(desktop._id, function(err, savedDesktop){
+							expect(savedDesktop.conversations.length).toBe(1);
+							done(err);
+						});
+					});
+				});
+			});
 		});
 	});
 
 	describe('#moveConversation', function(){
-		it('moves conversation to new location', function(){
+		beforeEach(function(done){
+			Desktop.create({
+				userId: new mongo.Types.ObjectId()
+			}, function(err, aDesktop){
+				desktop = aDesktop;
+				done(err);
+			});
+		});
+
+		afterEach(function(done){
+			desktop.remove(done);
+		});
+
+		it('moves conversation to new location', function(done){
 			var convo1 = new mongo.Types.ObjectId();
 			var convo2 = new mongo.Types.ObjectId();
 			var convo3 = new mongo.Types.ObjectId();
@@ -69,29 +145,37 @@ describe('Desktop', function(){
 			desktop.conversations.push(convo2);
 			desktop.conversations.push(convo3);
 
-			verifyOrder(convo1, convo2, convo3);
-
-			desktop.moveConversation(0, 1);
-
-			verifyOrder(convo2, convo1, convo3);
-
-			desktop.moveConversation(0, 2);
-
-			verifyOrder(convo1, convo3, convo2);
-
-			desktop.moveConversation(1, 1);
-
-			verifyOrder(convo1, convo3, convo2);
-
-			desktop.moveConversation(1, 2);
-
-			verifyOrder(convo1, convo2, convo3);
+			desktop.save(function(err){
+				verifyOrder(convo1, convo2, convo3, function(desktop){
+					desktop.moveConversation(0, 1, function(){
+						verifyOrder(convo2, convo1, convo3, function(desktop){
+							desktop.moveConversation(0, 2, function(){
+								verifyOrder(convo1, convo3, convo2, function(desktop){
+									desktop.moveConversation(1, 1, function(){
+										verifyOrder(convo1, convo3, convo2, function(desktop){
+											desktop.moveConversation(1, 2, function(){
+												verifyOrder(convo1, convo2, convo3, function(desktop){
+													done();
+												});
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+			});
 		});
 
-		function verifyOrder(first, second, third){
-			expect(desktop.conversations[0]).toBe(first);
-			expect(desktop.conversations[1]).toBe(second);
-			expect(desktop.conversations[2]).toBe(third);
+		function verifyOrder(first, second, third, callback){
+			Desktop.findById(desktop._id, function(err, savedDesktop){
+				expect(savedDesktop.conversations[0].toString()).toBe(first.toString());
+				expect(savedDesktop.conversations[1].toString()).toBe(second.toString());
+				expect(savedDesktop.conversations[2].toString()).toBe(third.toString());
+
+				callback(savedDesktop);
+			});
 		}
 	});
 

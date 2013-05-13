@@ -11,5 +11,9 @@ var schema = new mongo.Schema({
 	timestamp: { type: Date, default: Date.now, required: true },
 });
 
+schema.statics.updateTopic = function(conversationId, newTopic, callback){
+	this.update({ _id: conversationId }, { topic: newTopic }, callback);
+};
+
 module.exports = mongo.model('Conversation', schema);
 

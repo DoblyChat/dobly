@@ -30,7 +30,7 @@ describe('Routes handler', function(){
 		unreadMock = buildMock('../models/unread_marker', 'find');
 		asyncMock = buildMock('async', 'parallel', 'each');
 		conversationMock = buildMock('../models/conversation', 'find');
-		messageMock = buildMock('../models/message', 'find', 'count');
+		messageMock = buildMock('../models/message', 'readMessagesByPage', 'count');
 
 		mockery.registerMock('passport', passportMock);
 
@@ -268,7 +268,7 @@ describe('Routes handler', function(){
 						loadMessageCount = funcs[1];
 					});
 
-					it('loads messages in reverse order', function(){
+					it('loads first message page', function(){
 						loadMessages(dummyCallback);
 						expect(asyncMock.each).toHaveBeenCalled();
 						expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversations);
@@ -276,16 +276,13 @@ describe('Routes handler', function(){
 
 						var load = asyncMock.each.mostRecentCall.args[1];
 						load(conversation, dummyCallback);
-						expect(messageMock.find).toHaveBeenCalled();
-						var findArgs = messageMock.find.mostRecentCall.args;
+						expect(messageMock.readMessagesByPage).toHaveBeenCalled();
+						var readArgs = messageMock.readMessagesByPage.mostRecentCall.args;
 
-						expect(findArgs[0].conversationId).toBe(conversation._id);
-						expect(findArgs[1]).toBe('content createdBy timestamp');
-						expect(findArgs[2].limit).toBe(50);
-						expect(findArgs[2].lean).toBe(true);
-						expect(findArgs[2].sort.timestamp).toBe(-1);
+						expect(readArgs[0]).toBe(conversation._id);
+						expect(readArgs[1]).toBe(0);
 
-						var callback = messageMock.find.getCallback();
+						var callback = messageMock.readMessagesByPage.getCallback();
 						var messages = [{ dummyMsg: 'hello world'}];
 						callback('my-error', messages);
 						expect(conversation.messages).toBe(messages.reverse());
@@ -462,7 +459,7 @@ describe('Routes handler', function(){
 		describe('setup', function(){
 			it('gets all groups', function(){
 				setup.groups(dummyCallback);
-				expect(groupMock.find).toHaveBeenCalledWith({}, null, { lean: true }, dummyCallback);
+				expect(groupMock.find).toHaveBeenCalledWith({}, null, { lean: true, sort: { name: 1 } }, dummyCallback);
 			});
 
 			it('gets all users', function(){

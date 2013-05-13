@@ -1,6 +1,6 @@
-var UnreadMarker = require('../../models/unread_marker');
-
 describe('Unread Marker', function() {
+	
+	var UnreadMarker = require('../../models/unread_marker');
 
 	describe("#increaseCounter", function(){
 		var userId, conversationId;
@@ -66,6 +66,35 @@ describe('Unread Marker', function() {
 
 		it('count', function(done) {
 			requiredFieldTest('count', done);
+		});
+	});
+
+	describe('#remove markers', function(){
+		var userId, conversationOne, conversationTwo;
+
+		beforeEach(function(done){
+			userId = new mongo.Types.ObjectId();
+			conversationOne = new mongo.Types.ObjectId();
+			conversationTwo = new mongo.Types.ObjectId();
+
+			UnreadMarker.create([
+				{ userId: userId, conversationId: conversationOne, count: 2 },
+				{ userId: userId, conversationId: conversationTwo, count: 5 }
+			], done);
+		});
+
+		afterEach(function(done){
+			UnreadMarker.remove({ userId: userId }, done);
+		});
+
+		it('removes marker for user and conversation', function(done){
+			UnreadMarker.removeMarkers(userId, conversationOne, function(err){
+				UnreadMarker.find({ userId: userId }, function(err, markers){
+					expect(markers.length).toBe(1);
+					expect(markers[0].conversationId.toString()).toBe(conversationTwo.toString());
+					done(err);
+				});
+			});
 		});
 	});
 });

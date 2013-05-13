@@ -238,19 +238,19 @@ describe('Routes handler - integration', function(){
 				expect(result.groups.length).toBe(2);
 
 				var firstGroup = result.groups[0];
-				expect(firstGroup.name).toBe('test');
-				expect(firstGroup.users.length).toBe(3);
+				expect(firstGroup.users.length).toBe(2);
+				expect(firstGroup.name).toBe('another group');
 
-				expect(firstGroup.users[0].username).toBe(TEST_USER_NAME + 'a');
-				expect(firstGroup.users[1].username).toBe(TEST_USER_NAME + 'b');
-				expect(firstGroup.users[2].username).toBe(TEST_USER_NAME + 'c');
+				expect(firstGroup.users[0].username).toBe(TEST_USER_NAME + 'x');
+				expect(firstGroup.users[1].username).toBe(TEST_USER_NAME + 'z');
 
 				var secondGroup = result.groups[1];
-				expect(secondGroup.users.length).toBe(2);
-				expect(secondGroup.name).toBe('another group');
+				expect(secondGroup.name).toBe('test');
+				expect(secondGroup.users.length).toBe(3);
 
-				expect(secondGroup.users[0].username).toBe(TEST_USER_NAME + 'x');
-				expect(secondGroup.users[1].username).toBe(TEST_USER_NAME + 'z');
+				expect(secondGroup.users[0].username).toBe(TEST_USER_NAME + 'a');
+				expect(secondGroup.users[1].username).toBe(TEST_USER_NAME + 'b');
+				expect(secondGroup.users[2].username).toBe(TEST_USER_NAME + 'c');
 
 				done();
 			};

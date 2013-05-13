@@ -72,9 +72,8 @@ module.exports = (function(){
         }
     };
 
-
     self.markAsRead = function(socket, conversationId){
-        UnreadMarker.remove({ conversationId: conversationId, userId: socket.handshake.user._id }, function(err){
+        UnreadMarker.removeMarkers(socket.handshake.user._id, conversationId, function(err){
             if(err){
                 console.error('Error marking as read', err);
             }
@@ -82,30 +81,21 @@ module.exports = (function(){
     };
 
     self.updateTopic = function(data){
-        Conversation.update({ _id: data.conversationId }, { topic: data.newTopic }, function(err){
+        Conversation.updateTopic(data.conversationId, data.newTopic, function(err){
             if(err){
                 console.error('Error updating topic', err);
             }
         });
     };
 
-
     self.readMessages = function(data, confirm){
-        Message.find({ conversationId: data.conversationId }, 
-                    'content createdBy timestamp', { 
-                        limit: 50, 
-                        skip: data.page * 50,
-                        lean: true,
-                        sort: {
-                            timestamp: -1
-                        }
-                    }, function(err, messages){
-                        if(err){
-                            console.error('Error loading more messages', err);
-                        }else{
-                            confirm(messages);                            
-                        }
-                    });
+        Message.readMessagesByPage(data.conversationId, data.page, function(err, messages){
+            if(err){
+                console.error('Error loading more messages', err);
+            }else{
+                confirm(messages);                            
+            }
+        });
     };
 
     return self;

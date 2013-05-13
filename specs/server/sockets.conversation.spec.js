@@ -20,11 +20,11 @@ describe('Sockets', function(){
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../sockets/conversation_io');
 
-			conversationMock = buildMock('../models/conversation', 'create', 'update');
+			conversationMock = buildMock('../models/conversation', 'create', 'updateTopic');
 			asyncMock = buildMock('async', 'parallel', 'each');
-			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'remove');
+			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'removeMarkers');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
-			messageMock = buildMock('../models/message', 'create', 'find');
+			messageMock = buildMock('../models/message', 'create', 'readMessagesByPage');
 
 			conversationIo = require('../../sockets/conversation_io');
 		});
@@ -186,16 +186,16 @@ describe('Sockets', function(){
 			it('removes unread for a conversation and user combination', function(){
 				conversationIo.markAsRead(socketMock, 'convo-id');
 
-				expect(unreadMock.remove).toHaveBeenCalled()
+				expect(unreadMock.removeMarkers).toHaveBeenCalled()
 
-				var data = unreadMock.remove.mostRecentCall.args[0]
-				expect(data.conversationId).toBe('convo-id');
-				expect(data.userId).toBe('usr-id');
+				var args = unreadMock.removeMarkers.mostRecentCall.args;
+				expect(args[1]).toBe('convo-id');
+				expect(args[0]).toBe('usr-id');
 			});
 
 			it('logs an error if necessary', function(){
 				conversationIo.markAsRead(socketMock, null);
-				var removeCallback = unreadMock.remove.getCallback();
+				var removeCallback = unreadMock.removeMarkers.getCallback();
 				spyOn(console, 'error');
 				
 				removeCallback(null);
@@ -209,17 +209,17 @@ describe('Sockets', function(){
 		describe('#updateTopic', function(){
 			it('updates the topic for a conversation', function(){
 				conversationIo.updateTopic({ conversationId: 'convo-id', newTopic: 'new topic'});
-				expect(conversationMock.update).toHaveBeenCalled();
+				expect(conversationMock.updateTopic).toHaveBeenCalled();
 
-				expect(conversationMock.update.mostRecentCall.args[0]._id).toBe('convo-id');
-				expect(conversationMock.update.mostRecentCall.args[1].topic).toBe('new topic');
+				expect(conversationMock.updateTopic.mostRecentCall.args[0]).toBe('convo-id');
+				expect(conversationMock.updateTopic.mostRecentCall.args[1]).toBe('new topic');
 			});
 
 			it('logs error if neccesary', function(){
 				conversationIo.updateTopic({});
 				spyOn(console, 'error');
 
-				var callback = conversationMock.update.getCallback();
+				var callback = conversationMock.updateTopic.getCallback();
 				callback(null);
 				expect(console.error).not.toHaveBeenCalled();
 
@@ -234,17 +234,13 @@ describe('Sockets', function(){
 				var confirm = jasmine.createSpy('confirm');
 
 				conversationIo.readMessages(data, confirm);
-				expect(messageMock.find).toHaveBeenCalled();
+				expect(messageMock.readMessagesByPage).toHaveBeenCalled();
 
-				var args = messageMock.find.mostRecentCall.args;
-				expect(args[0].conversationId).toBe(data.conversationId);
-				expect(args[1]).toBe('content createdBy timestamp');
-				expect(args[2].limit).toBe(50);
-				expect(args[2].skip).toBe(150);
-				expect(args[2].lean).toBe(true);
-				expect(args[2].sort.timestamp).toBe(-1);
+				var args = messageMock.readMessagesByPage.mostRecentCall.args;
+				expect(args[0]).toBe(data.conversationId);
+				expect(args[1]).toBe(data.page);
 
-				var callback = messageMock.find.getCallback();
+				var callback = messageMock.readMessagesByPage.getCallback();
 				spyOn(console, 'error');
 
 				var messages = [{ dummy: 'test' }];

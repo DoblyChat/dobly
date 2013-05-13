@@ -1,7 +1,7 @@
-var Conversation = require('../../models/conversation'),
-	Message = require('../../models/message');
-
 describe('Conversation', function(){
+	var Conversation = require('../../models/conversation'),
+		Message = require('../../models/message');
+
 	describe('#required fields', function() {
 		var conversationData;
 
@@ -65,6 +65,34 @@ describe('Conversation', function(){
 			Conversation.create(conversationData, function(err) {
 				expect(err).not.toBe(null);
 				done();
+			});
+		});
+	});
+
+	describe('#updateTopic', function(){
+		var conversationId;
+
+		beforeEach(function(done){
+			Conversation.create({
+				topic: 'original topic',
+				createdBy: 'conversation model test',
+				groupId: new mongo.Types.ObjectId()
+			}, function(err, conversation){
+				conversationId = conversation._id;
+				done(err);
+			});
+		});
+
+		afterEach(function(done){
+			Conversation.findByIdAndRemove(conversationId, done);
+		});
+
+		it('updates topic', function(done){
+			Conversation.updateTopic(conversationId, 'new topic', function(err){
+				Conversation.findById(conversationId, function(err, conversation){
+					expect(conversation.topic).toBe('new topic');
+					done(err);
+				});
 			});
 		});
 	});

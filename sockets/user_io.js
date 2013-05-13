@@ -1,5 +1,5 @@
 module.exports = (function (){
-  var self = this;
+  var self = {};
 
   self.userConnected = function(socket){
     socket.join(socket.handshake.user.groupId);

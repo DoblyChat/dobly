@@ -11,6 +11,19 @@ var schema = new mongo.Schema({
    	conversationId: { type: mongo.Schema.Types.ObjectId, required: true },
 });
 
+schema.statics.readMessagesByPage = function(conversationId, page, callback){
+	this.find({ conversationId: conversationId }, 
+                    'content createdBy timestamp', 
+                    { 
+                        limit: 50, 
+                        skip: page * 50,
+                        lean: true,
+                        sort: {
+                            timestamp: -1
+                        }
+                    }, callback);
+};
+
 module.exports = mongo.model('Message', schema);
 
 exports.schema = schema;

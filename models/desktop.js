@@ -5,12 +5,12 @@ var schema = new mongo.Schema({
 	userId: { type: mongo.Schema.Types.ObjectId, required: true },
 });
 
-schema.methods.removeConversation = function(conversationId, callback){
-	this.update({ $pull: { conversations: conversationId }}, callback);
+schema.statics.removeConversation = function(id, conversationId, callback){
+	this.findByIdAndUpdate(id, { $pull: { conversations: conversationId }}, callback);
 };
 
-schema.methods.addConversation = function(conversationId, callback){
-	this.update({ $addToSet: { conversations: conversationId }}, callback);
+schema.statics.addConversation = function(id, conversationId, callback){
+	this.findByIdAndUpdate(id, { $addToSet: { conversations: conversationId }}, callback);
 };
 
 schema.methods.moveConversation = function(currentIndex, newIndex, callback){

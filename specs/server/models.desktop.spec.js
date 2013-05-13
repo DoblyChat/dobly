@@ -29,7 +29,7 @@ describe('Desktop', function(){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
 					expect(savedDesktop.conversations).toContain(conversationId);
 
-					desktop.removeConversation(conversationId, function(err){
+					Desktop.removeConversation(savedDesktop._id, conversationId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
 							expect(savedDesktop.conversations).not.toContain(conversationId);
 							done(err);
@@ -43,7 +43,7 @@ describe('Desktop', function(){
 			var conversationId = new mongo.Types.ObjectId();
 			expect(desktop.conversations).not.toContain(conversationId);
 
-			desktop.removeConversation(conversationId, function(err){
+			Desktop.removeConversation(desktop._id, conversationId, function(err){
 				expect(err).toBeNull();
 				done(err);
 			});
@@ -58,7 +58,7 @@ describe('Desktop', function(){
 					expect(savedDesktop.conversations).toContain(conversationId);
 					expect(savedDesktop.conversations).toContain(otherId);
 
-					savedDesktop.removeConversation(otherId, function(err){
+					Desktop.removeConversation(savedDesktop._id, otherId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
 							expect(savedDesktop.conversations).toContain(conversationId);
 							expect(savedDesktop.conversations).not.toContain(otherId);
@@ -87,13 +87,13 @@ describe('Desktop', function(){
 		it('adds a conversation', function(done){
 			var conversationId = new mongo.Types.ObjectId();
 
-			desktop.addConversation(conversationId, function(err){
+			Desktop.addConversation(desktop._id, conversationId, function(err){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
 					expect(savedDesktop.conversations).toContain(conversationId);
 					
 					var anotherConversationId = new mongo.Types.ObjectId();
 
-					savedDesktop.addConversation(anotherConversationId, function(err){
+					Desktop.addConversation(savedDesktop._id, anotherConversationId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
 							expect(savedDesktop.conversations.length).toBe(2);
 							expect(savedDesktop.conversations).toContain(anotherConversationId);
@@ -107,11 +107,11 @@ describe('Desktop', function(){
 		it('does not add the same conversation twice', function(done){
 			var conversationId = new mongo.Types.ObjectId();
 
-			desktop.addConversation(conversationId, function(err){
+			Desktop.addConversation(desktop._id, conversationId, function(err){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
 					expect(savedDesktop.conversations).toContain(conversationId);
 
-					savedDesktop.addConversation(conversationId, function(err){
+					Desktop.addConversation(desktop._id, conversationId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
 							expect(savedDesktop.conversations.length).toBe(1);
 							done(err);

@@ -101,19 +101,10 @@ module.exports = (function (){
 		    					async.each(conversations, loadMessages, callback);
 
 					    		function loadMessages(conversation, callback){
-					    			Message.find({ conversationId: conversation._id },
-					    					'content createdBy timestamp',
-					    					{ 
-					    						limit: 50, 
-					    						lean: true,
-					    						sort: {
-					    							timestamp: -1
-					    						}
-					    					}, 
-					    					function(err, messages){
-					    						conversation.messages = messages.reverse();
-					    						callback(err);
-					    					});
+					    			Message.readMessagesByPage(conversation._id, 0, function(err, messages){
+			    						conversation.messages = messages.reverse();
+			    						callback(err);
+			    					});
 					    		}
 		    				},
 		    				function(callback){
@@ -201,7 +192,7 @@ module.exports = (function (){
 	self.getGroups = function(req, res){
 		async.parallel({
 			groups: function(callback){
-				Group.find({}, null, { lean: true }, callback);		
+				Group.find({}, null, { lean: true, sort: { name: 1 } }, callback);		
 			},
 			users: function(callback){
 				User.find({}, null, { lean: true, sort: { username: 1 } }, callback);	

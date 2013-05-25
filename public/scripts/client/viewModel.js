@@ -1,5 +1,7 @@
 function createViewModel(conversationsData, desktopData, groupData) {
   var self = {};
+
+  app.topicSearch = ko.observable('');
   
   self.conversations = ko.observableArray([]);
   for(var i = 0; i < conversationsData.length; i++){

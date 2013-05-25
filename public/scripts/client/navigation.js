@@ -13,6 +13,7 @@ function createNavigationModule(viewModel) {
     self.all = function() {
 		viewModel.allConversations.refresh();
 		onlyShow(self.showingAll);
+        common.delayedFocus('#all-convos .search input');
     };
 
     function onlyShow(flagToShow) {

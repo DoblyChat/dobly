@@ -1,8 +1,6 @@
 function createAllConversations(desktop, navigation, conversationsObservable) {
     var self = {};
 
-    self.topicSearch = ko.observable('');
-
     self.open = function(conversation){
         navigation.desktop();
         desktop.addAndActivate(conversation);
@@ -32,10 +30,6 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
         $(event.currentTarget).closest('.header').siblings(selector).toggle('slideDown');
         $(event.currentTarget).hide().siblings().show();
     };
-
-    self.search = function() {
-        
-    }
 
     return self;
 }

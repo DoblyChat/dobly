@@ -1,4 +1,6 @@
-var app = {};
+var app = {
+	topicSearch: ko.observable(''),
+};
 
 function createMockSocket() {
 	var self = {};

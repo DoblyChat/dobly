@@ -1,7 +1,8 @@
 describe('Sockets', function(){
 	describe('Conversation - integration', function(){
 		var conversationIo, socketMock,
-			Conversation;
+			Conversation, Message, 
+			Unread, User;
 
 		beforeEach(function(){
 			conversationIo = require('../../sockets/conversation_io'),

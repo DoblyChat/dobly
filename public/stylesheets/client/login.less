@@ -9,10 +9,9 @@
 @field-padding-right: 20px;
 @field-padding-top: 0;
 @field-padding-bottom: 0;
-@field-border-size: 2px;
 @field-margin-right: 20px;
-@field-width: @field-outer-width - (@field-border-size * 2) - @field-margin-right - @field-padding-right - @field-padding-left;
-@field-height: @field-outer-height - (@field-border-size * 2) - @field-padding-top - @field-padding-bottom;
+@field-width: @field-outer-width - (@thick-border-size * 2) - @field-margin-right - @field-padding-right - @field-padding-left;
+@field-height: @field-outer-height - (@thick-border-size * 2) - @field-padding-top - @field-padding-bottom;
 
 .simple-form {
 	font-family: @sans;
@@ -37,7 +36,7 @@
 			width: @field-width;
 			height: @field-height;		
 			margin-right: @field-margin-right;
-			border: @field-border-size solid @blue;
+			border: @thick-blue-border;
 			float: left;
 			background: @white;
 			.text-color;

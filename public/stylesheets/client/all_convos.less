@@ -2,135 +2,170 @@
 @all-convos-icons-width: 4%;
 @all-convos-info-width: 85%;
 @all-convos-counter-container-width: 10%;
+@topic-search-outher-width: 300px;
+@topic-search-outer-height: 50px;
+@topic-search-padding: 15px;
 
 .thin-message-padding {
 	padding: 6px @message-right-padding 6px @message-left-padding;
 }
 
 #all-convos {
-	width: @convo-width + 100;
 	height: auto;
-    .centered;
     padding-bottom: @standard-margin;
-	
-	.convo {
-		background: @white;
-		.box-shadow;
 
-		margin-bottom: @standard-margin;
+    .search {  	
+    	float: left;
+    	margin-left: 20px;
+    	font-size: 20px;
+    	width: @topic-search-outher-width;
 
-		&:last-child{
-			margin-bottom: 0;
-		}
+    	input {
+    		font-weight: bold;
+    		width: @topic-search-outher-width - (@thick-border-size * 2) - (@topic-search-padding * 2);
+    		height: @topic-search-outer-height - (@thick-border-size * 2) - 5px;
+    		border: @thick-blue-border;
+    		padding: 0 @topic-search-padding 5px;
+    		margin-bottom: @standard-margin * 1.5;    		
 
-		.header {
-
-			.message-padding;
-			// border-bottom: @thick-gray-border;
-
-			.icons{
-				float: left;
-				width: @all-convos-icons-width;
-				padding: 15px 0;
-				font-size: 15px;
-				color: @blue;
-				cursor: pointer;
+    		&:focus {
+				outline: none;
 			}
 
-			.info {
-				float: left;
-				width: @all-convos-info-width;
+			&:-moz-placeholder {
+				.placeholder-color;
+			}
 
-				.topic {
-					.title-font;
-					.ellipsis;
-					padding: 10px 0;
+			&.placeholder {
+				.placeholder-color;
+			}
+    	}
+    }
 
-					span{
-						cursor: pointer;
+    .content {
+    	float: left;
+    	width: 600px;
+    	margin-left: 20px;
 
-						&:hover {
-							text-decoration: underline;
+		.convo {
+			background: @white;
+			.box-shadow;
+
+			margin-bottom: @standard-margin;
+
+			&:last-child{
+				margin-bottom: 0;
+			}
+
+			.header {
+
+				.message-padding;
+				// border-bottom: @thick-gray-border;
+
+				.icons{
+					float: left;
+					width: @all-convos-icons-width;
+					padding: 15px 0;
+					font-size: 15px;
+					color: @blue;
+					cursor: pointer;
+				}
+
+				.info {
+					float: left;
+					width: @all-convos-info-width;
+
+					.topic {
+						.title-font;
+						.ellipsis;
+						padding: 10px 0;
+
+						span{
+							cursor: pointer;
+
+							&:hover {
+								text-decoration: underline;
+							}
+						}
+					}
+
+					.created-by {
+						.caption-color;
+						margin-top: 1px;
+						padding-bottom: 10px;
+						span{
+							margin-right: 8px;
+						}
+
+						.no-margin{
+							margin-right:0;
 						}
 					}
 				}
 
-				.created-by {
-					.caption-color;
-					margin-top: 1px;
-					padding-bottom: 10px;
-					span{
-						margin-right: 8px;
+				.counter-container {
+					width: @all-convos-counter-container-width;
+					float: right;					
+					
+					.counter {	
+						float:right;		
+						height: 35px;
+						margin-right: -14px;
+						line-height: 1.3;	
+						font-size: 26px;	
+						.counter-common;
+						width: @all-convos-counter-width;						
+					}
+				}
+
+				&:after {
+					.float-parent
+				}
+			}
+
+			.messages-margin{
+				margin-left: @all-convos-icons-width;
+			}
+			.messages {
+				.messages-margin;
+				.message {
+					.thin-message-padding;
+					// border-bottom: 1px solid @light-gray;
+
+					&:last-child {
+						border-bottom: 0;
+						padding-bottom: 20px;
 					}
 
-					.no-margin{
-						margin-right:0;
+					.author {
+						.caption-color;
+						float: left;
+					}
+
+					.time {
+						.caption-color;
+						float: right;
+						font-size: @text-size - 1px;
+					}
+
+					.text {
+						.text-color;
+						clear: both;
+						padding-top: 1px;
+						line-height: 1.5;
+						.ellipsis
 					}
 				}
 			}
 
-			.counter-container {
-				width: @all-convos-counter-container-width;
-				float: right;					
-				
-				.counter {	
-					float:right;		
-					height: 35px;
-					margin-right: -14px;
-					line-height: 1.3;	
-					font-size: 26px;	
-					.counter-common;
-					width: @all-convos-counter-width;						
-				}
-			}
+			.no-messages {
+				.messages-margin;
 
-			&:after {
-				.float-parent
-			}
-		}
-
-		.messages-margin{
-			margin-left: @all-convos-icons-width;
-		}
-		.messages {
-			.messages-margin;
-			.message {
-				.thin-message-padding;
-				// border-bottom: 1px solid @light-gray;
-
-				&:last-child {
-					border-bottom: 0;
-					padding-bottom: 20px;
-				}
-
-				.author {
+				.message {
+					padding: 20px 25px 20px 25px;
 					.caption-color;
-					float: left;
 				}
-
-				.time {
-					.caption-color;
-					float: right;
-					font-size: @text-size - 1px;
-				}
-
-				.text {
-					.text-color;
-					clear: both;
-					padding-top: 1px;
-					line-height: 1.5;
-					.ellipsis
-				}
-			}
+			}			
 		}
-
-		.no-messages {
-			.messages-margin;
-
-			.message {
-				padding: 20px 25px 20px 25px;
-				.caption-color;
-			}
-		}			
 	}
 }

@@ -446,6 +446,51 @@ describe("conversation", function() {
         });
     });
 
+    describe("topic search", function() {
+
+        var someTopic, someOtherTopic;
+
+        beforeEach(function() {
+            someTopic = createConversation(testDataConversation());
+            someOtherTopic = createConversation(testDataSomeOtherConversation());
+        });
+
+        afterEach(function() {
+            app.topicSearch('');
+        });
+
+        it("blank", function() {
+            app.topicSearch('');
+            expect(someTopic.isInTopicSearch()).toBe(true);
+            expect(someOtherTopic.isInTopicSearch()).toBe(true);
+        });
+
+        it("some", function() {
+            app.topicSearch('some');
+            expect(someTopic.isInTopicSearch()).toBe(true);
+            expect(someOtherTopic.isInTopicSearch()).toBe(true); 
+        });
+
+        it("some topic", function() {
+            app.topicSearch('some topic');
+            expect(app.topicSearch()).toEqual('some topic');
+            expect(someTopic.isInTopicSearch()).toBe(true);
+            expect(someOtherTopic.isInTopicSearch()).toBe(false); 
+        });
+
+        it("some other", function() {
+            app.topicSearch('some other');
+            expect(someTopic.isInTopicSearch()).toBe(false);
+            expect(someOtherTopic.isInTopicSearch()).toBe(true); 
+        });
+
+        it("no matches", function() {
+            app.topicSearch('xyz');
+            expect(someTopic.isInTopicSearch()).toBe(false);
+            expect(someOtherTopic.isInTopicSearch()).toBe(false); 
+        });        
+    });
+
     function testDataConversation() {
         return {
             _id: "8",
@@ -455,6 +500,19 @@ describe("conversation", function() {
             timestamp: "2013-02-15T14:36:43.296Z",
             topic: "some topic",
             unread: 1,
+            totalMessages: 3
+        };
+    }
+
+    function testDataSomeOtherConversation() {
+        return {
+            _id: "10",
+            createdBy: "fernando",
+            groupId: "5",
+            messages: [ ],
+            timestamp: "2013-02-15T14:36:43.296Z",
+            topic: "some other topic",
+            unread: 0,
             totalMessages: 3
         };
     }

@@ -66,6 +66,7 @@ html
 			#all-convos
 				.search(data-bind="visible: navigation.showingAll")
 					input.field(type="text", name="topic-search", placeholder="Search topics", data-bind="value: app.topicSearch, valueUpdate: 'input'")
+					.divide
 				.content(data-bind="visible: navigation.showingAll, foreach: allConversations.sortedConversations")
 					.convo(data-bind="visible: isInTopicSearch")
 						.header

@@ -27,7 +27,7 @@ function createAllConversations(desktop, navigation, conversationsObservable) {
     };
 
     self.toggle = function(selector, event) {
-        $(event.currentTarget).closest('.header').siblings(selector).toggle('slideDown');
+        $(event.currentTarget).closest('.header').siblings(selector).toggle();
         $(event.currentTarget).hide().siblings().show();
     };
 

@@ -44,7 +44,7 @@ describe('Socket', function(){
 			mockery.registerAllowable('../../sockets');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
-			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession');
+			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations');
 			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
@@ -158,6 +158,11 @@ describe('Socket', function(){
 					expect(userIoMock.checkForActiveSession).toHaveBeenCalledWith(socketMock);
 				});
 
+				it('subscribe to conversations', function(){
+					fire('subscribe_to_conversations');
+					expect(userIoMock.subscribeToConversations).toHaveBeenCalledWith(socketMock, data);
+				});
+
 				it('adds conversation to desktop', function(){
 					fire('add_to_desktop');
 					expectSessionTouchCalled();
@@ -176,7 +181,7 @@ describe('Socket', function(){
 					expect(desktopIoMock.updateStripOrder).toHaveBeenCalledWith(data, confirm);;
 				});
 
-				it('updates strip order', function(){
+				it('read next messages', function(){
 					fire('read_next_messages');
 					expectSessionTouchCalled();
 					expect(conversationIoMock.readMessages).toHaveBeenCalledWith(data, confirm);;

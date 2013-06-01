@@ -2,12 +2,12 @@ module.exports = (function (){
   var self = {};
 
   self.userConnected = function(socket){
-    socket.join(socket.handshake.user.groupId);
+    socket.join('g-' + socket.handshake.user.groupId);
     socket.broadcastToGroup('user_connected', socket.handshake.user._id);
   }
 
   self.userDisconnected = function(socket){
-    socket.leave(socket.handshake.user.groupId);
+    socket.leave('g-' + socket.handshake.user.groupId);
     socket.broadcastToGroup('user_disconnected', socket.handshake.user._id);
   }
 

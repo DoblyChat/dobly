@@ -21,13 +21,13 @@ describe('Sockets', function(){
 
 		it('handles "user connected" event', function(){
 			userIo.userConnected(socketMock);
-			expect(socketMock.join).toHaveBeenCalledWith('my group');
+			expect(socketMock.join).toHaveBeenCalledWith('g-my group');
 			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_connected', 'my id');
 		});
 
 		it('handles "user disconnected" event', function(){
 			userIo.userDisconnected(socketMock);
-			expect(socketMock.leave).toHaveBeenCalledWith('my group');
+			expect(socketMock.leave).toHaveBeenCalledWith('g-my group');
 			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_disconnected', 'my id');
 		});
 

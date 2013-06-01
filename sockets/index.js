@@ -22,6 +22,7 @@ exports.config = function(io, sessionStore){
 
     io.sockets.on('connection', function (socket) {
       socket.broadcastToGroup = broadcastToGroup;
+      socket.broadcastToConversationMembers = broadcastToConversationMembers;
       socket.whenUser = whenUser;
 
       userIo.userConnected(socket);
@@ -62,7 +63,11 @@ exports.config = function(io, sessionStore){
 };
 
 function broadcastToGroup(event, data){
-  this.in(this.handshake.user.groupId).broadcast.emit(event, data);
+  this.in('g-' + this.handshake.user.groupId).broadcast.emit(event, data);
+}
+
+function broadcastToConversationMembers(event, conversationId, data){
+  this.in('c-' + conversationId).broadcast.emit(event, data);
 }
 
 function whenUser(event, callback){

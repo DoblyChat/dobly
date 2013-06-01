@@ -58,7 +58,7 @@ describe('Socket', function(){
 			mockery.deregisterAll();
 		});
 
-		it('configures sess settings', function(){
+		it('configures production settings', function(){
 			config(ioMock, sessionStoreMock);
 			expect(ioMock.configure).toHaveBeenCalled();
 			expect(ioMock.configure.mostRecentCall.args[0]).toBe('production');
@@ -103,10 +103,18 @@ describe('Socket', function(){
 					var data = {};
 					socketMock.broadcastToGroup('my-event', data);
 					expect(groupSockets.broadcast.emit).toHaveBeenCalledWith('my-event', data);
-					expect(socketMock.in).toHaveBeenCalledWith('gru-id');
+					expect(socketMock.in).toHaveBeenCalledWith('g-gru-id');
 				});
 
-				it('defines a when user method', function(){
+				it('defines a broadcastToConversationMembers method', function(){
+					expect(socketMock.broadcastToConversationMembers).toBeDefined();
+					var data = {};
+					socketMock.broadcastToConversationMembers('my-event', 'convo-id', data);
+					expect(groupSockets.broadcast.emit).toHaveBeenCalledWith('my-event', data);
+					expect(socketMock.in).toHaveBeenCalledWith('c-convo-id');
+				});
+
+				it('defines a whenUser method', function(){
 					expect(socketMock.whenUser).toBeDefined();
 					var callback = jasmine.createSpy();
 					socketMock.whenUser('event', callback);

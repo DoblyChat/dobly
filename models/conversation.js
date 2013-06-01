@@ -9,6 +9,10 @@ var schema = new mongo.Schema({
 	createdBy: { type: String, required: true },
 	groupId: { type: mongo.Schema.Types.ObjectId, required: true },
 	timestamp: { type: Date, default: Date.now, required: true },
+	members: {
+		entireGroup: { type: Boolean, default: false },
+		users: { type: [ mongo.Schema.Types.ObjectId ], default: [] },
+	}
 });
 
 schema.statics.updateTopic = function(conversationId, newTopic, callback){

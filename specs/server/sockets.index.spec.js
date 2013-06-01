@@ -45,7 +45,7 @@ describe('Socket', function(){
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession');
-			desktopIoMock = buildMock('./desktop_io', 'add', 'remove', 'updateStripOrder');
+			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -161,13 +161,13 @@ describe('Socket', function(){
 				it('adds conversation to desktop', function(){
 					fire('add_to_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.add).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(data, confirm);;
 				});
 
 				it('removes conversation from desktop', function(){
 					fire('remove_from_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.remove).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(data, confirm);;
 				});
 
 				it('updates strip order', function(){

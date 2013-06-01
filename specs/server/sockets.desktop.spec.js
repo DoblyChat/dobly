@@ -21,16 +21,16 @@ describe('Sockets', function(){
 			mockery.deregisterAll();
 		});
 
-		describe('#add', function(){
+		describe('#addConversation', function(){
 			it('adds a conversation', function(){
-				desktopIo.add({ id: 3, conversationId: 23 });
+				desktopIo.addConversation({ id: 3, conversationId: 23 });
 				expect(modelMock.addConversation).toHaveBeenCalled();
 				expect(modelMock.addConversation.mostRecentCall.args[0]).toBe(3);
 				expect(modelMock.addConversation.mostRecentCall.args[1]).toBe(23);
 			});
 
-			it('logs an error if add failed', function(){
-				desktopIo.add({ id: 15 });
+			it('logs an error if add conversation failed', function(){
+				desktopIo.addConversation({ id: 15 });
 				expect(modelMock.addConversation).toHaveBeenCalled();
 
 				var addCallback = modelMock.addConversation.getCallback();
@@ -39,9 +39,9 @@ describe('Sockets', function(){
 			});
 		});
 
-		describe('#remove', function(){
+		describe('#removeConversation', function(){
 			it('removes a conversation', function(){
-				desktopIo.remove({ id: 'id', conversationId: 34 });
+				desktopIo.removeConversation({ id: 'id', conversationId: 34 });
 				expect(modelMock.removeConversation).toHaveBeenCalled();
 				expect(modelMock.removeConversation.mostRecentCall.args[0]).toBe('id');
 				expect(modelMock.removeConversation.mostRecentCall.args[1]).toBe(34);
@@ -50,7 +50,7 @@ describe('Sockets', function(){
 			});
 
 			it('logs an error if remove conversation failed', function(){
-				desktopIo.remove({ id: 15 });
+				desktopIo.removeConversation({ id: 15 });
 				expect(modelMock.removeConversation).toHaveBeenCalled();
 
 				var addCallback = modelMock.removeConversation.getCallback();

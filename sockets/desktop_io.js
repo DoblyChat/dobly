@@ -2,13 +2,13 @@ module.exports = (function (){
     var Desktop = require('../models/desktop'),
         self = {};
 
-    self.add = function(data){
+    self.addConversation = function(data){
         Desktop.addConversation(data.id, data.conversationId, function(err){
             if(err) console.error('Desktop error adding conversation', err);
         });
     };
 
-    self.remove = function(data){
+    self.removeConversation = function(data){
         Desktop.removeConversation(data.id, data.conversationId, function(err){
             if(err) console.error('Desktop error removing conversation', err);
         });

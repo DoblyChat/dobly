@@ -56,6 +56,14 @@ describe('Sockets', function(){
 			expect(socketMock.emit).toHaveBeenCalledWith('receive_online_users', [ 1, 2 ]);
 		});
 
+		it('subscribes user to conversations', function(){
+			var conversations = [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ];
+			userIo.subscribeToConversations(socketMock, conversations);
+
+			expect(socketMock.join).toHaveBeenCalledWith('c-' + conversations[0]);
+			expect(socketMock.join).toHaveBeenCalledWith('c-' + conversations[1]);
+		});
+
 		describe('checks for active sessions', function(){
 			var rightNow;
 

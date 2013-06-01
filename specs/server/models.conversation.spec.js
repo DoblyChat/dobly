@@ -50,6 +50,10 @@ describe('Conversation', function(){
 				};
 		});
 
+		afterEach(function(done){
+			Conversation.remove({ groupId: conversationData.groupId }, done);
+		});
+
 		it('saves with 499', function(done) {
 			conversationData.topic = stringOfLength(499);
 			Conversation.create(conversationData, done);

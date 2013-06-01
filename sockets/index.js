@@ -39,8 +39,8 @@ exports.config = function(io, sessionStore){
         userIo.checkForActiveSession(socket);
       });
 
-      socket.whenUser('add_to_desktop', desktopIo.add);
-      socket.whenUser('remove_from_desktop', desktopIo.remove);
+      socket.whenUser('add_to_desktop', desktopIo.addConversation);
+      socket.whenUser('remove_from_desktop', desktopIo.removeConversation);
       socket.whenUser('update_strip_order', desktopIo.updateStripOrder);
       socket.whenUser('read_next_messages', conversationIo.readMessages);
 

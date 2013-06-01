@@ -21,6 +21,12 @@ module.exports = (function (){
     currentSocket.emit('receive_online_users', connectedUsers);
   };
 
+  self.subscribeToConversations = function(socket, conversations){
+    for(var i = 0; i < conversations.length; i++){
+      socket.join('c-' + conversations[i]);
+    }
+  };
+
   self.checkForActiveSession = function(socket){
     if(socket.handshake.session.cookie._expires < new Date()){
       console.info('Session expired for %s where cookie expired at %s at %s', socket.handshake.user.username, socket.handshake.session.cookie._expires, new Date());

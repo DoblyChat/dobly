@@ -23,7 +23,7 @@ describe('Sockets', function(){
 			var checkCompleted = false;
 
 			runs(function(){
-				desktopIo.add({ id: desktopId, conversationId: conversationId });
+				desktopIo.addConversation({ id: desktopId, conversationId: conversationId });
 			});
 
 			waitsFor(function(){
@@ -49,7 +49,7 @@ describe('Sockets', function(){
 
 			it('removes conversation', function(done){
 				runs(function(){
-					desktopIo.remove({ id: desktopId, conversationId: conversationId });
+					desktopIo.removeConversation({ id: desktopId, conversationId: conversationId });
 				});
 
 				waitsFor(function(){

@@ -74,7 +74,9 @@ describe('Sockets', function(){
 
 			afterEach(function(done){
 				Message.remove({ content: content }, function(){
-					User.remove({ username: username }, done);
+					User.remove({ username: username }, function(){
+						Unread.remove({ userId: userId }, done);
+					});
 				});
 			});
 

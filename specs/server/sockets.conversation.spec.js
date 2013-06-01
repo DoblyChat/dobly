@@ -35,8 +35,15 @@ describe('Sockets', function(){
 		});
 
 		describe('#createConversation', function(){
+			var data;
+
 			beforeEach(function(){
-				conversationIo.createConversation(socketMock, { topic: 'my new topic' });
+				data = { 
+					topic: 'my new topic',
+					forEntireGroup: true,
+					selectedMembers: [ 'pepe', 'juan' ]
+				};
+				conversationIo.createConversation(socketMock, data);
 				expect(conversationMock.create).toHaveBeenCalled();
 			});
 
@@ -54,6 +61,8 @@ describe('Sockets', function(){
 				expect(data.topic).toBe('my new topic');
 				expect(data.createdBy).toBe('usr');
 				expect(data.groupId).toBe('gru-id');
+				expect(data.members.entireGroup).toBe(true);
+				expect(data.members.users).toEqual([ 'pepe', 'juan' ]);
 			});
 
 			it('communicates to users about the new conversation if creation successfull', function(){

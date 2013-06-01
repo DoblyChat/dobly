@@ -32,16 +32,26 @@ describe('Sockets', function(){
 			});
 
 			it('creates a conversation', function(done){
+				var data = { 
+					topic: topic,
+					forEntireGroup: true,
+					selectedMembers: [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ]
+				};
+
 				socketMock.broadcastToGroup = function(event, conversation){
 					expect(conversation.topic).toBe(topic);
 					expect(conversation.createdBy).toBe(socketMock.handshake.user.username);
 					expect(conversation.groupId.toString()).toBe(socketMock.handshake.user.groupId.toString());
 					expect(conversation._id).not.toBeNull();
+					expect(conversation.members.entireGroup).toBe(true);
+					expect(conversation.members.users.length).toBe(2);
+					expect(conversation.members.users).toContain(data.selectedMembers[0]);
+					expect(conversation.members.users).toContain(data.selectedMembers[1]);
 
 					done();
 				};
 
-				conversationIo.createConversation(socketMock, { topic: topic });
+				conversationIo.createConversation(socketMock, data);
 			});
 		});
 

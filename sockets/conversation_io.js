@@ -7,21 +7,24 @@ module.exports = (function(){
         self = {};
 
     self.createConversation = function(socket, data) {
-        Conversation.create(
-                { 
-                    topic: data.topic, 
-                    createdBy: socket.handshake.user.username, 
-                    groupId: socket.handshake.user.groupId 
-                }, 
-                function(err, conversation){
-                    if(err){
-                        console.error('Error creating conversation', err);
-                    }else{
-                        socket.emit('my_new_conversation', conversation);
-                        socket.broadcastToGroup('new_conversation', conversation);    
-                    }
-                }
-        );
+        var newConvoData = { 
+            topic: data.topic, 
+            createdBy: socket.handshake.user.username, 
+            groupId: socket.handshake.user.groupId,
+            members: {
+                entireGroup: data.forEntireGroup,
+                users: data.selectedMembers
+            }
+        };
+
+        Conversation.create(newConvoData, function(err, conversation){
+            if(err){
+                console.error('Error creating conversation', err);
+            }else{
+                socket.emit('my_new_conversation', conversation);
+                socket.broadcastToGroup('new_conversation', conversation);    
+            }
+        });
     };
 
     self.sendMessage = function(socket, data, confirm){

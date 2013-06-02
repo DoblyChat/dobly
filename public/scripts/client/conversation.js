@@ -163,5 +163,9 @@ function createConversation(data) {
         return self.topic().toLowerCase().indexOf(app.topicSearch().toLowerCase()) > -1;
     });
 
+    self.toggleSearch = function() {
+        self.ui.toggleSearch();
+    };
+
     return self;
 }

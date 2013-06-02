@@ -12,6 +12,11 @@
 @new-message-left-padding: 13px;
 @new-message-right-padding: 13px;
 
+@message-search-left-padding: 7px;
+
+@convo-icon-search-outer-width: 35px;
+@convo-icon-search-padding: 10px;
+
 @textarea-height: 46px;
 
 .title-font {
@@ -30,6 +35,15 @@
 
 .message-padding {
 	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
+}
+
+.convo-footer-icon {
+	float: left;
+	padding: @convo-icon-search-padding;
+	width: @convo-icon-search-outer-width - (@convo-icon-search-padding * 2);
+	text-align: center;
+	.caption-color;
+	font-size: 16px;
 }
 
 #convos .convo {
@@ -114,24 +128,86 @@
 		}
 	}
 
-	.convo-new-message {
-		padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
+	.convo-footer {
+		//padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
 		border-top: @thick-gray-border;
+		.float-parent;
 
-		textarea {
-			border: none;
-			resize: none;
-			width: 100%;
-			height: @textarea-height;
-			font-size: @text-size + 4px;
+		.new-message {
+			float: left;
+			width: @convo-width - @new-message-left-padding - @convo-icon-search-outer-width;
+			padding: @new-message-top-padding 0 @new-message-bottom-padding @new-message-left-padding;
 
-			&:focus{
-				outline: none;
+			textarea {
+				border: none;
+				resize: none;
+				width: 98%;
+				height: @textarea-height;
+				font-size: @text-size + 4px;
+
+				&:focus{
+					outline: none;
+				}
+
+				&.placeholder {
+					.placeholder-color;
+				}
+			}
+		}
+
+		.icon-search {
+			.convo-footer-icon;
+		}
+
+		.search {
+			float: left;
+			width: @convo-width - @message-search-left-padding - @convo-icon-search-outer-width;
+			padding: @new-message-top-padding 0 @new-message-bottom-padding @message-search-left-padding;
+			position: relative;
+
+			input {
+				width: 98%;
+				height: 30px;
+				font-size: @text-size + 4px;
+				border: 1px solid @light-gray;
+				outline: 0;
+				padding: 0 0 4px 8px;
+
+				&.placeholder {
+					.placeholder-color;
+				}
 			}
 
-			&.placeholder {
-				.placeholder-color;
+			button {
+				background: @white;
+				position: absolute;
+				top: 10px;
+				left: 100%;
+				width: 30px;
+				height: 32px;
+				min-width: 30px;
+				min-height: 32px;
+				cursor: pointer;
+				color: @gray;
+				border: 1px solid @white;
+				font-size: 24px;
+
+				&.icon-arrow-up {
+					margin-left: -64px;
+				}
+
+				&.icon-arrow-down {
+					margin-left: -32px;
+				}
+
+				&:hover {
+					background: @light-gray;
+				}
 			}
+		}
+
+		.icon-dismiss {
+			.convo-footer-icon;
 		}
 	}
 }

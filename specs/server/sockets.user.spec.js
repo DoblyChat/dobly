@@ -64,6 +64,11 @@ describe('Sockets', function(){
 			expect(socketMock.join).toHaveBeenCalledWith('c-' + conversations[1]);
 		});
 
+		it('unsubscribe user from conversation notifications', function(){
+			userIo.unsubscribeToConversation(socketMock, 'convo-id');
+			expect(socketMock.leave).toHaveBeenCalledWith('c-convo-id');
+		});
+
 		describe('checks for active sessions', function(){
 			var rightNow;
 

@@ -44,7 +44,7 @@ describe('Socket', function(){
 			mockery.registerAllowable('../../sockets');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
-			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations');
+			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations', 'unsubscribeToConversation');
 			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
@@ -161,6 +161,11 @@ describe('Socket', function(){
 				it('subscribe to conversations', function(){
 					fire('subscribe_to_conversations');
 					expect(userIoMock.subscribeToConversations).toHaveBeenCalledWith(socketMock, data);
+				});
+
+				it('unsubscribe to conversation', function(){
+					fire('unsubscribe_to_conversation');
+					expect(userIoMock.unsubscribeToConversation).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('adds conversation to desktop', function(){

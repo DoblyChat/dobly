@@ -39,8 +39,12 @@ exports.config = function(io, sessionStore){
         userIo.checkForActiveSession(socket);
       });
 
-      socket.on('subscribe_to_conversations', function(data){
-        userIo.subscribeToConversations(socket, data);
+      socket.on('subscribe_to_conversations', function(conversations){
+        userIo.subscribeToConversations(socket, conversations);
+      });
+
+      socket.on('unsubscribe_to_conversation', function(conversationId){
+        userIo.unsubscribeToConversation(socket, conversationId);
       });
 
       socket.whenUser('add_to_desktop', desktopIo.addConversation);

@@ -2,15 +2,23 @@ module.exports = (function (){
     var Desktop = require('../models/desktop'),
         self = {};
 
-    self.addConversation = function(data){
+    self.addConversation = function(socket, data){
         Desktop.addConversation(data.id, data.conversationId, function(err){
-            if(err) console.error('Desktop error adding conversation', err);
+            if(err) {
+                console.error('Desktop error adding conversation', err);
+            }else{
+                socket.joinConversationRoom(data.conversationId);
+            }
         });
     };
 
-    self.removeConversation = function(data){
+    self.removeConversation = function(socket, data){
         Desktop.removeConversation(data.id, data.conversationId, function(err){
-            if(err) console.error('Desktop error removing conversation', err);
+            if(err) {
+                console.error('Desktop error removing conversation', err);
+            }else{
+                socket.leaveConversationRoom(data.conversationId);
+            }
         });
     };
 

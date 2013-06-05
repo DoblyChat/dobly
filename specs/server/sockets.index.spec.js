@@ -198,13 +198,13 @@ describe('Socket', function(){
 				it('adds conversation to desktop', function(){
 					fire('add_to_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(socketMock, data);;
 				});
 
 				it('removes conversation from desktop', function(){
 					fire('remove_from_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(socketMock, data);;
 				});
 
 				it('updates strip order', function(){

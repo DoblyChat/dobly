@@ -51,8 +51,14 @@ exports.config = function(io, sessionStore){
         userIo.unsubscribeToConversation(socket, conversationId);
       });
 
-      socket.whenUser('add_to_desktop', desktopIo.addConversation);
-      socket.whenUser('remove_from_desktop', desktopIo.removeConversation);
+      socket.whenUser('add_to_desktop', function(data){ 
+        desktopIo.addConversation(socket, data);
+      });
+
+      socket.whenUser('remove_from_desktop', function(data){
+        desktopIo.removeConversation(socket, data);
+      });
+      
       socket.whenUser('update_strip_order', desktopIo.updateStripOrder);
       socket.whenUser('read_next_messages', conversationIo.readMessages);
 

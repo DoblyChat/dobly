@@ -1,10 +1,15 @@
 describe('Sockets', function(){
 	describe('Desktop - integration', function(){
-		var desktopIo, Desktop, desktopId;
+		var desktopIo, Desktop, desktopId, socketMock;
 
 		beforeEach(function(done){
 			desktopIo = require('../../sockets/desktop_io');
 			Desktop = require('../../models/desktop');
+
+			socketMock = {
+				joinConversationRoom: jasmine.createSpy(),
+				leaveConversationRoom: jasmine.createSpy(),
+			};
 
 			Desktop.create({
 				userId: new mongo.Types.ObjectId()
@@ -23,7 +28,7 @@ describe('Sockets', function(){
 			var checkCompleted = false;
 
 			runs(function(){
-				desktopIo.addConversation({ id: desktopId, conversationId: conversationId });
+				desktopIo.addConversation(socketMock, { id: desktopId, conversationId: conversationId });
 			});
 
 			waitsFor(function(){
@@ -49,7 +54,7 @@ describe('Sockets', function(){
 
 			it('removes conversation', function(done){
 				runs(function(){
-					desktopIo.removeConversation({ id: desktopId, conversationId: conversationId });
+					desktopIo.removeConversation(socketMock, { id: desktopId, conversationId: conversationId });
 				});
 
 				waitsFor(function(){

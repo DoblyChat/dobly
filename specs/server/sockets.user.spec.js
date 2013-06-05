@@ -4,8 +4,10 @@ describe('Sockets', function(){
 
 		beforeEach(function(){
 			socketMock = {
-				join: jasmine.createSpy(),
-				leave: jasmine.createSpy(),
+				joinConversationRoom: jasmine.createSpy(),
+				joinGroupRoom: jasmine.createSpy(),
+				leaveConversationRoom: jasmine.createSpy(),
+				leaveGroupRoom: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
 				emit: jasmine.createSpy(),
 				handshake:{
@@ -21,13 +23,13 @@ describe('Sockets', function(){
 
 		it('handles "user connected" event', function(){
 			userIo.userConnected(socketMock);
-			expect(socketMock.join).toHaveBeenCalledWith('g-my group');
+			expect(socketMock.joinGroupRoom).toHaveBeenCalledWith('my group');
 			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_connected', 'my id');
 		});
 
 		it('handles "user disconnected" event', function(){
 			userIo.userDisconnected(socketMock);
-			expect(socketMock.leave).toHaveBeenCalledWith('g-my group');
+			expect(socketMock.leaveGroupRoom).toHaveBeenCalledWith('my group');
 			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_disconnected', 'my id');
 		});
 
@@ -60,13 +62,13 @@ describe('Sockets', function(){
 			var conversations = [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ];
 			userIo.subscribeToConversations(socketMock, conversations);
 
-			expect(socketMock.join).toHaveBeenCalledWith('c-' + conversations[0]);
-			expect(socketMock.join).toHaveBeenCalledWith('c-' + conversations[1]);
+			expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(conversations[0]);
+			expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(conversations[1]);
 		});
 
 		it('unsubscribe user from conversation notifications', function(){
 			userIo.unsubscribeToConversation(socketMock, 'convo-id');
-			expect(socketMock.leave).toHaveBeenCalledWith('c-convo-id');
+			expect(socketMock.leaveConversationRoom).toHaveBeenCalledWith('convo-id');
 		});
 
 		describe('checks for active sessions', function(){

@@ -17,7 +17,7 @@ describe('Sockets', function(){
 				emit: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
 				broadcastToConversationMembers: jasmine.createSpy(),
-				join: jasmine.createSpy()
+				joinConversationRoom: jasmine.createSpy()
 			};
 
 			sockets = {};
@@ -29,7 +29,7 @@ describe('Sockets', function(){
 							_id: 'usr-id'
 						}
 					},
-					join: jasmine.createSpy('join-1')
+					joinConversationRoom: jasmine.createSpy('join-1')
 				},
 				{ 
 					handshake: {
@@ -37,7 +37,7 @@ describe('Sockets', function(){
 							_id: 'usr-id-2'
 						}
 					},
-					join: jasmine.createSpy('join-2')
+					joinConversationRoom: jasmine.createSpy('join-2')
 				},
 				{ 
 					handshake: {
@@ -45,7 +45,7 @@ describe('Sockets', function(){
 							_id: 'usr-id-3'
 						}
 					},
-					join: jasmine.createSpy('join-3')
+					joinConversationRoom: jasmine.createSpy('join-3')
 				},
 			];
 
@@ -117,9 +117,9 @@ describe('Sockets', function(){
 				it('joins all sockets in group if conversation for the entire group', function(){
 					data.forEntireGroup = true;
 					callback(null, conversation);
-					expect(clients[0].join).toHaveBeenCalledWith('c-' + conversation._id);
-					expect(clients[1].join).toHaveBeenCalledWith('c-' + conversation._id);
-					expect(clients[2].join).toHaveBeenCalledWith('c-' + conversation._id);
+					expect(clients[0].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
+					expect(clients[1].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
+					expect(clients[2].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
 				});
 
 				it('joins only users specified and current user if not for entire group', function(){
@@ -127,11 +127,11 @@ describe('Sockets', function(){
 					data.selectedMembers = [ 'usr-id', 'usr-id-3' ]
 					callback(null, conversation);
 
-					expect(clients[0].join).toHaveBeenCalledWith('c-' + conversation._id);
-					expect(clients[1].join).not.toHaveBeenCalledWith('c-' + conversation._id);
-					expect(clients[2].join).toHaveBeenCalledWith('c-' + conversation._id);
+					expect(clients[0].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
+					expect(clients[1].joinConversationRoom).not.toHaveBeenCalledWith(conversation._id);
+					expect(clients[2].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
 
-					expect(socketMock.join).toHaveBeenCalledWith('c-' + conversation._id);
+					expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(conversation._id);
 				})
 			});
 		});

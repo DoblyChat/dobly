@@ -22,20 +22,19 @@ module.exports = (function(){
                 console.error('Error creating conversation', err);
             }else{
                 var allSocketsInGroup = sockets.clients('g-' + socket.handshake.user.groupId);
-                var convoRoomKey = 'c-' + conversation._id;
 
                 if(data.forEntireGroup){
                     for(var i = 0; i < allSocketsInGroup.length; i++){
-                        allSocketsInGroup[i].join(convoRoomKey);
+                        allSocketsInGroup[i].joinConversationRoom(conversation._id);
                     }
                 }else{
                     for(var i = 0; i < allSocketsInGroup.length; i++){
                         if(data.selectedMembers.indexOf(allSocketsInGroup[i].handshake.user._id.toString()) >= 0){
-                            allSocketsInGroup[i].join(convoRoomKey);
+                            allSocketsInGroup[i].joinConversationRoom(conversation._id);
                         }
                     }
 
-                    socket.join(convoRoomKey);
+                    socket.joinConversationRoom(conversation._id);
                 }
 
                 socket.emit('my_new_conversation', conversation);

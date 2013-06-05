@@ -35,6 +35,9 @@ describe('Socket', function(){
 					},
 				};
 
+				self.join = jasmine.createSpy('join');
+				self.leave = jasmine.createSpy('leave');
+
 				self.in = jasmine.createSpy('in').andReturn(groupSockets);
 
 				return self;
@@ -128,6 +131,30 @@ describe('Socket', function(){
 					onCallback(data, confirm);
 					expect(socketMock.handshake.session.touch).toHaveBeenCalled();
 					expect(callback).toHaveBeenCalledWith(data, confirm);
+				});
+
+				it('defines a joinConversationRoom method', function(){
+					expect(socketMock.joinConversationRoom).toBeDefined();
+					socketMock.joinConversationRoom('convo-id');
+					expect(socketMock.join).toHaveBeenCalledWith('c-convo-id');
+				});
+
+				it('defines a leaveConversationRoom method', function(){
+					expect(socketMock.leaveConversationRoom).toBeDefined();
+					socketMock.leaveConversationRoom('convo-id');
+					expect(socketMock.leave).toHaveBeenCalledWith('c-convo-id');
+				});
+
+				it('defines a joinGroupRoom method', function(){
+					expect(socketMock.joinGroupRoom).toBeDefined();
+					socketMock.joinGroupRoom('group-id');
+					expect(socketMock.join).toHaveBeenCalledWith('g-group-id');
+				});
+
+				it('defines a leaveGroupRoom method', function(){
+					expect(socketMock.leaveGroupRoom).toBeDefined();
+					socketMock.leaveGroupRoom('group-id');
+					expect(socketMock.leave).toHaveBeenCalledWith('g-group-id');
 				});
 			});
 

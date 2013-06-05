@@ -23,6 +23,10 @@ exports.config = function(io, sessionStore){
     io.sockets.on('connection', function (socket) {
       socket.broadcastToGroup = broadcastToGroup;
       socket.broadcastToConversationMembers = broadcastToConversationMembers;
+      socket.joinConversationRoom = joinConversationRoom;
+      socket.leaveConversationRoom = leaveConversationRoom;
+      socket.joinGroupRoom = joinGroupRoom;
+      socket.leaveGroupRoom = leaveGroupRoom;
       socket.whenUser = whenUser;
 
       userIo.userConnected(socket);
@@ -76,6 +80,22 @@ function broadcastToGroup(event, data){
 
 function broadcastToConversationMembers(event, conversationId, data){
   this.in('c-' + conversationId).broadcast.emit(event, data);
+}
+
+function joinConversationRoom(conversationId){
+  this.join('c-' + conversationId);
+}
+
+function leaveConversationRoom(conversationId){
+  this.leave('c-' + conversationId);
+}
+
+function joinGroupRoom(groupId){
+  this.join('g-' + groupId);
+}
+
+function leaveGroupRoom(groupId){
+  this.leave('g-' + groupId);
 }
 
 function whenUser(event, callback){

@@ -1,15 +1,13 @@
 module.exports = (function (){
   var self = {};
-  GROUP_ROOM_PREFIX = 'g-';
-  var CONVERSATION_ROOM_PREFIX = 'c-';
 
   self.userConnected = function(socket){
-    socket.join(GROUP_ROOM_PREFIX + socket.handshake.user.groupId);
+    socket.joinGroupRoom(socket.handshake.user.groupId);
     socket.broadcastToGroup('user_connected', socket.handshake.user._id);
   }
 
   self.userDisconnected = function(socket){
-    socket.leave(GROUP_ROOM_PREFIX + socket.handshake.user.groupId);
+    socket.leaveGroupRoom(socket.handshake.user.groupId);
     socket.broadcastToGroup('user_disconnected', socket.handshake.user._id);
   }
 
@@ -25,12 +23,12 @@ module.exports = (function (){
 
   self.subscribeToConversations = function(socket, conversations){
     for(var i = 0; i < conversations.length; i++){
-      socket.join(CONVERSATION_ROOM_PREFIX + conversations[i]);
+      socket.joinConversationRoom(conversations[i]);
     }
   };
 
   self.unsubscribeToConversation = function(socket, conversationId){
-    socket.leave(CONVERSATION_ROOM_PREFIX + conversationId);
+    socket.leaveConversationRoom(conversationId);
   };
 
   self.checkForActiveSession = function(socket){

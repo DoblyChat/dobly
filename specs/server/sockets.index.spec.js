@@ -201,7 +201,7 @@ describe('Socket', function(){
 				it('creates a conversation', function(){
 					fire('create_conversation');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.createConversation).toHaveBeenCalledWith(socketMock, data);
+					expect(conversationIoMock.createConversation).toHaveBeenCalledWith(socketMock, ioMock.sockets, data);
 				});
 
 				it('marks conversation as read', function(){

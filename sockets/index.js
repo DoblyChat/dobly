@@ -57,7 +57,7 @@ exports.config = function(io, sessionStore){
       });
 
       socket.whenUser('create_conversation', function(data){
-        conversationIo.createConversation(socket, data);
+        conversationIo.createConversation(socket, io.sockets, data);
       });
 
       socket.whenUser('mark_as_read', function(conversationId){

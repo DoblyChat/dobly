@@ -6,7 +6,7 @@ module.exports = (function(){
         async = require('async'),
         self = {};
 
-    self.createConversation = function(socket, data) {
+    self.createConversation = function(socket, sockets, data) {
         var newConvoData = { 
             topic: data.topic, 
             createdBy: socket.handshake.user.username, 
@@ -21,8 +21,25 @@ module.exports = (function(){
             if(err){
                 console.error('Error creating conversation', err);
             }else{
+                var allSocketsInGroup = sockets.clients('g-' + socket.handshake.user.groupId);
+                var convoRoomKey = 'c-' + conversation._id;
+
+                if(data.forEntireGroup){
+                    for(var i = 0; i < allSocketsInGroup.length; i++){
+                        allSocketsInGroup[i].join(convoRoomKey);
+                    }
+                }else{
+                    for(var i = 0; i < allSocketsInGroup.length; i++){
+                        if(data.selectedMembers.indexOf(allSocketsInGroup[i].handshake.user._id.toString()) >= 0){
+                            allSocketsInGroup[i].join(convoRoomKey);
+                        }
+                    }
+
+                    socket.join(convoRoomKey);
+                }
+
                 socket.emit('my_new_conversation', conversation);
-                socket.broadcastToGroup('new_conversation', conversation);    
+                socket.broadcastToConversationMembers('new_conversation', conversation._id, conversation);      
             }
         });
     };
@@ -47,7 +64,7 @@ module.exports = (function(){
                     timestamp: data.timestamp,
                 };
 
-                socket.broadcastToGroup('receive_message', dataToEmit);
+                socket.broadcastToConversationMembers('receive_message', data.conversationId, dataToEmit);
                 confirm();  
             }
         });
@@ -63,15 +80,29 @@ module.exports = (function(){
         }
 
         function saveUnreadMarkers(callback){
-            User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
-                async.each(users, save);
+            Conversation.findById(data.conversationId, function(err, conversation){
+                if(err){
+                    console.error('Error reading conversation for saving unread', err);
+                }else{
+                    if(conversation.members.entireGroup){
+                        User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
+                            async.each(users, save);
 
-                function save(user, saveCallback){
-                    UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
+                            function save(user, saveCallback){
+                                UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
+                            }
+
+                            callback(err);
+                        });
+                    }else{
+                        async.each(conversation.members.users, save);
+
+                        function save(userId, saveCallback){
+                            UnreadMarker.increaseCounter(userId, data.conversationId, saveCallback);
+                        }
+                    }
                 }
-
-                callback(err);
-            });
+            });  
         }
     };
 

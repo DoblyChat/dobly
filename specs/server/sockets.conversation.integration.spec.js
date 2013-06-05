@@ -14,6 +14,7 @@ describe('Sockets', function(){
 			socketMock = {
 				emit: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
+				broadcastToConversationMembers: jasmine.createSpy(),
 				handshake: {
 					user: {
 						username: 'socket-convo-test',
@@ -38,11 +39,12 @@ describe('Sockets', function(){
 					selectedMembers: [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ]
 				};
 
-				socketMock.broadcastToGroup = function(event, conversation){
+				socketMock.broadcastToConversationMembers = function(event, conversationId, conversation){
 					expect(conversation.topic).toBe(topic);
 					expect(conversation.createdBy).toBe(socketMock.handshake.user.username);
 					expect(conversation.groupId.toString()).toBe(socketMock.handshake.user.groupId.toString());
 					expect(conversation._id).not.toBeNull();
+					expect(conversation._id).toEqual(conversationId);
 					expect(conversation.members.entireGroup).toBe(true);
 					expect(conversation.members.users.length).toBe(2);
 					expect(conversation.members.users).toContain(data.selectedMembers[0]);
@@ -51,40 +53,53 @@ describe('Sockets', function(){
 					done();
 				};
 
-				conversationIo.createConversation(socketMock, data);
+				var sockets = { clients: function(){ return []; } };
+				conversationIo.createConversation(socketMock, sockets, data);
 			});
 		});
 
 		describe('#sendMessage', function(){
 			var content = 'socket-send-message-test';
 			var username = 'user-send-message-test';
-			var userId;
-
+			var userId, conversationId;
 
 			beforeEach(function(done){
-				User.create({ 
-					username: username, 
+				Conversation.create({
+					topic: 'sendMessage test',
 					groupId: socketMock.handshake.user.groupId,
-					password: 'pass'
-				}, function(err, user){
-					userId = user._id;
-					done(err);
+					createdBy: 'test',
+					members: {
+						entireGroup: true
+					}
+				}, function(err, conversation){
+					conversationId = conversation._id;
+
+					User.create({ 
+						username: username, 
+						groupId: socketMock.handshake.user.groupId,
+						password: 'pass'
+					}, function(err, user){
+						userId = user._id;
+						done(err);
+					});
 				});
 			});
 
 			afterEach(function(done){
-				Message.remove({ content: content }, function(){
-					User.remove({ username: username }, function(){
-						Unread.remove({ userId: userId }, done);
-					});
-				});
+				Conversation.findByIdAndRemove(conversationId, function(){
+					Message.remove({ content: content }, function(){
+						User.remove({ username: username }, function(){
+							Unread.remove({ userId: userId }, done);
+						});
+					});	
+				})
 			});
 
 			it('sends a message', function(done){
 				var data = {
 					content: content,
 					timestamp: new Date(),
-					conversationId: new mongo.Types.ObjectId(),
+					conversationId: conversationId,
 				};
 
 				var confirm = jasmine.createSpy('confirm');

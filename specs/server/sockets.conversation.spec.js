@@ -2,7 +2,8 @@ describe('Sockets', function(){
 	describe('Conversation', function(){
 		var conversationIo, socketMock, 
 			conversationMock, asyncMock,
-			unreadMock, userMock, messageMock;
+			unreadMock, userMock, messageMock,
+			sockets, clients;
 
 		beforeEach(function(){
 			socketMock = {
@@ -15,12 +16,45 @@ describe('Sockets', function(){
 				},
 				emit: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
+				broadcastToConversationMembers: jasmine.createSpy(),
+				join: jasmine.createSpy()
 			};
+
+			sockets = {};
+			clients = 
+			[
+				{ 
+					handshake: {
+						user: {
+							_id: 'usr-id'
+						}
+					},
+					join: jasmine.createSpy('join-1')
+				},
+				{ 
+					handshake: {
+						user: {
+							_id: 'usr-id-2'
+						}
+					},
+					join: jasmine.createSpy('join-2')
+				},
+				{ 
+					handshake: {
+						user: {
+							_id: 'usr-id-3'
+						}
+					},
+					join: jasmine.createSpy('join-3')
+				},
+			];
+
+			sockets.clients = jasmine.createSpy().andReturn(clients);
 
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../sockets/conversation_io');
 
-			conversationMock = buildMock('../models/conversation', 'create', 'updateTopic');
+			conversationMock = buildMock('../models/conversation', 'create', 'updateTopic', 'findById');
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'removeMarkers');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
@@ -43,38 +77,62 @@ describe('Sockets', function(){
 					forEntireGroup: true,
 					selectedMembers: [ 'pepe', 'juan' ]
 				};
-				conversationIo.createConversation(socketMock, data);
+
+				conversationIo.createConversation(socketMock, sockets, data);
 				expect(conversationMock.create).toHaveBeenCalled();
 			});
 
-			it('logs error if there is an error creating the conversation', function(){
-				var callback = conversationMock.create.getCallback();
-
-				spyOn(console, 'error');
-				callback('my error', null);
-				expect(console.error).toHaveBeenCalledWith('Error creating conversation', 'my error');
-			});
-
 			it('creates a conversation with the correct data', function(){
-				var data = conversationMock.create.mostRecentCall.args[0];
+				var createData = conversationMock.create.mostRecentCall.args[0];
 
-				expect(data.topic).toBe('my new topic');
-				expect(data.createdBy).toBe('usr');
-				expect(data.groupId).toBe('gru-id');
-				expect(data.members.entireGroup).toBe(true);
-				expect(data.members.users).toEqual([ 'pepe', 'juan' ]);
+				expect(createData.topic).toBe('my new topic');
+				expect(createData.createdBy).toBe('usr');
+				expect(createData.groupId).toBe('gru-id');
+				expect(createData.members.entireGroup).toBe(true);
+				expect(createData.members.users).toEqual([ 'pepe', 'juan' ]);
 			});
 
-			it('communicates to users about the new conversation if creation successfull', function(){
-				var callback = conversationMock.create.getCallback();
-				var conversation = {
-					_id: new mongo.Types.ObjectId(),
-					topic: 'hello world',
-				};
+			describe('callback', function(){
+				var callback, conversation;
 
-				callback(null, conversation);
-				expect(socketMock.emit).toHaveBeenCalledWith('my_new_conversation', conversation);
-				expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('new_conversation', conversation);
+				beforeEach(function(){
+					callback = conversationMock.create.getCallback();
+					conversation = {
+						_id: new mongo.Types.ObjectId(),
+						topic: 'hello world',
+					};
+				});
+
+				it('logs error if there is an error creating the conversation', function(){
+					spyOn(console, 'error');
+					callback('my error', null);
+					expect(console.error).toHaveBeenCalledWith('Error creating conversation', 'my error');
+				});
+
+				it('communicates to the user that created conversation when creation successfull', function(){
+					callback(null, conversation);
+					expect(socketMock.emit).toHaveBeenCalledWith('my_new_conversation', conversation);
+				});
+
+				it('joins all sockets in group if conversation for the entire group', function(){
+					data.forEntireGroup = true;
+					callback(null, conversation);
+					expect(clients[0].join).toHaveBeenCalledWith('c-' + conversation._id);
+					expect(clients[1].join).toHaveBeenCalledWith('c-' + conversation._id);
+					expect(clients[2].join).toHaveBeenCalledWith('c-' + conversation._id);
+				});
+
+				it('joins only users specified and current user if not for entire group', function(){
+					data.forEntireGroup = false;
+					data.selectedMembers = [ 'usr-id', 'usr-id-3' ]
+					callback(null, conversation);
+
+					expect(clients[0].join).toHaveBeenCalledWith('c-' + conversation._id);
+					expect(clients[1].join).not.toHaveBeenCalledWith('c-' + conversation._id);
+					expect(clients[2].join).toHaveBeenCalledWith('c-' + conversation._id);
+
+					expect(socketMock.join).toHaveBeenCalledWith('c-' + conversation._id);
+				})
 			});
 		});
 
@@ -116,48 +174,106 @@ describe('Sockets', function(){
 				});
 
 				describe('unread', function(){
-					var findCallback;
+					var convoCallback;
 
 					beforeEach(function(){
 						saveUnread(callback);
-						expect(userMock.findExcept).toHaveBeenCalled();
-						findCallback = userMock.findExcept.getCallback();
+						convoCallback = conversationMock.findById.getCallback();
 					});
 
-					it('saves for each user', function(){
-						var args = userMock.findExcept.mostRecentCall.args;
+					it('finds conversation by id', function(){
+						expect(conversationMock.findById).toHaveBeenCalled();
+						var args = conversationMock.findById.mostRecentCall.args;
 
-						expect(args[0]).toBe('usr-id');
-						expect(args[1]).toBe('gru-id');					
-
-						var users = [ 
-							{
-								_id: 'first'
-							},
-							{
-								_id: 'second'
-							}
-						];
-
-						findCallback(null, users);
-
-						expect(asyncMock.each).toHaveBeenCalled();
-						expect(asyncMock.each.mostRecentCall.args[0]).toBe(users);
-
-						var save = asyncMock.each.getCallback();
-						var saveCallback = jasmine.createSpy('save callback');
-						save(users[0], saveCallback);
-
-						expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'convo-id', saveCallback);
-
-						expect(callback).toHaveBeenCalledWith(null);
+						expect(args[0]).toBe(data.conversationId);
 					});
 
-					it('passes error along in callback', function(){
-						var findCallback = userMock.findExcept.getCallback();
-						findCallback('my error', []);
+					it('logs an error if there is an error reading the conversation', function(){
+						spyOn(console, 'error');
+						convoCallback('reading convo error', null);
+						expect(console.error).toHaveBeenCalledWith('Error reading conversation for saving unread', 'reading convo error')
+					});
 
-						expect(callback).toHaveBeenCalledWith('my error');
+					describe('users', function(){
+						var conversation;
+
+						describe('for entire group', function(){
+							var findCallback;
+
+							beforeEach(function(){
+								conversation = {
+									members: {
+										entireGroup: true,
+										users: [ ]
+									}
+								};
+
+								convoCallback(null, conversation);
+								expect(userMock.findExcept).toHaveBeenCalled();
+								findCallback = userMock.findExcept.getCallback();
+							});
+
+							it('saves for each user in group', function(){
+								var args = userMock.findExcept.mostRecentCall.args;
+
+								expect(args[0]).toBe('usr-id');
+								expect(args[1]).toBe('gru-id');					
+
+								var users = [ 
+									{
+										_id: 'first'
+									},
+									{
+										_id: 'second'
+									}
+								];
+
+								findCallback(null, users);
+
+								expect(asyncMock.each).toHaveBeenCalled();
+								expect(asyncMock.each.mostRecentCall.args[0]).toBe(users);
+
+								var save = asyncMock.each.getCallback();
+								var saveCallback = jasmine.createSpy('save callback');
+								save(users[0], saveCallback);
+
+								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'convo-id', saveCallback);
+
+								expect(callback).toHaveBeenCalledWith(null);
+							});
+
+							it('passes error along in callback', function(){
+								var findCallback = userMock.findExcept.getCallback();
+								findCallback('my error', []);
+
+								expect(callback).toHaveBeenCalledWith('my error');
+							});
+						});
+
+						describe('for select users', function(){
+							beforeEach(function(){
+								conversation = {
+									members: {
+										entireGroup: false,
+										users: [ 'usr-1', 'usr-2' ]
+									}
+								};
+
+								convoCallback(null, conversation);
+								expect(asyncMock.each).toHaveBeenCalled();
+							});
+
+							it('saves unread for only selected users', function(){
+								expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversation.members.users);
+
+								var save = asyncMock.each.getCallback();
+								var saveCallback = jasmine.createSpy();
+
+								save('userid', saveCallback);
+
+								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('userid', 'convo-id', saveCallback);
+							});
+						});
 					});
 				});
 			});
@@ -178,16 +294,19 @@ describe('Sockets', function(){
 				it('broadcasts and confirms', function(){
 					broadcast(null);
 
-					expect(socketMock.broadcastToGroup).toHaveBeenCalled();
-					expect(socketMock.broadcastToGroup.mostRecentCall.args[0]).toBe('receive_message');
+					expect(socketMock.broadcastToConversationMembers).toHaveBeenCalled();
+					var args = socketMock.broadcastToConversationMembers.mostRecentCall.args;
 
-					var broadcastedData = socketMock.broadcastToGroup.mostRecentCall.args[1];
+					expect(args[0]).toBe('receive_message');
+					expect(args[1]).toBe('convo-id');
+
+					var broadcastedData = args[2];
 					expect(broadcastedData.content).toBe(data.content);
 					expect(broadcastedData.createdBy).toBe('usr');
 					expect(broadcastedData.conversationId).toBe('convo-id');
 					expect(broadcastedData.timestamp).toBe(data.timestamp);
 					expect(confirm).toHaveBeenCalled();
-				})
+				});
 			});
 		});
 

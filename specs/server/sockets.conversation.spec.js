@@ -100,6 +100,7 @@ describe('Sockets', function(){
 					conversation = {
 						_id: new mongo.Types.ObjectId(),
 						topic: 'hello world',
+						_doc: {},
 					};
 				});
 
@@ -111,7 +112,26 @@ describe('Sockets', function(){
 
 				it('communicates to the user that created conversation when creation successfull', function(){
 					callback(null, conversation);
-					expect(socketMock.emit).toHaveBeenCalledWith('my_new_conversation', conversation);
+					expect(socketMock.emit).toHaveBeenCalled();
+
+					var args = socketMock.emit.mostRecentCall.args;
+					expect(args[0]).toBe('my_new_conversation');
+
+					expect(args[1]._id).toEqual(conversation._id);
+					expect(args[1].topic).toBe(conversation.topic);
+					expect(args[1]._doc.createdBy).toBe(socketMock.handshake.user.username);
+				});
+
+				it('communicates to other users that created conversation when creation successfull', function(){
+					callback(null, conversation);
+					expect(socketMock.broadcastToConversationMembers).toHaveBeenCalled();
+
+					var args = socketMock.broadcastToConversationMembers.mostRecentCall.args;
+					expect(args[0]).toBe('new_conversation');
+					expect(args[1]).toEqual(conversation._id)
+					expect(args[2]._id).toEqual(conversation._id);
+					expect(args[2].topic).toBe(conversation.topic);
+					expect(args[2]._doc.createdBy).toBe(socketMock.handshake.user.username);
 				});
 
 				it('joins all sockets in group if conversation for the entire group', function(){

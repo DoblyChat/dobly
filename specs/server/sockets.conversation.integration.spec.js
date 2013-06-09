@@ -42,6 +42,7 @@ describe('Sockets', function(){
 				socketMock.broadcastToConversationMembers = function(event, conversationId, conversation){
 					expect(conversation.topic).toBe(topic);
 					expect(conversation.createdById).toBe(socketMock.handshake.user._id);
+					expect(conversation._doc.createdBy).toBe(socketMock.handshake.user.username);
 					expect(conversation.groupId.toString()).toBe(socketMock.handshake.user.groupId.toString());
 					expect(conversation._id).not.toBeNull();
 					expect(conversation._id).toEqual(conversationId);

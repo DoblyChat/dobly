@@ -161,6 +161,7 @@ describe('Routes handler - integration', function(){
 				var conversation = conversations[i];
 				expect(conversation.groupId).toBe(group._id.toString());
 				expect(conversation.createdById).toBe(testUser._id.toString());
+				expect(conversation.createdBy).toBe(testUser.username);
 				expect(conversation.topic).toContain('test');
 			}
 

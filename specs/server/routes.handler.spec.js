@@ -346,7 +346,7 @@ describe('Routes handler', function(){
 		});
 
 		describe('render', function(){
-			var data, convo1, convo2, convo3;
+			var data, convo1, convo2, convo3, user1, user2, user3;
 
 			beforeEach(function(){
 				data = {
@@ -364,9 +364,17 @@ describe('Routes handler', function(){
 				convo2 = new mongo.Types.ObjectId();
 				convo3 = new mongo.Types.ObjectId();
 
-				data.conversations.push({ _id: convo1 });
-				data.conversations.push({ _id: convo2 });
-				data.conversations.push({ _id: convo3 });
+				user1 = { _id: new mongo.Types.ObjectId(), username: 'uno' };
+				user2 = { _id: new mongo.Types.ObjectId(), username: 'dos' };
+				user3 = { _id: new mongo.Types.ObjectId(), username: 'tres' };
+
+				data.conversations.push({ _id: convo1, createdById: user1._id });
+				data.conversations.push({ _id: convo2, createdById: user2._id });
+				data.conversations.push({ _id: convo3, createdById: user3._id });
+
+				data.users.push(user1);
+				data.users.push(user2);
+				data.users.push(user3);
 			});
 
 			it('logs error if any error is provided', function(){
@@ -391,9 +399,6 @@ describe('Routes handler', function(){
 			});
 
 			it('sets groups users', function(){
-				data.users.push({ name: 'user1'});
-				data.users.push({ name: 'user2' });
-
 				render(null, data);
 				expect(data.group.users).toBe(data.users);
 			});
@@ -421,9 +426,23 @@ describe('Routes handler', function(){
 				});
 			});
 
+			describe('conversations with created by names', function(){
+				beforeEach(function(){
+					data.conversations[0].createdById = user1._id;
+					data.conversations[1].createdById = user2._id;
+					data.conversations[2].createdById = user3._id;
+				});
+
+				it('adds created by names for each conversation', function(){
+					render(null, data);
+
+					expect(data.conversations[0].createdBy).toBe(user1.username);
+					expect(data.conversations[1].createdBy).toBe(user2.username);
+					expect(data.conversations[2].createdBy).toBe(user3.username);
+				});
+			});
+
 			it('renders desktop', function(){
-				data.users.push({ name: 'user1' });
-				data.users.push({ name: 'user2' });
 				data.markers.push({ conversationId: convo3, count: 88 });
 
 				render(null, data);

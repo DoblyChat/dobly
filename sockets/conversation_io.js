@@ -37,6 +37,7 @@ module.exports = (function(){
                     socket.joinConversationRoom(conversation._id);
                 }
 
+                conversation._doc.createdBy = socket.handshake.user.username;
                 socket.emit('my_new_conversation', conversation);
                 socket.broadcastToConversationMembers('new_conversation', conversation._id, conversation);      
             }

@@ -8,7 +8,7 @@ describe('Conversation', function(){
 		beforeEach(function () {
 			conversationData = { 
 					topic: 'my topic', 
-					createdBy: 'Pepe',
+					createdById: new mongo.Types.ObjectId(),
 					timestamp: Date.now(),
 					groupId: new mongo.Types.ObjectId()
 				};
@@ -26,8 +26,8 @@ describe('Conversation', function(){
 			requiredFieldTest('topic', done);
 		});
 
-		it('createdBy', function(done) {
-			requiredFieldTest('createdBy', done);
+		it('createdById', function(done) {
+			requiredFieldTest('createdById', done);
 		});
 
 		it('timestamp', function(done) {
@@ -44,7 +44,7 @@ describe('Conversation', function(){
 
 		beforeEach(function () {
 			conversationData = { 
-					createdBy: 'Pepe',
+					createdById: new mongo.Types.ObjectId(),
 					timestamp: Date.now(),
 					groupId: new mongo.Types.ObjectId()
 				};
@@ -79,7 +79,7 @@ describe('Conversation', function(){
 		beforeEach(function(done){
 			Conversation.create({
 				topic: 'original topic',
-				createdBy: 'conversation model test',
+				createdById: new mongo.Types.ObjectId(),
 				groupId: new mongo.Types.ObjectId()
 			}, function(err, conversation){
 				conversationId = conversation._id;

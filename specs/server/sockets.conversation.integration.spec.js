@@ -41,7 +41,7 @@ describe('Sockets', function(){
 
 				socketMock.broadcastToConversationMembers = function(event, conversationId, conversation){
 					expect(conversation.topic).toBe(topic);
-					expect(conversation.createdBy).toBe(socketMock.handshake.user.username);
+					expect(conversation.createdById).toBe(socketMock.handshake.user._id);
 					expect(conversation.groupId.toString()).toBe(socketMock.handshake.user.groupId.toString());
 					expect(conversation._id).not.toBeNull();
 					expect(conversation._id).toEqual(conversationId);
@@ -67,7 +67,7 @@ describe('Sockets', function(){
 				Conversation.create({
 					topic: 'sendMessage test',
 					groupId: socketMock.handshake.user.groupId,
-					createdBy: 'test',
+					createdById: socketMock.handshake.user._id,
 					members: {
 						entireGroup: true
 					}
@@ -165,7 +165,7 @@ describe('Sockets', function(){
 			beforeEach(function(done){
 				Conversation.create({ 
                     topic: 'socket-conversation-orig',
-					createdBy: socketMock.handshake.user.username,
+					createdById: socketMock.handshake.user._id,
 					groupId: socketMock.handshake.user.groupId,
                 }, 
                 function(err, conversation){
@@ -207,7 +207,7 @@ describe('Sockets', function(){
 			beforeEach(function(done){
 				Conversation.create({ 
                     topic: 'socket-conversation',
-					createdBy: socketMock.handshake.user.username,
+					createdById: socketMock.handshake.user._id,
 					groupId: socketMock.handshake.user.groupId,
                 }, function(err, conversation){
 					conversationId = conversation._id;

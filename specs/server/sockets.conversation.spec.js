@@ -86,8 +86,8 @@ describe('Sockets', function(){
 				var createData = conversationMock.create.mostRecentCall.args[0];
 
 				expect(createData.topic).toBe('my new topic');
-				expect(createData.createdBy).toBe('usr');
-				expect(createData.groupId).toBe('gru-id');
+				expect(createData.createdById).toBe(socketMock.handshake.user._id);
+				expect(createData.groupId).toBe(socketMock.handshake.user.groupId);
 				expect(createData.members.entireGroup).toBe(true);
 				expect(createData.members.users).toEqual([ 'pepe', 'juan' ]);
 			});

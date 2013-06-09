@@ -9,7 +9,7 @@ module.exports = (function(){
     self.createConversation = function(socket, sockets, data) {
         var newConvoData = { 
             topic: data.topic, 
-            createdBy: socket.handshake.user.username, 
+            createdById: socket.handshake.user._id, 
             groupId: socket.handshake.user.groupId,
             members: {
                 entireGroup: data.forEntireGroup,

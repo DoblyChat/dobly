@@ -211,7 +211,8 @@ describe('Sockets', function(){
 					it('logs an error if there is an error reading the conversation', function(){
 						spyOn(console, 'error');
 						convoCallback('reading convo error', null);
-						expect(console.error).toHaveBeenCalledWith('Error reading conversation for saving unread', 'reading convo error')
+						expect(console.error).toHaveBeenCalledWith('Error reading conversation for saving unread', 'reading convo error');
+						expect(callback).toHaveBeenCalledWith('reading convo error');
 					});
 
 					describe('users', function(){
@@ -253,20 +254,15 @@ describe('Sockets', function(){
 								expect(asyncMock.each).toHaveBeenCalled();
 								expect(asyncMock.each.mostRecentCall.args[0]).toBe(users);
 
-								var save = asyncMock.each.getCallback();
+								var save = asyncMock.each.mostRecentCall.args[1];
 								var saveCallback = jasmine.createSpy('save callback');
 								save(users[0], saveCallback);
 
 								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'convo-id', saveCallback);
 
-								expect(callback).toHaveBeenCalledWith(null);
-							});
-
-							it('passes error along in callback', function(){
-								var findCallback = userMock.findExcept.getCallback();
-								findCallback('my error', []);
-
-								expect(callback).toHaveBeenCalledWith('my error');
+								var eachCallback = asyncMock.each.getCallback();
+								eachCallback('each error');
+								expect(callback).toHaveBeenCalledWith('each error');
 							});
 						});
 
@@ -286,12 +282,16 @@ describe('Sockets', function(){
 							it('saves unread for only selected users', function(){
 								expect(asyncMock.each.mostRecentCall.args[0]).toBe(conversation.members.users);
 
-								var save = asyncMock.each.getCallback();
+								var save = asyncMock.each.mostRecentCall.args[1];
 								var saveCallback = jasmine.createSpy();
 
 								save('userid', saveCallback);
 
 								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('userid', 'convo-id', saveCallback);
+
+								var eachCallback = asyncMock.each.getCallback();
+								eachCallback('each error');
+								expect(callback).toHaveBeenCalledWith('each error');
 							});
 						});
 					});

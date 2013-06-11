@@ -100,7 +100,7 @@ html
 					span For the entire group
 
 				div
-					select(multiple="true", data-bind="options: $parent.group.users, optionsCaption: 'Select one or more users', optionsText: 'username', optionsValue: 'id', selectedOptions: selectedMembers")
+					select(multiple="true", data-bind="options: $parent.group.otherUsers, optionsCaption: 'Select one or more users', optionsText: 'username', optionsValue: 'id', selectedOptions: selectedMembers")
 
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel

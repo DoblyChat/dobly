@@ -54,6 +54,7 @@ module.exports = (function(){
             }
         ], 
         function(err){
+            debugger;
             if(err){
                 console.error('Error sending message', err);
             }else{
@@ -83,19 +84,22 @@ module.exports = (function(){
             Conversation.findById(data.conversationId, function(err, conversation){
                 if(err){
                     console.error('Error reading conversation for saving unread', err);
+                    callback(err);
                 }else{
                     if(conversation.members.entireGroup){
                         User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
-                            async.each(users, save);
+                            async.each(users, save, function(err){
+                                callback(err);
+                            });
 
                             function save(user, saveCallback){
                                 UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
                             }
-
-                            callback(err);
                         });
                     }else{
-                        async.each(conversation.members.users, save);
+                        async.each(conversation.members.users, save, function(err){
+                            callback(err);
+                        });
 
                         function save(userId, saveCallback){
                             UnreadMarker.increaseCounter(userId, data.conversationId, saveCallback);

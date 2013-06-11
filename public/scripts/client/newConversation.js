@@ -24,7 +24,7 @@ function createNewConversation(navigation) {
         if (self.topic().length > 0) {
             create();
         }
-    }
+    };
 
     function create() {
         var data = { topic: self.topic(), forEntireGroup: self.forEntireGroup(), selectedMembers: self.selectedMembers() }
@@ -36,7 +36,7 @@ function createNewConversation(navigation) {
     self.cancel = function() {
         clear();
         navigation.desktop();    
-    }
+    };
 
     function clear(){
         self.topic('');

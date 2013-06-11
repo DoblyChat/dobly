@@ -19,5 +19,14 @@ schema.statics.updateTopic = function(conversationId, newTopic, callback){
 	this.update({ _id: conversationId }, { topic: newTopic }, callback);
 };
 
+schema.statics.findAllowedConversations = function(groupId, userId, callback){
+	this.find({ groupId: groupId, 
+				$or: [ 
+					{ 'members.entireGroup': true }, 
+					{ 'members.users': { $in: [ userId ] } },
+					{ createdById: userId } 
+				] }, null, { lean: true }, callback);
+}
+
 module.exports = mongo.model('Conversation', schema);
 

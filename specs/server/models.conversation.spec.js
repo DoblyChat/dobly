@@ -100,4 +100,54 @@ describe('Conversation', function(){
 			});
 		});
 	});
+
+	describe('#find allowed conversations', function(){
+		var userId, groupId,
+			otherUserId, otherGroupId;
+
+		beforeEach(function(done){
+			groupId = new mongo.Types.ObjectId();
+			userId = new mongo.Types.ObjectId();
+			otherGroupId = new mongo.Types.ObjectId();
+			otherUserId = new mongo.Types.ObjectId();
+
+			var conversations = [
+				{ topic: 'group and creator', createdById: userId, members: { entireGroup: true, users: [] }, groupId: groupId },
+				{ topic: 'other group', createdById: otherUserId, members: { entireGroup: true, users: []}, groupId: otherGroupId },
+				{ topic: 'same group but no', createdById: otherUserId, members: { entireGroup: false, users: [ otherUserId ] }, groupId: groupId },
+				{ topic: 'same group but yes', createdById: otherUserId, members: { entireGroup: false, users: [ userId ] }, groupId: groupId },
+				{ topic: 'same group, yes, not creator', createdById: otherUserId, members: { entireGroup: true }, groupId: groupId },
+				{ topic: 'creator', createdById: userId, members: { entireGroup: false, users: [] }, groupId: groupId }
+			];
+
+			Conversation.create(conversations, done);
+		});
+
+		afterEach(function(done){
+			Conversation.remove({ $or: [ { groupId: groupId }, { groupId: otherGroupId } ] }, done);
+		});
+
+		it('sees only allowed conversations', function(done){
+			Conversation.findAllowedConversations(groupId, userId, function(err, conversations){
+				expect(conversations.length).toBe(4);
+				contains(conversations, 'group and creator');
+				contains(conversations, 'same group but yes');
+				contains(conversations, 'same group, yes, not creator');
+				contains(conversations, 'creator');
+				done();
+			});
+		});
+
+		function contains(conversations, topic){
+			var found = false;
+
+			conversations.forEach(function(conversation){
+				if(conversation.topic === topic){
+					found = true;
+				}
+			});
+
+			expect(found).toBe(true);
+		}
+	});
 });

@@ -68,7 +68,7 @@ describe('Routes handler - integration', function(){
 						var conversations = [];
 
 						for(var i = 0; i < 3; i++ ){
-							conversations.push({ topic: 'test ' + i, createdById: user._id, groupId: group._id, timestamp: new Date() });
+							conversations.push({ topic: 'test ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true } });
 						}
 
 						Conversation.create(conversations, function(err){

@@ -29,7 +29,7 @@ describe('Routes handler', function(){
 		desktopMock = buildMock('../models/desktop', 'findOrCreateByUserId', 'isModified');
 		unreadMock = buildMock('../models/unread_marker', 'find');
 		asyncMock = buildMock('async', 'parallel', 'each');
-		conversationMock = buildMock('../models/conversation', 'find');
+		conversationMock = buildMock('../models/conversation', 'findAllowedConversations');
 		messageMock = buildMock('../models/message', 'readMessagesByPage', 'count');
 
 		mockery.registerMock('passport', passportMock);
@@ -238,17 +238,16 @@ describe('Routes handler', function(){
 					setup.conversations(dummyCallback);
 				});
 
-				it('conversations per group', function(){
-					expect(conversationMock.find).toHaveBeenCalled();
-					var args = conversationMock.find.mostRecentCall.args;
+				it('allowed conversation', function(){
+					expect(conversationMock.findAllowedConversations).toHaveBeenCalled();
+					var args = conversationMock.findAllowedConversations.mostRecentCall.args;
 
-					expect(args[0].groupId).toBe('groupid');
-					expect(args[1]).toBeNull();
-					expect(args[2].lean).toBe(true);
+					expect(args[0]).toBe(req.user.groupId);
+					expect(args[1]).toBe(req.user._id);
 				});
 
 				it('bubbles up error if there is an error finding conversations', function(){
-					var callback = conversationMock.find.getCallback();
+					var callback = conversationMock.findAllowedConversations.getCallback();
 					callback('my-error');
 					expect(dummyCallback).toHaveBeenCalledWith('my-error');
 				});
@@ -261,7 +260,7 @@ describe('Routes handler', function(){
 						conversations = [{dummy: 'convo1'}, {dummy: 'convo2'}];
 						conversation = { _id: 'convo-id' };
 
-						var callback = conversationMock.find.getCallback();
+						var callback = conversationMock.findAllowedConversations.getCallback();
 						callback(null, conversations);
 						var funcs = asyncMock.parallel.mostRecentCall.args[0];
 						loadMessages = funcs[0];

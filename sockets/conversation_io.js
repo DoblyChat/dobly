@@ -53,20 +53,12 @@ module.exports = (function(){
                 saveUnreadMarkers(callback);
             }
         ], 
-        function(err){
-            debugger;
+        function(err, results){
             if(err){
                 console.error('Error sending message', err);
             }else{
-                var dataToEmit = {
-                    content: data.content, 
-                    createdBy: socket.handshake.user.username, 
-                    conversationId: data.conversationId,
-                    timestamp: data.timestamp,
-                };
-
-                socket.broadcastToConversationMembers('receive_message', data.conversationId, dataToEmit);
-                confirm();  
+                socket.broadcastToConversationMembers('receive_message', data.conversationId, results[0]);
+                confirm(results[0]);  
             }
         });
 

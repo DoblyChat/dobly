@@ -312,20 +312,17 @@ describe('Sockets', function(){
 				});
 
 				it('broadcasts and confirms', function(){
-					broadcast(null);
+					var message = {};
+					broadcast(null, [ message ]);
 
 					expect(socketMock.broadcastToConversationMembers).toHaveBeenCalled();
 					var args = socketMock.broadcastToConversationMembers.mostRecentCall.args;
 
 					expect(args[0]).toBe('receive_message');
 					expect(args[1]).toBe('convo-id');
+					expect(args[2]).toBe(message);
 
-					var broadcastedData = args[2];
-					expect(broadcastedData.content).toBe(data.content);
-					expect(broadcastedData.createdBy).toBe('usr');
-					expect(broadcastedData.conversationId).toBe('convo-id');
-					expect(broadcastedData.timestamp).toBe(data.timestamp);
-					expect(confirm).toHaveBeenCalled();
+					expect(confirm).toHaveBeenCalledWith(message);
 				});
 			});
 		});

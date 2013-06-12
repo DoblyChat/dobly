@@ -105,14 +105,16 @@ describe('Sockets', function(){
 
 				var confirm = jasmine.createSpy('confirm');
 
-				conversationIo.sendMessage(socketMock, data, function(){
-					Message.find({ content: content}, function(err, messages){
+				conversationIo.sendMessage(socketMock, data, function(message){
+					expect(message.content).toBe(content);
+					expect(message.createdBy).toBe(socketMock.handshake.user.username);
+					expect(message.conversationId).toEqual(data.conversationId);
+					expect(message.timestamp).toEqual(data.timestamp);
+					expect(message._id).not.toBeNull();
+
+					Message.count({ content: content }, function(err, count){
 						expect(err).toBeNull();
-						expect(messages.length).toBe(1);
-						expect(messages[0].content).toBe(content);
-						expect(messages[0].createdBy).toBe(socketMock.handshake.user.username);
-						expect(messages[0].conversationId).toEqual(data.conversationId);
-						expect(messages[0].timestamp).toEqual(data.timestamp);
+						expect(count).toBe(1);
 
 						Unread.find({ userId: userId }, function(err, markers){
 							expect(err).toBeNull();

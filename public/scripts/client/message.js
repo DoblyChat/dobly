@@ -1,6 +1,7 @@
 function createMessage(data, confirmed) {
   var self = {};
 
+  self.id = data._id;
   self.content = formatContent(data.content);
   self.timestamp = common.formatTimestamp(data.timestamp);
   self.createdBy = data.createdBy;

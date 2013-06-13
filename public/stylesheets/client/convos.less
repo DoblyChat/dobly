@@ -12,12 +12,9 @@
 @new-message-left-padding: 13px;
 @new-message-right-padding: 13px;
 
-@message-search-left-padding: 7px;
-
-@convo-icon-search-outer-width: 35px;
-@convo-icon-search-padding: 10px;
-
 @textarea-height: 46px;
+
+@convo-header-actions-width: 35px;
 
 .title-font {
 	font-size: @convo-title-text-size;
@@ -37,47 +34,101 @@
 	padding: @message-top-padding @message-right-padding @message-bottom-padding @message-left-padding;
 }
 
-.convo-footer-icon {
-	float: left;
-	padding: @convo-icon-search-padding;
-	width: @convo-icon-search-outer-width - (@convo-icon-search-padding * 2);
-	text-align: center;
-	.caption-color;
-	font-size: 16px;
-}
-
 #convos .convo {
 	width: @convo-width;
 	height: 100%;
 	background: @white;
 	.box-shadow;
 
-	.convo-header {	
-		.message-padding;
+	.convo-header {			
 		border-bottom: @thick-gray-border;
+		display: table;
 
-		.topic {
-			.title-font;
-			width: 100%;
+		.topic-created-by {
+			.message-padding;
+			padding-right: 0;
+			float: left;
+			width: @convo-width - @message-left-padding - @convo-header-actions-width;
 
-			.icon-pencil {
-				display: none;
-				font-size: 18px;
-				cursor: pointer;
-				margin-left: 5px;
+			.topic {
+				.title-font;
+				width: 100%;
+
+				.icon-pencil {
+					display: none;
+					font-size: 18px;
+					cursor: pointer;
+					margin-left: 5px;
+				}
+
+				&:hover {
+					.icon-pencil {
+						display: inline;
+					}
+				}
 			}
 
-			&:hover {
-				.icon-pencil {
-					display: inline;
+			.created-by {
+				.caption-color;
+				padding-top: 5px;
+				clear: both;
+			}
+		}
+
+		.actions {
+			float: left;
+			width: @convo-header-actions-width;
+			padding-top: 13px;
+
+			.icon-search {
+				font-size: 16px;
+				.caption-color;
+				padding-left: 5px;
+
+				&:hover {
+					.text-color;
+					cursor: pointer;
 				}
 			}
 		}
 
-		.created-by {
-			.caption-color;
-			padding-top: 5px;
-			clear: both;
+		.search {
+			float: left;
+			padding: 18px 18px 10px 18px;
+			width: @convo-width - 36px;
+			text-align: center;
+			
+			.textbox {
+
+				input {
+					width: 97%;
+					padding-left:5px;
+					font-size: @text-size + 4px;
+				}
+			}
+
+			.buttons {
+
+				button {
+					margin-top: 10px;
+					width: 85px;
+					height: 25px;
+
+					&.next {
+						.blue-button;
+					}
+
+					&.prev {
+						.light-gray-button;
+						margin-left: 5px;
+						margin-right: 5px;
+					}
+
+					&.done {
+						.light-gray-button;
+					}
+				}
+			}
 		}
 	}
 
@@ -126,88 +177,34 @@
 			line-height: 1.5;
 			word-wrap:break-word;
 		}
+
+		.highlight {
+			background: @mello-yellow;
+		}
+
+		&.match {
+			background: @light-blue;
+		}
 	}
 
 	.convo-footer {
-		//padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
+		padding: @new-message-top-padding @new-message-right-padding @new-message-bottom-padding @new-message-left-padding;
 		border-top: @thick-gray-border;
-		.float-parent;
 
-		.new-message {
-			float: left;
-			width: @convo-width - @new-message-left-padding - @convo-icon-search-outer-width;
-			padding: @new-message-top-padding 0 @new-message-bottom-padding @new-message-left-padding;
+		textarea {
+			border: none;
+			resize: none;
+			width: 100%;
+			height: @textarea-height;
+			font-size: @text-size + 4px;
 
-			textarea {
-				border: none;
-				resize: none;
-				width: 98%;
-				height: @textarea-height;
-				font-size: @text-size + 4px;
-
-				&:focus{
-					outline: none;
-				}
-
-				&.placeholder {
-					.placeholder-color;
-				}
-			}
-		}
-
-		.icon-search {
-			.convo-footer-icon;
-		}
-
-		.search {
-			float: left;
-			width: @convo-width - @message-search-left-padding - @convo-icon-search-outer-width;
-			padding: @new-message-top-padding 0 @new-message-bottom-padding @message-search-left-padding;
-			position: relative;
-
-			input {
-				width: 98%;
-				height: 30px;
-				font-size: @text-size + 4px;
-				border: 1px solid @light-gray;
-				outline: 0;
-				padding: 0 0 4px 8px;
-
-				&.placeholder {
-					.placeholder-color;
-				}
+			&:focus{
+				outline: none;
 			}
 
-			button {
-				background: @white;
-				position: absolute;
-				top: 10px;
-				left: 100%;
-				width: 30px;
-				height: 32px;
-				min-width: 30px;
-				min-height: 32px;
-				cursor: pointer;
-				color: @gray;
-				border: 1px solid @white;
-				font-size: 24px;
-
-				&.icon-arrow-up {
-					margin-left: -64px;
-				}
-
-				&.icon-arrow-down {
-					margin-left: -32px;
-				}
-
-				&:hover {
-					background: @light-gray;
-				}
+			&.placeholder {
+				.placeholder-color;
 			}
-		}
-
-		.icon-dismiss {
-			.convo-footer-icon;
 		}
 	}
 }

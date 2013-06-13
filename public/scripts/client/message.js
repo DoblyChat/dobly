@@ -3,6 +3,7 @@ function createMessage(data, confirmed) {
 
   self.id = data._id;
   self.content = formatContent(data.content);
+  self.rawContent = data.content;
   self.timestamp = common.formatTimestamp(data.timestamp);
   self.createdBy = data.createdBy;
   self.simpleTimestamp = common.formatTimestamp(data.timestamp);

@@ -1,31 +1,25 @@
+@all-convos-content-width: 600px;
 @all-convos-counter-width: 40px;
-@all-convos-icons-width: 4%;
+@all-convos-icons-width: 22px;
 @all-convos-info-width: 85%;
 @all-convos-counter-container-width: 10%;
-@topic-search-outher-width: 300px;
 @topic-search-outer-height: 50px;
-@topic-search-padding: 15px;
-
-.thin-message-padding {
-	padding: 6px @message-right-padding 6px @message-left-padding;
-}
+@topic-search-padding: 32px;
 
 #all-convos {
 	height: auto;
 
     .search {  	
-    	float: left;
-    	margin-left: 20px;
     	font-size: 20px;
-    	width: @topic-search-outher-width;
+    	width: @all-convos-content-width;
+		.centered;
 
     	input {
     		font-weight: bold;
-    		width: @topic-search-outher-width - (@thick-border-size * 2) - (@topic-search-padding * 2);
+    		width: @all-convos-content-width - (@thick-border-size * 2) - (@topic-search-padding * 2);
     		height: @topic-search-outer-height - (@thick-border-size * 2) - 5px;
     		border: @thick-blue-border;
-    		padding: 0 @topic-search-padding 5px;
-    		margin-bottom: @standard-margin * 1.5;    		
+    		padding: 0 @topic-search-padding 5px;    		
 
     		&:focus {
 				outline: none;
@@ -39,17 +33,20 @@
 				.placeholder-color;
 			}
     	}
+
+    	.divide {
+    		border-top: 1px solid @light-gray;
+    		margin: 13px 0;
+    	}
     }
 
     .content {
-    	float: left;
-    	width: 600px;
-    	margin-left: 20px;
+    	width: @all-convos-content-width;
+		.centered;
 
 		.convo {
 			background: @white;
-			.box-shadow;
-
+			border: 1px solid @light-gray;
 			margin-bottom: @standard-margin;
 
 			&:last-child{
@@ -58,16 +55,23 @@
 
 			.header {
 
-				.message-padding;
-				// border-bottom: @thick-gray-border;
+				padding: 10px;
 
-				.icons{
+				.icons {
 					float: left;
 					width: @all-convos-icons-width;
-					padding: 15px 0;
+					padding: 5px 0;
 					font-size: 15px;
-					color: @blue;
+					color: @light-gray;
 					cursor: pointer;
+
+					.icon-expand:hover {
+						color: @gray;
+					}
+
+					.icon-collapse:hover {
+						color: @gray;
+					}
 				}
 
 				.info {
@@ -77,7 +81,7 @@
 					.topic {
 						.title-font;
 						.ellipsis;
-						padding: 10px 0;
+						padding-bottom: 5px;
 
 						span{
 							cursor: pointer;
@@ -91,7 +95,7 @@
 					.created-by {
 						.caption-color;
 						margin-top: 1px;
-						padding-bottom: 10px;
+						padding-bottom: 5px;
 						span{
 							margin-right: 8px;
 						}
@@ -123,13 +127,12 @@
 			}
 
 			.messages-margin{
-				margin-left: @all-convos-icons-width;
+				margin: 0 @all-convos-icons-width;
 			}
 			.messages {
 				.messages-margin;
 				.message {
-					.thin-message-padding;
-					// border-bottom: 1px solid @light-gray;
+					padding: 6px 10px;
 
 					&:last-child {
 						border-bottom: 0;
@@ -161,7 +164,7 @@
 				.messages-margin;
 
 				.message {
-					padding: 20px 25px 20px 25px;
+					padding: 6px 10px 20px 10px;
 					.caption-color;
 				}
 			}			

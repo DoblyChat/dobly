@@ -110,6 +110,14 @@ describe('Message', function() {
 					done(err);
 				});
 			});
+
+			it('includes message id', function(done) {
+				Message.readMessagesByPage(conversationId, 0, function(err, messages){
+					expect(messages[0]._id).not.toBeUndefined();
+					expect(messages[0]._id).not.toBeNull();
+					done(err);
+				});
+			});
 		});
 
 		describe('sorting', function(){

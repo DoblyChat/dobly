@@ -13,6 +13,7 @@ function createConversation(data) {
     self.hasFocus = ko.observable(false);
     self.ui = createConversationUi();
     self.timestamp = common.formatTimestamp(data.timestamp);
+    self.search = createConversationSearch(self);
 
     if(data.messages) {
         for(var i = 0; i < data.messages.length; i++) {
@@ -51,7 +52,7 @@ function createConversation(data) {
     };  
 
     self.deactivate = function() {
-        if(self.active()){
+        if (self.active()){
             if (self.ui.scroll !== undefined) {
                 self.ui.scroll.stop();
             }
@@ -91,7 +92,7 @@ function createConversation(data) {
             emitMarkAsRead();
         } 
 
-        if(!(app.inFocus && self.hasFocus())){
+        if (!(app.inFocus && self.hasFocus())) {
             self.unreadCounter(self.unreadCounter() + 1);  
         }
     }
@@ -114,13 +115,13 @@ function createConversation(data) {
     });  
 
     self.hasFocus.subscribe(function(hasFocus) {
-        if(hasFocus){
+        if (hasFocus) {
             self.markAsRead();
         }
     });
 
     self.markAsRead = function() {
-        if(self.unreadCounter() > 0){
+        if (self.unreadCounter() > 0) {
             self.unreadCounter(0);
             emitMarkAsRead();
         };
@@ -134,25 +135,19 @@ function createConversation(data) {
 
     self.loadingMore = ko.observable(false);
 
-    var allMessagesLoaded = ko.computed(function(){
+    self.allMessagesLoaded = function() {
         return data.totalMessages <= self.messages().length;
-    }, self);
+    }
 
     var nextPage = 1;
 
     self.scrolled = function(conversation, event){
-        if(!self.loadingMore() && event.target.scrollTop - 40 < 0 && !allMessagesLoaded()){
+        if (!self.loadingMore() && event.target.scrollTop - 40 < 0 && !self.allMessagesLoaded()) {
             var originalScrollHeight = event.target.scrollHeight;
 
-            app.socket.emit('read_next_messages', { page: nextPage, conversationId: self.id }, function(messages){
-                ko.utils.arrayForEach(messages, function(message){
-                    self.messages.unshift(createMessage(message, true));
-                });
-
-                self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);
-                nextPage += 1;
+            self.page(function(messages) {
+                self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);            
                 self.loadingMore(false);
-
                 self.ui.highlightTopMessages(messages.length);
             });
 
@@ -160,9 +155,16 @@ function createConversation(data) {
         }
     };
 
-    self.isInTopicSearch = ko.computed(function() {
-        return self.topic().toLowerCase().indexOf(app.topicSearch().toLowerCase()) > -1;
-    });
+    self.page = function(hook) {
+        app.socket.emit('read_next_messages', { page: nextPage, conversationId: self.id }, function(messages){
+            ko.utils.arrayForEach(messages, function(message){
+                self.messages.unshift(createMessage(message, true));
+            });
+            nextPage += 1;
+
+            hook(messages);
+        });
+    }
 
     return self;
 }

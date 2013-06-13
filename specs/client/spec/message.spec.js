@@ -7,7 +7,6 @@ describe("message", function() {
 
 	it("creates message", function() {
 		var data = {
-			_id: "5130abb8cc5e23dd79000184",
 			content: "check", 
 			conversationId: "123", 
 			timestamp: Date.parse('2013.04.09 22:13:34'), 
@@ -16,7 +15,6 @@ describe("message", function() {
 		};
 
 		var message = createMessage(data, true);
-		expect(message.id).toBe('5130abb8cc5e23dd79000184');
 		expect(message.content).toBe('e-check');
 		expect(message.rawContent).toBe('check');
 		expect(message.timestamp).toBe(common.formatTimestamp(data.timestamp));

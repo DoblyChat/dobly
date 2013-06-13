@@ -39,6 +39,10 @@ exports.up = function(next){
 					}
 				}
 
+				if (typeof user === 'undefined') {
+					console.log('Could not find user for: [' + username + ']');
+				}
+
 				return user;
 			}
 		});

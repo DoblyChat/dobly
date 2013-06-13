@@ -68,7 +68,7 @@ describe('Routes handler - integration', function(){
 						var conversations = [];
 
 						for(var i = 0; i < 3; i++ ){
-							conversations.push({ topic: 'test ' + i, createdBy: 'test', groupId: group._id, timestamp: new Date() });
+							conversations.push({ topic: 'test ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true } });
 						}
 
 						Conversation.create(conversations, function(err){
@@ -160,7 +160,8 @@ describe('Routes handler - integration', function(){
 			for(var i = 0; i < conversations.length; i++){
 				var conversation = conversations[i];
 				expect(conversation.groupId).toBe(group._id.toString());
-				expect(conversation.createdBy).toBe('test');
+				expect(conversation.createdById).toBe(testUser._id.toString());
+				expect(conversation.createdBy).toBe(testUser.username);
 				expect(conversation.topic).toContain('test');
 			}
 

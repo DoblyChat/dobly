@@ -22,6 +22,11 @@ exports.config = function(io, sessionStore){
 
     io.sockets.on('connection', function (socket) {
       socket.broadcastToGroup = broadcastToGroup;
+      socket.broadcastToConversationMembers = broadcastToConversationMembers;
+      socket.joinConversationRoom = joinConversationRoom;
+      socket.leaveConversationRoom = leaveConversationRoom;
+      socket.joinGroupRoom = joinGroupRoom;
+      socket.leaveGroupRoom = leaveGroupRoom;
       socket.whenUser = whenUser;
 
       userIo.userConnected(socket);
@@ -38,8 +43,22 @@ exports.config = function(io, sessionStore){
         userIo.checkForActiveSession(socket);
       });
 
-      socket.whenUser('add_to_desktop', desktopIo.add);
-      socket.whenUser('remove_from_desktop', desktopIo.remove);
+      socket.on('subscribe_to_conversations', function(conversations){
+        userIo.subscribeToConversations(socket, conversations);
+      });
+
+      socket.on('unsubscribe_to_conversation', function(conversationId){
+        userIo.unsubscribeToConversation(socket, conversationId);
+      });
+
+      socket.whenUser('add_to_desktop', function(data){ 
+        desktopIo.addConversation(socket, data);
+      });
+
+      socket.whenUser('remove_from_desktop', function(data){
+        desktopIo.removeConversation(socket, data);
+      });
+      
       socket.whenUser('update_strip_order', desktopIo.updateStripOrder);
       socket.whenUser('read_next_messages', conversationIo.readMessages);
 
@@ -48,7 +67,7 @@ exports.config = function(io, sessionStore){
       });
 
       socket.whenUser('create_conversation', function(data){
-        conversationIo.createConversation(socket, data);
+        conversationIo.createConversation(socket, io.sockets, data);
       });
 
       socket.whenUser('mark_as_read', function(conversationId){
@@ -62,7 +81,27 @@ exports.config = function(io, sessionStore){
 };
 
 function broadcastToGroup(event, data){
-  this.in(this.handshake.user.groupId).broadcast.emit(event, data);
+  this.in('g-' + this.handshake.user.groupId).broadcast.emit(event, data);
+}
+
+function broadcastToConversationMembers(event, conversationId, data){
+  this.in('c-' + conversationId).broadcast.emit(event, data);
+}
+
+function joinConversationRoom(conversationId){
+  this.join('c-' + conversationId);
+}
+
+function leaveConversationRoom(conversationId){
+  this.leave('c-' + conversationId);
+}
+
+function joinGroupRoom(groupId){
+  this.join('g-' + groupId);
+}
+
+function leaveGroupRoom(groupId){
+  this.leave('g-' + groupId);
 }
 
 function whenUser(event, callback){

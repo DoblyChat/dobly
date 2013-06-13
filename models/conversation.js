@@ -6,14 +6,27 @@ function topicMaxLength(value) {
 
 var schema = new mongo.Schema({
 	topic: { type: String, required: true, validate: topicMaxLength },
-	createdBy: { type: String, required: true },
+	createdById: { type: mongo.Schema.Types.ObjectId, required: true },
 	groupId: { type: mongo.Schema.Types.ObjectId, required: true },
 	timestamp: { type: Date, default: Date.now, required: true },
+	members: {
+		entireGroup: { type: Boolean, default: false },
+		users: { type: [ mongo.Schema.Types.ObjectId ], default: [] },
+	}
 });
 
 schema.statics.updateTopic = function(conversationId, newTopic, callback){
 	this.update({ _id: conversationId }, { topic: newTopic }, callback);
 };
+
+schema.statics.findAllowedConversations = function(groupId, userId, callback){
+	this.find({ groupId: groupId, 
+				$or: [ 
+					{ 'members.entireGroup': true }, 
+					{ 'members.users': { $in: [ userId ] } },
+					{ createdById: userId } 
+				] }, null, { lean: true }, callback);
+}
 
 module.exports = mongo.model('Conversation', schema);
 

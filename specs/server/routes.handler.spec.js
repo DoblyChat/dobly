@@ -29,7 +29,7 @@ describe('Routes handler', function(){
 		desktopMock = buildMock('../models/desktop', 'findOrCreateByUserId', 'isModified');
 		unreadMock = buildMock('../models/unread_marker', 'find');
 		asyncMock = buildMock('async', 'parallel', 'each');
-		conversationMock = buildMock('../models/conversation', 'find');
+		conversationMock = buildMock('../models/conversation', 'findAllowedConversations');
 		messageMock = buildMock('../models/message', 'readMessagesByPage', 'count');
 
 		mockery.registerMock('passport', passportMock);
@@ -238,17 +238,16 @@ describe('Routes handler', function(){
 					setup.conversations(dummyCallback);
 				});
 
-				it('conversations per group', function(){
-					expect(conversationMock.find).toHaveBeenCalled();
-					var args = conversationMock.find.mostRecentCall.args;
+				it('allowed conversation', function(){
+					expect(conversationMock.findAllowedConversations).toHaveBeenCalled();
+					var args = conversationMock.findAllowedConversations.mostRecentCall.args;
 
-					expect(args[0].groupId).toBe('groupid');
-					expect(args[1]).toBeNull();
-					expect(args[2].lean).toBe(true);
+					expect(args[0]).toBe(req.user.groupId);
+					expect(args[1]).toBe(req.user._id);
 				});
 
 				it('bubbles up error if there is an error finding conversations', function(){
-					var callback = conversationMock.find.getCallback();
+					var callback = conversationMock.findAllowedConversations.getCallback();
 					callback('my-error');
 					expect(dummyCallback).toHaveBeenCalledWith('my-error');
 				});
@@ -261,7 +260,7 @@ describe('Routes handler', function(){
 						conversations = [{dummy: 'convo1'}, {dummy: 'convo2'}];
 						conversation = { _id: 'convo-id' };
 
-						var callback = conversationMock.find.getCallback();
+						var callback = conversationMock.findAllowedConversations.getCallback();
 						callback(null, conversations);
 						var funcs = asyncMock.parallel.mostRecentCall.args[0];
 						loadMessages = funcs[0];
@@ -346,7 +345,7 @@ describe('Routes handler', function(){
 		});
 
 		describe('render', function(){
-			var data, convo1, convo2, convo3;
+			var data, convo1, convo2, convo3, user1, user2, user3;
 
 			beforeEach(function(){
 				data = {
@@ -364,9 +363,17 @@ describe('Routes handler', function(){
 				convo2 = new mongo.Types.ObjectId();
 				convo3 = new mongo.Types.ObjectId();
 
-				data.conversations.push({ _id: convo1 });
-				data.conversations.push({ _id: convo2 });
-				data.conversations.push({ _id: convo3 });
+				user1 = { _id: new mongo.Types.ObjectId(), username: 'uno' };
+				user2 = { _id: new mongo.Types.ObjectId(), username: 'dos' };
+				user3 = { _id: new mongo.Types.ObjectId(), username: 'tres' };
+
+				data.conversations.push({ _id: convo1, createdById: user1._id });
+				data.conversations.push({ _id: convo2, createdById: user2._id });
+				data.conversations.push({ _id: convo3, createdById: user3._id });
+
+				data.users.push(user1);
+				data.users.push(user2);
+				data.users.push(user3);
 			});
 
 			it('logs error if any error is provided', function(){
@@ -391,9 +398,6 @@ describe('Routes handler', function(){
 			});
 
 			it('sets groups users', function(){
-				data.users.push({ name: 'user1'});
-				data.users.push({ name: 'user2' });
-
 				render(null, data);
 				expect(data.group.users).toBe(data.users);
 			});
@@ -421,9 +425,23 @@ describe('Routes handler', function(){
 				});
 			});
 
+			describe('conversations with created by names', function(){
+				beforeEach(function(){
+					data.conversations[0].createdById = user1._id;
+					data.conversations[1].createdById = user2._id;
+					data.conversations[2].createdById = user3._id;
+				});
+
+				it('adds created by names for each conversation', function(){
+					render(null, data);
+
+					expect(data.conversations[0].createdBy).toBe(user1.username);
+					expect(data.conversations[1].createdBy).toBe(user2.username);
+					expect(data.conversations[2].createdBy).toBe(user3.username);
+				});
+			});
+
 			it('renders desktop', function(){
-				data.users.push({ name: 'user1' });
-				data.users.push({ name: 'user2' });
 				data.markers.push({ conversationId: convo3, count: 88 });
 
 				render(null, data);

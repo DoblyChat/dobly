@@ -35,6 +35,9 @@ describe('Socket', function(){
 					},
 				};
 
+				self.join = jasmine.createSpy('join');
+				self.leave = jasmine.createSpy('leave');
+
 				self.in = jasmine.createSpy('in').andReturn(groupSockets);
 
 				return self;
@@ -44,8 +47,8 @@ describe('Socket', function(){
 			mockery.registerAllowable('../../sockets');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
-			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession');
-			desktopIoMock = buildMock('./desktop_io', 'add', 'remove', 'updateStripOrder');
+			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations', 'unsubscribeToConversation');
+			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -58,7 +61,7 @@ describe('Socket', function(){
 			mockery.deregisterAll();
 		});
 
-		it('configures sess settings', function(){
+		it('configures production settings', function(){
 			config(ioMock, sessionStoreMock);
 			expect(ioMock.configure).toHaveBeenCalled();
 			expect(ioMock.configure.mostRecentCall.args[0]).toBe('production');
@@ -103,10 +106,18 @@ describe('Socket', function(){
 					var data = {};
 					socketMock.broadcastToGroup('my-event', data);
 					expect(groupSockets.broadcast.emit).toHaveBeenCalledWith('my-event', data);
-					expect(socketMock.in).toHaveBeenCalledWith('gru-id');
+					expect(socketMock.in).toHaveBeenCalledWith('g-gru-id');
 				});
 
-				it('defines a when user method', function(){
+				it('defines a broadcastToConversationMembers method', function(){
+					expect(socketMock.broadcastToConversationMembers).toBeDefined();
+					var data = {};
+					socketMock.broadcastToConversationMembers('my-event', 'convo-id', data);
+					expect(groupSockets.broadcast.emit).toHaveBeenCalledWith('my-event', data);
+					expect(socketMock.in).toHaveBeenCalledWith('c-convo-id');
+				});
+
+				it('defines a whenUser method', function(){
 					expect(socketMock.whenUser).toBeDefined();
 					var callback = jasmine.createSpy();
 					socketMock.whenUser('event', callback);
@@ -120,6 +131,30 @@ describe('Socket', function(){
 					onCallback(data, confirm);
 					expect(socketMock.handshake.session.touch).toHaveBeenCalled();
 					expect(callback).toHaveBeenCalledWith(data, confirm);
+				});
+
+				it('defines a joinConversationRoom method', function(){
+					expect(socketMock.joinConversationRoom).toBeDefined();
+					socketMock.joinConversationRoom('convo-id');
+					expect(socketMock.join).toHaveBeenCalledWith('c-convo-id');
+				});
+
+				it('defines a leaveConversationRoom method', function(){
+					expect(socketMock.leaveConversationRoom).toBeDefined();
+					socketMock.leaveConversationRoom('convo-id');
+					expect(socketMock.leave).toHaveBeenCalledWith('c-convo-id');
+				});
+
+				it('defines a joinGroupRoom method', function(){
+					expect(socketMock.joinGroupRoom).toBeDefined();
+					socketMock.joinGroupRoom('group-id');
+					expect(socketMock.join).toHaveBeenCalledWith('g-group-id');
+				});
+
+				it('defines a leaveGroupRoom method', function(){
+					expect(socketMock.leaveGroupRoom).toBeDefined();
+					socketMock.leaveGroupRoom('group-id');
+					expect(socketMock.leave).toHaveBeenCalledWith('g-group-id');
 				});
 			});
 
@@ -150,16 +185,26 @@ describe('Socket', function(){
 					expect(userIoMock.checkForActiveSession).toHaveBeenCalledWith(socketMock);
 				});
 
+				it('subscribe to conversations', function(){
+					fire('subscribe_to_conversations');
+					expect(userIoMock.subscribeToConversations).toHaveBeenCalledWith(socketMock, data);
+				});
+
+				it('unsubscribe to conversation', function(){
+					fire('unsubscribe_to_conversation');
+					expect(userIoMock.unsubscribeToConversation).toHaveBeenCalledWith(socketMock, data);
+				});
+
 				it('adds conversation to desktop', function(){
 					fire('add_to_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.add).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(socketMock, data);;
 				});
 
 				it('removes conversation from desktop', function(){
 					fire('remove_from_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.remove).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(socketMock, data);;
 				});
 
 				it('updates strip order', function(){
@@ -168,7 +213,7 @@ describe('Socket', function(){
 					expect(desktopIoMock.updateStripOrder).toHaveBeenCalledWith(data, confirm);;
 				});
 
-				it('updates strip order', function(){
+				it('read next messages', function(){
 					fire('read_next_messages');
 					expectSessionTouchCalled();
 					expect(conversationIoMock.readMessages).toHaveBeenCalledWith(data, confirm);;
@@ -183,7 +228,7 @@ describe('Socket', function(){
 				it('creates a conversation', function(){
 					fire('create_conversation');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.createConversation).toHaveBeenCalledWith(socketMock, data);
+					expect(conversationIoMock.createConversation).toHaveBeenCalledWith(socketMock, ioMock.sockets, data);
 				});
 
 				it('marks conversation as read', function(){

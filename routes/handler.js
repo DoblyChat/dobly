@@ -92,7 +92,7 @@ module.exports = (function (){
 	self.renderDesktop = function(req, res) {
 		async.parallel({
 		    conversations: function(callback){
-		    	Conversation.find({ groupId: req.user.groupId }, null, { lean: true }, function(err, conversations){
+		    	Conversation.findAllowedConversations(req.user.groupId, req.user._id, function(err, conversations){
 		    		if(err){
 		    			callback(err);
 		    		}else{
@@ -143,7 +143,8 @@ module.exports = (function (){
 				results.group.users = results.users;
 
 			    results.conversations.forEach(function(conversation){
-					addUnread(conversation, results.markers, results.desktop);
+					addUnread(conversation);
+					addCreatorName(conversation);
 				});
 
 			    if(results.desktop.isModified('conversations')){
@@ -169,6 +170,15 @@ module.exports = (function (){
 								results.desktop.conversations.push(conversation._id);
 							}
 
+							return;
+						}
+					});
+				}
+
+				function addCreatorName(conversation, users){
+					results.users.forEach(function(user){
+						if(user._id.equals(conversation.createdById)){
+							conversation.createdBy = user.username;
 							return;
 						}
 					});

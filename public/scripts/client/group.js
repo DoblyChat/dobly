@@ -4,9 +4,15 @@ function createGroup(data){
 	self.name = data.name;
 
 	self.users = ko.observableArray([]);
+	self.otherUsers = ko.observableArray([]);
 
 	ko.utils.arrayForEach(data.users, function(userData){
-		self.users.push(createUser(userData));
+		var user = createUser(userData);
+		self.users.push(user);
+
+		if(user.id !== app.user._id){
+			self.otherUsers.push(user);
+		}
 	});
 
 	function createUser(userData){

@@ -4,7 +4,6 @@ var Conversation = require('../models/conversation'),
 	mongo = require('mongoose');
 
 var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
-mongo.connect(databaseUri);
 
 function logError(err){
 	if(err){
@@ -13,6 +12,8 @@ function logError(err){
 }
 
 exports.up = function(next){
+	mongo.connect(databaseUri);
+
   	Conversation.find({}, function(err, conversations){
 	  	async.each(conversations, moveMessages, function(err){
 	  		logError(err);
@@ -59,6 +60,8 @@ function cleanAllMessages(callback){
 }
 
 exports.down = function(next){
+	mongo.connect(databaseUri);
+	
 	Message.find({}, function(err, messages){
 		logError(err);
 		Conversation.find({}, function(err, conversations){

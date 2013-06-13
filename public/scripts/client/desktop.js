@@ -73,6 +73,7 @@ function createDesktop(data, allConversations){
     if(conversation.active()) {
       removeActive(conversation, index);
     }
+
     self.ui.scroll.tiles();
   };
 

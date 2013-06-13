@@ -10,7 +10,8 @@ describe("message", function() {
 			content: "check", 
 			conversationId: "123", 
 			timestamp: Date.parse('2013.04.09 22:13:34'), 
-			createdBy: "someone"
+			createdBy: "someone",
+			_id: 'm-id'
 		};
 
 		var message = createMessage(data, true);
@@ -19,6 +20,7 @@ describe("message", function() {
 		expect(message.createdBy).toBe('someone');
 		expect(message.simpleTimestamp).toBe(common.formatTimestamp(data.timestamp));
 		expect(message.confirmedSent()).toBe(true);
+		expect(message.id).toBe('m-id');
 	});
 
 	describe('Content formatting', function(){

@@ -94,6 +94,14 @@ html
 			#new-convo.text-input-dialog(data-bind="with: newConversation, visible: navigation.showingNewConvo")
 				div
 					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
+				
+				div
+					input(type="checkbox", data-bind="checked: forEntireGroup") 
+					span For the entire group
+
+				div
+					select(multiple="true", data-bind="options: $parent.group.otherUsers, optionsCaption: 'Select one or more users', optionsText: 'username', optionsValue: 'id', selectedOptions: selectedMembers")
+
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: createOnClick") Create

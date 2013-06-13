@@ -1,15 +1,21 @@
 describe("group", function() {
 	var group;
 	var testData;
-	var fernando, carlos, fido;
+	var fernando, carlos, fido, current;
 
 	beforeEach(function() {
+
+		app.user = {
+			_id: '888'
+		};
+
 		testData = {
 			name: 'some test group',
 			users: [ 
 				{ username: 'fernando', _id: '123' }, 
 				{ username: 'carlos', _id: '456'},
-				{ username: 'fido', _id: '789'}
+				{ username: 'fido', _id: '789'},
+				{ username: 'current', _id: '888' }
 			],
 		};
 
@@ -20,11 +26,14 @@ describe("group", function() {
 		fernando = group.users()[0];
 		carlos = group.users()[1];
 		fido = group.users()[2];
+		current = group.users()[3];
 	});
 
 	it("create group", function() {
 		expect(group.name).toBe('some test group');
-		expect(group.users().length).toBe(3);
+
+		var users = group.users();
+		expect(users.length).toBe(4);
 		expect(app.socket.emit).toHaveBeenCalledWith('request_online_users');
 
 		expect(fernando.username).toEqual('fernando');
@@ -32,6 +41,11 @@ describe("group", function() {
 		expect(fernando.id).toBe('123');
 		expect(carlos.online()).toBe(false);
 		expect(fido.online()).toBe(false);
+
+		expect(users).toContain(fernando);
+		expect(users).toContain(carlos);
+		expect(users).toContain(fido);
+		expect(users).toContain(current);
 	});
 
 	it("receive online users", function() {
@@ -57,5 +71,14 @@ describe("group", function() {
 
 		app.socket.mockEmit('user_disconnected', '123');
 		expect(fernando.online()).toBe(false);
+	});
+
+	it('has all users except current user', function(){
+		var otherUsers = group.otherUsers();
+		expect(otherUsers.length).toBe(3);
+
+		expect(otherUsers).toContain(fernando);
+		expect(otherUsers).toContain(carlos);
+		expect(otherUsers).toContain(fido);
 	});
 });

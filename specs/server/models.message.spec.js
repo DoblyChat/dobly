@@ -38,6 +38,10 @@ describe('Message', function() {
 	});
 
 	describe('#content max length', function() {
+		afterEach(function(done){
+			Message.remove({ conversationId: messageData.conversationId }, done);
+		});
+
 		it('saves with 1999', function(done) {
 			messageData.content = stringOfLength(1999);
 			Message.create(messageData, done);

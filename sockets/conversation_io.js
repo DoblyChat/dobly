@@ -6,22 +6,42 @@ module.exports = (function(){
         async = require('async'),
         self = {};
 
-    self.createConversation = function(socket, data) {
-        Conversation.create(
-                { 
-                    topic: data.topic, 
-                    createdBy: socket.handshake.user.username, 
-                    groupId: socket.handshake.user.groupId 
-                }, 
-                function(err, conversation){
-                    if(err){
-                        console.error('Error creating conversation', err);
-                    }else{
-                        socket.emit('my_new_conversation', conversation);
-                        socket.broadcastToGroup('new_conversation', conversation);    
+    self.createConversation = function(socket, sockets, data) {
+        var newConvoData = { 
+            topic: data.topic, 
+            createdById: socket.handshake.user._id, 
+            groupId: socket.handshake.user.groupId,
+            members: {
+                entireGroup: data.forEntireGroup,
+                users: data.selectedMembers
+            }
+        };
+
+        Conversation.create(newConvoData, function(err, conversation){
+            if(err){
+                console.error('Error creating conversation', err);
+            }else{
+                var allSocketsInGroup = sockets.clients('g-' + socket.handshake.user.groupId);
+
+                if(data.forEntireGroup){
+                    for(var i = 0; i < allSocketsInGroup.length; i++){
+                        allSocketsInGroup[i].joinConversationRoom(conversation._id);
                     }
+                }else{
+                    for(var i = 0; i < allSocketsInGroup.length; i++){
+                        if(data.selectedMembers.indexOf(allSocketsInGroup[i].handshake.user._id.toString()) >= 0){
+                            allSocketsInGroup[i].joinConversationRoom(conversation._id);
+                        }
+                    }
+
+                    socket.joinConversationRoom(conversation._id);
                 }
-        );
+
+                conversation._doc.createdBy = socket.handshake.user.username;
+                socket.emit('my_new_conversation', conversation);
+                socket.broadcastToConversationMembers('new_conversation', conversation._id, conversation);      
+            }
+        });
     };
 
     self.sendMessage = function(socket, data, confirm){
@@ -33,19 +53,12 @@ module.exports = (function(){
                 saveUnreadMarkers(callback);
             }
         ], 
-        function(err){
+        function(err, results){
             if(err){
                 console.error('Error sending message', err);
             }else{
-                var dataToEmit = {
-                    content: data.content, 
-                    createdBy: socket.handshake.user.username, 
-                    conversationId: data.conversationId,
-                    timestamp: data.timestamp,
-                };
-
-                socket.broadcastToGroup('receive_message', dataToEmit);
-                confirm();  
+                socket.broadcastToConversationMembers('receive_message', data.conversationId, results[0]);
+                confirm(results[0]);  
             }
         });
 
@@ -60,15 +73,32 @@ module.exports = (function(){
         }
 
         function saveUnreadMarkers(callback){
-            User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
-                async.each(users, save);
+            Conversation.findById(data.conversationId, function(err, conversation){
+                if(err){
+                    console.error('Error reading conversation for saving unread', err);
+                    callback(err);
+                }else{
+                    if(conversation.members.entireGroup){
+                        User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
+                            async.each(users, save, function(err){
+                                callback(err);
+                            });
 
-                function save(user, saveCallback){
-                    UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
+                            function save(user, saveCallback){
+                                UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
+                            }
+                        });
+                    }else{
+                        async.each(conversation.members.users, save, function(err){
+                            callback(err);
+                        });
+
+                        function save(userId, saveCallback){
+                            UnreadMarker.increaseCounter(userId, data.conversationId, saveCallback);
+                        }
+                    }
                 }
-
-                callback(err);
-            });
+            });  
         }
     };
 

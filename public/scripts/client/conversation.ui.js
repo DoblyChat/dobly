@@ -104,13 +104,5 @@ function createConversationUi() {
         toggleSearch();
     }
 
-    self.removeHighlight = function() {
-        $(self.getSelector('.convo-body > .content > .messages')).removeHighlight();
-    }
-
-    self.highlight = function(text) {
-        $(self.getSelector('.convo-body > .content > .messages')).highlight(text);
-    }
-
     return self;
 }

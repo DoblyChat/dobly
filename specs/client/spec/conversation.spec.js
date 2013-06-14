@@ -171,10 +171,10 @@ describe("conversation", function() {
 
             var confirmation = app.socket.emit.mostRecentCall.args[2];
             expect(message.confirmedSent()).toBe(false);
-            expect(message.id).toBeUndefined();
+            expect(message.id()).toBeUndefined();
             confirmation({ _id: 'm-id' });
             expect(message.confirmedSent()).toBe(true);
-            expect(message.id).toBe('m-id');
+            expect(message.id()).toBe('m-id');
 
             expect(conversation.newMessage()).toEqual('');
             expect(returnValue).toBe(false);

@@ -1,7 +1,7 @@
 function createMessage(data, confirmed) {
   var self = {};
 
-  self.id = data._id;
+  self.id = ko.observable(data._id);
   self.content = formatContent(data.content);
   self.rawContent = data.content;
   self.timestamp = common.formatTimestamp(data.timestamp);

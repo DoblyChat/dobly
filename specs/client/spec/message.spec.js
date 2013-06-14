@@ -21,7 +21,7 @@ describe("message", function() {
 		expect(message.createdBy).toBe('someone');
 		expect(message.simpleTimestamp).toBe(common.formatTimestamp(data.timestamp));
 		expect(message.confirmedSent()).toBe(true);
-		expect(message.id).toBe('m-id');
+		expect(message.id()).toBe('m-id');
 	});
 
 	describe('Content formatting', function(){

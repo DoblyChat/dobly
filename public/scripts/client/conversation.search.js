@@ -89,7 +89,7 @@ function createConversationSearch(conversation) {
             message = messages[i];
 
             if (matchFound(message, queryLower)) {
-                foundMessage.id = message.id;
+                foundMessage.id = message.id();
                 foundMessage.offset = messages.length - i;
                 return true;
             }
@@ -133,7 +133,7 @@ function createConversationSearch(conversation) {
     }
 
     function scrollTo(match) {
-        var firstMessagePosition = $('#' + messages[0].id).position();
+        var firstMessagePosition = $('#' + messages[0].id()).position();
         var offset = Math.abs(firstMessagePosition.top - match.position().top);
         
         if (offset > 0) {

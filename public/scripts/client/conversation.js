@@ -80,7 +80,7 @@ function createConversation(data) {
         self.newMessage('');
         app.socket.emit('send_message', messageData, function(message){
             messageObj.confirmedSent(true);
-            messageObj.id = message._id;
+            messageObj.id(message._id);
         });
     }
 

@@ -9,7 +9,7 @@ var schema = new mongo.Schema({
 schema.statics.increaseCounter = function(userId, conversationId, callback){
 	this.update({ userId: userId, conversationId: conversationId },
                 { $inc: { count: 1 } }, 
-                { upsert: true, multi: true }).exec(callback);
+                { upsert: true }).exec(callback);
 };
 
 schema.statics.removeMarkers = function(userId, conversationId, callback){

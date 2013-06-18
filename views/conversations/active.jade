@@ -5,6 +5,7 @@ html
 		link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700")
 		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
 		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/nanoscroller.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/chosen.css")
 		link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
 		title= title
 	body
@@ -102,16 +103,15 @@ html
 							.message There aren't any messages in this conversation.				
 					
 
-			#new-convo.text-input-dialog(data-bind="with: newConversation, visible: navigation.showingNewConvo")
+			#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
+				p 
+					span Who would you like to have this conversation with?
 				div
-					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
-				
+					select#members-select(multiple="true", data-bind="options: options, optionsText: 'text', optionsValue: 'value', selectedOptions: selectedOptions")
+				p
+					span Write a topic or question	
 				div
-					input(type="checkbox", data-bind="checked: forEntireGroup") 
-					span For the entire group
-
-				div
-					select(multiple="true", data-bind="options: $parent.group.otherUsers, optionsCaption: 'Select one or more users', optionsText: 'username', optionsValue: 'id', selectedOptions: selectedMembers")
+					textarea(maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
 
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
@@ -162,6 +162,7 @@ script(type="text/javascript", src="/scripts/lib/jquery.nanoscroller.min.js")
 script(type="text/javascript", src="/scripts/lib/jquery.hoverIntent.min.js")
 script(type="text/javascript", src="/scripts/lib/jquery.placeholder.min.js")
 script(type="text/javascript", src="/scripts/lib/jquery.highlight.min.js")
+script(type="text/javascript", src="/scripts/lib/chosen.jquery.min.js")
 script(type="text/javascript", src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.0.js")
 script(type="text/javascript", src="http://modernizr.com/downloads/modernizr-latest.js")
 script(type="text/javascript", src="/scripts/lib/date.js")

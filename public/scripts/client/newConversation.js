@@ -1,18 +1,33 @@
-function createNewConversation(navigation) {
-	var self = {};
+function createNewConversation(navigation, group) {
+	var self = {},
+        otherUsers = group.otherUsers,
+        groupKey = 'g';
 
 	self.topic = ko.observable();
-    self.forEntireGroup = ko.observable(false);
-    self.selectedMembers = ko.observableArray([]);
+    self.options = ko.observableArray();
 
+    for(var i = 0; i < otherUsers.length; i++){
+        self.options.push({
+            value: otherUsers[i].id,
+            text: otherUsers[i].username
+        });
+    }
+
+    self.options.push({
+        value: groupKey,
+        text: 'Entire Group'
+    });
+
+    self.selectedOptions = ko.observableArray([ groupKey ]); 
+    
 	self.setup = function() {
-        $('#new-convo textarea').placeholder();
         common.delayedFocus('#new-convo textarea');
+        $('#members-select').chosen({ placeholder: '' });
     };
 
 	self.createOnEnter = function(data, event) {
-	   if (common.enterKeyPressed(event) && self.topic().length > 0) {
-	       create();
+	   if (common.enterKeyPressed(event) && canCreate()) {
+	       self.create();
 	       return false;
 	   }
 	   else {
@@ -20,28 +35,43 @@ function createNewConversation(navigation) {
 	   }
 	};
 
+    function canCreate(){
+        return self.topic().length > 0 && self.selectedOptions().length > 0;
+    }
+
     self.createOnClick = function() {
-        if (self.topic().length > 0) {
-            create();
+        if (canCreate()) {
+            self.create();
         }
     };
 
-    function create() {
-        var data = { topic: self.topic(), forEntireGroup: self.forEntireGroup(), selectedMembers: self.selectedMembers() }
+    self.create = function() {
+        var selectedOptions = self.selectedOptions();
+        var groupKeyIndex = selectedOptions.indexOf(groupKey);
+        
+        if(groupKeyIndex >= 0){
+            selectedOptions.splice(groupKeyIndex, 1);
+        }
+
+        var data = { 
+            topic: self.topic(), 
+            forEntireGroup: groupKeyIndex >= 0, 
+            selectedMembers: selectedOptions,
+        };
+
         app.socket.emit('create_conversation', data);
-        clear();
+        restoreDefaults();
         navigation.desktop();  
     }
 
     self.cancel = function() {
-        clear();
+        restoreDefaults();
         navigation.desktop();    
     };
 
-    function clear(){
+    function restoreDefaults(){
         self.topic('');
-        self.forEntireGroup(false);
-        self.selectedMembers([]);
+        self.selectedOptions([ groupKey ]);
     }
 
 	return self;

@@ -99,9 +99,7 @@ function createConversationSearch(conversation) {
     }
 
     function matchFound(message, queryLower) {
-        return message.rawContent.toLowerCase().indexOf(queryLower) > -1 || 
-                message.createdBy.toLowerCase().indexOf(queryLower) > -1 ||
-                message.timestamp.toLowerCase().indexOf(queryLower) > -1;
+        return message.rawContent.trim().toLowerCase().indexOf(queryLower) > -1;
     }
 
     function scrollToMatchAndHighlight() {
@@ -114,7 +112,7 @@ function createConversationSearch(conversation) {
     function highlight(match) {
         matches.forEach(function(element) { element.removeHighlight(); })
         match.addClass('match');
-        match.highlight(currentQuery);
+        match.find('.text').highlight(currentQuery);
     }
 
     function scrollIfNeeded(match) {
@@ -168,6 +166,7 @@ function createConversationSearch(conversation) {
     function page() {
         conversation.page(function(messages) {
             conversation.loadingMore(false);
+            conversation.ui.scroll.adjust();
             self.next();
         });
 
@@ -180,6 +179,15 @@ function createConversationSearch(conversation) {
         conversation.ui.hideSearch();
     };
 
+    self.nextOnEnter = function(data, event) {
+       if (common.enterKeyPressed(event)) {
+           self.next();
+           return false;
+       }
+       else {
+           return true;
+       }
+    };
 
     return self;
 }

@@ -55,7 +55,7 @@ html
 								.icon-search(data-bind="click: search.show")
 							.search.hidden
 								.textbox
-									input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input'")
+									input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input', event: { keypress: search.nextOnEnter }")
 								.buttons
 									button.next(type="button", data-bind="click: search.next") Find Next
 									button.prev(type="button", data-bind="click: search.prev") Find Prev

@@ -56,10 +56,13 @@ html
 							.search.hidden
 								.textbox
 									input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input', event: { keypress: search.nextOnEnter }")
+									img(src="/images/spinner.gif", alt="searching...", data-bind="visible: search.searching")
 								.buttons
 									button.next(type="button", data-bind="click: search.next") Find Next
 									button.prev(type="button", data-bind="click: search.prev") Find Prev
 									button.done(type="button", data-bind="click: search.done") Done
+								.exhausted(data-bind="visible: search.exhausted")
+									span Your search reached the end of the conversation.
 						.nano.convo-body(data-bind="click: markAsRead")
 							.content(data-bind="event: { scroll: scrolled }")
 								.load-more(data-bind="visible: loadingMore")

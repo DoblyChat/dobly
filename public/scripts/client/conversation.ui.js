@@ -90,15 +90,21 @@ function createConversationUi() {
         }, 400);
     }
 
-    function toggleSearch() {
+    function toggleSearch() {        
+        self.resizeBodyFromHeaderChange(function() {
+            $(self.getSelector('.convo-header > div')).toggle()
+        });
+    }
+
+    self.resizeBodyFromHeaderChange = function(changeHeaderHeight) {
         var origHeaderHeight = headerOuterHeight();
-        $(self.getSelector('.convo-header > div')).toggle();
+        changeHeaderHeight();
         var newHeaderHeight = headerOuterHeight();
 
         var scrollOffset = $(self.getSelector('.convo-body > .content')).scrollTop();
         self.resizeBody();
         self.scroll.adjustToOffset(scrollOffset + (newHeaderHeight - origHeaderHeight));
-    }
+    };
 
     self.hideSearch = function() {
         toggleSearch();

@@ -13,6 +13,8 @@ function createConversationSearch(conversation) {
     });
 
     self.query = ko.observable('');
+    self.exhausted = ko.observable(false);
+    self.searching = ko.observable(false);
 
     self.show = function() {
         conversation.ui.showSearch();
@@ -21,10 +23,12 @@ function createConversationSearch(conversation) {
     self.next = function() {
         if (self.query().length > 0) {
 
+            self.searching(true);
             resetIfNeeded();
 
             if (nextFound()) {
                 scrollToMatchAndHighlight();
+                self.searching(false);
             } else {
                 pageIfPossible();
             }
@@ -60,6 +64,9 @@ function createConversationSearch(conversation) {
         currentQuery = self.query();
         foundMessage.id = '';
         foundMessage.offset = -1;
+        conversation.ui.resizeBodyFromHeaderChange(function() {
+            self.exhausted(false);
+        });
     }
 
     function nextFound() {
@@ -154,14 +161,23 @@ function createConversationSearch(conversation) {
     function pageIfPossible() {
         if (conversation.allMessagesLoaded()) {
             searchExhausted();
+            self.searching(false);
         } else {
             page();
         }
     }
 
     function searchExhausted() {
-        alert('search exhausted');
+        conversation.ui.resizeBodyFromHeaderChange(function() {
+            self.exhausted(true);
+        });
     }
+
+    self.exhausted.subscribe(function(isTrue) {
+        if (isTrue) {
+            $(conversation.ui.getSelector('.convo-header .search .exhausted')).effect("highlight", { color: '#ffafbf' }, 2000);
+        }
+    })
 
     function page() {
         conversation.page(function(messages) {

@@ -53,7 +53,8 @@ function createViewModel(conversationsData, desktopData, groupData) {
 
   self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
 
-  self.newConversation = createNewConversation(self.navigation);
+  self.group = createGroup(groupData);
+  self.newConversation = createNewConversation(self.navigation, self.group);
 
   app.socket.on('my_new_conversation', function(data) {
     var conversation = createConversation(data);
@@ -70,9 +71,9 @@ function createViewModel(conversationsData, desktopData, groupData) {
   });
 
   self.addNewConversation = function(){
-    self.navigation.newConvo();    
+    self.navigation.newConvo(); 
     self.newConversation.setup();
-  }
+  };
 
   if(self.notifier.needsToAskForPermission()){
     self.navigation.notificationSetup();
@@ -80,14 +81,13 @@ function createViewModel(conversationsData, desktopData, groupData) {
 
   self.cancelNotificationsSetup = function(){
     self.navigation.desktop();
-  }
+  };
 
   self.allowNotificationsSetup = function(){
     self.notifier.setup();
     self.navigation.desktop();
-  }
+  };
 
-  self.group = createGroup(groupData);
   self.conversationToChangeTopic = ko.observable();
   self.changeTopic = createChangeTopic(self.navigation);
 

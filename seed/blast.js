@@ -17,7 +17,7 @@ function blast(callback){
 			for(var i = 0; i < 20; i++){
 				conversationArray.push({ 
 					topic: 'Convo ' + i,
-					createdBy: user._id,
+					createdById: user._id,
 					groupId: user.groupId
 				});
 			}

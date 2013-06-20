@@ -74,7 +74,7 @@ describe("group", function() {
 	});
 
 	it('has all users except current user', function(){
-		var otherUsers = group.otherUsers();
+		var otherUsers = group.otherUsers;
 		expect(otherUsers.length).toBe(3);
 
 		expect(otherUsers).toContain(fernando);

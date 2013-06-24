@@ -48,12 +48,10 @@ html
 							.topic-created-by
 								.topic
 									span(data-bind="text: topic")
-									span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")
-								.created-by 
-									span by 
-									span(data-bind="text: createdBy")
+									span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
 							.actions
-								.icon-search(data-bind="click: search.show")
+								span.icon-info(data-bind="click: $root.navigation.conversationInfo")
+								span.icon-search(data-bind="click: search.show")
 							.search.hidden
 								.textbox
 									input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input'")
@@ -117,6 +115,12 @@ html
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: createOnClick") Create
 
+			#conversation-info(data-bind="with: conversationInfo, visible: navigation.showingConversationInfo")
+				h2(data-bind="text: conversation.topic")
+
+				div
+					span created by 
+					span(data-bind="text: conversation.createdBy")
 			#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
 				p 
 					span Set a new topic for this conversation
@@ -179,6 +183,7 @@ script(type="text/javascript", src="/scripts/client/desktop.js")
 script(type="text/javascript", src="/scripts/client/allConversations.js")
 script(type="text/javascript", src="/scripts/client/newConversation.js")
 script(type="text/javascript", src="/scripts/client/changeTopic.js")
+script(type="text/javascript", src="/scripts/client/conversationInfo.js")
 script(type="text/javascript", src="/scripts/client/navigation.js")
 script(type="text/javascript", src="/scripts/client/viewModel.js")
 script(type="text/javascript", src="/scripts/client/timeout.js")

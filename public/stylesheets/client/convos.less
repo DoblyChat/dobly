@@ -48,7 +48,7 @@
 			.message-padding;
 			padding-right: 0;
 			float: left;
-			width: @convo-width - @message-left-padding - @convo-header-actions-width;
+			width: @convo-width - @message-left-padding - @convo-header-actions-width - @message-right-padding;
 
 			.topic {
 				.title-font;
@@ -67,20 +67,15 @@
 					}
 				}
 			}
-
-			.created-by {
-				.caption-color;
-				padding-top: 5px;
-				clear: both;
-			}
 		}
 
 		.actions {
 			float: left;
 			width: @convo-header-actions-width;
 			padding-top: 13px;
+			margin-right: @message-right-padding;
 
-			.icon-search {
+			.icon-search, .icon-info {
 				font-size: 16px;
 				.caption-color;
 				padding-left: 5px;

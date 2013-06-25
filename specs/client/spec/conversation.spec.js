@@ -25,6 +25,8 @@ describe("conversation", function() {
             expect(conversation.hasFocus()).toBe(false);
             expect(conversation.ui).toBeDefined();
             expect(conversation.timestamp).toBe(common.formatTimestamp(testData.timestamp));
+            expect(conversation.forEntireGroup).toBe(true);
+            expect(conversation.users).toEqual(['pepe', 'grillo'])
         });
 
         it("undefined id", function() {
@@ -502,7 +504,11 @@ describe("conversation", function() {
             timestamp: "2013-02-15T14:36:43.296Z",
             topic: "some topic",
             unread: 1,
-            totalMessages: 3
+            totalMessages: 3,
+            members: {
+                entireGroup: true,
+                users: [ 'pepe', 'grillo' ]
+            }
         };
     }
 
@@ -515,7 +521,11 @@ describe("conversation", function() {
             timestamp: "2013-02-15T14:36:43.296Z",
             topic: "some other topic",
             unread: 0,
-            totalMessages: 3
+            totalMessages: 3,
+            members: {
+                entireGroup: false,
+                users: [ 'juan', 'lopez' ]
+            }
         };
     }
 

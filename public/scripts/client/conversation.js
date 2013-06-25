@@ -14,6 +14,8 @@ function createConversation(data) {
     self.ui = createConversationUi();
     self.timestamp = common.formatTimestamp(data.timestamp);
     self.search = createConversationSearch(self);
+    self.forEntireGroup = data.members.entireGroup;
+    self.users = data.members.users;
 
     if(data.messages) {
         for(var i = 0; i < data.messages.length; i++) {

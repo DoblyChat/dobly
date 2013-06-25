@@ -119,11 +119,22 @@ html
 					button.button-right(type="button", data-bind="click: createOnClick") Create
 
 			#conversation-info(data-bind="with: conversationInfo, visible: navigation.showingConversationInfo")
-				h2(data-bind="text: conversation.topic")
+				div.header
+					h2(data-bind="text: topic")
+				table
+					tr
+						td created by 
+						td.value(data-bind="text: createdBy")
+					tr
+						td on 
+						td.value(data-bind="text: timestamp")
+					tr
+						td with
+						td.value
+							span(data-bind="visible: forEntireGroup") entire group
+							ul(data-bind="visible: !forEntireGroup(), foreach: users")
+								li(data-bind="text: $data")
 
-				div
-					span created by 
-					span(data-bind="text: conversation.createdBy")
 			#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
 				p 
 					span Set a new topic for this conversation
@@ -144,7 +155,8 @@ html
 					button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
 
 			#group-info(data-bind="with: group, visible: navigation.showingGroup")
-				h2(data-bind="text: name")
+				.header
+					h2(data-bind="text: name")
 
 				table.users(data-bind="foreach: users")
 					tr
@@ -186,7 +198,7 @@ script(type="text/javascript", src="/scripts/client/desktop.js")
 script(type="text/javascript", src="/scripts/client/allConversations.js")
 script(type="text/javascript", src="/scripts/client/newConversation.js")
 script(type="text/javascript", src="/scripts/client/changeTopic.js")
-script(type="text/javascript", src="/scripts/client/conversationInfo.js")
+script(type="text/javascript", src="/scripts/client/conversation.info.js")
 script(type="text/javascript", src="/scripts/client/navigation.js")
 script(type="text/javascript", src="/scripts/client/viewModel.js")
 script(type="text/javascript", src="/scripts/client/timeout.js")

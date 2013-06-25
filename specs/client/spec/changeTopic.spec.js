@@ -70,6 +70,10 @@ describe("change topic", function() {
 			timestamp: "2013-02-15T14:36:43.296Z",
 			topic: "last in show",
 			unread: 0,
+			members: {
+				forEntireGroup: true,
+				users: []
+			}
 		};
 	}
 });

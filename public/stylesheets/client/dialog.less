@@ -115,3 +115,73 @@
 		}
 	}
 }
+
+.info-dialog{
+	background-color: @white;
+	.box-shadow;
+	.middle-of-screen;
+	margin-left: -150px;
+	margin-top: -120px;
+	padding: 20px;
+
+	.header {
+		padding-bottom: 5px;
+		border-bottom: 1px solid @light-gray;
+		margin-bottom: 20px;
+
+		h2{
+			margin: 0;
+			font-size: 2em;
+			text-transform: capitalize;
+			color: @gray;
+		}
+	}
+}
+
+#group-info{
+	.info-dialog;
+
+	.users {
+		font-size: 1.5em;
+
+		tr td{
+			padding-bottom: 10px;
+		}
+		.name{
+			width: 200px;
+		}
+
+		.online {
+			color: @blue;
+		}
+
+		.offline {
+			color: @light-gray;
+		}	
+	}
+}
+
+#conversation-info{
+	.info-dialog;
+	
+	table{
+		min-width: 250px;
+		font-size: 1.3em;
+
+		td{
+			padding-bottom: 10px;
+			vertical-align: top;
+		}
+
+		ul{
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.value{
+		color: @blue;
+		text-align: right;
+	}
+}

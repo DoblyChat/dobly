@@ -21,7 +21,7 @@ function createViewModel(conversationsData, desktopData, groupData) {
   self.group = createGroup(groupData);
   self.newConversation = createNewConversation(self.navigation, self.group);
   self.changeTopic = createChangeTopic(self.navigation);
-  self.conversationInfo = createConversationInfo();
+  self.conversationInfo = createConversationInfo(self.group);
 
   app.socket.on('receive_message', function(message) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){

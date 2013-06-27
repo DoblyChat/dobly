@@ -65,7 +65,7 @@ function createViewModel(conversationsData, desktopData, groupData) {
   });
 
   app.socket.on('new_conversation', function(data){
-    var conversation = createConversation(data);
+    var conversation = createConversation(data, self.group);
     self.conversations.push(conversation);
     self.desktop.add(conversation); 
   });

@@ -6,7 +6,7 @@ var Conversation = require('../models/conversation'),
 var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 
 exports.up = function(next){
-	mongo.connect(databaseUri);
+	mongo.createConnection(databaseUri);
 	
 	Conversation.find({}, function(err, conversations){
 		User.find({}, function(err, users){

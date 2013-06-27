@@ -12,7 +12,7 @@ function logError(err){
 }
 
 exports.up = function(next){
-	mongo.connect(databaseUri);
+	mongo.createConnection(databaseUri);
 
   	Conversation.find({}, function(err, conversations){
 	  	async.each(conversations, moveMessages, function(err){
@@ -60,7 +60,7 @@ function cleanAllMessages(callback){
 }
 
 exports.down = function(next){
-	mongo.connect(databaseUri);
+	mongo.createConnection(databaseUri);
 	
 	Message.find({}, function(err, messages){
 		logError(err);

@@ -1,17 +1,23 @@
 describe("conversation", function() {
 
-    var conversation;
-    var testData;
+    var conversation, testData, group;
 
     beforeEach(function() {
         testData = testDataConversation();
         app.socket = createMockSocket();
+
+        group = {
+            users: ko.observableArray([ 
+                { id: '1', username: 'uno' },
+                { id: '2', username: 'dos' }
+            ])
+        };
     });
 
     describe("creation", function() {
 
         it("load properties", function() {
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.id).toEqual('8');
             expect(conversation.topic()).toEqual("some topic");
@@ -26,25 +32,32 @@ describe("conversation", function() {
             expect(conversation.ui).toBeDefined();
             expect(conversation.timestamp).toBe(common.formatTimestamp(testData.timestamp));
             expect(conversation.forEntireGroup).toBe(true);
-            expect(conversation.users).toEqual(['pepe', 'grillo'])
+            expect(conversation.users).toEqual('')
+        });
+
+        it("loads users", function() {
+            conversation = createConversation(testDataSomeOtherConversation(), group);
+
+            expect(conversation.forEntireGroup).toBe(false);
+            expect(conversation.users).toEqual('uno, dos');
         });
 
         it("undefined id", function() {
             testData._id = undefined;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.id).toBe(0);
         });
 
         it("undefined unread", function() {
             testData.unread = undefined;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.unreadCounter()).toBe(0);
         });
 
         it("pushes messages", function() {
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.messages().length).toBe(2);
             expect(conversation.messages()[0].content).toEqual("alpha");
@@ -56,7 +69,7 @@ describe("conversation", function() {
         describe("when app in focus", function() {
             beforeEach(function() {
                 app.inFocus = true;
-                conversation = createConversation(testData);                
+                conversation = createConversation(testData, group);                
                 expect(conversation.unreadCounter()).toBe(1);                                
                 expect(conversation.messages().length).toBe(2);
                 spyOn(conversation.ui.scroll, 'adjust');
@@ -106,7 +119,7 @@ describe("conversation", function() {
         describe("when app not in focus", function() {
             beforeEach(function() {
                 app.inFocus = false;
-                conversation = createConversation(testData);                
+                conversation = createConversation(testData, group);                
                 expect(conversation.unreadCounter()).toBe(1);                                
                 expect(conversation.messages().length).toBe(2);
                 spyOn(conversation.ui.scroll, 'adjust');
@@ -136,7 +149,7 @@ describe("conversation", function() {
 
     describe("send message", function() {
         beforeEach(function() {
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             spyOn(conversation, 'markAsRead');
         });
 
@@ -216,7 +229,7 @@ describe("conversation", function() {
     describe("last messages", function() {
         it("3 messages", function() {
             testData.messages = [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie() ];
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.lastMessages().length).toBe(2);
             expect(conversation.lastMessages()[0].content).toBe("beta");
@@ -225,7 +238,7 @@ describe("conversation", function() {
 
         it("2 messages", function() {
             testData.messages = [ testDataMessageAlpha(), testDataMessageBeta() ];
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.lastMessages().length).toBe(2);
             expect(conversation.lastMessages()[0].content).toBe("alpha");
@@ -234,7 +247,7 @@ describe("conversation", function() {
 
         it("1 messages", function() {
             testData.messages = [ testDataMessageAlpha() ];
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
 
             expect(conversation.lastMessages().length).toBe(1);
             expect(conversation.lastMessages()[0].content).toBe("alpha");
@@ -244,19 +257,19 @@ describe("conversation", function() {
     describe("unread counter", function() {
         it("0 messages", function() {
             testData.unread = 0;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             expect(conversation.showUnreadCounter()).toBe(false);
         });
 
         it("1 message", function() {
             testData.unread = 1;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             expect(conversation.showUnreadCounter()).toBe(true);
         });
 
         it("2 messages", function() {
             testData.unread = 2;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             expect(conversation.showUnreadCounter()).toBe(true);
         });
     });
@@ -264,7 +277,7 @@ describe("conversation", function() {
     describe("mark as read", function() {
         it("when unread counter is 1", function() {
             testData.unread = 1;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             expect(conversation.unreadCounter()).toBe(1);
 
             conversation.markAsRead();
@@ -275,7 +288,7 @@ describe("conversation", function() {
 
         it("when unread counter is 0", function() {
             testData.unread = 0;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             expect(conversation.unreadCounter()).toBe(0);
 
             conversation.markAsRead();
@@ -287,7 +300,7 @@ describe("conversation", function() {
 
     describe("has focus", function() {
         it("true", function() {
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             spyOn(conversation, 'markAsRead');
 
             conversation.hasFocus(true);
@@ -296,7 +309,7 @@ describe("conversation", function() {
         });
 
         it("false", function() {
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             spyOn(conversation, 'markAsRead');
 
             conversation.hasFocus(false);
@@ -308,7 +321,7 @@ describe("conversation", function() {
     describe("activate", function() {
 
         beforeEach(function() {
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
         });
 
         it("on the left", function() {
@@ -346,7 +359,7 @@ describe("conversation", function() {
         var conversation, event;
 
         beforeEach(function(){
-            conversation = createConversation(testDataConversation());            
+            conversation = createConversation(testDataConversation(), group);            
             event = {
                 target: {
                     scrollTop: 0,
@@ -371,7 +384,7 @@ describe("conversation", function() {
         it('does not initiate request if all messages have been loaded', function(){
             var testData = testDataConversation();
             testData.totalMessages = 2;
-            conversation = createConversation(testData);
+            conversation = createConversation(testData, group);
             conversation.scrolled(null, event);
             expect(app.socket.emit).not.toHaveBeenCalled();
             expect(conversation.loadingMore()).toBe(false);
@@ -455,8 +468,8 @@ describe("conversation", function() {
         var someTopic, someOtherTopic;
 
         beforeEach(function() {
-            someTopic = createConversation(testDataConversation());
-            someOtherTopic = createConversation(testDataSomeOtherConversation());
+            someTopic = createConversation(testDataConversation(), group);
+            someOtherTopic = createConversation(testDataSomeOtherConversation(), group);
         });
 
         afterEach(function() {
@@ -507,7 +520,7 @@ describe("conversation", function() {
             totalMessages: 3,
             members: {
                 entireGroup: true,
-                users: [ 'pepe', 'grillo' ]
+                users: []
             }
         };
     }
@@ -524,7 +537,7 @@ describe("conversation", function() {
             totalMessages: 3,
             members: {
                 entireGroup: false,
-                users: [ 'juan', 'lopez' ]
+                users: [ '1', '2' ]
             }
         };
     }

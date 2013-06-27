@@ -7,7 +7,6 @@ function createNavigationModule(viewModel) {
     self.showingNotificationSetup = ko.observable(false);
     self.showingGroup = ko.observable(false);
     self.changingTopic = ko.observable(false);
-    self.showingConversationInfo = ko.observable(false);
 
     var flags = [ 
         self.showingDesktop, 
@@ -16,7 +15,6 @@ function createNavigationModule(viewModel) {
         self.showingNotificationSetup, 
         self.showingGroup, 
         self.changingTopic,
-        self.showingConversationInfo
     ];
 
     self.all = function() {
@@ -56,18 +54,12 @@ function createNavigationModule(viewModel) {
 		return self.showingAll() 
 			|| self.showingNewConvo() 
 			|| self.showingNotificationSetup()
-			|| self.showingGroup()
-            || self.showingConversationInfo();
+			|| self.showingGroup();
     };
 
     self.changeTopic = function(){
 		onlyShow(self.changingTopic);
     }
-
-    self.conversationInfo = function(convo){
-        onlyShow(self.showingConversationInfo);
-        viewModel.conversationInfo.set(convo);
-    };
 
     return self;
 }

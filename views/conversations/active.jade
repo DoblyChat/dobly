@@ -45,12 +45,11 @@ html
 				#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
 					.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
 						.convo-header(data-bind="click: markAsRead")
-							.topic-created-by
-								.topic
-									span(data-bind="text: topic")
-									span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
+							.topic
+								span(data-bind="text: topic")
+								span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
 							.actions
-								span.icon-info(data-bind="click: $root.navigation.conversationInfo")
+								span.icon-info(data-bind="click: ui.toggleInfo")
 								span.icon-search(data-bind="click: search.show")
 							.search.hidden
 								.textbox
@@ -62,6 +61,19 @@ html
 									button.done(type="button", data-bind="click: search.done") Done
 								.exhausted(data-bind="visible: search.exhausted")
 									span Your search reached the end of the conversation.
+							.info.hidden
+								div
+									span.label by:
+									span.value(data-bind="text: createdBy")
+								div
+									span.label on:
+									span.value(data-bind="text: timestamp")
+
+								div
+									span.label with:
+									span(data-bind="visible: forEntireGroup") entire group
+									span(data-bind="visible: !forEntireGroup, text: users")
+
 						.nano.convo-body(data-bind="click: markAsRead")
 							.content(data-bind="event: { scroll: scrolled }")
 								.load-more(data-bind="visible: loadingMore")
@@ -117,23 +129,6 @@ html
 				.buttons				
 					button.button-left(type="button", data-bind="click: cancel") Cancel
 					button.button-right(type="button", data-bind="click: createOnClick") Create
-
-			#conversation-info(data-bind="with: conversationInfo, visible: navigation.showingConversationInfo")
-				div.header
-					h2(data-bind="text: topic")
-				table
-					tr
-						td created by 
-						td.value(data-bind="text: createdBy")
-					tr
-						td on 
-						td.value(data-bind="text: timestamp")
-					tr
-						td with
-						td.value
-							span(data-bind="visible: forEntireGroup") entire group
-							ul(data-bind="visible: !forEntireGroup(), foreach: users")
-								li(data-bind="text: $data")
 
 			#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
 				p 
@@ -198,7 +193,6 @@ script(type="text/javascript", src="/scripts/client/desktop.js")
 script(type="text/javascript", src="/scripts/client/allConversations.js")
 script(type="text/javascript", src="/scripts/client/newConversation.js")
 script(type="text/javascript", src="/scripts/client/changeTopic.js")
-script(type="text/javascript", src="/scripts/client/conversation.info.js")
 script(type="text/javascript", src="/scripts/client/navigation.js")
 script(type="text/javascript", src="/scripts/client/viewModel.js")
 script(type="text/javascript", src="/scripts/client/timeout.js")

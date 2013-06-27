@@ -5,9 +5,12 @@ function createViewModel(conversationsData, desktopData, groupData) {
   
   self.conversations = ko.observableArray([]);
 
+  self.group = createGroup(groupData);
+
   var toSubscribe = [];
+
   for(var i = 0; i < conversationsData.length; i++){
-    self.conversations.push(createConversation(conversationsData[i]));
+    self.conversations.push(createConversation(conversationsData[i], self.group));
     toSubscribe.push(conversationsData[i]._id);
   }
 
@@ -18,10 +21,8 @@ function createViewModel(conversationsData, desktopData, groupData) {
   self.notifier = createNotifier(self.desktop);
   self.navigation = createNavigationModule(self);
   self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
-  self.group = createGroup(groupData);
   self.newConversation = createNewConversation(self.navigation, self.group);
   self.changeTopic = createChangeTopic(self.navigation);
-  self.conversationInfo = createConversationInfo(self.group);
 
   app.socket.on('receive_message', function(message) {
     ko.utils.arrayForEach(self.conversations(), function(conversation){

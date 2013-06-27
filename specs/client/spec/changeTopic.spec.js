@@ -1,25 +1,27 @@
 describe("change topic", function() {
-	var nav;
-	var changeTopic;	
+	var nav, changeTopic, conversationMock;
 
 	beforeEach(function() {
 		nav = jasmine.createSpyObj('nav', ['desktop', 'changeTopic']);
 		app.socket = createMockSocket();
 		changeTopic = createChangeTopic(nav);
+		conversationMock = {
+			topic: ko.observable('last in show'),
+			id: "8"
+		};
 	});
 
 	it("click", function() {
-		var testConversation = createConversation(conversationTestData());
 		spyOn(common, "delayedFocus");
-		changeTopic.click(testConversation);
+		changeTopic.click(conversationMock);
 
-		expect(changeTopic.conversation).toEqual(testConversation);
+		expect(changeTopic.conversation).toEqual(conversationMock);
 		expect(nav.changeTopic).toHaveBeenCalled();
 		expect(common.delayedFocus).toHaveBeenCalled();
 	});
 
 	it("update", function() {
-		changeTopic.conversation = createConversation(conversationTestData());
+		changeTopic.conversation = conversationMock;
 		changeTopic.newTopic('some new topic');
 		changeTopic.update();
 
@@ -60,20 +62,4 @@ describe("change topic", function() {
 		expect(changeTopic.newTopic()).toEqual('');
 		expect(nav.desktop).toHaveBeenCalled();
 	});
-
-	function conversationTestData() {
-		return {
-			_id: "8",
-			createdBy: "fernando",
-			groupId: "5",
-			messages: [],
-			timestamp: "2013-02-15T14:36:43.296Z",
-			topic: "last in show",
-			unread: 0,
-			members: {
-				forEntireGroup: true,
-				users: []
-			}
-		};
-	}
 });

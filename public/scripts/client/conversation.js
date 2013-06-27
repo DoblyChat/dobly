@@ -1,4 +1,4 @@
-function createConversation(data) {
+function createConversation(data, group) {
     var self = {};
 
     self.id = data._id ? data._id : 0;
@@ -15,13 +15,26 @@ function createConversation(data) {
     self.timestamp = common.formatTimestamp(data.timestamp);
     self.search = createConversationSearch(self);
     self.forEntireGroup = data.members.entireGroup;
-    self.users = data.members.users;
 
     if(data.messages) {
         for(var i = 0; i < data.messages.length; i++) {
           self.messages.push(createMessage(data.messages[i], true));
       }
     }
+
+    var groupUsers = group.users();
+    var usersArray = [];
+
+    for(var i = 0; i < data.members.users.length; i++){
+        for(var j = 0; j < groupUsers.length; j++){
+            if(data.members.users[i] === groupUsers[j].id){
+                usersArray.push(groupUsers[j].username);
+                break;
+            }
+        }
+    }
+
+    self.users = usersArray.join(', ');
 
     self.lastMessages = ko.computed(function () {
         if(self.messages().length - 2 >= 0) {

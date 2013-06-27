@@ -92,7 +92,8 @@ function createConversationUi() {
 
     function toggleSearch() {        
         self.resizeBodyFromHeaderChange(function() {
-            $(self.getSelector('.convo-header > div')).toggle()
+            $(self.getSelector('.convo-header > .search')).toggle();
+            $(self.getSelector('.convo-header > .info')).hide();
         });
     }
 
@@ -108,7 +109,14 @@ function createConversationUi() {
 
     self.hideSearch = function() {
         toggleSearch();
-    }
+    };
+
+    self.toggleInfo = function(){
+        self.resizeBodyFromHeaderChange(function() {
+            $(self.getSelector('.convo-header > .info')).toggle();
+            $(self.getSelector('.convo-header > .search')).hide();
+        });
+    };
 
     return self;
 }

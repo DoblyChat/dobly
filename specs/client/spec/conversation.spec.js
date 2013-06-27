@@ -7,10 +7,10 @@ describe("conversation", function() {
         app.socket = createMockSocket();
 
         group = {
-            users: ko.observableArray([ 
+            users: [ 
                 { id: '1', username: 'uno' },
                 { id: '2', username: 'dos' }
-            ])
+            ]
         };
     });
 

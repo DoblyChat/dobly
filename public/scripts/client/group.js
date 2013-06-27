@@ -3,7 +3,7 @@ function createGroup(data){
 
 	self.name = data.name;
 
-	self.users = ko.observableArray([]);
+	self.users = [];
 	self.otherUsers = [];
 
 	ko.utils.arrayForEach(data.users, function(userData){
@@ -24,7 +24,7 @@ function createGroup(data){
 	}
 
 	app.socket.on('receive_online_users', function(onlineUsers){
-		ko.utils.arrayForEach(self.users(), function(user){
+		ko.utils.arrayForEach(self.users, function(user){
 			if (onlineUsers.indexOf(user.id) >= 0){
 				user.online(true);
 			}
@@ -32,7 +32,7 @@ function createGroup(data){
 	});
 
 	app.socket.on('user_connected', function(connectedUser){
-		ko.utils.arrayForEach(self.users(), function(user){
+		ko.utils.arrayForEach(self.users, function(user){
 			if (user.id === connectedUser){
 				user.online(true);
 			}
@@ -40,7 +40,7 @@ function createGroup(data){
 	});
 
 	app.socket.on('user_disconnected', function(disconnectedUser){
-		ko.utils.arrayForEach(self.users(), function(user){
+		ko.utils.arrayForEach(self.users, function(user){
 			if (user.id === disconnectedUser){
 				user.online(false);
 			}

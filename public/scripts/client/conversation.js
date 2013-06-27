@@ -22,13 +22,12 @@ function createConversation(data, group) {
       }
     }
 
-    var groupUsers = group.users();
     var usersArray = [];
 
     for(var i = 0; i < data.members.users.length; i++){
-        for(var j = 0; j < groupUsers.length; j++){
-            if(data.members.users[i] === groupUsers[j].id){
-                usersArray.push(groupUsers[j].username);
+        for(var j = 0; j < group.users.length; j++){
+            if(data.members.users[i] === group.users[j].id){
+                usersArray.push(group.users[j].username);
                 break;
             }
         }

@@ -23,17 +23,16 @@ describe("group", function() {
 
 		group = createGroup(testData);
 
-		fernando = group.users()[0];
-		carlos = group.users()[1];
-		fido = group.users()[2];
-		current = group.users()[3];
+		fernando = group.users[0];
+		carlos = group.users[1];
+		fido = group.users[2];
+		current = group.users[3];
 	});
 
 	it("create group", function() {
 		expect(group.name).toBe('some test group');
 
-		var users = group.users();
-		expect(users.length).toBe(4);
+		expect(group.users.length).toBe(4);
 		expect(app.socket.emit).toHaveBeenCalledWith('request_online_users');
 
 		expect(fernando.username).toEqual('fernando');
@@ -42,10 +41,10 @@ describe("group", function() {
 		expect(carlos.online()).toBe(false);
 		expect(fido.online()).toBe(false);
 
-		expect(users).toContain(fernando);
-		expect(users).toContain(carlos);
-		expect(users).toContain(fido);
-		expect(users).toContain(current);
+		expect(group.users).toContain(fernando);
+		expect(group.users).toContain(carlos);
+		expect(group.users).toContain(fido);
+		expect(group.users).toContain(current);
 	});
 
 	it("receive online users", function() {

@@ -104,37 +104,6 @@ describe("navigation", function() {
 		expect(nav.showingGroup()).toBe(false);
 		expect(nav.changingTopic()).toBe(true);
 	});
-
-	describe("show back", function() {
-		var nav;
-		beforeEach(function() {
-			nav = createNavigationModule();
-		});
-
-		it("when default", function() {
-			expect(nav.showBack()).toBe(false);
-		});
-
-		it("when showing all", function() {
-			nav.showingAll(true);
-			expect(nav.showBack()).toBe(true);
-		});
-
-		it("when showing new conversation", function() {
-			nav.showingNewConvo(true);
-			expect(nav.showBack()).toBe(true);
-		});
-
-		it("when showing notification setup", function() {
-			nav.showingNotificationSetup(true);
-			expect(nav.showBack()).toBe(true);
-		});
-
-		it("when showing group", function() {
-			nav.showingGroup(true);
-			expect(nav.showBack()).toBe(true);
-		});
-	});
 });
 
 

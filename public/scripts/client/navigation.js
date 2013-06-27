@@ -49,14 +49,7 @@ function createNavigationModule(viewModel) {
     self.group = function(){
 		onlyShow(self.showingGroup);
     };
-
-    self.showBack = function(){
-		return self.showingAll() 
-			|| self.showingNewConvo() 
-			|| self.showingNotificationSetup()
-			|| self.showingGroup();
-    };
-
+    
     self.changeTopic = function(){
 		onlyShow(self.changingTopic);
     }

@@ -13,11 +13,12 @@ html
 			#logo
 				img(src="/images/logo.png", alt="Dobly")
 			.top-links.hidden
-				a(data-bind="click: navigation.desktop, visible: navigation.showBack()") Back to Conversations
-				a(data-bind="click: navigation.all, visible: navigation.showingDesktop") All Conversations
-				span(data-bind="visible: navigation.showingDesktop() || navigation.showBack()") |
-				a(data-bind="click: navigation.group, visible: !navigation.showingGroup()") Group
-				span(data-bind="visible: !navigation.showingGroup()") |
+				a(data-bind="click: navigation.desktop, css: { active: navigation.showingDesktop }") Conversations
+				span |
+				a(data-bind="click: navigation.all, css: { active: navigation.showingAll }") All Conversations
+				span |
+				a(data-bind="click: navigation.group, css: { active: navigation.showingGroup }") Group
+				span |
 				a(href="/logout") Logout
 
 		#main-timer

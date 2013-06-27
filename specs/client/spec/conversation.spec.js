@@ -18,7 +18,6 @@ describe("conversation", function() {
 
         it("load properties", function() {
             conversation = createConversation(testData, group);
-
             expect(conversation.id).toEqual('8');
             expect(conversation.topic()).toEqual("some topic");
             expect(conversation.createdBy()).toEqual("fernando");

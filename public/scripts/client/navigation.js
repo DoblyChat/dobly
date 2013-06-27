@@ -17,25 +17,30 @@ function createNavigationModule(viewModel) {
         self.changingTopic,
     ];
 
+    function onlyShow(flagToShow, callback) {
+        if(!flagToShow()){
+            for (var i = flags.length - 1; i >= 0; i--) {
+                if (flags[i] === flagToShow) {
+                    flags[i](true);
+                } else {
+                    flags[i](false);
+                }
+            };
+
+            if(callback) callback();
+        }
+    }
+
     self.all = function() {
 		viewModel.allConversations.refresh();
 		onlyShow(self.showingAll);
         common.delayedFocus('#all-convos .search input');
     };
 
-    function onlyShow(flagToShow) {
-		for (var i = flags.length - 1; i >= 0; i--) {
-			if (flags[i] === flagToShow) {
-				flags[i](true);
-			} else {
-				flags[i](false);
-			}
-		};
-    }
-
     self.desktop = function() {
-		onlyShow(self.showingDesktop);
-		viewModel.desktop.ui.show();
+		onlyShow(self.showingDesktop, function(){
+            viewModel.desktop.ui.show();
+        });
     };
 
     self.newConvo = function() {
@@ -49,7 +54,7 @@ function createNavigationModule(viewModel) {
     self.group = function(){
 		onlyShow(self.showingGroup);
     };
-    
+
     self.changeTopic = function(){
 		onlyShow(self.changingTopic);
     }

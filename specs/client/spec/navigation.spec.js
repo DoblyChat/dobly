@@ -41,6 +41,7 @@ describe("navigation", function() {
 
 		spyOn(viewModel.desktop.ui, 'show');
 		var nav = createNavigationModule(viewModel);
+		nav.showingDesktop(false);
 
 		nav.desktop();
 
@@ -102,6 +103,37 @@ describe("navigation", function() {
 		expect(nav.showingNewConvo()).toBe(false);
 		expect(nav.showingNotificationSetup()).toBe(false);
 		expect(nav.showingGroup()).toBe(false);
+		expect(nav.changingTopic()).toBe(true);
+	});
+
+	it('does not attempt to "show" again if requested view is already shown', function(){
+		var viewModel = {
+			desktop: {
+				ui: {
+					show: function() {},
+				},
+			},
+		};
+
+		spyOn(viewModel.desktop.ui, 'show');
+		var nav = createNavigationModule(viewModel);
+		nav.showingDesktop(true);
+		nav.showingAll(true);
+		nav.showingNewConvo(true);
+		nav.showingNotificationSetup(true);
+		nav.showingGroup(true);
+		nav.changingTopic(true);
+
+		nav.desktop();
+
+		expect(viewModel.desktop.ui.show).not.toHaveBeenCalled();
+		expect(nav.showingDesktop()).toBe(true);
+
+		// Verify the state for all views did not change
+		expect(nav.showingAll()).toBe(true);
+		expect(nav.showingNewConvo()).toBe(true);
+		expect(nav.showingNotificationSetup()).toBe(true);
+		expect(nav.showingGroup()).toBe(true);
 		expect(nav.changingTopic()).toBe(true);
 	});
 });

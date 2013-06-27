@@ -21,7 +21,7 @@ module.exports = (function(){
             if(err){
                 console.error('Error creating conversation', err);
             }else{
-                var allSocketsInGroup = sockets.clients('g-' + socket.handshake.user.groupId);
+                var allSocketsInGroup = sockets.groupClients(socket.handshake.user.groupId);
 
                 if(data.forEntireGroup){
                     for(var i = 0; i < allSocketsInGroup.length; i++){

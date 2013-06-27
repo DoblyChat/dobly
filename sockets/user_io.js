@@ -13,7 +13,7 @@ module.exports = (function (){
 
   self.requestOnlineUsers = function(currentSocket, sockets){
     var connectedUsers = [];
-    var socketsArray = sockets.clients(currentSocket.handshake.user.groupId);
+    var socketsArray = sockets.groupClients(currentSocket.handshake.user.groupId);
     for(var i = 0; i < socketsArray.length; i++){
         connectedUsers.push(socketsArray[i].handshake.user._id);
     }

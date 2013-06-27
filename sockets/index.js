@@ -20,6 +20,8 @@ exports.config = function(io, sessionStore){
         authorize(data, accept, sessionStore);
     });
 
+    io.sockets.groupClients = groupClients;
+
     io.sockets.on('connection', function (socket) {
       socket.broadcastToGroup = broadcastToGroup;
       socket.broadcastToConversationMembers = broadcastToConversationMembers;
@@ -32,7 +34,7 @@ exports.config = function(io, sessionStore){
       userIo.userConnected(socket);
 
       socket.on('request_online_users', function(){
-        userIo.requestOnlineUsers(socket, io.sockets)
+        userIo.requestOnlineUsers(socket, io.sockets);
       });
 
       socket.on('disconnect', function(){
@@ -84,6 +86,18 @@ function broadcastToGroup(event, data){
   this.in('g-' + this.handshake.user.groupId).broadcast.emit(event, data);
 }
 
+function joinGroupRoom(groupId){
+  this.join('g-' + groupId);
+}
+
+function leaveGroupRoom(groupId){
+  this.leave('g-' + groupId);
+}
+
+function groupClients(groupId){
+  return this.clients('g-' + groupId)
+}
+
 function broadcastToConversationMembers(event, conversationId, data){
   this.in('c-' + conversationId).broadcast.emit(event, data);
 }
@@ -94,14 +108,6 @@ function joinConversationRoom(conversationId){
 
 function leaveConversationRoom(conversationId){
   this.leave('c-' + conversationId);
-}
-
-function joinGroupRoom(groupId){
-  this.join('g-' + groupId);
-}
-
-function leaveGroupRoom(groupId){
-  this.leave('g-' + groupId);
 }
 
 function whenUser(event, callback){

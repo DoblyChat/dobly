@@ -49,7 +49,7 @@ describe('Sockets', function(){
 				},
 			];
 
-			sockets.clients = jasmine.createSpy().andReturn(clients);
+			sockets.groupClients = jasmine.createSpy().andReturn(clients);
 
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../sockets/conversation_io');
@@ -137,6 +137,7 @@ describe('Sockets', function(){
 				it('joins all sockets in group if conversation for the entire group', function(){
 					data.forEntireGroup = true;
 					callback(null, conversation);
+					expect(sockets.groupClients).toHaveBeenCalledWith(socketMock.handshake.user.groupId);
 					expect(clients[0].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
 					expect(clients[1].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
 					expect(clients[2].joinConversationRoom).toHaveBeenCalledWith(conversation._id);

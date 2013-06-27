@@ -54,7 +54,7 @@ describe('Sockets', function(){
 					done();
 				};
 
-				var sockets = { clients: function(){ return []; } };
+				var sockets = { groupClients: function(){ return []; } };
 				conversationIo.createConversation(socketMock, sockets, data);
 			});
 		});

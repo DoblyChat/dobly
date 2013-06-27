@@ -12,6 +12,7 @@ describe('Socket', function(){
 				enable: jasmine.createSpy('enable'),
 				sockets: {
 					on: jasmine.createSpy('sockets-on'),
+					clients: jasmine.createSpy('sockets-clients')
 				},
 			};
 
@@ -87,6 +88,16 @@ describe('Socket', function(){
 
 			callback(data, accept);
 			expect(authorizeMock).toHaveBeenCalledWith(data, accept, sessionStoreMock);
+		});
+
+		it('defines group clients custom function', function(){
+			config(ioMock, sessionStoreMock);
+			expect(ioMock.sockets.groupClients).toBeDefined();
+			var clients = [];
+			ioMock.sockets.clients.andReturn(clients);
+			var result = ioMock.sockets.groupClients('my-g-group');
+			expect(ioMock.sockets.clients).toHaveBeenCalledWith('g-my-g-group');
+			expect(result).toEqual(clients);
 		});
 
 		describe('on socket connection', function(){

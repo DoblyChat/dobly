@@ -35,7 +35,7 @@ describe('Sockets', function(){
 
 		it('handles a request for online users', function(){
 			var sockets = {
-				clients: jasmine.createSpy().andReturn([
+				groupClients: jasmine.createSpy().andReturn([
 					{ 
 						handshake:{
 							user: {
@@ -54,7 +54,7 @@ describe('Sockets', function(){
 			};
 
 			userIo.requestOnlineUsers(socketMock, sockets);
-			expect(sockets.clients).toHaveBeenCalledWith('my group');
+			expect(sockets.groupClients).toHaveBeenCalledWith('my group');
 			expect(socketMock.emit).toHaveBeenCalledWith('receive_online_users', [ 1, 2 ]);
 		});
 

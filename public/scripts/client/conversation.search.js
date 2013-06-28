@@ -1,11 +1,11 @@
 function createConversationSearch(conversation) {
     var self = {};
     var messages = conversation.messages();
-    var foundMessage = {
+    self.foundMessage = {
         id: '',
         offset: -1,
-    }
-    var matches = [];
+    };
+    self.matches = [];
     var currentQuery = '';
 
     self.topicMatched = ko.computed(function() {
@@ -27,7 +27,7 @@ function createConversationSearch(conversation) {
             resetIfNeeded();
 
             if (nextFound()) {
-                scrollToMatchAndHighlight();
+                self.scrollToMatchAndHighlight();
                 self.searching(false);
             } else {
                 pageIfPossible();
@@ -41,7 +41,7 @@ function createConversationSearch(conversation) {
             resetIfNeeded();
 
             if (prevFound()) {
-                scrollToMatchAndHighlight();
+                self.scrollToMatchAndHighlight();
             } else {
                 searchExhausted();
             }
@@ -55,15 +55,15 @@ function createConversationSearch(conversation) {
     }
 
     function reset() {
-        for (var i = matches.length - 1; i >= 0; i--) {
-            matches[i].removeClass('match');
-            matches[i].removeHighlight();
-            matches.pop();
+        for (var i = self.matches.length - 1; i >= 0; i--) {
+            self.matches[i].removeClass('match');
+            self.matches[i].removeHighlight();
+            self.matches.pop();
         }
 
         currentQuery = self.query();
-        foundMessage.id = '';
-        foundMessage.offset = -1;
+        self.foundMessage.id = '';
+        self.foundMessage.offset = -1;
         conversation.ui.resizeBodyFromHeaderChange(function() {
             self.exhausted(false);
         });
@@ -88,16 +88,16 @@ function createConversationSearch(conversation) {
         var message;
 
         var startingPoint = messages.length;
-        if (foundMessage.offset > -1) {
-            startingPoint = messages.length - foundMessage.offset;
+        if (self.foundMessage.offset > -1) {
+            startingPoint = messages.length - self.foundMessage.offset;
         }
 
         for (var i = initialization(startingPoint); condition(i); i = increment(i)) {
             message = messages[i];
 
             if (matchFound(message, queryLower)) {
-                foundMessage.id = message.id();
-                foundMessage.offset = messages.length - i;
+                self.foundMessage.id = message.id();
+                self.foundMessage.offset = messages.length - i;
                 return true;
             }
         }
@@ -109,15 +109,15 @@ function createConversationSearch(conversation) {
         return message.rawContent.trim().toLowerCase().indexOf(queryLower) > -1;
     }
 
-    function scrollToMatchAndHighlight() {
-        var match = $('#' + foundMessage.id);
+    self.scrollToMatchAndHighlight = function() {
+        var match = $('#' + self.foundMessage.id);
         highlight(match);
         scrollIfNeeded(match);
         addToMatches(match);        
     }
 
     function highlight(match) {
-        matches.forEach(function(element) { element.removeHighlight(); })
+        self.matches.forEach(function(element) { element.removeHighlight(); })
         match.addClass('match');
         match.find('.text').highlight(currentQuery);
     }
@@ -149,12 +149,12 @@ function createConversationSearch(conversation) {
     }
 
     function addToMatches(match) {
-        var alreadyMatched = matches.some(function(element) {
-            return element.attr('id') === foundMessage.id;
+        var alreadyMatched = self.matches.some(function(element) {
+            return element.attr('id') === self.foundMessage.id;
         });
 
         if (!alreadyMatched) {
-            matches.push(match);
+            self.matches.push(match);
         }
     }
 

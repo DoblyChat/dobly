@@ -8,7 +8,7 @@ describe('User', function() {
 	beforeEach(function(done) {
 		Group.create({ name: 'test'}, function(err, testGroup) {
 			group = testGroup;
-			userData = { username: 'test', password: 'cleartext', groupId: group._id };
+			userData = { name: 'test me', email: 'model-test@dobly.com', password: 'cleartext', groupId: group._id };
 			done(err);
 		});
 	});
@@ -25,11 +25,10 @@ describe('User', function() {
 
 		it('does not encrypt password on update if password did not change', function(done) {
 			User.create(userData, function(err, user){
-				user.username = 'test-2';
+				user.email = 'test-2@email.com';
 					
 				user.save(function(err){
-					User.findOne({ username: 'test-2' }, function(err, updatedUser) {
-						expect(updatedUser.username).not.toBe('test');
+					User.findOne({ email: 'test-2@email.com' }, function(err, updatedUser) {
 						expect(updatedUser.password).toBe(user.password);
 						done(err);
 					});
@@ -56,7 +55,19 @@ describe('User', function() {
 		});
 	});
 
-	describe('#username', function(){
+	describe('#name', function(){
+		it('is lower cased automatically', function(done){
+			userData.name = 'TEST ME';
+
+			User.create(userData, function(err, user){
+				expect(user.name).not.toBe('TEST ME');
+				expect(user.name).toBe('test me');
+				done();
+			});
+		});
+	});
+
+	describe('#email', function(){
 		
 		it('must be unique', function(done) {
 			User.create(userData, function(err, user) {
@@ -65,7 +76,7 @@ describe('User', function() {
 				userData.password = 'something else'
 				User.create(userData, function(err) {
 					expect(err).not.toBe(null);
-					expect(err.err).toContain('dup key: { : "test" }')
+					expect(err.err).toContain('dup key: { : "model-test@dobly.com" }')
 
 					done();
 				});
@@ -73,11 +84,11 @@ describe('User', function() {
 		});
 
 		it('is lower cased automatically', function(done){
-			userData.username = 'TEST';
+			userData.email = 'UPPER.CASE@EMAIL.COM';
 
 			User.create(userData, function(err, user){
-				expect(user.username).not.toBe('TEST');
-				expect(user.username).toBe('test');
+				expect(user.email).not.toBe('UPPER.CASE@EMAIL.COM');
+				expect(user.email).toBe('upper.case@email.com');
 				done();
 			});
 		});
@@ -93,8 +104,12 @@ describe('User', function() {
 			});
 		};
 
-		it('username', function(done) {
-			requiredFieldTest('username', done);
+		it('name', function(done) {
+			requiredFieldTest('name', done);
+		});
+
+		it('email', function(done){
+			requiredFieldTest('email', done);
 		});
 
 		it('password', function(done) {
@@ -113,17 +128,20 @@ describe('User', function() {
 			User.create([
 				{ 
 					groupId: group._id,
-					username: 'find-1',
+					name: 'find-1',
+					email: 'em-1@dobly.com',
 					password: 'pass'
 				},
 				{
 					groupId: group._id,
-					username: 'find-2',
+					name: 'find-2',
+					email: 'em-2@dobly.com',
 					password: 'pass'
 				},
 				{
 					groupId: group._id,
-					username: 'find-3',
+					name: 'find-3',
+					email: 'em-3@dobly.com',
 					password: 'pass'
 				}
 			], function(err){
@@ -137,8 +155,8 @@ describe('User', function() {
 		it('finds user excluding middle', function(done){
 			User.findExcept(secondUser._id, group._id, function(err, foundUsers){
 				expect(foundUsers.length).toBe(2);
-				expect(foundUsers[0].username).toBe(firstUser.username);
-				expect(foundUsers[1].username).toBe(thirdUser.username);
+				expect(foundUsers[0].email).toBe(firstUser.email);
+				expect(foundUsers[1].email).toBe(thirdUser.email);
 				done(err);
 			});
 		});

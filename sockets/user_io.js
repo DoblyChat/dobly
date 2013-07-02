@@ -33,7 +33,7 @@ module.exports = (function (){
 
   self.checkForActiveSession = function(socket){
     if(socket.handshake.session.cookie._expires < new Date()){
-      console.info('Session expired for %s where cookie expired at %s at %s', socket.handshake.user.username, socket.handshake.session.cookie._expires, new Date());
+      console.info('Session expired for %s where cookie expired at %s at %s', socket.handshake.user.email, socket.handshake.session.cookie._expires, new Date());
       socket.emit('timeout');
     }
   };

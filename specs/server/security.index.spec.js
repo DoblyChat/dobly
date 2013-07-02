@@ -1,6 +1,6 @@
 describe('Security', function(){
 	describe('Index', function(){
-		var passport, userMock, strategy, strategyConfig;
+		var passport, userMock, strategy, strategyOptions, strategyConfig;
 
 		beforeEach(function(){
 			passport = {
@@ -15,7 +15,8 @@ describe('Security', function(){
 			userMock = buildMock('../models/user', 'findOne', 'findById');
 			strategy = {};
 			mockery.registerMock('passport-local', {
-				Strategy: function(callback){
+				Strategy: function(options, callback){
+					strategyOptions = options;
 					strategyConfig = callback;
 					return strategy;
 				}
@@ -31,20 +32,21 @@ describe('Security', function(){
 		});
 
 		describe('strategy config', function(){
-			var username, password, done;
+			var email, password, done;
 
 			beforeEach(function(){
-				username = 'USR_D12';
+				email = 'USR_D12@dobly.com';
 				password = 'MY_PASS';
 				done = jasmine.createSpy('done');
 
 				expect(passport.use).toHaveBeenCalledWith(strategy);
-				strategyConfig(username, password, done);
+				expect(strategyOptions.usernameField).toBe('email');
+				strategyConfig(email, password, done);
 			});
 
-			it('find user by lower cased username', function(){
+			it('find user by lower cased email', function(){
 				expect(userMock.findOne).toHaveBeenCalled();
-				expect(userMock.findOne.mostRecentCall.args[0].username).toBe('usr_d12');
+				expect(userMock.findOne.mostRecentCall.args[0].email).toBe('usr_d12@dobly.com');
 			});
 
 			describe('When finding user', function(){
@@ -131,7 +133,7 @@ describe('Security', function(){
 
 				var args = userMock.findById.mostRecentCall.args;
 				expect(args[0]).toBe(userId);
-				expect(args[1]).toBe('_id groupId username');
+				expect(args[1]).toBe('_id groupId email name');
 				expect(args[2].lean).toBe(true);
 
 				var findCallback = userMock.findById.getCallback();

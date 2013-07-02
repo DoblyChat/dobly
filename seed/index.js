@@ -32,8 +32,8 @@ function create() {
 		}
 
 		var users = [ 
-			{ username: 'Fernando', password: 'pass', groupId: group._id }, 
-			{ username: 'Carlos', password: 'pass', groupId: group._id } 
+			{ name: 'Fernando', email: 'perudise@gmail.com', password: 'pass', groupId: group._id }, 
+			{ name: 'Carlos', email: 'atecarlos@gmail.com', password: 'pass', groupId: group._id } 
 		];
 
 		User.create(users, 

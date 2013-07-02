@@ -57,7 +57,7 @@ function createViewModel(conversationsData, desktopData, groupData) {
   });
 
   app.socket.on('my_new_conversation', function(data) {
-    var conversation = createConversation(data);
+    var conversation = createConversation(data, self.group);
     self.conversations.push(conversation);
     self.desktop.addAndActivate(conversation);
     self.desktop.ui.scroll.bottomTile();

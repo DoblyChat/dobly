@@ -5,9 +5,12 @@
 	.form-container
 		form(method='post', action='/create-user')
 			input(type='hidden', name='group', value=group)
-			input#username.field(type="text", name="username", placeholder="Username")
-			input.field(type="password", name="password", placeholder="Password")
-			input.field(type="password", name="password2", placeholder="Verify password")
+			div.row
+				input#email.field(type="email", name="email", placeholder="Email")
+				input.field(type="text", name="name", placeholder="Name")
+				input.field(type="password", name="password", placeholder="Password")
+				input.field(type="password", name="password2", placeholder="Verify password")
+			
 			input.button(type="submit", value="Sign Up")
 	if showFlash
 		#flash= info

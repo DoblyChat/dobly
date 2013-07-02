@@ -9,8 +9,8 @@ describe('new conversation', function(){
 
 		groupMock = {
 			otherUsers: [
-				{ id: 'usr-1', username: 'user one' },
-				{ id: 'usr-2', username: 'user two' },
+				{ id: 'usr-1', name: 'user one' },
+				{ id: 'usr-2', name: 'user two' },
 			]
 		};
 		newConvo = createNewConversation(navMock, groupMock);

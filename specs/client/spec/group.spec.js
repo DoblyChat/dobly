@@ -12,10 +12,10 @@ describe("group", function() {
 		testData = {
 			name: 'some test group',
 			users: [ 
-				{ username: 'fernando', _id: '123' }, 
-				{ username: 'carlos', _id: '456'},
-				{ username: 'fido', _id: '789'},
-				{ username: 'current', _id: '888' }
+				{ name: 'fernando', _id: '123' }, 
+				{ name: 'carlos', _id: '456'},
+				{ name: 'fido', _id: '789'},
+				{ name: 'current', _id: '888' }
 			],
 		};
 
@@ -35,7 +35,7 @@ describe("group", function() {
 		expect(group.users.length).toBe(4);
 		expect(app.socket.emit).toHaveBeenCalledWith('request_online_users');
 
-		expect(fernando.username).toEqual('fernando');
+		expect(fernando.name).toEqual('fernando');
 		expect(fernando.online()).toBe(false);
 		expect(fernando.id).toBe('123');
 		expect(carlos.online()).toBe(false);

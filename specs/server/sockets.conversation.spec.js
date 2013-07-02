@@ -10,7 +10,7 @@ describe('Sockets', function(){
 				handshake: {
 					user: {
 						groupId: 'gru-id',
-						username: 'usr',
+						name: 'usr',
 						_id: 'usr-id',
 					},
 				},
@@ -119,7 +119,7 @@ describe('Sockets', function(){
 
 					expect(args[1]._id).toEqual(conversation._id);
 					expect(args[1].topic).toBe(conversation.topic);
-					expect(args[1]._doc.createdBy).toBe(socketMock.handshake.user.username);
+					expect(args[1]._doc.createdBy).toBe(socketMock.handshake.user.name);
 				});
 
 				it('communicates to other users that created conversation when creation successfull', function(){
@@ -131,7 +131,7 @@ describe('Sockets', function(){
 					expect(args[1]).toEqual(conversation._id)
 					expect(args[2]._id).toEqual(conversation._id);
 					expect(args[2].topic).toBe(conversation.topic);
-					expect(args[2]._doc.createdBy).toBe(socketMock.handshake.user.username);
+					expect(args[2]._doc.createdBy).toBe(socketMock.handshake.user.name);
 				});
 
 				it('joins all sockets in group if conversation for the entire group', function(){

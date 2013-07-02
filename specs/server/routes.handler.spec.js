@@ -112,7 +112,7 @@ describe('Routes handler', function(){
 			expect(passportMock.authenticate).toHaveBeenCalledWith('local', {
 				successRedirect: '/conversations',
 				failureRedirect: '/login',
-				failureFlash: 'Username and password do not match.'
+				failureFlash: 'Email and password do not match.'
 			});
 		});
 	});
@@ -172,7 +172,8 @@ describe('Routes handler', function(){
 				return 'read ' + key;
 			};
 			req.body = {};
-			req.body.username = 'user';
+			req.body.email = 'user@email.com';
+			req.body.name = 'user';
 			req.body.password = 'pass';
 			req.body.password2 = 'pass';
 			req.body.group = 'gru';
@@ -193,7 +194,7 @@ describe('Routes handler', function(){
 
 			var createCallback = userMock.create.getCallback();
 			createCallback({});
-			expect(req.flash).toHaveBeenCalledWith('error', 'Username is already in use.');
+			expect(req.flash).toHaveBeenCalledWith('error', 'Email is already in use.');
 			expect(res.redirect).toHaveBeenCalledWith('read Referrer');
 		});
 
@@ -209,7 +210,8 @@ describe('Routes handler', function(){
 			expect(userMock.create).toHaveBeenCalled();
 
 			var userData = userMock.create.mostRecentCall.args[0];
-			expect(userData.username).toBe('user');
+			expect(userData.name).toBe('user');
+			expect(userData.email).toBe('user@email.com')
 			expect(userData.groupId).toBe('id');
 			expect(userData.password).toBe('pass');
 
@@ -363,9 +365,9 @@ describe('Routes handler', function(){
 				convo2 = new mongo.Types.ObjectId();
 				convo3 = new mongo.Types.ObjectId();
 
-				user1 = { _id: new mongo.Types.ObjectId(), username: 'uno' };
-				user2 = { _id: new mongo.Types.ObjectId(), username: 'dos' };
-				user3 = { _id: new mongo.Types.ObjectId(), username: 'tres' };
+				user1 = { _id: new mongo.Types.ObjectId(), name: 'uno' };
+				user2 = { _id: new mongo.Types.ObjectId(), name: 'dos' };
+				user3 = { _id: new mongo.Types.ObjectId(), name: 'tres' };
 
 				data.conversations.push({ _id: convo1, createdById: user1._id });
 				data.conversations.push({ _id: convo2, createdById: user2._id });
@@ -435,9 +437,9 @@ describe('Routes handler', function(){
 				it('adds created by names for each conversation', function(){
 					render(null, data);
 
-					expect(data.conversations[0].createdBy).toBe(user1.username);
-					expect(data.conversations[1].createdBy).toBe(user2.username);
-					expect(data.conversations[2].createdBy).toBe(user3.username);
+					expect(data.conversations[0].createdBy).toBe(user1.name);
+					expect(data.conversations[1].createdBy).toBe(user2.name);
+					expect(data.conversations[2].createdBy).toBe(user3.name);
 				});
 			});
 
@@ -482,14 +484,14 @@ describe('Routes handler', function(){
 
 			it('gets all users', function(){
 				setup.users(dummyCallback);
-				expect(userMock.find).toHaveBeenCalledWith({}, null, { lean: true, sort: { username: 1 } }, dummyCallback);
+				expect(userMock.find).toHaveBeenCalledWith({}, null, { lean: true, sort: { name: 1 } }, dummyCallback);
 			});
 		});
 
 		describe('render', function(){
 			var data;
 
-			beforeEach(function(){
+				beforeEach(function(){
 				data = {
 					users: [],
 					groups: [],

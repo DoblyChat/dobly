@@ -1,5 +1,5 @@
 @login-width: 660px;
-@sign-up-width: 960px;
+@sign-up-width: 1200px;
 @prompt-height: 36px;
 @prompt-margin-bottom: 30px;
 @form-margin-bottom: 30px;
@@ -54,8 +54,7 @@
 
 		input.button {
 			width: 140px;
-			height: 70px;			
-			float: right;
+			height: 70px;
 			.blue-button;			
 		}
 	}
@@ -76,10 +75,23 @@
 	.simple-form;
 	width: @login-width;
 	margin-left: -(@login-width/2);
+
+	.form-container{
+		input.button{
+			float: right;
+		}
+	}
 }
 
 #sign-up {
 	.simple-form;
 	width: @sign-up-width;
-	margin-left: -(@sign-up-width/2);
+	margin-left: -510px;
+
+	.form-container{
+		.row{
+			.float-parent;
+			margin-bottom: 10px;
+		}
+	}
 }

@@ -29,8 +29,8 @@ describe('Group', function() {
 
 		it('removes all users associated with group', function(done){
 			User.create([
-					{ username: 'pepe', password: 'pass1', grpupId: group._id },
-					{ username: 'pepe2', password: 'pass2', grpupId: group._id },
+					{ name: 'pepe', email: 'pepe@test.com', password: 'pass1', grpupId: group._id },
+					{ name: 'pepe2', email: 'pepe2@test.com', password: 'pass2', grpupId: group._id },
 				], 
 				function(err, users){
 					group.remove(function(err){

@@ -17,7 +17,7 @@ function createGroup(data){
 
 	function createUser(userData){
 		return { 
-			username: userData.username, 
+			name: userData.name, 
 			online: ko.observable(false),
 			id: userData._id
 		};

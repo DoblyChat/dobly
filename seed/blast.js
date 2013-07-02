@@ -11,7 +11,7 @@ mongo.connect(databaseUri);
 
 function blast(callback){
 	Group.findOne({ name: 'founders' }, function(err, group){
-		User.create([{ username: 'blast', password: 'pass', groupId: group._id}], function(err, user){
+		User.create([{ name: 'blast', email: 'blast@dobly.com', password: 'pass', groupId: group._id}], function(err, user){
 			var conversationArray = [];
 
 			for(var i = 0; i < 20; i++){
@@ -37,7 +37,7 @@ function blast(callback){
 					for(var j = 0; j < 500; j++){
 						messages.push({ 
 							content: j,
-							createdBy: user.username,
+							createdBy: user.name,
 							conversationId: conversation._id,
 						});
 					}
@@ -65,7 +65,7 @@ function blast(callback){
 
 async.series([
 	function(callback){
-		User.findOneAndRemove({ username: 'blast' }, callback);
+		User.findOneAndRemove({ email: 'blast@dobly.com' }, callback);
 	},
 	function(callback){
 		Conversation.remove({ topic: new RegExp('^Convo.*$') }, callback);

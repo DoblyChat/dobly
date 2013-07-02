@@ -37,7 +37,7 @@ module.exports = (function(){
                     socket.joinConversationRoom(conversation._id);
                 }
 
-                conversation._doc.createdBy = socket.handshake.user.username;
+                conversation._doc.createdBy = socket.handshake.user.name;
                 socket.emit('my_new_conversation', conversation);
                 socket.broadcastToConversationMembers('new_conversation', conversation._id, conversation);      
             }
@@ -66,7 +66,7 @@ module.exports = (function(){
             Message.create(
             {
                 content: data.content,
-                createdBy: socket.handshake.user.username,
+                createdBy: socket.handshake.user.name,
                 timestamp: data.timestamp,
                 conversationId: data.conversationId
             }, callback);

@@ -3,7 +3,7 @@ var Conversation = require('../models/conversation'),
 	async = require('async'),
 	mongo = require('mongoose');
 
-var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
+var databaseUri = process.env.MONGOLAB_URI || 'mongodb:localhost/proto';
 
 function logError(err){
 	if(err){
@@ -12,41 +12,41 @@ function logError(err){
 }
 
 exports.up = function(next){
-	// mongo.connect(databaseUri);
+	mongo.connect(databaseUri);
 
- //  	Conversation.find({}, function(err, conversations){
-	//   	async.each(conversations, moveMessages, function(err){
-	//   		logError(err);
-	//   		cleanAllMessages(function(){
-	//   			next();
-	//   		});
-	//   	});
+  	Conversation.find({}, function(err, conversations){
+	   	async.each(conversations, moveMessages, function(err){
+	   		logError(err);
+	   		cleanAllMessages(function(){
+	   			next();
+	   		});
+	   	});
 
-	//   	function moveMessages(conversation, callback){
-	//   		var messages = conversation.get('messages');
+	   	function moveMessages(conversation, callback){
+	   		var messages = conversation.get('messages');
 
-	//   		if(messages){
-	//   			async.each(conversation.get('messages'), moveMessage, function(err){
-	// 	  			callback(err);
-	// 	  		});
+	   		if(messages){
+	   			async.each(conversation.get('messages'), moveMessage, function(err){
+	 	  			callback(err);
+	 	  		});
 
-	// 	  		function moveMessage(message, callback){
-	// 		  		var newMessage = new Message();
-	// 				newMessage.content = message.content;
-	// 				newMessage.createdBy = message.createdBy;
-	// 				newMessage.timestamp = message.timestamp;
-	// 				newMessage.conversationId = conversation._id;
-	// 				newMessage._id = message._id;
-	// 				newMessage.save(function(err){
-	// 					logError(err);
-	// 					callback(err);
-	// 				});
-	// 		  	} 
-	//   		}else{
-	//   			callback(null);
-	//   		}
-	//   	} 			
-	// });
+	 	  		function moveMessage(message, callback){
+	 		  		var newMessage = new Message();
+	 				newMessage.content = message.content;
+	 				newMessage.createdBy = message.createdBy;
+	 				newMessage.timestamp = message.timestamp;
+	 				newMessage.conversationId = conversation._id;
+	 				newMessage._id = message._id;
+	 				newMessage.save(function(err){
+	 					logError(err);
+	 					callback(err);
+	 				});
+	 		  	} 
+	   		}else{
+	   			callback(null);
+	   		}
+	   	} 			
+	 });
 	next();
 };
 

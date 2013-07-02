@@ -3,7 +3,8 @@ var mongo = require('mongoose')
   , SALT_WORK_FACTOR = 10;
 
 var schema = new mongo.Schema({
-	username: { type: String, required: true, lowercase: true, index: { unique: true } },
+	email: { type: String, required: true, lowercase: true, index: { unique: true } },
+	name: { type: String, required: true, lowercase: true },
 	password: { type: String, required: true },
 	groupId: { type: mongo.Schema.Types.ObjectId, required: true }
 });

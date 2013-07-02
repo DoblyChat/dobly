@@ -9,7 +9,8 @@ describe('Routes handler - integration', function(){
 
 	var handler, req, res, group;
 
-	var TEST_USER_NAME = 'test user';
+	var TEST_NAME = 'test user',
+		TEST_EMAIL = 'routes.int@test.com';
 
 	beforeEach(function(done){
 		handler = require('../../routes/handler');
@@ -38,11 +39,14 @@ describe('Routes handler - integration', function(){
 	it('#creates user', function(done){
 		req.body.password = req.body.password2 = 'pass';
 		req.body.group = group.name;
-		req.body.username = TEST_USER_NAME;
+		req.body.name = TEST_NAME;
+		req.body.email = TEST_EMAIL;
 
 		res.redirect = function(){
-			User.find({ name: TEST_USER_NAME, groupId: group._id }, function(err, user){
+			User.findOne({ email: TEST_EMAIL }, function(err, user){
 				expect(user).toBeDefined();
+				expect(user.name).toBe(TEST_NAME);
+				expect(user.groupId).toEqual(group._id)
 				done(err);
 			});
 		};
@@ -54,12 +58,12 @@ describe('Routes handler - integration', function(){
 		var testUser, conversations;
 
 		beforeEach(function(done){
-			User.create({ username: TEST_USER_NAME, groupId: group._id, password: 'pass' }, function(err, user){
+			User.create({ email: TEST_EMAIL, name: TEST_NAME, groupId: group._id, password: 'pass' }, function(err, user){
 				testUser = user;
 
 				async.parallel({
 					user2: function(callback){
-						User.create({ username: TEST_USER_NAME + '2', groupId: group._id, password: 'pass' }, callback);
+						User.create({ email: 'routes.int.2@test.com', name: TEST_NAME + '2', groupId: group._id, password: 'pass' }, callback);
 					},
 					desktop: function(callback){
 						Desktop.create({ userId: user._id }, callback);
@@ -92,13 +96,13 @@ describe('Routes handler - integration', function(){
 									var data = [];
 
 									for(var i = 0; i< 51; i++ ){
-										data.push({ content: 'test message 2.' + i, createdBy: TEST_USER_NAME, conversationId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) })
+										data.push({ content: 'test message 2.' + i, createdBy: TEST_NAME, conversationId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) })
 									}
 
-									data.push({ content: 'test message 1', createdBy: TEST_USER_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 17) });
-									data.push({ content: 'test message 1.2', createdBy: TEST_USER_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 16) });
+									data.push({ content: 'test message 1', createdBy: TEST_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 17) });
+									data.push({ content: 'test message 1.2', createdBy: TEST_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 16) });
 
-									data.push({ content: 'test message 3', createdBy: TEST_USER_NAME, conversationId: savedConversations[2]._id });
+									data.push({ content: 'test message 3', createdBy: TEST_NAME, conversationId: savedConversations[2]._id });
 
 									Message.create(data, callback);
 								},
@@ -161,7 +165,7 @@ describe('Routes handler - integration', function(){
 				var conversation = conversations[i];
 				expect(conversation.groupId).toBe(group._id.toString());
 				expect(conversation.createdById).toBe(testUser._id.toString());
-				expect(conversation.createdBy).toBe(testUser.username);
+				expect(conversation.createdBy).toBe(testUser.name);
 				expect(conversation.topic).toContain('test');
 			}
 
@@ -191,14 +195,14 @@ describe('Routes handler - integration', function(){
 
 		function verifyCurrentUser(currentUser){
 			expect(currentUser._id).toBe(testUser._id.toString());
-			expect(currentUser.username).toBe(testUser.username);
+			expect(currentUser.email).toBe(testUser.email);
 		}
 
 		function verifyGroup(resultGroup){
 			expect(resultGroup.name).toBe(group.name);
 			expect(resultGroup.users.length).toBe(2);
-			expect(resultGroup.users[0].username).toBe(TEST_USER_NAME);
-			expect(resultGroup.users[1].username).toBe(TEST_USER_NAME + '2');
+			expect(resultGroup.users[0].name).toBe(TEST_NAME);
+			expect(resultGroup.users[1].name).toBe(TEST_NAME + '2');
 		}
 	});
 
@@ -212,15 +216,15 @@ describe('Routes handler - integration', function(){
 				async.parallel([
 					function(callback){
 						User.create([
-							{ username: TEST_USER_NAME + 'A', groupId: group._id, password: 'pass' },
-							{ username: TEST_USER_NAME + 'C', groupId: group._id, password: 'pass' },
-							{ username: TEST_USER_NAME + 'B', groupId: group._id, password: 'pass' }
+							{ name: TEST_NAME + 'A', email: 'get.groups@test.com', groupId: group._id, password: 'pass' },
+							{ name: TEST_NAME + 'C', email: 'get.groups2@test.com', groupId: group._id, password: 'pass' },
+							{ name: TEST_NAME + 'B', email: 'get.groups3@test.com', groupId: group._id, password: 'pass' }
 						], callback);
 					},
 					function(callback){
 						User.create([
-							{ username: TEST_USER_NAME + 'Z', groupId: anotherGroup._id, password: 'pass' },
-							{ username: TEST_USER_NAME + 'X', groupId: anotherGroup._id, password: 'pass' }
+							{ name: TEST_NAME + 'Z', email: 'get.groups4@test.com', groupId: anotherGroup._id, password: 'pass' },
+							{ name: TEST_NAME + 'X', email: 'get.groups5@test.com', groupId: anotherGroup._id, password: 'pass' }
 						], callback);
 					}
 				], done);
@@ -242,16 +246,16 @@ describe('Routes handler - integration', function(){
 				expect(firstGroup.users.length).toBe(2);
 				expect(firstGroup.name).toBe('another group');
 
-				expect(firstGroup.users[0].username).toBe(TEST_USER_NAME + 'x');
-				expect(firstGroup.users[1].username).toBe(TEST_USER_NAME + 'z');
+				expect(firstGroup.users[0].name).toBe(TEST_NAME + 'x');
+				expect(firstGroup.users[1].name).toBe(TEST_NAME + 'z');
 
 				var secondGroup = result.groups[1];
 				expect(secondGroup.name).toBe('test');
 				expect(secondGroup.users.length).toBe(3);
 
-				expect(secondGroup.users[0].username).toBe(TEST_USER_NAME + 'a');
-				expect(secondGroup.users[1].username).toBe(TEST_USER_NAME + 'b');
-				expect(secondGroup.users[2].username).toBe(TEST_USER_NAME + 'c');
+				expect(secondGroup.users[0].name).toBe(TEST_NAME + 'a');
+				expect(secondGroup.users[1].name).toBe(TEST_NAME + 'b');
+				expect(secondGroup.users[2].name).toBe(TEST_NAME + 'c');
 
 				done();
 			};

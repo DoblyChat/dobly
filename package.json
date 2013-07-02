@@ -25,6 +25,7 @@
   "devDependencies": {
     "jasmine-node": "1.5.X",
     "mockery": "~1.4.0",
-    "connect": "2.7.6"
+    "connect": "2.7.6",
+    "validator": "~1.2.1"
   }
 }

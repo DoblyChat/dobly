@@ -17,7 +17,7 @@ describe('Sockets', function(){
 				broadcastToConversationMembers: jasmine.createSpy(),
 				handshake: {
 					user: {
-						username: 'socket-convo-test',
+						name: 'socket-convo-test',
 						groupId: new mongo.Types.ObjectId(),
 						_id: new mongo.Types.ObjectId(),
 					},
@@ -42,7 +42,7 @@ describe('Sockets', function(){
 				socketMock.broadcastToConversationMembers = function(event, conversationId, conversation){
 					expect(conversation.topic).toBe(topic);
 					expect(conversation.createdById).toBe(socketMock.handshake.user._id);
-					expect(conversation._doc.createdBy).toBe(socketMock.handshake.user.username);
+					expect(conversation._doc.createdBy).toBe(socketMock.handshake.user.name);
 					expect(conversation.groupId.toString()).toBe(socketMock.handshake.user.groupId.toString());
 					expect(conversation._id).not.toBeNull();
 					expect(conversation._id).toEqual(conversationId);
@@ -61,7 +61,8 @@ describe('Sockets', function(){
 
 		describe('#sendMessage', function(){
 			var content = 'socket-send-message-test';
-			var username = 'user-send-message-test';
+			var name = 'user-send-message-test';
+			var email = 'send.message@test.com';
 			var userId, conversationId;
 
 			beforeEach(function(done){
@@ -76,7 +77,8 @@ describe('Sockets', function(){
 					conversationId = conversation._id;
 
 					User.create({ 
-						username: username, 
+						name: name,
+						email: email,
 						groupId: socketMock.handshake.user.groupId,
 						password: 'pass'
 					}, function(err, user){
@@ -89,7 +91,7 @@ describe('Sockets', function(){
 			afterEach(function(done){
 				Conversation.findByIdAndRemove(conversationId, function(){
 					Message.remove({ content: content }, function(){
-						User.remove({ username: username }, function(){
+						User.remove({ email: email }, function(){
 							Unread.remove({ userId: userId }, done);
 						});
 					});	
@@ -107,7 +109,7 @@ describe('Sockets', function(){
 
 				conversationIo.sendMessage(socketMock, data, function(message){
 					expect(message.content).toBe(content);
-					expect(message.createdBy).toBe(socketMock.handshake.user.username);
+					expect(message.createdBy).toBe(socketMock.handshake.user.name);
 					expect(message.conversationId).toEqual(data.conversationId);
 					expect(message.timestamp).toEqual(data.timestamp);
 					expect(message._id).not.toBeNull();

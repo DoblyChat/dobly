@@ -27,7 +27,7 @@ function createConversation(data, group) {
     for(var i = 0; i < data.members.users.length; i++){
         for(var j = 0; j < group.users.length; j++){
             if(data.members.users[i] === group.users[j].id){
-                usersArray.push(group.users[j].username);
+                usersArray.push(group.users[j].name);
                 break;
             }
         }
@@ -86,7 +86,7 @@ function createConversation(data, group) {
             content: self.newMessage(), 
             conversationId: self.id, 
             timestamp: new Date(),
-            createdBy: app.user.username
+            createdBy: app.user.name
         };
     }
 

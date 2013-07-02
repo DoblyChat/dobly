@@ -8,8 +8,8 @@ describe("conversation", function() {
 
         group = {
             users: [ 
-                { id: '1', username: 'uno' },
-                { id: '2', username: 'dos' }
+                { id: '1', name: 'uno' },
+                { id: '2', name: 'dos' }
             ]
         };
     });
@@ -161,7 +161,7 @@ describe("conversation", function() {
             spyOn(common, 'enterKeyPressed').andReturn(true);
             var testEvent = { shiftKey: false };
             spyOn(conversation, 'addMessage');
-            app.user = { username: 'jimmy' };
+            app.user = { name: 'jimmy' };
 
             var returnValue = conversation.sendMessage(null, testEvent);
 

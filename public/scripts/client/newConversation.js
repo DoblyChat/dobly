@@ -9,7 +9,7 @@ function createNewConversation(navigation, group) {
     for(var i = 0; i < otherUsers.length; i++){
         self.options.push({
             value: otherUsers[i].id,
-            text: otherUsers[i].username
+            text: otherUsers[i].name
         });
     }
 

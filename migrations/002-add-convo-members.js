@@ -6,8 +6,8 @@ exports.up = function(next){
 
 	helper.connect();
 	
-	Conversation.find({}, function(err, conversations){
-		console.log('conversations', conversations);
+	Conversation.collection.find({}, function(err, conversations){
+		console.log('Conversations', conversations);
 		User.find({}, function(err, users){
 			console.log('Users', users);
 			async.each(conversations, addMembers, function(err){

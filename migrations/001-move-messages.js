@@ -1,10 +1,10 @@
 exports.up = function(next){
-	/*var Conversation = require('../models/conversation'),
+	var Conversation = require('../models/conversation'),
 		Message = require('../models/message'),
 		async = require('async'),
 		helper = require('./helper');
 
-	helper.connect(execute);
+	helper.connect(next);
 
 	function execute(){
 		Conversation.find({}, function(err, conversations){
@@ -50,9 +50,7 @@ exports.up = function(next){
 		        					callback();
 		    });
 		}
-	}*/
-
-	next();
+	}
 };
 
 exports.down = function(next){

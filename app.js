@@ -44,6 +44,17 @@ app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
+app.configure('staging', function(){
+  app.use(less({ 
+    src: __dirname + '/public',
+    once: true,
+    compress: true
+  }));
+
+  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.errorHandler());
+});
+
 app.configure('production', function(){
   app.use(less({ 
     src: __dirname + '/public',

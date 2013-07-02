@@ -10,6 +10,7 @@ exports.up = function(next){
 	   	async.each(conversations, moveMessages, function(err){
 	   		helper.logError(err);
 	   		cleanAllMessages(function(){
+	   			helper.disconnect();
 	   			next();
 	   		});
 	   	});
@@ -39,7 +40,6 @@ exports.up = function(next){
 	   		}
 	   	} 			
 	 });
-	next();
 };
 
 function cleanAllMessages(callback){
@@ -91,6 +91,7 @@ exports.down = function(next){
 
 			function end(err){
 				helper.logError(err);
+				helper.disconnect();
 				next();
 			}
 		});		

@@ -5,6 +5,10 @@ function connect(){
 	mongo.connect(databaseUri);
 }
 
+function disconnect(){
+	mongo.disconnect();
+}
+
 function logError(err){
 	if(err){
 		console.error(err);
@@ -12,4 +16,5 @@ function logError(err){
 }
 
 exports.connect = connect;
+exports.disconnect = disconnect;
 exports.logError = logError;

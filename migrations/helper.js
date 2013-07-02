@@ -4,12 +4,17 @@ var mongo = require('mongoose'),
 var connection;
 
 function connect(callback){
+	disconnect();
 	mongo.connect(databaseUri);
 	callback();
 }
 
 function disconnect(callback){
 	mongo.disconnect(callback);
+
+	for(var i = 0; i < mongo.connections.length; i++){
+		mongo.connections[i].close();
+	}
 }
 
 function logError(err){

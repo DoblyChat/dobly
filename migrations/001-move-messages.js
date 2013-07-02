@@ -1,4 +1,7 @@
 exports.up = function(next){
+
+	next(); // short circuit first migration - causing deployment problems
+
 	var Conversation = require('../models/conversation'),
 		Message = require('../models/message'),
 		async = require('async'),

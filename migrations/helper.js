@@ -1,9 +1,12 @@
 var mongo = require('mongoose'),
 	databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 
-function connect(){
-	disconnect();
+var connection;
+
+function connect(callback){
 	mongo.connect(databaseUri);
+	console.log(mongo.connections);
+	callback();
 }
 
 function disconnect(callback){

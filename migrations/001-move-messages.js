@@ -1,57 +1,56 @@
 exports.up = function(next){
-
-	next(); // short circuit first migration - causing deployment problems
-/*
 	var Conversation = require('../models/conversation'),
 		Message = require('../models/message'),
 		async = require('async'),
 		helper = require('./helper');
 
-	helper.connect();
+	helper.connect(execute);
 
-  	Conversation.find({}, function(err, conversations){
-	   	async.each(conversations, moveMessages, function(err){
-	   		helper.logError(err);
-	   		cleanAllMessages(function(){
-	   			helper.disconnect(next);
-	   		});
-	   	});
+	function execute(){
+		Conversation.find({}, function(err, conversations){
+		   	async.each(conversations, moveMessages, function(err){
+		   		helper.logError(err);
+		   		cleanAllMessages(function(){
+		   			helper.disconnect(next);
+		   		});
+		   	});
 
-	   	function moveMessages(conversation, callback){
-	   		var messages = conversation.get('messages');
+		   	function moveMessages(conversation, callback){
+		   		var messages = conversation.get('messages');
 
-	   		if(messages){
-	   			async.each(conversation.get('messages'), moveMessage, function(err){
-	 	  			callback(err);
-	 	  		});
+		   		if(messages){
+		   			async.each(conversation.get('messages'), moveMessage, function(err){
+		 	  			callback(err);
+		 	  		});
 
-	 	  		function moveMessage(message, callback){
-	 		  		var newMessage = new Message();
-	 				newMessage.content = message.content;
-	 				newMessage.createdBy = message.createdBy;
-	 				newMessage.timestamp = message.timestamp;
-	 				newMessage.conversationId = conversation._id;
-	 				newMessage._id = message._id;
-	 				newMessage.save(function(err){
-	 					helper.logError(err);
-	 					callback(err);
-	 				});
-	 		  	} 
-	   		}else{
-	   			callback(null);
-	   		}
-	   	} 			
-	 });
+		 	  		function moveMessage(message, callback){
+		 		  		var newMessage = new Message();
+		 				newMessage.content = message.content;
+		 				newMessage.createdBy = message.createdBy;
+		 				newMessage.timestamp = message.timestamp;
+		 				newMessage.conversationId = conversation._id;
+		 				newMessage._id = message._id;
+		 				newMessage.save(function(err){
+		 					helper.logError(err);
+		 					callback(err);
+		 				});
+		 		  	} 
+		   		}else{
+		   			callback(null);
+		   		}
+		   	} 			
+		 });
 
-  	function cleanAllMessages(callback){
-	    Conversation.collection.update({}, { $unset: { 'messages': 1 } }, { multi: true },
-	                        function(err) {
-	        					if (err) {
-	        						helper.logError(err);
-	        					}
-	        					callback();
-	    });
-	}*/
+	  	function cleanAllMessages(callback){
+		    Conversation.collection.update({}, { $unset: { 'messages': 1 } }, { multi: true },
+		                        function(err) {
+		        					if (err) {
+		        						helper.logError(err);
+		        					}
+		        					callback();
+		    });
+		}
+	}
 };
 
 exports.down = function(next){

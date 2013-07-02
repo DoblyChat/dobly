@@ -3,22 +3,24 @@ exports.up = function(next){
 		async = require('async'),
 		helper = require('./helper');
 
-	helper.connect();
+	helper.connect(execute);
 
-	User.find({}, function(err, users){
-		helper.logError(err);
-
-		async.each(users, update, function(err){
+	function execute(){
+		User.find({}, function(err, users){
 			helper.logError(err);
-			helper.disconnect(next);
-		});
 
-		function update(user, callback){
-			user.email = user.email || user._doc.username + '@dobly.com';
-			user.name = user.name || user._doc.username;
-			user.save(callback);
-		}
-	});
+			async.each(users, update, function(err){
+				helper.logError(err);
+				helper.disconnect(next);
+			});
+
+			function update(user, callback){
+				user.email = user.email || user._doc.username + '@dobly.com';
+				user.name = user.name || user._doc.username;
+				user.save(callback);
+			}
+		});
+	}
 };
 
 exports.down = function(next){

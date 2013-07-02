@@ -2,6 +2,7 @@ var mongo = require('mongoose'),
 	databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 
 function connect(){
+	disconnect();
 	mongo.connect(databaseUri);
 }
 

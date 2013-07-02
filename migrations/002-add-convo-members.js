@@ -11,8 +11,7 @@ exports.up = function(next){
 			async.each(conversations, addMembers, function(err){
 				helper.logError(err);
 				console.log('Default members for all conversations set to entire group. CreatedById attribute populated');
-				helper.disconnect();
-				next();
+				helper.disconnect(next);
 			});
 
 			function addMembers(conversation, callback){

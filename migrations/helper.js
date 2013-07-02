@@ -6,8 +6,8 @@ function connect(){
 	mongo.connect(databaseUri);
 }
 
-function disconnect(){
-	mongo.disconnect();
+function disconnect(callback){
+	mongo.disconnect(callback);
 }
 
 function logError(err){

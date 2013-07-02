@@ -10,8 +10,7 @@ exports.up = function(next){
 
 		async.each(users, update, function(err){
 			helper.logError(err);
-			helper.disconnect();
-			next();
+			helper.disconnect(next);
 		});
 
 		function update(user, callback){

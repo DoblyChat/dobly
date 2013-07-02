@@ -15,8 +15,8 @@ exports.up = function(next){
 		});
 
 		function update(user, callback){
-			user.email = user._doc.username + '@dobly.com';
-			user.name = user._doc.username;
+			user.email = user.email || user._doc.username + '@dobly.com';
+			user.name = user.name || user._doc.username;
 			user.save(callback);
 		}
 	});

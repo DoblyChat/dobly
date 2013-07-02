@@ -1,21 +1,16 @@
-var Conversation = require('../models/conversation'),
-	User = require('../models/user'),
-	async = require('async'),
-	mongo = require('mongoose');
-
-var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
-
 exports.up = function(next){
-	mongo.connect(databaseUri);
+	var Conversation = require('../models/conversation'),
+		User = require('../models/user'),
+		async = require('async'),
+		helper = require('./helper');
+
+	helper.connect();
 	
 	Conversation.find({}, function(err, conversations){
 		User.find({}, function(err, users){
 			async.each(conversations, addMembers, function(err){
-				if(err){
-					console.error(err);
-				}else{
-					console.log('Default members for all conversations set to entire group. CreatedById attribute populated');
-				}
+				helper.logError(err);
+				console.log('Default members for all conversations set to entire group. CreatedById attribute populated');
 
 				next();
 			});
@@ -40,7 +35,7 @@ exports.up = function(next){
 				}
 
 				if (typeof user === 'undefined') {
-					console.log('Could not find user for: [' + username + ']');
+					helper.logError('Could not find user for: [' + username + ']');
 				}
 
 				return user;

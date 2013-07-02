@@ -1,22 +1,14 @@
-var Conversation = require('../models/conversation'),
-	Message = require('../models/message'),
-	async = require('async'),
-	mongo = require('mongoose');
-
-var databaseUri = process.env.MONGOLAB_URI || 'mongodb:localhost/proto';
-
-function logError(err){
-	if(err){
-		console.error(err);
-	}
-}
-
 exports.up = function(next){
-	mongo.connect(databaseUri);
+	var Conversation = require('../models/conversation'),
+		Message = require('../models/message'),
+		async = require('async'),
+		helper = require('./helper');
+
+	helper.connect();
 
   	Conversation.find({}, function(err, conversations){
 	   	async.each(conversations, moveMessages, function(err){
-	   		logError(err);
+	   		helper.logError(err);
 	   		cleanAllMessages(function(){
 	   			next();
 	   		});
@@ -38,7 +30,7 @@ exports.up = function(next){
 	 				newMessage.conversationId = conversation._id;
 	 				newMessage._id = message._id;
 	 				newMessage.save(function(err){
-	 					logError(err);
+	 					helper.logError(err);
 	 					callback(err);
 	 				});
 	 		  	} 
@@ -54,24 +46,29 @@ function cleanAllMessages(callback){
     Conversation.collection.update({}, { $unset: { 'messages': 1 } }, { multi: true },
                         function(err) {
         					if (err) {
-        						logError(err);
+        						helper.logError(err);
         					}
         					callback();
     });
 }
 
 exports.down = function(next){
-	mongo.connect(databaseUri);
+	var Conversation = require('../models/conversation'),
+		Message = require('../models/message'),
+		async = require('async'),
+		helper = require('./helper');
+
+	helper.connect();
 	
 	Message.find({}, function(err, messages){
-		logError(err);
+		helper.logError(err);
 		Conversation.find({}, function(err, conversations){
 			conversations.forEach(function(conversation){
 				conversation.messages = [];
 			});
 
 			async.each(messages, moveMessages, function(err){
-				logError(err);
+				helper.logError(err);
 				async.each(conversations, saveConversation, end);					
 			});
 
@@ -87,13 +84,13 @@ exports.down = function(next){
 
 			function saveConversation(conversation, callback){
 				conversation.save(function(err){
-					logError(err);
+					helper.logError(err);
 					callback(err);
 				});
 			}
 
 			function end(err){
-				logError(err);
+				helper.logError(err);
 				next();
 			}
 		});		

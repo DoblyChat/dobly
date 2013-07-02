@@ -40,17 +40,17 @@ exports.up = function(next){
 	   		}
 	   	} 			
 	 });
-};
 
-function cleanAllMessages(callback){
-    Conversation.collection.update({}, { $unset: { 'messages': 1 } }, { multi: true },
-                        function(err) {
-        					if (err) {
-        						helper.logError(err);
-        					}
-        					callback();
-    });
-}
+  	function cleanAllMessages(callback){
+	    Conversation.collection.update({}, { $unset: { 'messages': 1 } }, { multi: true },
+	                        function(err) {
+	        					if (err) {
+	        						helper.logError(err);
+	        					}
+	        					callback();
+	    });
+	}
+};
 
 exports.down = function(next){
 	var Conversation = require('../models/conversation'),

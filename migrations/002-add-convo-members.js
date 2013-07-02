@@ -6,10 +6,8 @@ exports.up = function(next){
 
 	helper.connect();
 	
-	Conversation.collection.find({}, function(err, conversations){
-		console.log('Conversations', conversations);
+	Conversation.find({}, function(err, conversations){
 		User.find({}, function(err, users){
-			console.log('Users', users);
 			async.each(conversations, addMembers, function(err){
 				helper.logError(err);
 				console.log('Default members for all conversations set to entire group. CreatedById attribute populated');

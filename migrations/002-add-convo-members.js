@@ -7,7 +7,7 @@ exports.up = function(next){
 	helper.connect();
 	
 	Conversation.find({}, function(err, conversations){
-		console.log('conversations', conversation);
+		console.log('conversations', conversations);
 		User.find({}, function(err, users){
 			console.log('Users', users);
 			async.each(conversations, addMembers, function(err){
@@ -30,7 +30,7 @@ exports.up = function(next){
 				var user;
 
 				for(var i = 0; i < users.length; i++){
-					if(users[i].username === username){
+					if(users[i]._doc.username === username){
 						user = users[i];
 						break;
 					}

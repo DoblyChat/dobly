@@ -1,1 +1,0 @@
-{"migrations":[{"title":"migrations/001-move-messages.js"},{"title":"migrations/002-add-convo-members.js"},{"title":"migrations/003-update-user-model.js"}],"path":"migrations/.migrate","pos":2,"_events":{}}

@@ -1,5 +1,5 @@
 exports.up = function(next){
-	var Conversation = require('../models/conversation'),
+	/*var Conversation = require('../models/conversation'),
 		Message = require('../models/message'),
 		async = require('async'),
 		helper = require('./helper');
@@ -50,7 +50,9 @@ exports.up = function(next){
 		        					callback();
 		    });
 		}
-	}
+	}*/
+
+	next();
 };
 
 exports.down = function(next){

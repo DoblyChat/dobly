@@ -13,5 +13,5 @@
     "schema": { "migration": {} },
     "modelName": "Migration",
     "db": "mongodb://migration:mIgr@tem3@ds053937.mongolab.com:53937/heroku_app14477441"
-  },
+  }
 }

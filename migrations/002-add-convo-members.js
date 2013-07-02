@@ -4,10 +4,12 @@ exports.up = function(next){
 		async = require('async'),
 		helper = require('./helper');
 
-	next();
-	// helper.connect(next, true);
-	
+	helper.connect(function(){
+		helper.disconnect(next);
+	});
+
 	function execute(){
+		console.log('in execute')
 		Conversation.find({}, function(err, conversations){
 			User.find({}, function(err, users){
 				async.each(conversations, addMembers, function(err){

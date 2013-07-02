@@ -2,14 +2,8 @@ var mongo = require('mongoose'),
 	async = require('async'),
 	databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 
-var connection;
-
-function connect(callback, skipConnect){
-	if(skipConnect) {
-		mongo.connect(databaseUri);
-	}
-	console.log(callback)
-	callback();
+function connect(callback){
+	mongo.connect(databaseUri, callback);
 }
 
 function disconnect(callback){

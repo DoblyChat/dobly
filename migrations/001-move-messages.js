@@ -4,7 +4,9 @@ exports.up = function(next){
 		async = require('async'),
 		helper = require('./helper');
 
-	helper.connect(next, true);
+	helper.connect(function(){
+		helper.disconnect(next);
+	});
 
 	function execute(){
 		Conversation.find({}, function(err, conversations){

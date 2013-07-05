@@ -1,6 +1,7 @@
 var mongo = require('mongoose')
   , bcrypt = require('bcrypt')
-  , SALT_WORK_FACTOR = 10;
+  , SALT_WORK_FACTOR = 10
+  , check = require('validator').check;
 
 var schema = new mongo.Schema({
 	email: { type: String, required: true, lowercase: true, index: { unique: true } },
@@ -26,6 +27,19 @@ schema.pre('save', function(next) {
 		});
 	});
 });
+
+schema.path('email').validate(function (value) {
+	var isValid;
+	
+	try{
+		check(value).isEmail();
+		isValid = true;
+	}catch(e){
+		isValid = false;
+	}
+
+	return isValid;
+}, 'Invalid email');
 
 schema.methods.comparePassword = function(candidatePassword, callback) {
 	bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {

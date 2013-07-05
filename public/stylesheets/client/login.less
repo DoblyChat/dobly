@@ -28,11 +28,10 @@
 	}
 
 	.form-container {
-		font-size: 24px;
 		.float-parent;
 		margin-bottom: @form-margin-bottom;
 
-		input.field {			
+		.field {			
 			width: @field-width;
 			height: @field-height;		
 			margin-right: @field-margin-right;
@@ -52,7 +51,7 @@
 			}
 		}
 
-		input.button {
+		.button {
 			width: 140px;
 			height: 70px;
 			.blue-button;			
@@ -73,6 +72,7 @@
 
 #login {
 	.simple-form;
+	font-size: 24px;
 	width: @login-width;
 	margin-left: -(@login-width/2);
 
@@ -85,13 +85,18 @@
 
 #sign-up {
 	.simple-form;
+	font-size: 20px;
 	width: @sign-up-width;
-	margin-left: -510px;
+	margin-left: -550px;
 
 	.form-container{
 		.row{
 			.float-parent;
-			margin-bottom: 10px;
+			margin-bottom: @form-margin-bottom;
+
+			.large-field{
+				width: @field-width + 40;
+			}
 		}
 	}
 }

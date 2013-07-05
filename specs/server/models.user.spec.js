@@ -92,6 +92,15 @@ describe('User', function() {
 				done();
 			});
 		});
+
+		it('must be formatted as an email', function(){
+			userData.email = 'not.an.email';
+
+			User.create(userData, function(err, user){
+				expect(err).not.toBeNull();
+				expect(err.errors['email'].type).toBe('Invalid email');
+			});
+		});
 	});
 
 	describe('#required fields', function() {

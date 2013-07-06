@@ -6,11 +6,11 @@
 		form(method='post', action='/create-user')
 			input(type='hidden', name='group', value=group)
 			div.row
-				input#email.field.large-field(type="email", name="email", placeholder="Email")
-				input.field.large-field(type="text", name="name", placeholder="Name")
-				input.field(type="password", name="password", placeholder="Password")
-				input.field(type="password", name="password2", placeholder="Verify password")
-			
-			input.button(type="submit", value="Sign Up")
+				input#email.field(type="email", name="email", placeholder="Email")
+				input#name.field(type="text", name="name", placeholder="Name")
+				input#password.field(type="password", name="password", placeholder="Password")
+				input#verify.field(type="password", name="password2", placeholder="Verify password")
+			div.submit
+				input.button(type="submit", value="Sign Up")
 	if showFlash
 		#flash= info

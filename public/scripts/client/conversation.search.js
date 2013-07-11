@@ -50,12 +50,13 @@ function createConversationSearch(conversation) {
 
     function resetIfNeeded() {
         if (currentQuery !== self.query()) {
-            reset();
+            self.reset();
         }
     }
 
-    function reset() {
-        for (var i = self.matches.length - 1; i >= 0; i--) {
+    self.reset = function() {
+        var matchesLength = self.matches.length
+        for (var i = matchesLength - 1; i >= 0; i--) {
             self.matches[i].removeClass('match');
             self.matches[i].removeHighlight();
             self.matches.pop();
@@ -163,7 +164,7 @@ function createConversationSearch(conversation) {
             searchExhausted();
             self.searching(false);
         } else {
-            page();
+            self.page();
         }
     }
 
@@ -179,7 +180,7 @@ function createConversationSearch(conversation) {
         }
     })
 
-    function page() {
+    self.page = function() {
         conversation.page(function(messages) {
             conversation.loadingMore(false);
             conversation.ui.scroll.adjust();
@@ -191,7 +192,7 @@ function createConversationSearch(conversation) {
 
     self.done = function() {
         self.query('');
-        reset();
+        self.reset();
         conversation.ui.hideSearch();
     };
 

@@ -32,52 +32,6 @@
   <script type="text/javascript" src="http://localhost:3000/scripts/client/desktop.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/client/newConversation.js"></script>--> 
 
-  <script type="text/javascript">
-    require(['jasmine', 'jasmine-html', 'jasmine-jquery'], function(jasmine){
-        var jasmineEnv = jasmine.getEnv();
-        jasmineEnv.updateInterval = 1000;
-
-        var htmlReporter = new jasmine.HtmlReporter();
-
-        jasmineEnv.addReporter(htmlReporter);
-
-        jasmine.getFixtures().fixturesPath = 'fixtures';
-
-        jasmineEnv.specFilter = function(spec) {
-          return htmlReporter.specFilter(spec);
-        };
-
-        var currentWindowOnload = window.onload;
-
-        var specs = [
-          'spec/common.spec.js',
-          'spec/message.spec.js',
-          'spec/navigation.spec.js',
-          'spec/changeTopic.spec.js',
-          'spec/group.spec.js',
-          'spec/timeout.spec.js',
-          'spec/allConversations.spec.js',
-          'spec/conversation.spec.js',
-          'spec/desktop.spec.js',
-          'spec/newConversation.spec.js'
-        ];
-
-        window.onload = function() {
-          if (currentWindowOnload) {
-            currentWindowOnload();
-          }
-
-          execJasmine();
-        };
-
-        function execJasmine() {
-          require(specs, function(){
-            jasmineEnv.execute();
-          });
-        }
-      });
-  </script>
-
 </head>
 
 <body>

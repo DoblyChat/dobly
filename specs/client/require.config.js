@@ -14,7 +14,8 @@ requirejs.config({
         'date': 'lib/date',
         'jasmine': '/lib/jasmine-1.3.1/jasmine',
         'jasmine-html': '/lib/jasmine-1.3.1/jasmine-html',
-        'jasmine-jquery': '/lib/jasmine-jquery'
+        'jasmine-jquery': '/lib/jasmine-jquery',
+        'globalVars': '/globalVars'
     },
 
     shim: {
@@ -26,7 +27,53 @@ requirejs.config({
         'modernizr': {
             exports: 'Modernizr'
         },
-        'jasmine-html': ['jasmine'],
-        'jasmine-jquery': ['jasmine-html']
+        'jasmine': {
+            exports: 'jasmine'
+        },
+        'jasmine-html': {
+            exports: 'jasmine',
+            deps: ['jasmine']
+        },
+        'jasmine-jquery': ['jasmine-html'],
+        'globalVars': ['jasmine-html']
     }
 });
+
+require(['jquery', 'jasmine-html', 'globalVars', 'jasmine-jquery'], function($, jasmine, globalVars){
+    var jasmineEnv = jasmine.getEnv();
+    jasmineEnv.updateInterval = 1000;
+
+    var htmlReporter = new jasmine.HtmlReporter();
+
+    jasmineEnv.addReporter(htmlReporter);
+
+    jasmine.getFixtures().fixturesPath = 'fixtures';
+
+    jasmineEnv.specFilter = function(spec) {
+        return htmlReporter.specFilter(spec);
+    };
+
+    var currentWindowOnload = window.onload;
+
+    var specs = [
+        'spec/common.spec.js',
+        'spec/message.spec.js',
+        'spec/navigation.spec.js',
+        'spec/changeTopic.spec.js',
+        'spec/group.spec.js',
+        'spec/timeout.spec.js',
+        'spec/allConversations.spec.js',
+        'spec/conversation.spec.js',
+        'spec/desktop.spec.js',
+        'spec/newConversation.spec.js'
+    ];
+
+    $.extend(window, globalVars);
+    execJasmine();
+
+    function execJasmine() {
+      require(specs, function(){
+        jasmineEnv.execute();
+      });
+    }
+  });

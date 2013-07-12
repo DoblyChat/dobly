@@ -1,4 +1,4 @@
-define(['client/message'], function(createMessage){
+define(['client/message', 'client/common'], function(createMessage, common){
     describe("message", function() {
         beforeEach(function(){
             spyOn(common, 'htmlEncode').andCallFake(function(string){

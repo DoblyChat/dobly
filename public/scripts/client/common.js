@@ -1,62 +1,72 @@
-var common = (function(){
-	var self = {};
+(function(global){
+    function common($){
+        var self = {};
 
-  self.enterKeyPressed = function(event) {
-	  var keyCode = (event.which ? event.which : event.keyCode);
-	  return keyCode === 13;
-	};
+        self.browser = {
+            getUserAgent : function() {
+                return navigator.userAgent.toLowerCase();
+            },
 
-	self.focus = function(selector) {		
-		if (!browser.isSafari() && !browser.isIE()){ 
-      $(selector).focus();
-		}
-	};
+            isSafari : function() {
+                return this.getUserAgent().indexOf('safari') > -1 && this.getUserAgent().indexOf('chrome') <= -1;
+            },
 
-  self.delayedFocus = function(selector, delay, hook){
-    setTimeout(function () { 
-      common.focus(selector);
-      if(hook) hook();
-    }, delay ? delay : 400);
-  };
+            isIE : function() {
+                return this.getUserAgent().indexOf('msie') > -1;
+            },
+        };
 
-  self.formatTimestamp = function(timestamp){
-    return formatTimestamp(timestamp, "h:mm tt", "M/d h:mm tt")
-  };
+        self.enterKeyPressed = function(event) {
+            var keyCode = (event.which ? event.which : event.keyCode);
+            return keyCode === 13;
+        };
 
-  self.formatSimpleTimestamp = function(timestamp){
-    return formatTimestamp(timestamp, "h:mm tt", "M/d");
-  }
+        self.focus = function(selector) {       
+            if (!self.browser.isSafari() && !self.browser.isIE()){ 
+                $(selector).focus();
+            }
+        };
 
-  function formatTimestamp(timestampString, todayFormat, otherFormat) {
-    var timestamp = new Date(timestampString);
-    var datestamp = new Date(timestampString).clearTime();
+        self.delayedFocus = function(selector, delay, hook){
+            setTimeout(function () { 
+                self.focus(selector);
+                if(hook) hook();
+            }, delay ? delay : 400);
+        };
 
-    if (datestamp.equals(Date.today())) {
-      return timestamp.toString(todayFormat);
-    } else {
-      return timestamp.toString(otherFormat);
+        self.formatTimestamp = function(timestamp){
+            return formatTimestamp(timestamp, "h:mm tt", "M/d h:mm tt")
+        };
+
+        self.formatSimpleTimestamp = function(timestamp){
+            return formatTimestamp(timestamp, "h:mm tt", "M/d");
+        };
+
+        function formatTimestamp(timestampString, todayFormat, otherFormat) {
+            var timestamp = new Date(timestampString);
+            var datestamp = new Date(timestampString).clearTime();
+
+            if (datestamp.equals(Date.today())) {
+                return timestamp.toString(todayFormat);
+            } else {
+                return timestamp.toString(otherFormat);
+            }
+        }
+
+        self.htmlEncode = function(value){
+            //create a in-memory div, set it's inner text(which jQuery automatically encodes)
+            //then grab the encoded contents back out.  The div never exists on the page.
+            return $('<div/>').text(value).html();
+        };
+        
+        return self;
     }
-  }
 
-  self.htmlEncode = function(value){
-    //create a in-memory div, set it's inner text(which jQuery automatically encodes)
-    //then grab the encoded contents back out.  The div never exists on the page.
-    return $('<div/>').text(value).html();
-  };
+    if(typeof define === 'function'){
+        define(['jquery', 'date'], common);
+    }else{
+        return global.common = common(jQuery);
+    }
+})(window);
 
-  return self;
-})();
 
-var browser = {
-  getUserAgent : function() {
-    return navigator.userAgent.toLowerCase();
-  },
-
-  isSafari : function() {
-    return browser.getUserAgent().indexOf('safari') > -1 && browser.getUserAgent().indexOf('chrome') <= -1;
-  },
-
-  isIE : function() {
-    return browser.getUserAgent().indexOf('msie') > -1;
-  },
-};

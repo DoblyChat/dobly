@@ -6,18 +6,16 @@
 
   <link rel="shortcut icon" type="image/png" href="lib/jasmine-1.3.1/jasmine_favicon.png">
   <link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">
-  <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine.js"></script>
-  <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-html.js"></script>
+  <script data-main="require.config" src="http://localhost:3000/scripts/lib/require.js"></script>
 
-  <!-- include libraries here... -->
+  <!-- include libraries here...
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script type="text/javascript" src="lib/jasmine-jquery.js"></script>
   <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.0.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/lib/date.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/lib/jquery.placeholder.min.js"></script>
-  <script type="text/javascript" src="http://localhost:3000/scripts/lib/chosen.jquery.min.js"></script>
+  <script type="text/javascript" src="http://localhost:3000/scripts/lib/chosen.jquery.min.js"></script>-->
 
-  <!-- include source files here... -->  
+  <!-- include source files here...  
   <script type="text/javascript" src="globalVars.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/client/common.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/client/message.js"></script>
@@ -32,49 +30,52 @@
   <script type="text/javascript" src="http://localhost:3000/scripts/client/conversation.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/client/desktop.ui.js"></script>
   <script type="text/javascript" src="http://localhost:3000/scripts/client/desktop.js"></script>
-  <script type="text/javascript" src="http://localhost:3000/scripts/client/newConversation.js"></script>
-
-  <!-- include spec files here... -->
-  <script type="text/javascript" src="spec/common.spec.js"></script>
-  <script type="text/javascript" src="spec/message.spec.js"></script>
-  <script type="text/javascript" src="spec/navigation.spec.js"></script>
-  <script type="text/javascript" src="spec/changeTopic.spec.js"></script>
-  <script type="text/javascript" src="spec/group.spec.js"></script>
-  <script type="text/javascript" src="spec/timeout.spec.js"></script>
-  <script type="text/javascript" src="spec/allConversations.spec.js"></script>
-  <script type="text/javascript" src="spec/conversation.spec.js"></script>
-  <script type="text/javascript" src="spec/desktop.spec.js"></script>
-  <script type="text/javascript" src="spec/newConversation.spec.js"></script>
+  <script type="text/javascript" src="http://localhost:3000/scripts/client/newConversation.js"></script>--> 
 
   <script type="text/javascript">
-    (function() {
-      var jasmineEnv = jasmine.getEnv();
-      jasmineEnv.updateInterval = 1000;
+    require(['jasmine', 'jasmine-html', 'jasmine-jquery'], function(jasmine){
+        var jasmineEnv = jasmine.getEnv();
+        jasmineEnv.updateInterval = 1000;
 
-      var htmlReporter = new jasmine.HtmlReporter();
+        var htmlReporter = new jasmine.HtmlReporter();
 
-      jasmineEnv.addReporter(htmlReporter);
+        jasmineEnv.addReporter(htmlReporter);
 
-      jasmine.getFixtures().fixturesPath = 'fixtures';
+        jasmine.getFixtures().fixturesPath = 'fixtures';
 
-      jasmineEnv.specFilter = function(spec) {
-        return htmlReporter.specFilter(spec);
-      };
+        jasmineEnv.specFilter = function(spec) {
+          return htmlReporter.specFilter(spec);
+        };
 
-      var currentWindowOnload = window.onload;
+        var currentWindowOnload = window.onload;
 
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
+        var specs = [
+          'spec/common.spec.js',
+          'spec/message.spec.js',
+          'spec/navigation.spec.js',
+          'spec/changeTopic.spec.js',
+          'spec/group.spec.js',
+          'spec/timeout.spec.js',
+          'spec/allConversations.spec.js',
+          'spec/conversation.spec.js',
+          'spec/desktop.spec.js',
+          'spec/newConversation.spec.js'
+        ];
+
+        window.onload = function() {
+          if (currentWindowOnload) {
+            currentWindowOnload();
+          }
+
+          execJasmine();
+        };
+
+        function execJasmine() {
+          require(specs, function(){
+            jasmineEnv.execute();
+          });
         }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
-
-    })();
+      });
   </script>
 
 </head>

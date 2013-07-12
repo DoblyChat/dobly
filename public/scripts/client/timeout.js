@@ -1,27 +1,30 @@
-function createTimeout(maxReconnects, global) {
-	var self = {};
+define(function(){
+	return function createTimeout(maxReconnects, global) {
+		var self = {};
 
-	app.socket.on('reconnecting', function(delay, attempt) {
-		if (attempt === maxReconnects) {
-			timeout();
-		}
-	});
-
-	function timeout(){
-		global.location.href = "http://" + global.location.host + "/timeout";
-	}
-
-	self.startPing = function() {
-		setInterval(self.emitPing, 5000);
-
-		app.socket.on('timeout', function() {
-			timeout();
+		app.socket.on('reconnecting', function(delay, attempt) {
+			if (attempt === maxReconnects) {
+				timeout();
+			}
 		});
-	};
 
-	self.emitPing = function() {
-		app.socket.emit('ping');
-	};
+		function timeout(){
+			global.location.href = "http://" + global.location.host + "/timeout";
+		}
 
-	return self;
-}
+		self.startPing = function() {
+			setInterval(self.emitPing, 5000);
+
+			app.socket.on('timeout', function() {
+				timeout();
+			});
+		};
+
+		self.emitPing = function() {
+			app.socket.emit('ping');
+		};
+
+		return self;
+	};
+});
+

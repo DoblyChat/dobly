@@ -1,82 +1,85 @@
-Modernizr.addTest('notifications', function(){ 
-	return !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);
-});
+define(['modernizr'], function(Modernizr){
+	Modernizr.addTest('notifications', function(){ 
+		return !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);
+	});
 
-function createNotifier(desktop){
-	var self = {};
+	return function (desktop){
+		var self = {};
 
-	var ALLOWED = 0;
-	var NOT_SET = 1;
+		var ALLOWED = 0;
+		var NOT_SET = 1;
 
-	var notifications = window.webkitNotifications;
-	var titleBlinkTimer;
+		var notifications = window.webkitNotifications;
+		var titleBlinkTimer;
 
-	var appTitle = document.title;
+		var appTitle = document.title;
 
-	self.needsToAskForPermission = function(){
-		return Modernizr.notifications && permissionsNotSet();
-	}
-
-	function permissionsNotSet(){
-		// not set = 1
-		// denied = 2
-		// allowed = 0
-		return notifications.checkPermission() === NOT_SET;
-	}
-
-	self.setup = function() {
-		if(Modernizr.notifications && permissionsNotSet()){
-			notifications.requestPermission();
+		self.needsToAskForPermission = function(){
+			return Modernizr.notifications && permissionsNotSet();
 		}
-	}
 
-	self.showDeskopNotification = function(conversation, content){
-		if(!app.inFocus){
-			if(Modernizr.notifications){
-				if(notifications.checkPermission() === ALLOWED){
-					var notif = notifications.createNotification(
-						'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
-						conversation.topic(), content);
+		function permissionsNotSet(){
+			// not set = 1
+			// denied = 2
+			// allowed = 0
+			return notifications.checkPermission() === NOT_SET;
+		}
 
-					notif.onclick = function(){
-						window.focus();
-						desktop.activate(conversation);
-						conversation.hasFocus(true);
-					}
-
-					notif.show();
-
-					setTimeout(function(){
-						notif.cancel();
-					}, '5000');
-				}
+		self.setup = function() {
+			if(Modernizr.notifications && permissionsNotSet()){
+				notifications.requestPermission();
 			}
-			playSound();
-		}
-	}
-
-	function playSound(){
-		document.getElementById('notification-sound').play();
-	}
-
-	self.updateTitle = function(unreadCount){
-		clearInterval(titleBlinkTimer);
-
-		if(unreadCount > 0){
-			titleBlinkTimer = setInterval(blink, '1500');
-		}else{
-			document.title = appTitle;
 		}
 
-		function blink(){
-			var currentTitle = document.title;
-			if(currentTitle === appTitle){
-				document.title = '(' + unreadCount + ') unread - ' + appTitle;
+		self.showDeskopNotification = function(conversation, content){
+			if(!app.inFocus){
+				if(Modernizr.notifications){
+					if(notifications.checkPermission() === ALLOWED){
+						var notif = notifications.createNotification(
+							'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
+							conversation.topic(), content);
+
+						notif.onclick = function(){
+							window.focus();
+							desktop.activate(conversation);
+							conversation.hasFocus(true);
+						}
+
+						notif.show();
+
+						setTimeout(function(){
+							notif.cancel();
+						}, '5000');
+					}
+				}
+				playSound();
+			}
+		}
+
+		function playSound(){
+			document.getElementById('notification-sound').play();
+		}
+
+		self.updateTitle = function(unreadCount){
+			clearInterval(titleBlinkTimer);
+
+			if(unreadCount > 0){
+				titleBlinkTimer = setInterval(blink, '1500');
 			}else{
 				document.title = appTitle;
 			}
-		}
-	}
 
-	return self;
-}
+			function blink(){
+				var currentTitle = document.title;
+				if(currentTitle === appTitle){
+					document.title = '(' + unreadCount + ') unread - ' + appTitle;
+				}else{
+					document.title = appTitle;
+				}
+			}
+		}
+
+		return self;
+	};
+});
+

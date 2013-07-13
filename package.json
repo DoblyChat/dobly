@@ -1,5 +1,5 @@
 {
-  "name": "qna-prototype",
+  "name": "dobly",
   "version": "0.0.1",
   "private": true,
   "engines": {
@@ -21,12 +21,14 @@
     "connect-mongo": "~0.3.2",
     "mongo-connect": "0.0.6",
     "mongoose-migrate": "~0.1.4",
-    "validator": "~1.2.1"
+    "validator": "~1.2.1",
+    "grunt": "~0.4.1"
   },
   "devDependencies": {
     "jasmine-node": "1.5.X",
     "mockery": "~1.4.0",
     "connect": "2.7.6",
-    "validator": "~1.2.1"
+    "validator": "~1.2.1",
+    "grunt-contrib-jshint": "~0.6.0"
   }
 }

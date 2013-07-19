@@ -7,7 +7,4 @@ seed:
 blast:
 	@NODE_ENV=development node seed/blast.js
 
-jasmine:
-	@NODE_ENV=test node specs/client/server.js
-
 .PHONY: test test-debug seed blast

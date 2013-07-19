@@ -1,4 +1,4 @@
-define(['client/conversation.search', 'client/conversation', 'client/common'], function(createConversationSearch, createConversation, common){
+define(['knockout', 'client/conversation.search', 'client/conversation', 'client/common'], function(ko, createConversationSearch, createConversation, common){
 	describe("conversation search", function() {
 
 		var testData;
@@ -6,9 +6,14 @@ define(['client/conversation.search', 'client/conversation', 'client/common'], f
 		var search;
 
 		beforeEach(function() {
+			app.topicSearch = ko.observable('');
 		    testData = testDataConversation();
 		    conversation = createConversation(testData);
 		  	search = createConversationSearch(conversation);
+		});
+
+		afterEach(function(){
+			app.topicSearch = undefined;
 		});
 
 		it("creation", function() {

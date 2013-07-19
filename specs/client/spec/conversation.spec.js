@@ -1,4 +1,4 @@
-define(['client/conversation', 'client/common', 'client/message'], function(createConversation, common, createMessage){
+define(['knockout', 'client/conversation', 'client/common', 'client/message'], function(ko, createConversation, common, createMessage){
     describe("conversation", function() {
 
         var conversation, testData, group;
@@ -6,13 +6,17 @@ define(['client/conversation', 'client/common', 'client/message'], function(crea
         beforeEach(function() {
             testData = testDataConversation();
             app.socket = createMockSocket();
-
+            app.topicSearch = ko.observable('');
             group = {
                 users: [ 
                     { id: '1', name: 'uno' },
                     { id: '2', name: 'dos' }
                 ]
             };
+        });
+
+        afterEach(function(){
+            app.topicSearch = null;
         });
 
         describe("creation", function() {
@@ -470,10 +474,6 @@ define(['client/conversation', 'client/common', 'client/message'], function(crea
             beforeEach(function() {
                 someTopic = createConversation(testDataConversation(), group);
                 someOtherTopic = createConversation(testDataSomeOtherConversation(), group);
-            });
-
-            afterEach(function() {
-                app.topicSearch('');
             });
 
             it("blank", function() {

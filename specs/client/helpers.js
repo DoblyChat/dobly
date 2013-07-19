@@ -1,9 +1,7 @@
-define(['jasmine-html', 'knockout'], function(jasmine, ko){
-	var app = {
-		topicSearch: ko.observable(''),
-	};
+(function(global){
+	global.app = {};
 
-	function createMockSocket() {
+	global.createMockSocket = function() {
 		var self = {};
 
 		var handlers = [];
@@ -19,11 +17,13 @@ define(['jasmine-html', 'knockout'], function(jasmine, ko){
 		};
 
 		return self;
-	}
-
-	return {
-		app: app,
-		createMockSocket: createMockSocket
 	};
-});
+
+	var _loadFixtures = global.loadFixtures;
+
+	global.loadFixtures = function(fixture){
+		_loadFixtures('../../../specs/client/fixtures/' + fixture);
+	};
+
+})(window);
 

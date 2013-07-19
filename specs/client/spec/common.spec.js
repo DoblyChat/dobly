@@ -13,8 +13,8 @@ define(['client/common'], function(common){
             });
 
             it("when string", function() {
-                var april9 = '2013.04.09 22:13:34';
-                expect(common.formatTimestamp(april9)).toBe('4/9 10:13 PM');
+                var april9 = '2013-04-09T22:13:34';
+                expect(common.formatTimestamp(april9)).toBe('4/9 6:13 PM');
             });
 
             it("today's time stamp", function() {
@@ -28,7 +28,7 @@ define(['client/common'], function(common){
             });
 
             it("simple time stamp when string", function() {
-                var april9 = '2013.04.09 22:13:34';
+                var april9 = '2013-04-09T22:13:34Z';
                 expect(common.formatSimpleTimestamp(april9)).toBe('4/9');
             });
 

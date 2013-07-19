@@ -4,3 +4,5 @@ public/stylesheets/style.css
 migrations/.migrate
 play.js
 dump/
+_SpecRunner.html
+.grunt

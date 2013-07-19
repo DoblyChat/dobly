@@ -58,11 +58,23 @@ module.exports = function(grunt){
 		      	}
 		    }
 		},
+		"jasmine-node": {
+		    options: { 
+		    	captureExceptions: true,
+		    	forceexit: true
+		    },
+		    run: {
+		      	spec: 'specs/server'
+		    },
+		    env: { },
+		    executable: './node_modules/.bin/jasmine-node'
+		}
 	});
 
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-jasmine');
+	grunt.loadNpmTasks('grunt-contrib-jasmine-node');
 	grunt.loadNpmTasks('grunt-contrib-connect');
 
 	// To run tests through the browser:
@@ -70,6 +82,6 @@ module.exports = function(grunt){
 	// 2-point to localhost:8000/_SpecRunner.html
 	// 3-if _SpecRunner.html does not exist, run the 'tests-client'
 	// task at least once
-	grunt.registerTask('tests-client', ['connect', 'jasmine']);
-	grunt.registerTask('check', ['jshint', 'tests-client']);
+	grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
+	grunt.registerTask('check', ['jshint', 'tests']);
 };

@@ -19,7 +19,7 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
 
         self.bodyHeight = function() {
             return $(self.getSelector('.convo-body')).height();
-        }
+        };
 
         self.scroll = (function(){
             var scroll = {};
@@ -58,7 +58,7 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
 
             scroll.adjustToTop = function() {
                 $(self.getSelector('.nano')).nanoScroller({ scroll: 'top' });  
-            }
+            };
 
             scroll.stop = function() {
                 $(self.getSelector('.nano')).nanoScroller({ stop: true });
@@ -66,7 +66,7 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
 
             scroll.flash = function() {
                 $(self.getSelector('.nano')).nanoScroller({ flash: true });
-            }
+            };
 
             return scroll;
         })();
@@ -89,7 +89,7 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
             setTimeout(function() {
                 $(self.getSelector('.convo-header > .search > .textbox > input')).focus();
             }, 400);
-        }
+        };
 
         function toggleSearch() {        
             self.resizeBodyFromHeaderChange(function() {

@@ -35,6 +35,6 @@ schema.statics.findOrCreateByUserId = function(userId, callback){
 			callback(err, desktop);
 		}
 	});
-}
+};
 
 module.exports = mongo.model('Desktop', schema);

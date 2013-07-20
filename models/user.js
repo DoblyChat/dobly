@@ -1,7 +1,7 @@
-var mongo = require('mongoose')
-  , bcrypt = require('bcrypt')
-  , SALT_WORK_FACTOR = 10
-  , check = require('validator').check;
+var mongo = require('mongoose'),
+	bcrypt = require('bcrypt'), 
+	SALT_WORK_FACTOR = 10, 
+	check = require('validator').check;
 
 var schema = new mongo.Schema({
 	email: { type: String, required: true, lowercase: true, index: { unique: true } },

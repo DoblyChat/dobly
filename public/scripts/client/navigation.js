@@ -26,7 +26,7 @@ define(['knockout', 'client/common'], function(ko, common){
                     } else {
                         flags[i](false);
                     }
-                };
+                }
 
                 if(callback) callback();
             }
@@ -58,7 +58,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
         self.changeTopic = function(){
             onlyShow(self.changingTopic);
-        }
+        };
 
         return self;
     };

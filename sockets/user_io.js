@@ -4,12 +4,12 @@ module.exports = (function (){
   self.userConnected = function(socket){
     socket.joinGroupRoom(socket.handshake.user.groupId);
     socket.broadcastToGroup('user_connected', socket.handshake.user._id);
-  }
+  };
 
   self.userDisconnected = function(socket){
     socket.leaveGroupRoom(socket.handshake.user.groupId);
     socket.broadcastToGroup('user_disconnected', socket.handshake.user._id);
-  }
+  };
 
   self.requestOnlineUsers = function(currentSocket, sockets){
     var connectedUsers = [];

@@ -9,7 +9,6 @@ exports.up = function(next){
 	});
 
 	function execute(){
-		console.log('in execute')
 		Conversation.find({}, function(err, conversations){
 			User.find({}, function(err, users){
 				async.each(conversations, addMembers, function(err){

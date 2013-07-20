@@ -25,10 +25,10 @@ define(['knockout', 'client/common'], function(ko, common){
         };
 
         self.update = function(){
-          app.socket.emit('update_topic', { conversationId: self.conversation.id, newTopic: self.newTopic() })
+          app.socket.emit('update_topic', { conversationId: self.conversation.id, newTopic: self.newTopic() });
           self.conversation.topic(self.newTopic());
           close();
-        }
+        };
 
         function close(){
           self.newTopic('');

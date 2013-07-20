@@ -95,7 +95,7 @@ function leaveGroupRoom(groupId){
 }
 
 function groupClients(groupId){
-  return this.clients('g-' + groupId)
+  return this.clients('g-' + groupId);
 }
 
 function broadcastToConversationMembers(event, conversationId, data){

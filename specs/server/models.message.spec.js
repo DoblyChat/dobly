@@ -8,7 +8,7 @@ describe('Message', function() {
 			createdBy: 'creator', 
 			timestamp: Date.now(),
 			conversationId: new mongo.Types.ObjectId()
-		 }
+		};
 	});
 	
 	describe('#required fields', function() {
@@ -18,7 +18,7 @@ describe('Message', function() {
 				checkRequiredFieldError(err, field);
 				done();
 			});
-		};
+		}
 
 		it('content', function(done) {
 			requiredFieldTest('content', done);
@@ -34,7 +34,7 @@ describe('Message', function() {
 
 		it('conversationId', function(done){
 			requiredFieldTest('conversationId', done);
-		})
+		});
 	});
 
 	describe('#content max length', function() {

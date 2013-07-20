@@ -16,7 +16,7 @@ define(['modernizr'], function(Modernizr){
 
 		self.needsToAskForPermission = function(){
 			return Modernizr.notifications && permissionsNotSet();
-		}
+		};
 
 		function permissionsNotSet(){
 			// not set = 1
@@ -29,7 +29,7 @@ define(['modernizr'], function(Modernizr){
 			if(Modernizr.notifications && permissionsNotSet()){
 				notifications.requestPermission();
 			}
-		}
+		};
 
 		self.showDeskopNotification = function(conversation, content){
 			if(!app.inFocus){
@@ -43,7 +43,7 @@ define(['modernizr'], function(Modernizr){
 							window.focus();
 							desktop.activate(conversation);
 							conversation.hasFocus(true);
-						}
+						};
 
 						notif.show();
 
@@ -54,7 +54,7 @@ define(['modernizr'], function(Modernizr){
 				}
 				playSound();
 			}
-		}
+		};
 
 		function playSound(){
 			document.getElementById('notification-sound').play();
@@ -77,7 +77,7 @@ define(['modernizr'], function(Modernizr){
 					document.title = appTitle;
 				}
 			}
-		}
+		};
 
 		return self;
 	};

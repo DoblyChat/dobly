@@ -35,7 +35,7 @@ define(['client/changeTopic', 'client/common', 'knockout'], function(createChang
 
 			expect(changeTopic.newTopic()).toEqual('');
 			expect(nav.desktop).toHaveBeenCalled();
-		})
+		});
 
 		it("update on click", function() {
 			spyOn(changeTopic, "update");
@@ -55,7 +55,7 @@ define(['client/changeTopic', 'client/common', 'knockout'], function(createChang
 			spyOn(changeTopic, "update");
 			changeTopic.updateOnEnter(null, testEvent);
 			expect(changeTopic.update).not.toHaveBeenCalled();
-		})
+		});
 
 		it("cancel", function() {
 			changeTopic.cancel();

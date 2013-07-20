@@ -46,7 +46,7 @@ describe('Routes handler - integration', function(){
 			User.findOne({ email: TEST_EMAIL }, function(err, user){
 				expect(user).toBeDefined();
 				expect(user.name).toBe(TEST_NAME);
-				expect(user.groupId).toEqual(group._id)
+				expect(user.groupId).toEqual(group._id);
 				done(err);
 			});
 		};
@@ -96,7 +96,7 @@ describe('Routes handler - integration', function(){
 									var data = [];
 
 									for(var i = 0; i< 51; i++ ){
-										data.push({ content: 'test message 2.' + i, createdBy: TEST_NAME, conversationId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) })
+										data.push({ content: 'test message 2.' + i, createdBy: TEST_NAME, conversationId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
 									}
 
 									data.push({ content: 'test message 1', createdBy: TEST_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 17) });
@@ -233,7 +233,7 @@ describe('Routes handler - integration', function(){
 
 		afterEach(function(done){
 			anotherGroup.remove(function(err){
-				group.remove(done)
+				group.remove(done);
 			});
 		});
 
@@ -285,6 +285,6 @@ describe('Routes handler - integration', function(){
 			};
 
 			handler.createGroup(req, res);
-		})
-	})
-})
+		});
+	});
+});

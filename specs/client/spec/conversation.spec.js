@@ -36,7 +36,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(conversation.ui).toBeDefined();
                 expect(conversation.timestamp).toBe(common.formatTimestamp(testData.timestamp));
                 expect(conversation.forEntireGroup).toBe(true);
-                expect(conversation.users).toEqual('')
+                expect(conversation.users).toEqual('');
             });
 
             it("loads users", function() {

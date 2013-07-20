@@ -56,7 +56,8 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
         }
 
         self.reset = function() {
-            var matchesLength = self.matches.length
+            var matchesLength = self.matches.length;
+            
             for (var i = matchesLength - 1; i >= 0; i--) {
                 self.matches[i].removeClass('match');
                 self.matches[i].removeHighlight();
@@ -69,7 +70,7 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
             conversation.ui.resizeBodyFromHeaderChange(function() {
                 self.exhausted(false);
             });
-        }
+        };
 
         function nextFound() {
             var initialization = function(startingPoint) { return startingPoint - 1; };
@@ -116,10 +117,10 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
             highlight(match);
             scrollIfNeeded(match);
             addToMatches(match);        
-        }
+        };
 
         function highlight(match) {
-            self.matches.forEach(function(element) { element.removeHighlight(); })
+            self.matches.forEach(function(element) { element.removeHighlight(); });
             match.addClass('match');
             match.find('.text').highlight(currentQuery);
         }
@@ -179,7 +180,7 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
             if (isTrue) {
                 $(conversation.ui.getSelector('.convo-header .search .exhausted')).effect("highlight", { color: '#ffafbf' }, 2000);
             }
-        })
+        });
 
         self.page = function() {
             conversation.page(function(messages) {
@@ -189,7 +190,7 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
             });
 
             conversation.loadingMore(true);
-        }
+        };
 
         self.done = function() {
             self.query('');

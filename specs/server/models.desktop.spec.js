@@ -98,7 +98,7 @@ describe('Desktop', function(){
 							expect(savedDesktop.conversations.length).toBe(2);
 							expect(savedDesktop.conversations).toContain(anotherConversationId);
 							done(err);
-						})
+						});
 					});
 				});
 			});

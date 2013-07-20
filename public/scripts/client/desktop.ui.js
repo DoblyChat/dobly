@@ -32,7 +32,7 @@ define(['jquery', 'jquery-ui'], function($){
                 var newMesageBar = $('#new-message-bar').outerHeight();
 
                 $('#convo-tiles').height(stripHeight - newTileHeight - newMesageBar);
-            };
+            }
 
             res.tilesAndConversationBodies = function() {
                 res.conversationBodies();

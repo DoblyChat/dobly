@@ -25,9 +25,9 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
         var usersArray = [];
 
-        for(var i = 0; i < data.members.users.length; i++){
+        for(var n = 0; n < data.members.users.length; n++){
             for(var j = 0; j < group.users.length; j++){
-                if(data.members.users[i] === group.users[j].id){
+                if(data.members.users[n] === group.users[j].id){
                     usersArray.push(group.users[j].name);
                     break;
                 }
@@ -61,10 +61,10 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
             var getSelector = function getSelector(cssSelector) {
                 return convoSelector + ' > ' + cssSelector;
-            }
+            };
 
             self.ui.init(getSelector);
-        };  
+        }
 
         self.deactivate = function() {
             if (self.active()){
@@ -110,7 +110,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
             if (!(app.inFocus && self.hasFocus())) {
                 self.unreadCounter(self.unreadCounter() + 1);  
             }
-        }
+        };
 
         self.sendMessage = function (conversation, event) {    
             self.markAsRead();
@@ -139,7 +139,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
             if (self.unreadCounter() > 0) {
                 self.unreadCounter(0);
                 emitMarkAsRead();
-            };
+            }
 
             return true;
         };
@@ -152,7 +152,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
         self.allMessagesLoaded = function() {
             return data.totalMessages <= self.messages().length;
-        }
+        };
 
         var nextPage = 1;
 
@@ -179,7 +179,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
                 hook(messages);
             });
-        }
+        };
 
         return self;
     };

@@ -16,10 +16,10 @@ requirejs.config({
 });
 
 require(['jquery', 'common', 'placeholder'], function($, common){
-	$(document).ready(function(){
-	  	common.focus("#email");
-	  	$('input, textarea').placeholder();
-	});
+    $(document).ready(function(){
+        common.focus("#email");
+        $('input, textarea').placeholder();
+    });
 });
 
 

@@ -63,7 +63,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
             app.socket.emit('create_conversation', data);
             restoreDefaults();
             navigation.desktop();  
-        }
+        };
 
         self.cancel = function() {
             restoreDefaults();

@@ -54,7 +54,7 @@ describe('Socket', function(){
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
 
-			config = require('../../sockets').config
+			config = require('../../sockets').config;
 		});
 
 		afterEach(function(){
@@ -209,25 +209,25 @@ describe('Socket', function(){
 				it('adds conversation to desktop', function(){
 					fire('add_to_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(socketMock, data);;
+					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('removes conversation from desktop', function(){
 					fire('remove_from_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(socketMock, data);;
+					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('updates strip order', function(){
 					fire('update_strip_order');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.updateStripOrder).toHaveBeenCalledWith(data, confirm);;
+					expect(desktopIoMock.updateStripOrder).toHaveBeenCalledWith(data, confirm);
 				});
 
 				it('read next messages', function(){
 					fire('read_next_messages');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.readMessages).toHaveBeenCalledWith(data, confirm);;
+					expect(conversationIoMock.readMessages).toHaveBeenCalledWith(data, confirm);
 				});
 
 				it('sends message', function(){

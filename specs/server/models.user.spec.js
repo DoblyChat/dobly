@@ -1,5 +1,5 @@
-var User = require('../../models/user')
-  , Group = require('../../models/group');
+var User = require('../../models/user'),
+	Group = require('../../models/group');
 
 describe('User', function() {
 
@@ -73,10 +73,10 @@ describe('User', function() {
 			User.create(userData, function(err, user) {
 				expect(err).toBeNull();
 
-				userData.password = 'something else'
+				userData.password = 'something else';
 				User.create(userData, function(err) {
 					expect(err).not.toBe(null);
-					expect(err.err).toContain('dup key: { : "model-test@dobly.com" }')
+					expect(err.err).toContain('dup key: { : "model-test@dobly.com" }');
 
 					done();
 				});
@@ -98,7 +98,7 @@ describe('User', function() {
 
 			User.create(userData, function(err, user){
 				expect(err).not.toBeNull();
-				expect(err.errors['email'].type).toBe('Invalid email');
+				expect(err.errors.email.type).toBe('Invalid email');
 			});
 		});
 	});
@@ -111,7 +111,7 @@ describe('User', function() {
 				checkRequiredFieldError(err, field);
 				done();
 			});
-		};
+		}
 
 		it('name', function(done) {
 			requiredFieldTest('name', done);

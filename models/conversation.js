@@ -26,7 +26,7 @@ schema.statics.findAllowedConversations = function(groupId, userId, callback){
 					{ 'members.users': { $in: [ userId ] } },
 					{ createdById: userId } 
 				] }, null, { lean: true }, callback);
-}
+};
 
 module.exports = mongo.model('Conversation', schema);
 

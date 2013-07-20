@@ -35,7 +35,7 @@
         };
 
         self.formatTimestamp = function(timestamp){
-            return formatTimestamp(timestamp, "h:mm tt", "M/d h:mm tt")
+            return formatTimestamp(timestamp, "h:mm tt", "M/d h:mm tt");
         };
 
         self.formatSimpleTimestamp = function(timestamp){
@@ -65,7 +65,7 @@
     if(typeof define === 'function'){
         define(['jquery', 'date'], common);
     }else{
-        return global.common = common(jQuery);
+        global.common = common(jQuery);
     }
 })(window);
 

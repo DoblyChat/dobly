@@ -211,7 +211,7 @@ describe('Routes handler', function(){
 
 			var userData = userMock.create.mostRecentCall.args[0];
 			expect(userData.name).toBe('user');
-			expect(userData.email).toBe('user@email.com')
+			expect(userData.email).toBe('user@email.com');
 			expect(userData.groupId).toBe('id');
 			expect(userData.password).toBe('pass');
 

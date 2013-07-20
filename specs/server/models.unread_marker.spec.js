@@ -33,8 +33,8 @@ describe('Unread Marker', function() {
 		afterEach(function(done){
 			UnreadMarker.find({ userId: userId }).remove(function(){
 				done();
-			})
-		})
+			});
+		});
 	});
 
 	describe('#required fields', function() {
@@ -54,7 +54,7 @@ describe('Unread Marker', function() {
 				checkRequiredFieldError(err, field);
 				done();
 			});
-		};
+		}
 
 		it('conversationId', function(done) {
 			requiredFieldTest('conversationId', done);

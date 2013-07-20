@@ -28,9 +28,9 @@ module.exports = (function(){
                         allSocketsInGroup[i].joinConversationRoom(conversation._id);
                     }
                 }else{
-                    for(var i = 0; i < allSocketsInGroup.length; i++){
-                        if(data.selectedMembers.indexOf(allSocketsInGroup[i].handshake.user._id.toString()) >= 0){
-                            allSocketsInGroup[i].joinConversationRoom(conversation._id);
+                    for(var j = 0; j < allSocketsInGroup.length; j++){
+                        if(data.selectedMembers.indexOf(allSocketsInGroup[j].handshake.user._id.toString()) >= 0){
+                            allSocketsInGroup[j].joinConversationRoom(conversation._id);
                         }
                     }
 
@@ -80,22 +80,26 @@ module.exports = (function(){
                 }else{
                     if(conversation.members.entireGroup){
                         User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
-                            async.each(users, save, function(err){
-                                callback(err);
-                            });
-
-                            function save(user, saveCallback){
-                                UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
-                            }
+                            async.each(
+                                users, 
+                                function (user, saveCallback){
+                                    UnreadMarker.increaseCounter(user._id, data.conversationId, saveCallback);
+                                }, 
+                                function(err){
+                                    callback(err);
+                                }
+                            );
                         });
                     }else{
-                        async.each(conversation.members.users, save, function(err){
-                            callback(err);
-                        });
-
-                        function save(userId, saveCallback){
-                            UnreadMarker.increaseCounter(userId, data.conversationId, saveCallback);
-                        }
+                        async.each(
+                            conversation.members.users, 
+                            function (userId, saveCallback){
+                                UnreadMarker.increaseCounter(userId, data.conversationId, saveCallback);
+                            },
+                            function(err){
+                                callback(err);
+                            }
+                        );  
                     }
                 }
             });  

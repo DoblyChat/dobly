@@ -128,7 +128,7 @@ describe('Sockets', function(){
 
 					var args = socketMock.broadcastToConversationMembers.mostRecentCall.args;
 					expect(args[0]).toBe('new_conversation');
-					expect(args[1]).toEqual(conversation._id)
+					expect(args[1]).toEqual(conversation._id);
 					expect(args[2]._id).toEqual(conversation._id);
 					expect(args[2].topic).toBe(conversation.topic);
 					expect(args[2]._doc.createdBy).toBe(socketMock.handshake.user.name);
@@ -145,7 +145,7 @@ describe('Sockets', function(){
 
 				it('joins only users specified and current user if not for entire group', function(){
 					data.forEntireGroup = false;
-					data.selectedMembers = [ 'usr-id', 'usr-id-3' ]
+					data.selectedMembers = [ 'usr-id', 'usr-id-3' ];
 					callback(null, conversation);
 
 					expect(clients[0].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
@@ -153,7 +153,7 @@ describe('Sockets', function(){
 					expect(clients[2].joinConversationRoom).toHaveBeenCalledWith(conversation._id);
 
 					expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(conversation._id);
-				})
+				});
 			});
 		});
 
@@ -332,7 +332,7 @@ describe('Sockets', function(){
 			it('removes unread for a conversation and user combination', function(){
 				conversationIo.markAsRead(socketMock, 'convo-id');
 
-				expect(unreadMock.removeMarkers).toHaveBeenCalled()
+				expect(unreadMock.removeMarkers).toHaveBeenCalled();
 
 				var args = unreadMock.removeMarkers.mostRecentCall.args;
 				expect(args[1]).toBe('convo-id');
@@ -371,7 +371,7 @@ describe('Sockets', function(){
 
 				callback('update error');
 				expect(console.error).toHaveBeenCalledWith('Error updating topic', 'update error');
-			})
+			});
 		});
 
 		describe('#readMessages', function(){
@@ -396,6 +396,6 @@ describe('Sockets', function(){
 				callback('my error', null);
 				expect(console.error).toHaveBeenCalledWith('Error loading more messages', 'my error');
 			});
-		})
+		});
 	});
-})
+});

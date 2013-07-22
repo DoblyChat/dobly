@@ -4,6 +4,7 @@ module.exports = (function(){
         User = require('../models/user'),
         UnreadMarker = require('../models/unread_marker'),
         async = require('async'),
+        notification = require('../notifications/notification'),
         self = {};
 
     self.createConversation = function(socket, sockets, data) {
@@ -44,7 +45,7 @@ module.exports = (function(){
         });
     };
 
-    self.sendMessage = function(socket, data, confirm){
+    self.sendMessage = function(socket, sockets, data, confirm){
         async.parallel([
             function(callback){
                 saveMessage(callback);
@@ -57,8 +58,10 @@ module.exports = (function(){
             if(err){
                 console.error('Error sending message', err);
             }else{
-                socket.broadcastToConversationMembers('receive_message', data.conversationId, results[0]);
-                confirm(results[0]);  
+                var message = results[0];
+                socket.broadcastToConversationMembers('receive_message', data.conversationId, message);
+                confirm(message);
+                notification.notifyOfflineUsers(socket, sockets, message);
             }
         });
 

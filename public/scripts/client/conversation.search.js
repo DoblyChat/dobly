@@ -55,8 +55,7 @@ function createConversationSearch(conversation) {
     }
 
     self.reset = function() {
-        var matchesLength = self.matches.length
-        for (var i = matchesLength - 1; i >= 0; i--) {
+        for (var i = self.matches.length - 1; i >= 0; i--) {
             self.matches[i].removeClass('match');
             self.matches[i].removeHighlight();
             self.matches.pop();

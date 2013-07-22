@@ -65,7 +65,7 @@ exports.config = function(io, sessionStore){
       socket.whenUser('read_next_messages', conversationIo.readMessages);
 
       socket.whenUser('send_message', function(data, confirm) {
-        conversationIo.sendMessage(socket, data, confirm);
+        conversationIo.sendMessage(socket, io.sockets, data, confirm);
       });
 
       socket.whenUser('create_conversation', function(data){

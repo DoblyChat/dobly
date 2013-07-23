@@ -11,7 +11,7 @@ var express = require('express')
   , less = require('less-middleware');
 
 
-var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
+var databaseUri = process.env.MONGOLAB_URI;
 mongo.connect(databaseUri);
 
 var sessionStore = new MongoStore({
@@ -66,7 +66,7 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT;
 app.listen(port);
 
 // Security configuration

@@ -162,7 +162,7 @@ describe('User', function() {
 		});
 
 		it('finds user excluding middle', function(done){
-			User.findExcept(secondUser._id, group._id, function(err, foundUsers){
+			User.findExcept([secondUser._id], group._id, function(err, foundUsers){
 				expect(foundUsers.length).toBe(2);
 				expect(foundUsers[0].email).toBe(firstUser.email);
 				expect(foundUsers[1].email).toBe(thirdUser.email);

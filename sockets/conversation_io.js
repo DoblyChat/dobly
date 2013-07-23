@@ -4,7 +4,6 @@ module.exports = (function(){
         User = require('../models/user'),
         UnreadMarker = require('../models/unread_marker'),
         async = require('async'),
-        notification = require('../notifications/notification'),
         self = {};
 
     self.createConversation = function(socket, sockets, data) {
@@ -45,7 +44,7 @@ module.exports = (function(){
         });
     };
 
-    self.sendMessage = function(socket, sockets, data, confirm){
+    self.sendMessage = function(socket, notification, data, confirm){
         async.parallel([
             function(callback){
                 saveMessage(callback);
@@ -61,7 +60,7 @@ module.exports = (function(){
                 var message = results[0];
                 socket.broadcastToConversationMembers('receive_message', data.conversationId, message);
                 confirm(message);
-                notification.notifyOfflineUsers(socket, sockets, message);
+                notification.notifyOfflineUsers(message);
             }
         });
 
@@ -82,7 +81,7 @@ module.exports = (function(){
                     callback(err);
                 }else{
                     if(conversation.members.entireGroup){
-                        User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
+                        User.findExcept([socket.handshake.user._id], socket.handshake.user.groupId, function(err, users){
                             async.each(users, save, function(err){
                                 callback(err);
                             });

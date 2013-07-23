@@ -3,9 +3,9 @@ module.exports = (function() {
 		mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_APIKEY),
 		self = {};
 
-	self.send(fromName, fromEmail, to, replyToEmail, subject, text, tags) {
+	self.send = function(fromName, fromEmail, to, replyToEmail, subject, text, tags) {
 		var message = {
-		    "html": "<p>" + text + "</p>",
+		    "html": null,
 		    "text": text,
 		    "subject": subject,
 		    "from_email": fromEmail,

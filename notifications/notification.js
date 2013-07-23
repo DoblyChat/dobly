@@ -1,44 +1,49 @@
 module.exports = (function() {
-	var wrapper = require('mandrill_wrapper'),
+	var wrapper = require('./mandrill_wrapper'),
+		senderUser = null,
+		onlineUsersIds = null,
+		Conversation = require('../models/conversation'),
+		User = require('../models/user'),
 		self = {};
 
-	self.notifyOfflineUsers = function(socket, sockets, message) {
+	self.init = function(socket, sockets) {
+		senderUser = socket.handshake.user;
+		onlineUsersIds = sockets.groupClients(senderUser.groupId).map(function(client) {
+			return client.handshake.user._id;
+		});
+	};
 
-		var senderUser = socket.handshake.user;
-		var onlineUsers = sockets.groupClients(senderUser.groupId);
-
+	self.notifyOfflineUsers = function(message) {
 		Conversation.findById(message.conversationId, function(err, conversation) {
 			if(err) {
-				console.error('Error reading conversation to notify offline conversation members', err);
+				console.error('Error reading conversation to notify offline users', err);
 			} else {
-				if (conversation.members.entireGroup) {
-					User.findExcept(senderUser._id, conversation.groupId, function(err, users) {
-						var userIds = users.map(function(user) {
-							return user._id;
-						});
-						notifyOfflineUsersHelper(senderUser, userIds, onlineUsers);	
-					});
-				}
-				else {
-					notifyOfflineUsersHelper(senderUser, conversation.members.users, onlineUsers);
-				}				
+				getOfflineUsersAndNotify(conversation, message);
 			}
 		});
 	};
 
-	function notifyOfflineUsersHelper(senderUser, conversationUserIds, onlineUsers) {
-		var offlineUsers = conversationUserIds.filter(function(conversationUserId) {
-			return !onlineUsers.some(function(onlineUser) {
-				return onlineUser.handshake.user._id === conversationUserId;
-			});
-		});
+	function getOfflineUsersAndNotify(conversation, message) {
+		User.findExcept(onlineUsersIds, senderUser.groupId, function(err, offlineUsers) {
+			if (!conversation.members.entireGroup) {
+				offlineUsers = offlineUsers.filter(function(offlineUser) {
+					return conversation.members.users.some(function(conversationMemberUserId) {
+						return offlineUser._id === conversationMemberUserId
+					});
+				});
+			}
 
+			notify(offlineUsers, conversation, message);
+		});
+	}
+
+	function notify(offlineUsers, conversation, message) {
 		var fromName = senderUser.name,
 			fromEmail = "notification@dobly.com",
 			replyToEmail = "no-reply@dobly.com", 
 			subject = conversation.topic, 
 			text = message.content, 
-			tags = [ "offline-messages" ]);
+			tags = [ "offline-messages" ];
 
 		var to = offlineUsers.map(function(offlineUser) {
 			return { 

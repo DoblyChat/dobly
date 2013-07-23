@@ -3,7 +3,7 @@ describe('Socket', function(){
 		var socketMock, ioMock, groupSockets,
 			conversationIoMock, userIoMock,
 			desktopIoMock, authorizeMock,
-			sessionStoreMock, config;
+			sessionStoreMock, config, notificationMock;
 
 		beforeEach(function(){
 			ioMock = {
@@ -46,6 +46,7 @@ describe('Socket', function(){
 
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../sockets');
+			mockery.registerAllowable('../../notifications');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations', 'unsubscribeToConversation');
@@ -53,6 +54,7 @@ describe('Socket', function(){
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
+			notificationMock = buildMock('../notifications/notification', 'init', 'notifyOfflineUsers');
 
 			config = require('../../sockets').config
 		});
@@ -233,7 +235,7 @@ describe('Socket', function(){
 				it('sends message', function(){
 					fire('send_message');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.sendMessage).toHaveBeenCalledWith(socketMock, data, confirm);
+					expect(conversationIoMock.sendMessage).toHaveBeenCalledWith(socketMock, notificationMock, data, confirm);
 				});
 
 				it('creates a conversation', function(){

@@ -9,13 +9,25 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             'sync disconnect on unload': true
         });
 
-        $(document).ready(function() {
-            app.user = JSON.parse($('#currentUser').val());
+        $(global)
+            .focus(function() {
+                global.app.inFocus = true;
+            })
+            .blur(function() {
+                global.app.inFocus = false;
+            })
+            .resize(function() {
+                global.app.desktop.ui.resize.stripAndConvos();
+                global.app.desktop.ui.resize.tilesAndConversationBodies();
+            });
+
+        function start(){
+            app.user = JSON.parse(document.getElementById('currentUser').value);
             app.inFocus = true;
 
-            var desktopData = JSON.parse($('#desktop').val());
-            var conversationData = JSON.parse($('#conversations').val());
-            var groupData = JSON.parse($('#group').val());
+            var desktopData = JSON.parse(document.getElementById('desktop').value);
+            var conversationData = JSON.parse(document.getElementById('conversations').value);
+            var groupData = JSON.parse(document.getElementById('group').value);
             
             var viewModel = createViewModel(conversationData, desktopData, groupData);
 
@@ -26,20 +38,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             
             var timeout = createTimeout(maxReconnects, global);
             timeout.startPing();
-        });
-
-        $(global).focus(function() {
-            global.app.inFocus = true;
-        });
-
-        $(global).blur(function() {
-            global.app.inFocus = false;
-        });
-
-        $(global).resize(function() {
-            global.app.desktop.ui.resize.stripAndConvos();
-            global.app.desktop.ui.resize.tilesAndConversationBodies();
-        });
+        }
 
         function initUi(){
             global.app.desktop.ui.setup();
@@ -54,5 +53,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             $('#content').show();
             global.app.desktop.ui.highlight();
         }
+
+        start();
     })(window);
 });

@@ -163,7 +163,7 @@ module.exports = (function (){
             }
 
             function render() {
-                res.render('conversations/active', 
+                res.render('conversations', 
                 { 
                     title: title,
                     conversations: JSON.stringify(results.conversations),

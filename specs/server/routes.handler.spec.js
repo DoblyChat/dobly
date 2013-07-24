@@ -451,7 +451,7 @@ describe('Routes handler', function(){
 				expect(res.render).toHaveBeenCalled();
 
 				var args = res.render.mostRecentCall.args;
-				expect(args[0]).toBe('conversations/active');
+				expect(args[0]).toBe('conversations');
 
 				var renderData = args[1];
 

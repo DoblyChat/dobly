@@ -42,29 +42,29 @@ app.configure('development', function(){
 
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+
+  app.locals({
+    production_mode: false
+  });
 });
 
-app.configure('staging', function(){
-  app.use(less({ 
-    src: __dirname + '/public',
-    once: true,
-    compress: true
-  }));
+app.configure('staging', prodConfig);
+app.configure('production', prodConfig);
 
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.use(express.errorHandler());
-});
+function prodConfig(){
+    app.use(less({ 
+        src: __dirname + '/public',
+        once: true,
+        compress: true
+    }));
 
-app.configure('production', function(){
-  app.use(less({ 
-    src: __dirname + '/public',
-    once: true,
-    compress: true
-  }));
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.errorHandler({ dumpExceptions: true }));
 
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.use(express.errorHandler());
-});
+    app.locals({
+        production_mode: true
+    });
+}
 
 var port = process.env.PORT || 3000;
 app.listen(port);

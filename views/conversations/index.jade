@@ -171,4 +171,8 @@ input#desktop(type="hidden", value=desktop)
 input#currentUser(type="hidden", value=currentUser)
 input#group(type="hidden", value=group)
 
+if production_mode
+	script
+		window.app = { PRODUCTION_MODE: true }
+
 script(data-main="/scripts/client/require.config", src="/scripts/lib/require.js")

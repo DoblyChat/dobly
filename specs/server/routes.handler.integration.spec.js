@@ -146,7 +146,7 @@ describe('Routes handler - integration', function(){
 			req.user = testUser;
 
 			res.render = function(url, result){
-				expect(url).toBe('conversations/active');
+				expect(url).toBe('conversations');
 				verifyConversations(JSON.parse(result.conversations));
 				verifyDesktop(JSON.parse(result.desktop));
 				verifyCurrentUser(JSON.parse(result.currentUser));

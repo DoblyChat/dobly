@@ -57,7 +57,7 @@ module.exports = function(grunt){
                 }
             }
         },
-        "jasmine-node": {
+        'jasmine-node': {
             options: { 
                 captureExceptions: true,
                 forceexit: true
@@ -67,6 +67,20 @@ module.exports = function(grunt){
             },
             env: { },
             executable: './node_modules/.bin/jasmine-node'
+        },
+        requirejs: {
+            compile: {
+                options: {
+                    baseUrl: "public/scripts",
+                    mainConfigFile: "public/scripts/client/require.config.js",
+                    out: "public/scripts/release/main.js",
+                    name: 'client/main',
+                    preserveLicenseComments: false,
+                    paths:{
+                        'socket-io': 'empty:'
+                    }
+                }
+            }
         }
     });
 
@@ -75,6 +89,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jasmine-node');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive

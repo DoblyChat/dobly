@@ -1,5 +1,6 @@
 node_modules/
 public/stylesheets/style.css
+public/scripts/release
 .DS_Store
 migrations/.migrate
 play.js

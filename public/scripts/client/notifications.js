@@ -1,7 +1,5 @@
-define(['modernizr'], function(Modernizr){
-	Modernizr.addTest('notifications', function(){ 
-		return !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);
-	});
+define(function(){
+	var canUseNotifications = !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);		
 
 	return function (desktop){
 		var self = {};
@@ -15,7 +13,7 @@ define(['modernizr'], function(Modernizr){
 		var appTitle = document.title;
 
 		self.needsToAskForPermission = function(){
-			return Modernizr.notifications && permissionsNotSet();
+			return canUseNotifications && permissionsNotSet();
 		};
 
 		function permissionsNotSet(){
@@ -26,14 +24,14 @@ define(['modernizr'], function(Modernizr){
 		}
 
 		self.setup = function() {
-			if(Modernizr.notifications && permissionsNotSet()){
+			if(canUseNotifications && permissionsNotSet()){
 				notifications.requestPermission();
 			}
 		};
 
 		self.showDeskopNotification = function(conversation, content){
 			if(!app.inFocus){
-				if(Modernizr.notifications){
+				if(canUseNotifications){
 					if(notifications.checkPermission() === ALLOWED){
 						var notif = notifications.createNotification(
 							'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 

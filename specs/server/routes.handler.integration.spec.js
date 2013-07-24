@@ -26,7 +26,7 @@ describe('Routes handler - integration', function(){
 			},
 		};
 
-		Group.create({ name: 'test'}, function(err, testGroup){
+		Group.create({ name: 'test', rawName: 'Test'}, function(err, testGroup){
 			group = testGroup;
 			done(err);
 		});
@@ -210,7 +210,7 @@ describe('Routes handler - integration', function(){
 		var anotherGroup;
 
 		beforeEach(function(done){
-			Group.create({ name: 'another group' }, function(err, aGroup){
+			Group.create({ name: 'another group', rawName: 'Another Group' }, function(err, aGroup){
 				anotherGroup = aGroup;
 
 				async.parallel([

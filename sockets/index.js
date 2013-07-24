@@ -14,7 +14,8 @@ exports.config = function(io, sessionStore){
     var conversationIo = require('./conversation_io'),
         userIo = require('./user_io'),
         desktopIo = require('./desktop_io'),
-        authorize = require('./authorize_io');
+        authorize = require('./authorize_io'),
+        notification = require('../notifications/notification');
 
     io.set('authorization', function (data, accept) {
         authorize(data, accept, sessionStore);
@@ -65,7 +66,8 @@ exports.config = function(io, sessionStore){
       socket.whenUser('read_next_messages', conversationIo.readMessages);
 
       socket.whenUser('send_message', function(data, confirm) {
-        conversationIo.sendMessage(socket, data, confirm);
+        notification.init(socket, io.sockets);
+        conversationIo.sendMessage(socket, notification, data, confirm);
       });
 
       socket.whenUser('create_conversation', function(data){

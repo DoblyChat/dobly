@@ -6,8 +6,9 @@ describe('User', function() {
 	var group, userData;
 
 	beforeEach(function(done) {
-		Group.create({ name: 'test'}, function(err, testGroup) {
+		Group.create({ name: 'test', rawName: 'Test' }, function(err, testGroup) {
 			group = testGroup;
+			expect(group._id).not.toBeNull();
 			userData = { name: 'test me', email: 'model-test@dobly.com', password: 'cleartext', groupId: group._id };
 			done(err);
 		});
@@ -162,10 +163,17 @@ describe('User', function() {
 		});
 
 		it('finds user excluding middle', function(done){
-			User.findExcept(secondUser._id, group._id, function(err, foundUsers){
+			User.findExcept([secondUser._id], group._id, function(err, foundUsers){
 				expect(foundUsers.length).toBe(2);
-				expect(foundUsers[0].email).toBe(firstUser.email);
-				expect(foundUsers[1].email).toBe(thirdUser.email);
+				expect(foundUsers.some(function(foundUser) {
+					return foundUser.email === firstUser.email;
+				})).toBe(true);
+				expect(foundUsers.some(function(foundUser) {
+					return foundUser.email === secondUser.email;
+				})).toBe(false);
+				expect(foundUsers.some(function(foundUser) {
+					return foundUser.email === thirdUser.email;
+				})).toBe(true);				
 				done(err);
 			});
 		});

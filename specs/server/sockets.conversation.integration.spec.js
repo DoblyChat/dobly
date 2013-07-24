@@ -105,9 +105,9 @@ describe('Sockets', function(){
                     conversationId: conversationId,
                 };
 
-                var confirm = jasmine.createSpy('confirm');
+                var notification = jasmine.createSpyObj('notification', ['notifyOfflineUsers']);
 
-                conversationIo.sendMessage(socketMock, data, function(message){
+                conversationIo.sendMessage(socketMock, notification, data, function(message){
                     expect(message.content).toBe(content);
                     expect(message.createdBy).toBe(socketMock.handshake.user.name);
                     expect(message.conversationId).toEqual(data.conversationId);

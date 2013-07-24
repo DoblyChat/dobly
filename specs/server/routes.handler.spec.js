@@ -140,10 +140,12 @@ describe('Routes handler', function(){
 			req.flash = jasmine.createSpy().andReturn('flash message');
 			req.params = { group: 'gru' };
 			handler.signUp(req, res);
+			var findCallback = groupMock.findOne.getCallback();
+			findCallback(null, { rawName: 'Gru'});
 
 			expect(req.flash).toHaveBeenCalledWith('error');
 			expect(res.render).toHaveBeenCalledWith('security/sign-up', {
-				group: 'gru',
+				group: 'Gru',
 				title: 'Sign up - ' + APP_TITLE,
 				showFlash: true,
 				info: 'flash message'
@@ -154,10 +156,12 @@ describe('Routes handler', function(){
 			req.flash = jasmine.createSpy().andReturn('');
 			req.params = { group: 'grup' };
 			handler.signUp(req, res);
+			var findCallback = groupMock.findOne.getCallback();
+			findCallback(null, { rawName: 'Grup'});
 
 			expect(req.flash).toHaveBeenCalledWith('error');
 			expect(res.render).toHaveBeenCalledWith('security/sign-up', {
-				group: 'grup',
+				group: 'Grup',
 				title: 'Sign up - ' + APP_TITLE,
 				showFlash: false,
 				info: ''

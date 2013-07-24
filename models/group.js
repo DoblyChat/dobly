@@ -2,7 +2,8 @@ var mongo = require('mongoose'),
 	User = require('./user');
 
 var schema = new mongo.Schema({
-	name: { type: String, required: true, lowercase: true }
+	name: { type: String, required: true, lowercase: true },
+	rawName: { type: String, required: true }
 });
 
 schema.pre('remove', function(next){

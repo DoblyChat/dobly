@@ -158,7 +158,7 @@ describe('Sockets', function(){
 		});
 
 		describe('#sendMessage', function(){
-			var confirm, data, callback;
+			var confirm, data, callback, notification;
 
 			beforeEach(function(){
 				confirm = jasmine.createSpy('confirm');
@@ -168,8 +168,9 @@ describe('Sockets', function(){
 					timestamp: new Date(),
 					conversationId: 'convo-id'
 				};
+				notification = jasmine.createSpyObj('notification', ['notifyOfflineUsers']);
 
-				conversationIo.sendMessage(socketMock, data, confirm);
+				conversationIo.sendMessage(socketMock, notification, data, confirm);
 			});
 
 			describe('process', function(){
@@ -238,7 +239,7 @@ describe('Sockets', function(){
 							it('saves for each user in group', function(){
 								var args = userMock.findExcept.mostRecentCall.args;
 
-								expect(args[0]).toBe('usr-id');
+								expect(args[0][0]).toBe('usr-id');
 								expect(args[1]).toBe('gru-id');					
 
 								var users = [ 

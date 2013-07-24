@@ -44,7 +44,7 @@ module.exports = (function(){
         });
     };
 
-    self.sendMessage = function(socket, data, confirm){
+    self.sendMessage = function(socket, notification, data, confirm){
         async.parallel([
             function(callback){
                 saveMessage(callback);
@@ -57,8 +57,10 @@ module.exports = (function(){
             if(err){
                 console.error('Error sending message', err);
             }else{
-                socket.broadcastToConversationMembers('receive_message', data.conversationId, results[0]);
-                confirm(results[0]);  
+                var message = results[0];
+                socket.broadcastToConversationMembers('receive_message', data.conversationId, message);
+                confirm(message);
+                notification.notifyOfflineUsers(message);
             }
         });
 
@@ -79,7 +81,7 @@ module.exports = (function(){
                     callback(err);
                 }else{
                     if(conversation.members.entireGroup){
-                        User.findExcept(socket.handshake.user._id, socket.handshake.user.groupId, function(err, users){
+                        User.findExcept([socket.handshake.user._id], socket.handshake.user.groupId, function(err, users){
                             async.each(
                                 users, 
                                 function (user, saveCallback){

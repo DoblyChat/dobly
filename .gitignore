@@ -7,3 +7,4 @@ play.js
 dump/
 _SpecRunner.html
 .grunt
+.env

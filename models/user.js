@@ -48,8 +48,8 @@ schema.methods.comparePassword = function(candidatePassword, callback) {
 	});
 };
 
-schema.statics.findExcept = function(exceptUserId, groupId, callback){
-	this.find({ _id: { $ne: exceptUserId }, groupId: groupId }, function(err, users){
+schema.statics.findExcept = function(exceptUserIds, groupId, callback){
+	this.find({ _id: { $nin: exceptUserIds }, groupId: groupId }, function(err, users){
         callback(err, users);
     });
 };

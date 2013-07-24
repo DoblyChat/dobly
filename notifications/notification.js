@@ -29,12 +29,12 @@ module.exports = (function() {
 			if (!conversation.members.entireGroup) {
 				offlineUsers = offlineUsers.filter(function(offlineUser) {
 					return conversation.members.users.some(function(conversationMemberUserId) {
-						return offlineUser._id === conversationMemberUserId
+						return offlineUser._id.toString() === conversationMemberUserId.toString();
 					});
 				});
 			}
 
-			Group.findById(senderUser.groupId, 'name', function(err, group) {
+			Group.findById(senderUser.groupId, 'rawName', function(err, group) {
 				notify(offlineUsers, group, conversation, message);
 			});
 		});
@@ -44,7 +44,7 @@ module.exports = (function() {
 		var fromName = senderUser.name,
 			fromEmail = "notification@dobly.com",
 			replyToEmail = "no-reply@dobly.com", 
-			subject = "[Dobly - " + group.name + "] " + conversation.topic, 
+			subject = "[Dobly - " + group.rawName + "] " + conversation.topic, 
 			text = message.content, 
 			tags = [ "offline-messages" ];
 
@@ -57,6 +57,6 @@ module.exports = (function() {
 
 		wrapper.send(fromName, fromEmail, to, replyToEmail, subject, text, tags);
 	}
-	
+
 	return self;
 })();

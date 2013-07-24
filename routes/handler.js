@@ -63,12 +63,14 @@ module.exports = (function (){
 	self.signUp = function(req, res) {
 		var flash = req.flash(flashKey);
 		var showFlash = flash.length > 0;
-		res.render('security/sign-up', { group: req.params.group, title: 'Sign up - ' + title, showFlash: showFlash, info: flash });
+		Group.findOne({ name: req.params.group }, 'rawName', function(err, groupObj) {
+			res.render('security/sign-up', { group: groupObj.rawName, title: 'Sign up - ' + title, showFlash: showFlash, info: flash });
+		});
 	}
 
 	self.createUser = function(req, res) {
 		if(req.body.password === req.body.password2) {
-			Group.findOne({ name: req.body.group }, function(err, group) {
+			Group.findOne({ name: req.body.group.toLowerCase() }, function(err, group) {
 				User.create(
 					{ name: req.body.name, email: req.body.email, groupId: group._id, password: req.body.password },
 					function(err){
@@ -236,7 +238,7 @@ module.exports = (function (){
 	};
 
 	self.createGroup = function(req, res){
-		Group.create({ name: req.body.name }, function(err){
+		Group.create({ name: req.body.name, rawName: req.body.name }, function(err){
 			if(err){
 				console.error('Error creating group', err);
 			}

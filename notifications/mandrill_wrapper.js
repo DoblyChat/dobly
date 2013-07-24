@@ -41,6 +41,7 @@ module.exports = (function() {
 		var send_at = null;
 		
 		mandrill_client.messages.send({"message": message, "async": async, "ip_pool": ip_pool, "send_at": send_at}, function(result) {
+		    console.log('Mandrill API called.');
 		    console.log(result);
 		}, function(e) {
 		    console.error('A mandrill error occurred: ' + e.name + ' - ' + e.message);

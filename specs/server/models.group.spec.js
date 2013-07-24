@@ -3,15 +3,16 @@ var Group = require('../../models/group'),
 
 describe('Group', function() {
 
-	describe('#name', function(){
+	describe('#required fields', function(){
 		afterEach(function(done){
 			Group.findOneAndRemove({ name: 'test' }, done);
 		});
 
-		it('is lower cased automatically', function(done){
-			Group.create({ name: 'TEST' }, function(err, group){
+		it('name is lower cased and rawName is not', function(done){
+			Group.create({ name: 'TEST', rawName: 'TEST' }, function(err, group){
 				expect(group.name).not.toBe('TEST');
 				expect(group.name).toBe('test');
+				expect(group.rawName).toBe('TEST');
 				done();
 			});
 		});
@@ -21,7 +22,7 @@ describe('Group', function() {
 		var group;
 
 		beforeEach(function(done){
-			Group.create({ name: 'test'}, function(err, newGroup){
+			Group.create({ name: 'test', rawName: 'Test'}, function(err, newGroup){
 				group = newGroup;
 				done();
 			});

@@ -73,6 +73,7 @@ module.exports = (function (){
 					{ name: req.body.name, email: req.body.email, groupId: group._id, password: req.body.password },
 					function(err){
 						if(err){
+							console.error('Error creating user: ' + err);
 							redirectToSignUp('Email is already in use.');
 						}else{
 							res.redirect('/login');	

@@ -4,6 +4,7 @@ module.exports = (function() {
 		onlineUsersIds = null,
 		Conversation = require('../models/conversation'),
 		User = require('../models/user'),
+		Group = require('../models/group'),
 		self = {};
 
 	self.init = function(socket, sockets) {
@@ -33,15 +34,17 @@ module.exports = (function() {
 				});
 			}
 
-			notify(offlineUsers, conversation, message);
+			Group.findById(senderUser.groupId, 'name', function(err, group) {
+				notify(offlineUsers, group, conversation, message);
+			});
 		});
 	}
 
-	function notify(offlineUsers, conversation, message) {
+	function notify(offlineUsers, group, conversation, message) {
 		var fromName = senderUser.name,
 			fromEmail = "notification@dobly.com",
 			replyToEmail = "no-reply@dobly.com", 
-			subject = conversation.topic, 
+			subject = "[Dobly - " + group.name + "] " + conversation.topic, 
 			text = message.content, 
 			tags = [ "offline-messages" ];
 
@@ -54,6 +57,6 @@ module.exports = (function() {
 
 		wrapper.send(fromName, fromEmail, to, replyToEmail, subject, text, tags);
 	}
-
+	
 	return self;
 })();

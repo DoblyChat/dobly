@@ -8,6 +8,7 @@ module.exports = function(grunt){
                 'models/*.js',
                 'migrations/*.js',
                 'routes/*.js',
+                'notifications/*.js',
                 'security/*.js',
                 'sockets/*.js',
                 'specs/server/*.js',

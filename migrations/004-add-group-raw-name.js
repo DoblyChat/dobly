@@ -4,7 +4,7 @@ exports.up = function(next){
         helper = require('./helper');
 
     helper.connect(function(){
-        helper.disconnect(next);
+        execute();
     });
 
     function execute() {

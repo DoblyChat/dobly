@@ -22,7 +22,7 @@
     "mongo-connect": "0.0.6",
     "mongoose-migrate": "~0.1.4",
     "validator": "~1.2.1",
-    "mandrill-api":">=1.0.27"
+    "mandrill-api": ">=1.0.27"
   },
   "devDependencies": {
     "jasmine-node": "1.5.X",
@@ -36,6 +36,7 @@
     "grunt-jasmine-node": "~0.1.0",
     "grunt-contrib-jasmine-node": "~0.1.1",
     "grunt-template-jasmine-requirejs": "~0.1.3",
-    "grunt-contrib-requirejs": "~0.4.1"
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-less": "~0.6.4"
   }
 }

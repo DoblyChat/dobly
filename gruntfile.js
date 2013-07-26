@@ -82,6 +82,19 @@ module.exports = function(grunt){
                     }
                 }
             }
+        },
+        less: {
+            production:{
+                options: {
+                    paths: [ 'public/stylesheets/client' ],
+                    yuicompress: true
+                },
+                files: {
+                    'public/stylesheets/index.css': 'public/stylesheets/index.less',
+                    'public/stylesheets/style.css': 'public/stylesheets/style.less',
+                }
+            }
+            
         }
     });
 
@@ -91,6 +104,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-jasmine-node');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive
@@ -99,4 +113,5 @@ module.exports = function(grunt){
     // task at least once
     grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
+    grunt.registerTask('build', ['requirejs', 'less']);
 };

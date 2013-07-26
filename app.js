@@ -52,12 +52,6 @@ app.configure('staging', prodConfig);
 app.configure('production', prodConfig);
 
 function prodConfig(){
-    app.use(less({ 
-        src: __dirname + '/public',
-        once: true,
-        compress: true
-    }));
-
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.errorHandler({ dumpExceptions: true }));
 

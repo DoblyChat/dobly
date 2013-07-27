@@ -44,7 +44,7 @@ module.exports = (function(){
         });
     };
 
-    self.sendMessage = function(socket, notification, data, confirm){
+    self.sendMessage = function(socket, offlineNotification, data, confirm){
         async.parallel([
             function(callback){
                 saveMessage(callback);
@@ -60,7 +60,7 @@ module.exports = (function(){
                 var message = results[0];
                 socket.broadcastToConversationMembers('receive_message', data.conversationId, message);
                 confirm(message);
-                notification.notifyOfflineUsers(message);
+                offlineNotification.notify(message);
             }
         });
 

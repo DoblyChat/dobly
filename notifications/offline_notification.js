@@ -14,7 +14,7 @@ module.exports = (function() {
 		});
 	};
 
-	self.notifyOfflineUsers = function(message) {
+	self.notify = function(message) {
 		Conversation.findById(message.conversationId, function(err, conversation) {
 			if(err) {
 				console.error('Error reading conversation to notify offline users', err);
@@ -35,12 +35,12 @@ module.exports = (function() {
 			}
 
 			Group.findById(senderUser.groupId, 'rawName', function(err, group) {
-				notify(offlineUsers, group, conversation, message);
+				sendEmail(offlineUsers, group, conversation, message);
 			});
 		});
 	}
 
-	function notify(offlineUsers, group, conversation, message) {
+	function sendEmail(offlineUsers, group, conversation, message) {
 		var fromName = senderUser.name,
 			fromEmail = "notification@dobly.com",
 			replyToEmail = "no-reply@dobly.com", 

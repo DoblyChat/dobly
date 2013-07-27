@@ -7,6 +7,7 @@ module.exports = (function (){
         UnreadMarker = require('../models/unread_marker'),
         passport = require('passport'),
         async = require('async'),
+        log = require('../common/log'),
         flashKey = 'error',
         title = 'Dobly',
         self = {};
@@ -74,8 +75,8 @@ module.exports = (function (){
                 User.create(
                     { name: req.body.name, email: req.body.email, groupId: group._id, password: req.body.password },
                     function(err){
-                        if(err){
-                            console.error('Error creating user: ' + err);
+                        if(err){                            
+                            log.error('Error creating user', err);
                             redirectToSignUp('Email is already in use.');
                         }else{
                             res.redirect('/login'); 
@@ -178,7 +179,7 @@ module.exports = (function (){
             }
             
             if(err){
-                console.error('Error rendering desktop', err);
+                log.error('Error rendering desktop', err);
             }else{
                 results.group.users = results.users;
 
@@ -190,7 +191,7 @@ module.exports = (function (){
                 if(results.desktop.isModified('conversations')){
                     results.desktop.save(function(err){
                         if(err){
-                            console.error('Error updating desktop when rendering', err);
+                            log.error('Error updating desktop when rendering', err);
                         }else{
                             render();   
                         }
@@ -213,7 +214,7 @@ module.exports = (function (){
         },
         function(err, results){
             if(err){
-                console.error('Error getting groups/users', err);
+                log.error('Error getting groups/users', err);
             }
 
             results.users.forEach(function(user){
@@ -240,7 +241,7 @@ module.exports = (function (){
     self.createGroup = function(req, res){
         Group.create({ name: req.body.name, rawName: req.body.name }, function(err){
             if(err){
-                console.error('Error creating group', err);
+                log.error('Error creating group', err);
             }
             res.redirect('admin/groups');
         });

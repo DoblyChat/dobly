@@ -2,7 +2,7 @@ describe('Routes handler', function(){
 	var handler, req, res, 
 		passportMock, groupMock, userMock, asyncMock,
 		conversationMock, desktopMock, unreadMock,
-		messageMock;
+		messageMock, logMock;
 
 	var APP_TITLE = 'Dobly';
 
@@ -31,6 +31,7 @@ describe('Routes handler', function(){
 		asyncMock = buildMock('async', 'parallel', 'each');
 		conversationMock = buildMock('../models/conversation', 'findAllowedConversations');
 		messageMock = buildMock('../models/message', 'readMessagesByPage', 'count');
+		logMock = buildMock('../common/log', 'error');
 
 		mockery.registerMock('passport', passportMock);
 
@@ -197,7 +198,9 @@ describe('Routes handler', function(){
 			findCallback(null, { _id: 'group'});
 
 			var createCallback = userMock.create.getCallback();
+
 			createCallback({});
+			expect(logMock.error).toHaveBeenCalled();
 			expect(req.flash).toHaveBeenCalledWith('error', 'Email is already in use.');
 			expect(res.redirect).toHaveBeenCalledWith('read Referrer');
 		});
@@ -383,15 +386,12 @@ describe('Routes handler', function(){
 			});
 
 			it('logs error if any error is provided', function(){
-				spyOn(console, 'error');
 				render('some error', {});
 
-				expect(console.error).toHaveBeenCalledWith('Error rendering desktop', 'some error');
+				expect(logMock.error).toHaveBeenCalledWith('Error rendering desktop', 'some error');
 			});
 
 			it('logs error if there is an error updating the desktop conversations', function(){
-				spyOn(console, 'error');
-
 				data.desktop.isModified.andReturn(true);
 				data.desktop.save = jasmine.createSpy();
 				render(null, data);
@@ -400,7 +400,7 @@ describe('Routes handler', function(){
 
 				var saveCallback = data.desktop.save.getCallback();
 				saveCallback('save error');
-				expect(console.error).toHaveBeenCalledWith('Error updating desktop when rendering', 'save error');
+				expect(logMock.error).toHaveBeenCalledWith('Error updating desktop when rendering', 'save error');
 			});
 
 			it('sets groups users', function(){
@@ -503,10 +503,9 @@ describe('Routes handler', function(){
 			});
 
 			it('logs errors', function(){
-				spyOn(console, 'error');
 				render('my error', data);
 
-				expect(console.error).toHaveBeenCalledWith('Error getting groups/users', 'my error');
+				expect(logMock.error).toHaveBeenCalledWith('Error getting groups/users', 'my error');
 			});
 
 			it('associates all users into respective groups', function(){
@@ -571,9 +570,8 @@ describe('Routes handler', function(){
 			});
 
 			it('logs error if there are errors creating a group', function(){
-				spyOn(console, 'error');
 				callback('my error');
-				expect(console.error).toHaveBeenCalledWith('Error creating group', 'my error');
+				expect(logMock.error).toHaveBeenCalledWith('Error creating group', 'my error');
 			});
 
 			it('redirects to groups', function(){

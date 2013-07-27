@@ -158,7 +158,7 @@ describe('Sockets', function(){
 		});
 
 		describe('#sendMessage', function(){
-			var confirm, data, callback, notification;
+			var confirm, data, callback, offlineNotification;
 
 			beforeEach(function(){
 				confirm = jasmine.createSpy('confirm');
@@ -168,9 +168,9 @@ describe('Sockets', function(){
 					timestamp: new Date(),
 					conversationId: 'convo-id'
 				};
-				notification = jasmine.createSpyObj('notification', ['notifyOfflineUsers']);
+				offlineNotification = jasmine.createSpyObj('offlineNotification', ['notify']);
 
-				conversationIo.sendMessage(socketMock, notification, data, confirm);
+				conversationIo.sendMessage(socketMock, offlineNotification, data, confirm);
 			});
 
 			describe('process', function(){

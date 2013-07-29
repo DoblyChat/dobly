@@ -1,0 +1,43 @@
+#header {
+	height: @header-height;
+	.centered;
+	.margin-bottom;
+	padding: 0 (@standard-margin*2) 0 (@standard-margin*2);
+
+	#logo {
+		float: left;
+		margin-top: 10px;
+	}
+
+	.top-links {
+		float: right;
+		.margin-top;
+		text-align: center;
+		line-height: 41px;
+
+		span, a {
+			cursor: pointer;
+			.caption-color;
+			text-decoration: none;
+			font-size: 15px;
+			margin-left: 5px;
+			margin-right: 5px;
+			font-weight: bold;
+			text-transform: capitalize;
+
+			&:hover {
+				.text-color;
+			}
+
+			&.active{
+				color: @blue;
+			}
+
+			&.active:hover{
+				color: #77ceee;
+			}
+		}
+
+		
+	}
+}

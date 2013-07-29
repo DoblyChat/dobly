@@ -1,0 +1,178 @@
+doctype
+html
+	head
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
+		link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/nanoscroller.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/chosen.css")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
+		title= title
+	body
+		#header
+			#logo
+				img(src="/images/logo.png", alt="Dobly")
+			.top-links.hidden
+				a(data-bind="click: navigation.desktop, css: { active: navigation.showingDesktop }") Conversations
+				span |
+				a(data-bind="click: navigation.all, css: { active: navigation.showingAll }") All Conversations
+				span |
+				a(data-bind="click: navigation.group, css: { active: navigation.showingGroup }") Group
+				span |
+				a(href="/logout") Logout
+
+		#main-timer
+			img(src="/images/spinner.gif", alt="loading...")
+
+		#content.hidden
+			#content-timer(data-bind="visible: desktop.loading")
+				img(src="/images/spinner.gif", alt="loading...")
+				
+			#strip-convos
+				#strip(data-bind="with: desktop, visible: navigation.showingDesktop")					
+					.nano#convo-tiles
+						.content(data-bind="foreach: conversations")
+							.tile(data-bind="css: { highlight: active }, click: $parent.activate")
+								.highlight-placeholder
+									.tile-text(data-bind="text:topic")
+									.tile-icons
+										.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
+										.icon-dismiss(data-bind="click: $parent.remove")
+										.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
+					#new-message-bar(data-bind="css: { active: $root.hasUnread }")
+					#new-convo-tile(data-bind="click: $parent.addNewConversation")				
+						.icon-plus
+						#new-convo-text New Conversation
+				#convos(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
+					.convo(data-bind="visible: active, css : { 'convo-left': isLeft, 'convo-right': isRight } ")
+						.convo-header(data-bind="click: markAsRead")
+							.topic
+								span(data-bind="text: topic")
+								span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
+							.actions
+								span.icon-info(data-bind="click: ui.toggleInfo")
+								span.icon-search(data-bind="click: search.show")
+							.search.hidden
+								.textbox
+									input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input', event: { keypress: search.nextOnEnter }")
+									img(src="/images/spinner.gif", alt="searching...", data-bind="visible: search.searching")
+								.buttons
+									button.next(type="button", data-bind="click: search.next") Find Next
+									button.prev(type="button", data-bind="click: search.prev") Find Prev
+									button.done(type="button", data-bind="click: search.done") Done
+								.exhausted(data-bind="visible: search.exhausted")
+									span Your search reached the end of the conversation.
+							.info.hidden
+								div
+									span.label by:
+									span.value(data-bind="text: createdBy")
+								div
+									span.label on:
+									span.value(data-bind="text: timestamp")
+
+								div
+									span.label with:
+									span(data-bind="visible: forEntireGroup") entire group
+									span(data-bind="visible: !forEntireGroup, text: users")
+
+						.nano.convo-body(data-bind="click: markAsRead")
+							.content(data-bind="event: { scroll: scrolled }")
+								.load-more(data-bind="visible: loadingMore")
+									img(src="/images/spinner.gif", alt="loading...")
+								.messages(data-bind="foreach: messages")
+									.message(data-bind="attr: { id: id }")
+										.author(data-bind="text: createdBy")
+										.time
+											span(data-bind="text: timestamp, visible: confirmedSent")
+											img.pending-timer(src="/images/spinner.gif", alt="waiting for confirmation...", data-bind="visible: !confirmedSent()")
+										.text(data-bind="html: content")
+						.convo-footer(data-bind="click: markAsRead")
+							textarea(tabindex="2", placeholder="Write a new message", rows="2", maxlength=2000, data-bind="value: newMessage, valueUpdate: 'input', event: { keypress: sendMessage }, hasfocus: hasFocus")
+			#all-convos
+				.search(data-bind="visible: navigation.showingAll")
+					input.field(type="text", name="topic-search", placeholder="Search topics", data-bind="value: app.topicSearch, valueUpdate: 'input'")
+					.divide
+				.content(data-bind="visible: navigation.showingAll, foreach: allConversations.sortedConversations")
+					.convo(data-bind="visible: search.topicMatched")
+						.header
+							.icons
+								span.icon-expand(data-bind="click: $root.allConversations.toggleMessages")
+								span.icon-collapse.hidden(data-bind="click: $root.allConversations.toggleMessages")
+							.info
+								.topic
+									span(data-bind="text: topic, click: $root.allConversations.open")
+								.created-by
+									span(data-bind="text: createdBy")
+									span |
+									span(data-bind="text: timestamp")
+							.counter-container
+								.counter(data-bind="visible: unreadCounter() > 0, text: unreadCounter")
+
+						.messages.hidden(data-bind="foreach: lastMessages")
+							.message
+								.author(data-bind="text: createdBy")
+								.time(data-bind="text: simpleTimestamp")
+								.text(data-bind="html: content")
+						.no-messages.hidden
+							.message There aren't any messages in this conversation.				
+					
+
+			#new-convo(data-bind="with: newConversation, visible: navigation.showingNewConvo")
+				p 
+					span Who would you like to have this conversation with?
+				div
+					select#members-select(multiple="true", data-bind="options: options, optionsText: 'text', optionsValue: 'value', selectedOptions: selectedOptions")
+				p
+					span Write a topic or question	
+				div
+					textarea(maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
+
+				.buttons				
+					button.button-left(type="button", data-bind="click: cancel") Cancel
+					button.button-right(type="button", data-bind="click: createOnClick") Create
+
+			#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
+				p 
+					span Set a new topic for this conversation
+				div
+					textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'input', event: { keypress: updateOnEnter }")
+				.buttons				
+					button.button-left(type="button", data-bind="click: cancel") Cancel
+					button.button-right(type="button", data-bind="click: updateOnClick") Save
+
+			#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
+				p 
+					span For a better experience, please allow 
+					span= title
+					span  to request permissions to show rich notifications
+
+				.buttons
+					button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
+					button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
+
+			#group-info(data-bind="with: group, visible: navigation.showingGroup")
+				.header
+					h2(data-bind="text: name")
+
+				table.users(data-bind="foreach: users")
+					tr
+						td.name(data-bind="text: name")
+						td.status
+							span.online(data-bind="visible: online") online
+							span.offline(data-bind="visible: !online()") offline
+					
+
+audio#notification-sound
+	source(src="audio/bell.mp3", type="audio/mpeg")
+	source(src="audio/bell.ogg", type="audio/ogg")
+
+input#conversations(type="hidden", value=conversations)
+input#desktop(type="hidden", value=desktop)
+input#currentUser(type="hidden", value=currentUser)
+input#group(type="hidden", value=group)
+
+if production_mode
+	script
+		window.app = { PRODUCTION_MODE: true }
+
+script(data-main="/scripts/client/require.config", src="/scripts/lib/require.js")

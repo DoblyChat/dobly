@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+migrations/.migrate
+play.js
+dump/
+_SpecRunner.html
+.grunt
+.env

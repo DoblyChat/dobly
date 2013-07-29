@@ -1,0 +1,25 @@
+@strip-width: @tile-width;
+@dual-convo-width: @convo-width + @standard-margin + @convo-width;
+@strip-dual-convo-width: @strip-width + @standard-margin + @dual-convo-width;
+
+#strip-convos {
+	width: @strip-dual-convo-width;
+	.centered;
+	display: table;
+}
+
+#strip {
+	width: 	@strip-width;
+	float: left;
+	.margin-bottom;
+	background: lighten(@light-gray,5%);
+	.box-shadow;
+	.text-color;
+}
+
+#convos {
+	width: @dual-convo-width;
+	float: right;
+	.margin-bottom;
+}
+

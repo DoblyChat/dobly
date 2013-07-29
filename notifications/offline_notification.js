@@ -1,15 +1,16 @@
 module.exports = (function() {
 	var wrapper = require('./mandrill_wrapper'),
-		senderUser = null,
-		onlineUsersIds = null,
 		Conversation = require('../models/conversation'),
 		User = require('../models/user'),
 		Group = require('../models/group'),
 		self = {};
 
+	self.senderUser = null;
+	self.onlineUsersIds = null;
+
 	self.init = function(socket, sockets) {
-		senderUser = socket.handshake.user;
-		onlineUsersIds = sockets.groupClients(senderUser.groupId).map(function(client) {
+		self.senderUser = socket.handshake.user;
+		self.onlineUsersIds = sockets.groupClients(self.senderUser.groupId).map(function(client) {
 			return client.handshake.user._id;
 		});
 	};
@@ -25,7 +26,7 @@ module.exports = (function() {
 	};
 
 	function getOfflineUsersAndNotify(conversation, message) {
-		User.findExcept(onlineUsersIds, senderUser.groupId, function(err, offlineUsers) {
+		User.findExcept(self.onlineUsersIds, self.senderUser.groupId, function(err, offlineUsers) {
 			if (!conversation.members.entireGroup) {
 				offlineUsers = offlineUsers.filter(function(offlineUser) {
 					return conversation.members.users.some(function(conversationMemberUserId) {
@@ -34,14 +35,14 @@ module.exports = (function() {
 				});
 			}
 
-			Group.findById(senderUser.groupId, 'rawName', function(err, group) {
+			Group.findById(self.senderUser.groupId, 'rawName', function(err, group) {
 				sendEmail(offlineUsers, group, conversation, message);
 			});
 		});
 	}
 
 	function sendEmail(offlineUsers, group, conversation, message) {
-		var fromName = senderUser.name,
+		var fromName = self.senderUser.name,
 			fromEmail = "notification@dobly.com",
 			replyToEmail = "no-reply@dobly.com", 
 			subject = "[Dobly - " + group.rawName + "] " + conversation.topic, 

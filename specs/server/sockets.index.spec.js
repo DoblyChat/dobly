@@ -54,7 +54,7 @@ describe('Socket', function(){
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
-			notificationMock = buildMock('../notifications/notification', 'init', 'notifyOfflineUsers');
+			notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
 
 			config = require('../../sockets').config;
 		});

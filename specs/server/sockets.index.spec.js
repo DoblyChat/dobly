@@ -45,8 +45,8 @@ describe('Socket', function(){
 			})();
 
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../../sockets');
-			mockery.registerAllowable('../../notifications');
+			mockery.registerAllowable('../../lib/sockets');
+			mockery.registerAllowable('../../lib/notifications');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations', 'unsubscribeToConversation');
@@ -56,7 +56,7 @@ describe('Socket', function(){
 			sessionStoreMock = {};
 			notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
 
-			config = require('../../sockets').config;
+			config = require('../../lib/sockets').config;
 		});
 
 		afterEach(function(){

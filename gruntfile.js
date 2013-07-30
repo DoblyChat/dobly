@@ -118,7 +118,9 @@ module.exports = function(grunt){
         git_deploy: {
             task: {
                 options: {
-                    url: 'git@heroku.com:dobly-staging.git'
+                    url: 'git@heroku.com:dobly-staging.git',
+                    branch: 'master',
+                    message: 'deploymnet'
                 },
 
                 src: '.'

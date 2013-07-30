@@ -7,7 +7,7 @@ describe("Notifications", function() {
 
 		beforeEach(function() {
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../../notifications/offline_notification');
+			mockery.registerAllowable('../../lib/notifications/offline_notification');
 
 			mandrillWrapperMock = buildMock('./mandrill_wrapper','send');
 			conversationMock = buildMock('../models/conversation','findById');
@@ -15,7 +15,7 @@ describe("Notifications", function() {
 			groupMock = buildMock('../models/group','findById');
 			logMock = buildMock('../common/log','error');
 
-			offlineNotification = require('../../notifications/offline_notification');
+			offlineNotification = require('../../lib/notifications/offline_notification');
 
 			setupData();
 		});

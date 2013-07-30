@@ -4,7 +4,7 @@ describe("Common", function() {
             spyOn(console, 'error');
             spyOn(console, 'trace');
 
-            var log = require('../../common/log');
+            var log = require('../../lib/common/log');
 
             var err = {};
             log.error('Some Error', err);

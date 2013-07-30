@@ -1,0 +1,8 @@
+#change-topic.text-input-dialog(data-bind="with: changeTopic, visible: navigation.changingTopic")
+	p 
+		span Set a new topic for this conversation
+	div
+		textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'input', event: { keypress: updateOnEnter }")
+	.buttons				
+		button.button-left(type="button", data-bind="click: cancel") Cancel
+		button.button-right(type="button", data-bind="click: updateOnClick") Save

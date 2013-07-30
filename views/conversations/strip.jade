@@ -1,0 +1,14 @@
+#strip(data-bind="with: desktop, visible: navigation.showingDesktop")					
+	.nano#convo-tiles
+		.content(data-bind="foreach: conversations")
+			.tile(data-bind="css: { highlight: active }, click: $parent.activate")
+				.highlight-placeholder
+					.tile-text(data-bind="text:topic")
+					.tile-icons
+						.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
+						.icon-dismiss(data-bind="click: $parent.remove")
+						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
+	#new-message-bar(data-bind="css: { active: $root.hasUnread }")
+	#new-convo-tile(data-bind="click: $parent.addNewConversation")				
+		.icon-plus
+		#new-convo-text New Conversation

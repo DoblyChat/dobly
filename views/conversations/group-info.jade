@@ -1,0 +1,10 @@
+#group-info(data-bind="with: group, visible: navigation.showingGroup")
+	.header
+		h2(data-bind="text: name")
+
+	table.users(data-bind="foreach: users")
+		tr
+			td.name(data-bind="text: name")
+			td.status
+				span.online(data-bind="visible: online") online
+				span.offline(data-bind="visible: !online()") offline

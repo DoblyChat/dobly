@@ -119,10 +119,18 @@ module.exports = function(grunt){
                 options: {
                     url: 'git@heroku.com:dobly-staging.git',
                     branch: 'master',
-                    message: 'deploymnet'
+                    message: 'deployment'
                 },
 
                 src: '.'
+            }
+        },
+        'heroku-deploy' : {
+            production : {
+                deployBranch : 'prod'
+            },
+            staging : {
+                deployBranch : 'staging'
             }
         }
     });
@@ -135,7 +143,6 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-git');
-    grunt.loadNpmTasks('grunt-git-deploy');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive
@@ -144,5 +151,5 @@ module.exports = function(grunt){
     // task at least once
     grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
-    grunt.registerTask('deploy', ['gitcheckout', 'requirejs', 'less', 'gitcommit', 'git_deploy']);
+    grunt.registerTask('deploy', ['gitcheckout', 'requirejs', 'less', 'gitcommit']);
 };

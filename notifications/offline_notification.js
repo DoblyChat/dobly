@@ -3,6 +3,7 @@ module.exports = (function() {
 		Conversation = require('../models/conversation'),
 		User = require('../models/user'),
 		Group = require('../models/group'),
+		log = require('../common/log'),
 		self = {};
 
 	self.senderUser = null;
@@ -17,16 +18,15 @@ module.exports = (function() {
 
 	self.notify = function(message) {
 		Conversation.findById(message.conversationId, function(err, conversation) {
-			if(err) {
-				console.error('Error reading conversation to notify offline users', err);
-			} else {
-				getOfflineUsersAndNotify(conversation, message);
-			}
+			if (err) return handleError(err);
+			getOfflineUsersAndNotify(conversation, message);
 		});
 	};
 
 	function getOfflineUsersAndNotify(conversation, message) {
 		User.findExcept(self.onlineUsersIds, self.senderUser.groupId, function(err, offlineUsers) {
+			if (err) return handleError(err);
+
 			if (!conversation.members.entireGroup) {
 				offlineUsers = offlineUsers.filter(function(offlineUser) {
 					return conversation.members.users.some(function(conversationMemberUserId) {
@@ -36,6 +36,7 @@ module.exports = (function() {
 			}
 
 			Group.findById(self.senderUser.groupId, 'rawName', function(err, group) {
+				if (err) return handleError(err);
 				sendEmail(offlineUsers, group, conversation, message);
 			});
 		});
@@ -57,6 +58,10 @@ module.exports = (function() {
 		});
 
 		wrapper.send(fromName, fromEmail, to, replyToEmail, subject, text, tags);
+	}
+
+	function handleError(err) {
+		log.error('', err);
 	}
 
 	return self;

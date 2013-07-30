@@ -52,7 +52,7 @@ describe('Sockets', function(){
 			sockets.groupClients = jasmine.createSpy().andReturn(clients);
 
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../../sockets/conversation_io');
+			mockery.registerAllowable('../../lib/sockets/conversation_io');
 
 			conversationMock = buildMock('../models/conversation', 'create', 'updateTopic', 'findById');
 			asyncMock = buildMock('async', 'parallel', 'each');
@@ -60,7 +60,7 @@ describe('Sockets', function(){
 			userMock = buildMock('../models/user', 'find', 'findExcept');
 			messageMock = buildMock('../models/message', 'create', 'readMessagesByPage');
 
-			conversationIo = require('../../sockets/conversation_io');
+			conversationIo = require('../../lib/sockets/conversation_io');
 		});
 
 		afterEach(function(){

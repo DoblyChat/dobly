@@ -1,8 +1,8 @@
-var Conversation = require('../models/conversation')
-  , Message = require('../models/message')
-  , User = require('../models/user')
-  , Group = require('../models/group')
-  , Desktop = require('../models/desktop')
+var Conversation = require('../lib/models/conversation')
+  , Message = require('../lib/models/message')
+  , User = require('../lib/models/user')
+  , Group = require('../lib/models/group')
+  , Desktop = require('../lib/models/desktop')
   , mongo = require('mongoose')
   , async = require('async');
 

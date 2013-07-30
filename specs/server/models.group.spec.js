@@ -1,5 +1,5 @@
-var Group = require('../../models/group'),
-	User = require('../../models/user');
+var Group = require('../../lib/models/group'),
+	User = require('../../lib/models/user');
 
 describe('Group', function() {
 

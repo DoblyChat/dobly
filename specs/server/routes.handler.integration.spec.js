@@ -1,10 +1,10 @@
 describe('Routes handler - integration', function(){
-	var User = require('../../models/user'),
-		Group = require('../../models/group'),
-		Conversation = require('../../models/conversation'),
-		Desktop = require('../../models/desktop'),
-		Message = require('../../models/message'),
-		UnreadMarker = require('../../models/unread_marker'),
+	var User = require('../../lib/models/user'),
+		Group = require('../../lib/models/group'),
+		Conversation = require('../../lib/models/conversation'),
+		Desktop = require('../../lib/models/desktop'),
+		Message = require('../../lib/models/message'),
+		UnreadMarker = require('../../lib/models/unread_marker'),
 		async = require('async');
 
 	var handler, req, res, group;
@@ -13,7 +13,7 @@ describe('Routes handler - integration', function(){
 		TEST_EMAIL = 'routes.int@test.com';
 
 	beforeEach(function(done){
-		handler = require('../../routes/handler');
+		handler = require('../../lib/routes/handler');
 
 		res = {
 			redirect: jasmine.createSpy('redirect'),

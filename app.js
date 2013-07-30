@@ -1,13 +1,13 @@
 var express = require('express')
-  , routes = require('./routes')
-  , sockets = require('./sockets')
+  , routes = require('./lib/routes')
+  , sockets = require('./lib/sockets')
   , MongoStore = require('connect-mongo')(express)
   , app = express.createServer()
   , io = require('socket.io').listen(app)
   , mongo = require('mongoose')
   , path = require('path')
   , passport = require('passport')
-  , security = require('./security')
+  , security = require('./lib/security')
   , less = require('less-middleware');
 
 

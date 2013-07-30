@@ -1,6 +1,6 @@
 describe('Unread Marker', function() {
 	
-	var UnreadMarker = require('../../models/unread_marker');
+	var UnreadMarker = require('../../lib/models/unread_marker');
 
 	describe("#increaseCounter", function(){
 		var userId, conversationId;

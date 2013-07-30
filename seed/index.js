@@ -1,5 +1,5 @@
-var User = require('../models/user')
-  , Group = require('../models/group')
+var User = require('../lib/models/user')
+  , Group = require('../lib/models/group')
   , mongo = require('mongoose');
 
 var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';

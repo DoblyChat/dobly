@@ -5,9 +5,9 @@ describe('Sockets', function(){
 
 		beforeEach(function(){
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../../sockets/desktop_io');
+			mockery.registerAllowable('../../lib/sockets/desktop_io');
 			modelMock = buildMock('../models/desktop', 'findById', 'addConversation', 'removeConversation');
-			desktopIo = require('../../sockets/desktop_io');
+			desktopIo = require('../../lib/sockets/desktop_io');
 
 			desktopMock = { 
 				moveConversation: jasmine.createSpy(),

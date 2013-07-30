@@ -5,11 +5,11 @@ describe('Sockets', function(){
             Unread, User;
 
         beforeEach(function(){
-            conversationIo = require('../../sockets/conversation_io');
-            Conversation = require('../../models/conversation');
-            Message = require('../../models/message');
-            Unread = require('../../models/unread_marker');
-            User = require('../../models/user');
+            conversationIo = require('../../lib/sockets/conversation_io');
+            Conversation = require('../../lib/models/conversation');
+            Message = require('../../lib/models/message');
+            Unread = require('../../lib/models/unread_marker');
+            User = require('../../lib/models/user');
 
             socketMock = {
                 emit: jasmine.createSpy(),

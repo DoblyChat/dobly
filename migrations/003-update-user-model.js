@@ -1,5 +1,5 @@
 exports.up = function(next){
-	var User = require('../models/user'),
+	var User = require('../lib/models/user'),
 		async = require('async'),
 		helper = require('./helper');
 

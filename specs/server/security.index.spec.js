@@ -10,7 +10,7 @@ describe('Security', function(){
 			};
 
 			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../../security/');
+			mockery.registerAllowable('../../lib/security/');
 
 			userMock = buildMock('../models/user', 'findOne', 'findById');
 			strategy = {};
@@ -22,7 +22,7 @@ describe('Security', function(){
 				}
 			});
 
-			var security = require('../../security/');
+			var security = require('../../lib/security/');
 			security.config(passport);
 		});
 

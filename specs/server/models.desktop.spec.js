@@ -1,5 +1,5 @@
 describe('Desktop', function(){
-	var Desktop = require('../../models/desktop');
+	var Desktop = require('../../lib/models/desktop');
 
 	var desktop;
 

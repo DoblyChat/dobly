@@ -3,8 +3,8 @@ describe('Sockets', function(){
 		var desktopIo, Desktop, desktopId, socketMock;
 
 		beforeEach(function(done){
-			desktopIo = require('../../sockets/desktop_io');
-			Desktop = require('../../models/desktop');
+			desktopIo = require('../../lib/sockets/desktop_io');
+			Desktop = require('../../lib/models/desktop');
 
 			socketMock = {
 				joinConversationRoom: jasmine.createSpy(),

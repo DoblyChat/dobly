@@ -5,12 +5,7 @@ module.exports = function(grunt){
             files: [
                 'gruntfile.js', 
                 'public/scripts/client/*.js', 
-                'models/*.js',
-                'migrations/*.js',
-                'routes/*.js',
-                'notifications/*.js',
-                'security/*.js',
-                'sockets/*.js',
+                'lib/**/*.js',
                 'specs/server/*.js',
                 'specs/client/spec/*.js'],
             options: {

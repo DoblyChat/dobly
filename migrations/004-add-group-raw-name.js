@@ -1,5 +1,5 @@
 exports.up = function(next){
-    var Group = require('../models/group'),
+    var Group = require('../lib/models/group'),
         async = require('async'),
         helper = require('./helper');
 

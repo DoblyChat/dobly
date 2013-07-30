@@ -1,5 +1,5 @@
 describe('Message', function() {
-	var Message = require('../../models/message');
+	var Message = require('../../lib/models/message');
 	var messageData;
 
 	beforeEach(function() {

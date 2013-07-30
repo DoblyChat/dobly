@@ -1,6 +1,6 @@
 describe('Conversation', function(){
-	var Conversation = require('../../models/conversation'),
-		Message = require('../../models/message');
+	var Conversation = require('../../lib/models/conversation'),
+		Message = require('../../lib/models/message');
 
 	describe('#required fields', function() {
 		var conversationData;

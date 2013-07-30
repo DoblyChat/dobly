@@ -1,6 +1,6 @@
 exports.up = function(next){
-    var Conversation = require('../models/conversation'),
-        Message = require('../models/message'),
+    var Conversation = require('../lib/models/conversation'),
+        Message = require('../lib/models/message'),
         async = require('async'),
         helper = require('./helper');
 

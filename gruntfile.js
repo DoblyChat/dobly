@@ -94,7 +94,36 @@ module.exports = function(grunt){
                     'public/stylesheets/style.css': 'public/stylesheets/style.less',
                 }
             }
-            
+        },
+        gitcommit: {
+            task: {
+                options: {
+                    message: 'Commit of built files'
+                },
+                files: [
+                    { src: 'public/scripts/release/main.js' },
+                    { src: 'public/stylesheets/index.css' },
+                    { src: 'public/stylesheets/style.css' }
+                ]
+            }
+        },
+        gitcheckout: {
+            task: {
+                options: {
+                    branch: 'master'
+                }
+            }
+        },
+        git_deploy: {
+            task: {
+                options: {
+                    url: 'git@heroku.com:dobly-staging.git',
+                    branch: 'master',
+                    message: 'deploymnet'
+                },
+
+                src: '.'
+            }
         }
     });
 
@@ -105,6 +134,8 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-git');
+    grunt.loadNpmTasks('grunt-git-deploy');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive
@@ -113,5 +144,5 @@ module.exports = function(grunt){
     // task at least once
     grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
-    grunt.registerTask('build', ['requirejs', 'less']);
+    grunt.registerTask('deploy', ['gitcheckout', 'requirejs', 'less', 'gitcommit', 'git_deploy']);
 };

@@ -60,6 +60,16 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(conversation.unreadCounter()).toBe(0);
             });
 
+            it("undefined totalMessages", function() {
+                conversation = createConversation(testData, group);
+                expect(conversation.allMessagesLoaded()).toBe(false);
+
+                testData.totalMessages = undefined;
+                conversation = createConversation(testData, group);
+
+                expect(conversation.allMessagesLoaded()).toBe(true);
+            });
+
             it("pushes messages", function() {
                 conversation = createConversation(testData, group);
 

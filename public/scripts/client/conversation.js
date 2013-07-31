@@ -150,11 +150,12 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
         self.loadingMore = ko.observable(false);
 
-        self.allMessagesLoaded = function() {
-            return data.totalMessages <= self.messages().length;
-        };
-
         var nextPage = 1;
+        var totalMessages = data.totalMessages || 0;
+
+        self.allMessagesLoaded = function() {
+            return totalMessages <= self.messages().length;
+        };
 
         self.scrolled = function(conversation, event){
             if (!self.loadingMore() && event.target.scrollTop - 40 < 0 && !self.allMessagesLoaded()) {

@@ -3,7 +3,9 @@ exports.up = function(next){
 		async = require('async'),
 		helper = require('./helper');
 
-	helper.connect(execute);
+	helper.connect(function(){
+		helper.disconnect(next);
+	});
 
 	function execute(){
 		User.find({}, function(err, users){

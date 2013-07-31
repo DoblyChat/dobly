@@ -23,7 +23,7 @@ global.jasmine.Spy.prototype.getCallback = function(){
 global.jasmine.Spy.prototype.callback = function(error, results) {
 	var myCallback = this.getCallback();
 	myCallback(error, results);
-}
+};
 
 global.buildMock = function(path){
 	var mock = {};

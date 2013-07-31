@@ -235,6 +235,7 @@ describe('Socket', function(){
 				it('sends message', function(){
 					fire('send_message');
 					expectSessionTouchCalled();
+					expect(notificationMock.init).toHaveBeenCalledWith(socketMock, ioMock.sockets);
 					expect(conversationIoMock.sendMessage).toHaveBeenCalledWith(socketMock, notificationMock, data, confirm);
 				});
 

@@ -3,8 +3,17 @@ html
 	head
 		meta(name="viewport", content="width=device-width, initial-scale=1.0")
 		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/index/bootstrap.css")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/index.css")
+
+		if production_mode
+			link(rel="stylesheet", type="text/css", href="/stylesheets/release/compiled.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/release/style.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/release/index.css")
+		else
+			link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/index.css")
+		
 		title= title
 	body
 		.navbar.navbar-inverse.navbar-fixed-top

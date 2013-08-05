@@ -106,7 +106,7 @@ module.exports = function(grunt){
             css: {
                 files: [
                     { expand: true, flatten:true, src: ['public/stylesheets/lib/*.png'], dest: 'public/stylesheets/release/', filter: 'isFile' },
-                    { expand: true, flatten: true, src: ['public/stylesheets/lib/webfonts'], dest: 'public/stylesheets/release/webfonts'}, // includes files in path and its subdirs
+                    { expand: true, cwd:'public/stylesheets/lib/webfonts/', src: ['**'], dest: 'public/stylesheets/release/webfonts/' }, 
                 ]
             }
         },

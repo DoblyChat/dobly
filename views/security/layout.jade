@@ -1,9 +1,13 @@
 doctype
 html
 	head
-		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
-		link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
+		if production_mode
+			link(rel="stylesheet", type="text/css", href="/stylesheets/release/compiled.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/release/style.css")
+		else
+			link(rel="stylesheet", type="text/css", href="/stylesheets/lib/normalize.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
+			link(rel="stylesheet", type="text/css", href="/stylesheets/style.css")
 		title= title
 	body!=body
 

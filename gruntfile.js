@@ -102,6 +102,15 @@ module.exports = function(grunt){
                 }
             }
         },
+        copy: {
+            css: {
+                files: [
+                    { expand: true, flatten:true, src: ['public/stylesheets/lib/*.png'], dest: 'public/stylesheets/release/', filter: 'isFile' },
+                    { expand: true, flatten: true, src: ['public/stylesheets/lib/webfonts'], dest: 'public/stylesheets/release/webfonts'}, // includes files in path and its subdirs
+                ]
+            }
+        },
+        clean: ["public/stylesheets/release/**", "public/scripts/release/**"],
         gitcommit: {
             task: {
                 options: {
@@ -109,9 +118,7 @@ module.exports = function(grunt){
                 },
                 files: [
                     { src: 'public/scripts/release/main.js' },
-                    { src: 'public/stylesheets/release/index.css' },
-                    { src: 'public/stylesheets/release/style.css' },
-                    { src: 'public/stylesheets/release/compiled.css' }
+                    { src: 'public/stylesheets/release/**' }
                 ]
             }
         },
@@ -132,6 +139,8 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-git');
 
     // To run tests through the browser:
@@ -141,5 +150,5 @@ module.exports = function(grunt){
     // task at least once
     grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
-    grunt.registerTask('deploy', ['gitcheckout', 'requirejs', 'less', 'cssmin', 'gitcommit']);
+    grunt.registerTask('deploy', ['gitcheckout', 'clean', 'requirejs', 'less', 'cssmin', 'copy:css', 'gitcommit']);
 };

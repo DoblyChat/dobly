@@ -64,21 +64,37 @@ describe('Socket', function(){
 			mockery.deregisterAll();
 		});
 
-		it('configures production settings', function(){
-			config(ioMock, sessionStoreMock);
-			expect(ioMock.configure).toHaveBeenCalled();
-			expect(ioMock.configure.mostRecentCall.args[0]).toBe('production');
+		describe('configuration', function(){
+			it('configures production settings', function(){
+				config(ioMock, sessionStoreMock);
+				expect(ioMock.configure).toHaveBeenCalled();
+				expect(ioMock.configure.calls[0].args[0]).toBe('production');
 
-			var callback = ioMock.configure.getCallback();
-			callback();
+				verify();
+			});
 
-			expect(ioMock.set).toHaveBeenCalledWith('transports', ['xhr-polling']);
-			expect(ioMock.set).toHaveBeenCalledWith('polling duration', 10);
-			expect(ioMock.enable).toHaveBeenCalledWith('browser client minification');
-			expect(ioMock.enable).toHaveBeenCalledWith('browser client etag');
-			expect(ioMock.enable).toHaveBeenCalledWith('browser client gzip');
-			expect(ioMock.set).toHaveBeenCalledWith('log level', 1);
+			it('configures staging settings', function(){
+				config(ioMock, sessionStoreMock);
+				expect(ioMock.configure).toHaveBeenCalled();
+				expect(ioMock.configure.calls[1].args[0]).toBe('staging');
+
+				verify();
+			});
+
+			function verify(){
+				var callback = ioMock.configure.getCallback();
+				callback();
+
+				expect(ioMock.set).toHaveBeenCalledWith('transports', ['xhr-polling']);
+				expect(ioMock.set).toHaveBeenCalledWith('polling duration', 10);
+				expect(ioMock.enable).toHaveBeenCalledWith('browser client minification');
+				expect(ioMock.enable).toHaveBeenCalledWith('browser client etag');
+				expect(ioMock.enable).toHaveBeenCalledWith('browser client gzip');
+				expect(ioMock.set).toHaveBeenCalledWith('log level', 1);
+			}
 		});
+
+
 
 		it('binds authorization', function(){
 			config(ioMock, sessionStoreMock);

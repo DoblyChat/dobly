@@ -148,7 +148,8 @@ module.exports = function(grunt){
     // 2-point to localhost:8000/_SpecRunner.html
     // 3-if _SpecRunner.html does not exist, run the 'tests-client'
     // task at least once
-    grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
+    grunt.registerTask('tests-client', ['connect', 'jasmine']);
+    grunt.registerTask('tests', ['tests-client', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
     grunt.registerTask('deploy', ['gitcheckout', 'clean', 'requirejs', 'less', 'cssmin', 'copy:css', 'gitcommit']);
 };

@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "engines": {
-    "node": "0.8.x",
-    "npm": "1.1.x"
+    "node": "0.10.x",
+    "npm": "1.3.x"
   },
   "dependencies": {
     "express": "2.5.X",
@@ -40,6 +40,7 @@
     "grunt-contrib-less": "~0.6.4",
     "grunt-git-deploy": "~0.1.0",
     "grunt-heroku-deploy": "~0.1.1",
-    "grunt-git": "~0.1.1"
+    "grunt-git": "~0.1.1",
+    "grunt-contrib-cssmin": "~0.6.1"
   }
 }

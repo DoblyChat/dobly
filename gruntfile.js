@@ -85,8 +85,20 @@ module.exports = function(grunt){
                     yuicompress: true
                 },
                 files: {
-                    'public/stylesheets/index.css': 'public/stylesheets/index.less',
-                    'public/stylesheets/style.css': 'public/stylesheets/style.less',
+                    'public/stylesheets/release/index.css': 'public/stylesheets/index.less',
+                    'public/stylesheets/release/style.css': 'public/stylesheets/style.less',
+                }
+            }
+        },
+        cssmin: {
+            combine: {
+                files: {
+                    'public/stylesheets/release/compiled.css': [
+                        'public/stylesheets/lib/normalize.css', 
+                        'public/stylesheets/lib/fonts.css',
+                        'public/stylesheets/lib/nanoscroller.css',
+                        'public/stylesheets/lib/chosen.css'
+                    ]
                 }
             }
         },
@@ -97,8 +109,9 @@ module.exports = function(grunt){
                 },
                 files: [
                     { src: 'public/scripts/release/main.js' },
-                    { src: 'public/stylesheets/index.css' },
-                    { src: 'public/stylesheets/style.css' }
+                    { src: 'public/stylesheets/release/index.css' },
+                    { src: 'public/stylesheets/release/style.css' },
+                    { src: 'public/stylesheets/release/compiled.css' }
                 ]
             }
         },
@@ -107,25 +120,6 @@ module.exports = function(grunt){
                 options: {
                     branch: 'master'
                 }
-            }
-        },
-        git_deploy: {
-            task: {
-                options: {
-                    url: 'git@heroku.com:dobly-staging.git',
-                    branch: 'master',
-                    message: 'deployment'
-                },
-
-                src: '.'
-            }
-        },
-        'heroku-deploy' : {
-            production : {
-                deployBranch : 'prod'
-            },
-            staging : {
-                deployBranch : 'staging'
             }
         }
     });
@@ -137,6 +131,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-git');
 
     // To run tests through the browser:
@@ -146,5 +141,5 @@ module.exports = function(grunt){
     // task at least once
     grunt.registerTask('tests', ['connect', 'jasmine', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
-    grunt.registerTask('deploy', ['gitcheckout', 'requirejs', 'less', 'gitcommit']);
+    grunt.registerTask('deploy', ['gitcheckout', 'requirejs', 'less', 'cssmin', 'gitcommit']);
 };

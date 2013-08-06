@@ -1,4 +1,6 @@
 define(['client/navigation'], function(createNavigationModule){ 
+    'use strict';
+
     describe("navigation", function() {
         it("creates navigation module", function() {
             var nav = createNavigationModule();

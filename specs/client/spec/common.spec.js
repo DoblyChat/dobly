@@ -1,4 +1,6 @@
 define(['client/common'], function(common){
+    'use strict';
+
     describe("common", function() {
         it('html encodes text', function(){
             var unencodedText = '<script>alert("hello world");</script>';

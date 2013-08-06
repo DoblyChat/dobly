@@ -1,7 +1,8 @@
-var Group = require('../../lib/models/group'),
-	User = require('../../lib/models/user');
-
 describe('Group', function() {
+	'use strict';
+
+	var Group = require('../../lib/models/group'),
+		User = require('../../lib/models/user');
 
 	describe('#required fields', function(){
 		afterEach(function(done){

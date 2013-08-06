@@ -1,5 +1,7 @@
 describe('Routes handler - integration', function(){
-	var User = require('../../lib/models/user'),
+	'use strict';
+
+    var User = require('../../lib/models/user'),
 		Group = require('../../lib/models/group'),
 		Conversation = require('../../lib/models/conversation'),
 		Desktop = require('../../lib/models/desktop'),

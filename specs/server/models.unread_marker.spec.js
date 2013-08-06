@@ -1,5 +1,6 @@
 describe('Unread Marker', function() {
-	
+	'use strict';
+
 	var UnreadMarker = require('../../lib/models/unread_marker');
 
 	describe("#increaseCounter", function(){

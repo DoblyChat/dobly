@@ -1,7 +1,8 @@
-var User = require('../../lib/models/user'),
-	Group = require('../../lib/models/group');
-
 describe('User', function() {
+	'use strict';
+	
+	var User = require('../../lib/models/user'),
+		Group = require('../../lib/models/group');
 
 	var group, userData;
 

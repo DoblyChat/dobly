@@ -1,3 +1,5 @@
+'use strict';
+
 exports.up = function(next){
     var Group = require('../lib/models/group'),
         async = require('async'),

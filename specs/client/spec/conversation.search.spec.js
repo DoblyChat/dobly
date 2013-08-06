@@ -1,4 +1,6 @@
 define(['knockout', 'client/conversation.search', 'client/conversation', 'client/common'], function(ko, createConversationSearch, createConversation, common){
+    'use strict';
+
     describe("conversation search", function() {
 
         var testData;

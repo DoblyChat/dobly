@@ -1,4 +1,6 @@
 define(['client/allConversations'], function(createAllConversations){
+    'use strict';
+
     describe("all conversations", function() {
         var all;
         var desktop;

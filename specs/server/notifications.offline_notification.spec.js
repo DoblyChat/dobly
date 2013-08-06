@@ -1,4 +1,6 @@
 describe("Notifications", function() {
+    'use strict';
+
     describe("Offline Notification", function() {
 
         var mandrillWrapperMock, conversationMock, userMock, groupMock, logMock;

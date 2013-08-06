@@ -1,4 +1,6 @@
 describe('Desktop', function(){
+	'use strict';
+
 	var Desktop = require('../../lib/models/desktop');
 
 	var desktop;

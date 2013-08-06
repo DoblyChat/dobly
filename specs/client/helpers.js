@@ -1,4 +1,6 @@
 (function(global){
+	'use strict';
+
 	global.app = {};
 
 	global.createMockSocket = function() {

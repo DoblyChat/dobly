@@ -1,5 +1,7 @@
 describe('Security', function(){
-	describe('Index', function(){
+	'use strict';
+
+    describe('Index', function(){
 		var passport, userMock, strategy, strategyOptions, strategyConfig;
 
 		beforeEach(function(){

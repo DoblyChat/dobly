@@ -1,5 +1,7 @@
 describe('Routes handler', function(){
-	var handler, req, res, 
+	'use strict';
+
+    var handler, req, res, 
 		passportMock, groupMock, userMock, asyncMock,
 		conversationMock, desktopMock, unreadMock,
 		messageMock, logMock;

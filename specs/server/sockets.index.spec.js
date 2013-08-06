@@ -1,5 +1,7 @@
 describe('Socket', function(){
-	describe('Configure', function(){
+	'use strict';
+
+    describe('Configure', function(){
 		var socketMock, ioMock, groupSockets,
 			conversationIoMock, userIoMock,
 			desktopIoMock, authorizeMock,

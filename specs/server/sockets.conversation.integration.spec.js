@@ -1,4 +1,6 @@
 describe('Sockets', function(){
+    'use strict';
+
     describe('Conversation - integration', function(){
         var conversationIo, socketMock,
             Conversation, Message, 

@@ -1,4 +1,6 @@
 describe('Message', function() {
+	'use strict';
+
 	var Message = require('../../lib/models/message');
 	var messageData;
 

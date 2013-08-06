@@ -1,4 +1,6 @@
 define(['client/group'], function(createGroup){
+	'use strict';
+
 	describe("group", function() {
 		var group;
 		var testData;

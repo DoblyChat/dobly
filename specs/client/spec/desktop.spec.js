@@ -1,4 +1,6 @@
 define(['client/desktop'], function(createDesktop){
+    'use strict';
+
     describe("desktop", function() {
 
         var desktop;

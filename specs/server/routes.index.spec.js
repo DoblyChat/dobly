@@ -1,5 +1,7 @@
 describe('Routes configuration', function(){
-	var config = require('../../lib/routes/').config;
+	'use strict';
+
+    var config = require('../../lib/routes/').config;
 	var appMock, handlerMock;
 
 	beforeEach(function(){

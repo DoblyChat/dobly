@@ -1,4 +1,6 @@
 describe("Common", function() {
+    'use strict';
+
     describe("Log", function() {
         it("error", function() {
             spyOn(console, 'error');

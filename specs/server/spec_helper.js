@@ -1,3 +1,5 @@
+'use strict';
+
 global.mongo = require('mongoose');
 global.mongo.connect('mongodb://localhost/proto-test');
 global.mockery = require('mockery');

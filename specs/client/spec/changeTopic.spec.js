@@ -1,4 +1,6 @@
 define(['client/changeTopic', 'client/common', 'knockout'], function(createChangeTopic, common, ko){
+	'use strict';
+
 	describe("change topic", function() {
 		var nav, changeTopic, conversationMock;
 

@@ -1,5 +1,7 @@
 describe('Sockets', function(){
-	describe('Desktop', function(){
+	'use strict';
+
+    describe('Desktop', function(){
 			
 		var desktopIo, modelMock, desktopMock, socketMock;
 

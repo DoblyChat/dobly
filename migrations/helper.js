@@ -1,3 +1,5 @@
+'use strict';
+
 var mongo = require('mongoose'),
 	async = require('async'),
 	databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';

@@ -1,3 +1,5 @@
+'use strict';
+
 exports.up = function(next){
 	var User = require('../lib/models/user'),
 		async = require('async'),

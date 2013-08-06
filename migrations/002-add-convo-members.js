@@ -1,3 +1,5 @@
+'use strict';
+
 exports.up = function(next){
 	var Conversation = require('../lib/models/conversation'),
 		User = require('../lib/models/user'),

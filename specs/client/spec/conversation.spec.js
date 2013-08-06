@@ -1,4 +1,6 @@
 define(['knockout', 'client/conversation', 'client/common', 'client/message'], function(ko, createConversation, common, createMessage){
+    'use strict';
+
     describe("conversation", function() {
 
         var conversation, testData, group;

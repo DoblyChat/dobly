@@ -1,4 +1,6 @@
 define(['client/timeout'], function(createTimeout){
+    'use strict';
+
     describe("timeout", function() {
         var timeout;
         var maxReconnects = 5;

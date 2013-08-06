@@ -1,5 +1,7 @@
 describe('Sockets', function(){
-	describe('Conversation', function(){
+	'use strict';
+
+    describe('Conversation', function(){
 		var conversationIo, socketMock, 
 			conversationMock, asyncMock,
 			unreadMock, userMock, messageMock,

@@ -1,4 +1,6 @@
 define(['client/newConversation', 'client/common'], function(createNewConversation, common){
+	'use strict';
+
 	describe('new conversation', function(){
 		var newConvo, navMock, groupMock;
 

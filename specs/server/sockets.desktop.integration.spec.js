@@ -1,5 +1,7 @@
 describe('Sockets', function(){
-	describe('Desktop - integration', function(){
+	'use strict';
+
+    describe('Desktop - integration', function(){
 		var desktopIo, Desktop, desktopId, socketMock;
 
 		beforeEach(function(done){

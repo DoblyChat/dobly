@@ -1,5 +1,7 @@
 describe('Sockets', function(){
-	describe('User', function(){
+	'use strict';
+
+    describe('User', function(){
 		var userIo, socketMock;
 
 		beforeEach(function(){

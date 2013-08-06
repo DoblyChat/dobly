@@ -1,5 +1,7 @@
 describe('Sockets', function(){
-	describe('Authorize', function(){
+	'use strict';
+
+    describe('Authorize', function(){
 		var authorize, userMock, data, accept, 
 			sessionStoreMock, cookieParserMock,
 			cookieMock;
@@ -74,14 +76,14 @@ describe('Sockets', function(){
 					spyOn(console, 'error');
 					session = { passport: { user: 'usr' } };
 					callback(null, session);
-					findUsercallback = userMock.findById.getCallback();
+					findUserCallback = userMock.findById.getCallback();
 				});
 
 				it('loads user if session is found', function(){
 					expect(userMock.findById.mostRecentCall.args[0]).toBe('usr');
 					var user = { _doc: { name: 'hello world '} };
 					
-					findUsercallback(null, user);
+					findUserCallback(null, user);
 
 					expect(data.session).toBe(session);
 					expect(data.user).toBe(user._doc);
@@ -89,13 +91,13 @@ describe('Sockets', function(){
 				});
 
 				it('does not authorize if there is an error finding the user', function(){
-					findUsercallback('an error', {});
+					findUserCallback('an error', {});
 					expect(console.error).toHaveBeenCalledWith('User not found', 'an error');
 					expect(accept).toHaveBeenCalledWith('User not found', false);
 				});
 
 				it('does not authorize if user is not found', function(){
-					findUsercallback(null, null);
+					findUserCallback(null, null);
 					expect(console.error).toHaveBeenCalledWith('User not found', null);
 					expect(accept).toHaveBeenCalledWith('User not found', false);
 				});

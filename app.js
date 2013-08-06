@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express')
   , routes = require('./lib/routes')
   , sockets = require('./lib/sockets')

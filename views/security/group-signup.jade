@@ -1,0 +1,16 @@
+#signup
+	.form-container
+		form(method='post', action="/group/signup")
+			.prompt
+				span The name of your team or group
+			input.field(type="text", name="groupname", placeholder="Name of your team or group")
+			.prompt
+				span Your information
+			input.field(type="text", name="firstname", placeholder="First name")
+			input.field(type="text", name="lastname", placeholder="Last name")
+			input.field(type="email", name="email", placeholder="Email")
+			input.field(type="password", name="password", placeholder="Password")
+			input.field(type="password", name="password2", placeholder="Verify password")
+			input.button(type="submit", value="Sign Up")
+	if showFlash
+		#flash = info

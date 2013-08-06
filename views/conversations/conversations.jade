@@ -39,7 +39,7 @@
 						.author(data-bind="text: createdBy")
 						.time
 							span(data-bind="text: timestamp, visible: confirmedSent")
-							img.pending-timer(src="/images/spinner.gif", alt="waiting for confirmation...", data-bind="visible: !confirmedSent()")
+							img.pending-timer(src="/images/spinner.gif", alt="waiting for confirmation...", width="14", height="14", data-bind="visible: !confirmedSent()")
 						.text(data-bind="html: content")
 		.convo-footer(data-bind="click: markAsRead")
 			textarea(tabindex="2", placeholder="Write a new message", rows="2", maxlength=2000, data-bind="value: newMessage, valueUpdate: 'input', event: { keypress: sendMessage }, hasfocus: hasFocus")

@@ -128,6 +128,16 @@ module.exports = function(grunt){
                     branch: 'master'
                 }
             }
+        },
+        imagemin: {
+            dist: {
+                options: {
+                    optimizationLevel: 0
+                },
+                files: {
+                    'public/images/logo.png': 'public/images/src/logo.png',
+                }
+            }
         }
     });
 
@@ -142,6 +152,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-git');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive

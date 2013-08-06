@@ -1,4 +1,5 @@
 @import "client/colors";
+@import "client/common";
 
 @sans: MuseoSlab-500;
 
@@ -23,6 +24,19 @@ body {
 		line-height: 1.2;
 		text-shadow: @gray 0px 0px 2px;
 	}
+}
+
+#sign-up {
+	margin: 40px auto;
+	display: table;
+
+	button {
+		.blue-button;		
+		font-family: @sans;
+		font-size: 20px;
+		width: 170px;
+		height: 60px;
+	}	
 }
 
 @-ms-viewport {

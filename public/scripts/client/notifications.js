@@ -1,5 +1,7 @@
 define(function(){
-	var canUseNotifications = !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);		
+	'use strict';
+    
+    var canUseNotifications = !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);		
 
 	return function (desktop){
 		var self = {};

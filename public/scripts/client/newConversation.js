@@ -1,4 +1,6 @@
 define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common){
+    'use strict';
+    
     return function (navigation, group) {
         var self = {},
             otherUsers = group.otherUsers,

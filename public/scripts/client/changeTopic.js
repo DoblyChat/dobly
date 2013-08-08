@@ -1,4 +1,6 @@
 define(['knockout', 'client/common'], function(ko, common){
+    'use strict';
+    
     return function (nav){
         var self = {};
 

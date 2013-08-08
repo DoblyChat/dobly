@@ -33,6 +33,8 @@ app.configure(function(){
   app.use(passport.session());
 
   app.use(app.router);
+
+  express.static.mime.define({'application/x-font-woff': ['woff']});
 });
 
 app.configure('development', function(){

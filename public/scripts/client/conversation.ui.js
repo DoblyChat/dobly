@@ -1,4 +1,6 @@
 define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
+    'use strict';
+    
     return function () {
         var self = {};
 

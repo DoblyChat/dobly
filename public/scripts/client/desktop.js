@@ -1,4 +1,6 @@
 define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
+    'use strict';
+    
     return function (data, allConversations){
         var self = {};
 

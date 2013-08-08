@@ -1,4 +1,6 @@
 define(['knockout', 'client/common', 'client/message', 'client/conversation.search', 'client/conversation.ui'], function(ko, common, createMessage, createConversationSearch, createConversationUi){
+    'use strict';
+    
     return function (data, group) {
         var self = {};
 

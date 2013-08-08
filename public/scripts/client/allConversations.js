@@ -1,4 +1,6 @@
 define(['jquery'], function($){
+    'use strict';
+    
     return function (desktop, navigation, conversationsObservable) {
         var self = {};
 

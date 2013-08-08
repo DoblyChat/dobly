@@ -18,6 +18,8 @@ define([
                                     createNewConversation,
                                     createChangeTopic,
                                     createMessage){
+    'use strict';
+    
     return function createViewModel(conversationsData, desktopData, groupData) {
         var self = {};
 

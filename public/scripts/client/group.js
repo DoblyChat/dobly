@@ -1,5 +1,7 @@
 define(['jquery', 'knockout'], function($, ko){
-	return function(data){
+	'use strict';
+    
+    return function(data){
 		var self = {};
 
 		self.name = data.name;

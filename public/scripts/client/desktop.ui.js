@@ -1,4 +1,6 @@
 define(['jquery', 'jquery-ui'], function($){
+    'use strict';
+    
     return function (desktop){
         var self = {};
 

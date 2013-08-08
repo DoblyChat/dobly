@@ -1,4 +1,6 @@
 define(['knockout', 'client/common'], function(ko, common){
+    'use strict';
+    
     return function (data, confirmed) {
         var self = {};
 
@@ -23,7 +25,7 @@ define(['knockout', 'client/common'], function(ko, common){
         function parseLinks(content){
             //URLs starting with http://, https://, or ftp://
             var replacePattern1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-            replacedText = content.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+            var replacedText = content.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
 
             //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
             var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;

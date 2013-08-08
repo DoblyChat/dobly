@@ -1,5 +1,7 @@
 define(function(){
-	return function createTimeout(maxReconnects, global) {
+	'use strict';
+    
+    return function createTimeout(maxReconnects, global) {
 		var self = {};
 
 		app.socket.on('reconnecting', function(delay, attempt) {

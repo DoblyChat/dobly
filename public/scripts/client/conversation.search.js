@@ -1,4 +1,6 @@
 define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, common){
+    'use strict';
+    
     return function (conversation) {
         var self = {};
         var messages = conversation.messages();

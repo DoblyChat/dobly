@@ -1,4 +1,6 @@
 (function(global){
+    'use strict';
+    
     function common($){
         var self = {};
 

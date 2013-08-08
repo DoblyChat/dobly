@@ -1,4 +1,6 @@
 define(['knockout', 'client/common'], function(ko, common){
+    'use strict';
+    
     return function (viewModel) {
         var self = {};
 

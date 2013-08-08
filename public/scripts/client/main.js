@@ -1,4 +1,6 @@
 define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout'], function($, ko, io, createViewModel, createTimeout) {
+    'use strict';
+    
     (function(global){
         global.app = {};
 

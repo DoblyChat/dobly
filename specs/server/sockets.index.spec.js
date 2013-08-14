@@ -61,11 +61,6 @@ describe('Socket', function(){
 			config = require('../../lib/sockets').config;
 		});
 
-		afterEach(function(){
-			mockery.disable();
-			mockery.deregisterAll();
-		});
-
 		describe('configuration', function(){
 			it('configures production settings', function(){
 				config(ioMock, sessionStoreMock);

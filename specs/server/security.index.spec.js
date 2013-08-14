@@ -28,11 +28,6 @@ describe('Security', function(){
 			security.config(passport);
 		});
 
-		afterEach(function(){
-			mockery.disable();
-			mockery.deregisterAll();
-		});
-
 		describe('strategy config', function(){
 			var email, password, done;
 

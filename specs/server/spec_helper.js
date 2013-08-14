@@ -38,3 +38,8 @@ global.buildMock = function(path){
 
     return mock;
 };
+
+afterEach(function(){
+	global.mockery.disable();
+	global.mockery.deregisterAll();
+});

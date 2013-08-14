@@ -31,11 +31,6 @@ describe('Routes configuration', function(){
 		config(appMock);
 	});
 
-	afterEach(function(){
-		mockery.disable();
-		mockery.deregisterAll();
-	});
-
 	it('configures routes', function(){
 		verifyGet('/', handlerMock.home);
 		verifyGet('/login', handlerMock.logIn);

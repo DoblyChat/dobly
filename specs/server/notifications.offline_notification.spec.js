@@ -59,11 +59,6 @@ describe("Notifications", function() {
             };
         }
 
-        afterEach(function(){
-            mockery.disable();
-            mockery.deregisterAll();
-        });
-
         it("init", function() {
             var someUser = {
                 email: 'some@user.com',

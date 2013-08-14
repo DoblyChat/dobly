@@ -65,11 +65,6 @@ describe('Sockets', function(){
 			conversationIo = require('../../lib/sockets/conversation_io');
 		});
 
-		afterEach(function(){
-			mockery.disable();
-			mockery.deregisterAll();
-		});
-
 		describe('#createConversation', function(){
 			var data;
 

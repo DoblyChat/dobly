@@ -14,7 +14,7 @@ function blast(callback){
 		User.create([{ name: 'blast', email: 'blast@dobly.com', password: 'pass', groupId: group._id}], function(err, user){
 			var conversationArray = [];
 
-			for(var i = 0; i < 20; i++){
+			for(var i = 0; i < 100; i++){
 				conversationArray.push({ 
 					topic: 'Convo ' + i,
 					createdById: user._id,

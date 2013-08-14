@@ -36,11 +36,6 @@ describe('Sockets', function(){
 			authorize = require('../../lib/sockets/authorize_io');
 		});
 
-		afterEach(function(){
-			mockery.disable();
-			mockery.deregisterAll();
-		});
-
 		it('does not authorize if no cookie is passed in', function(){
 			data.headers.cookie = undefined;
 			authorize(data, accept, sessionStoreMock);

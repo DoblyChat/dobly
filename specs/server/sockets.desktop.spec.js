@@ -23,11 +23,6 @@ describe('Sockets', function(){
 			spyOn(console, 'error');
 		});
 
-		afterEach(function(){
-			mockery.disable();
-			mockery.deregisterAll();
-		});
-
 		describe('#addConversation', function(){
 			it('adds a conversation', function(){
 				desktopIo.addConversation(socketMock, { id: 3, conversationId: 23 });

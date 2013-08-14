@@ -40,11 +40,6 @@ describe('Routes handler', function(){
 		handler = require('../../lib/routes/handler');
 	});
 
-	afterEach(function(){
-		mockery.disable();
-		mockery.deregisterAll();
-	});
-
 	describe('#check user session', function(){
 		var next;
 

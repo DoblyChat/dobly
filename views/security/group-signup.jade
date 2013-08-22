@@ -1,16 +1,21 @@
-#signup
-	.form-container
-		form(method='post', action="/group/signup")
-			.prompt
-				span The name of your team or group
-			input.field(type="text", name="groupname", placeholder="Name of your team or group")
-			.prompt
-				span Your information
-			input.field(type="text", name="firstname", placeholder="First name")
-			input.field(type="text", name="lastname", placeholder="Last name")
-			input.field(type="email", name="email", placeholder="Email")
-			input.field(type="password", name="password", placeholder="Password")
-			input.field(type="password", name="password2", placeholder="Verify password")
-			input.button(type="submit", value="Sign Up")
-	if showFlash
-		#flash = info
+#group-signup
+	form(method='post', action="/group/signup")
+		.prompt1 Sign up to use Dobly
+		.prompt2 The name of your group
+		.field
+			input(type="text", name="groupname", placeholder="Name of your group", value=groupname)
+		.prompt2 Your information
+		.field 
+			input(type="text", name="firstname", placeholder="First name", value=firstname)
+		.field 
+			input(type="text", name="lastname", placeholder="Last name", value=lastname)
+		.field 
+			input(type="email", name="email", placeholder="Email", value=email)
+		.field 
+			input(type="password", name="password", placeholder="Password")
+		.field 
+			input(type="password", name="password2", placeholder="Verify password")
+		.button 
+			input(type="submit", value="Sign Up")
+	if showFlashError
+		#flash.error= error

@@ -7,5 +7,7 @@
 			input#email.field(type="email", name="email", placeholder="Email")
 			input#password.field(type="password", name="password", placeholder="Password")
 			input.button(type="submit", value="Sign In")
-	if showFlash
-		#flash= info
+	if showFlashError
+		#flash.error= error
+	if showFlashInfo
+		#flash.info= info

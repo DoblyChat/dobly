@@ -61,9 +61,16 @@
 		padding-left: @field-padding-left;
 		padding-right: @field-padding-right;
 		font-size: 16px;
-		background: @red;
 		line-height: 2.5;
 		.text-color;
+
+		&.error {
+			background: @red;
+		}
+
+		&.info {
+			background: @flash-blue;
+		}
 	}
 }
 
@@ -142,5 +149,57 @@
 
 	#flash {
 		width: @signup-width - @flash-width-offset;
+	}
+}
+
+#group-signup {
+	font-family: @sans;
+	.text-color;
+	.centered;
+	display: table;
+	font-size: 20px;
+
+	.prompt1 {
+		font-size: 36px;
+		line-height: 1;
+		font-weight: bold;
+		margin-top: 40px;
+	}
+
+	.prompt2 {
+		margin-top: 30px;
+	}
+
+	.field {
+		margin-top: 20px;
+		display: table;
+
+		input {
+			height: 60px;
+			width: 400px;
+			border: @thick-blue-border;
+			background: @white;
+			outline: none;
+			padding: 0 20px;
+
+			&:-moz-placeholder {
+				.placeholder-color;
+			}
+
+			&.placeholder {
+				.placeholder-color;
+			}
+		}
+	}
+
+	.button {
+		margin-top: 20px;
+		float: right;
+
+		input {
+			width: 140px;
+			height: 70px;
+			.blue-button;
+		}
 	}
 }

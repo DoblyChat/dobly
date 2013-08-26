@@ -1,1 +1,28 @@
-#tasks
+#tasks(data-bind="with: tasks, visible: navigation.showingTasks")
+	#new-task-list
+		input(data-bind="value: newTaskList")
+		button(data-bind="click: create") Create
+
+	#tasks-content
+		#task-lists(data-bind="foreach: lists")
+			.task-list(data-bind="css: { active: active }")
+				span(data-bind="text: name, click: $root.open")
+				
+		#open-task-list(data-bind="with: openList")
+			.task-list
+				.head
+					h2(data-bind="text: name")
+
+				ul.tasks(data-bind="foreach: tasks")
+					li.task
+						span.check
+							input(type="checkbox", data-bind="value: complete")
+						span.description(data-bind="text: description, css: { complete: complete }")
+
+				.new-task-form
+					input(data-bind="value: newTask, event: { 'keypress': createTask }", placeholder="Enter a new task")
+							
+			
+
+	
+

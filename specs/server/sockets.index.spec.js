@@ -5,7 +5,8 @@ describe('Socket', function(){
 		var socketMock, ioMock, groupSockets,
 			conversationIoMock, userIoMock,
 			desktopIoMock, authorizeMock,
-			sessionStoreMock, config, notificationMock;
+			sessionStoreMock, taskIoMock,
+			config, notificationMock;
 
 		beforeEach(function(){
 			ioMock = {
@@ -53,6 +54,7 @@ describe('Socket', function(){
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createConversation', 'markAsRead', 'updateTopic', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations', 'unsubscribeToConversation');
 			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
+			taskIoMock = buildMock('./task_io', 'readTaskLists', 'createTaskList', 'addTask');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -268,6 +270,24 @@ describe('Socket', function(){
 					fire('update_topic');
 					expectSessionTouchCalled();
 					expect(conversationIoMock.updateTopic).toHaveBeenCalledWith(data);
+				});
+
+				it('requests task lists', function(){
+					fire('request_task_lists');
+					expectSessionTouchCalled();
+					expect(taskIoMock.readTaskLists).toHaveBeenCalledWith(socketMock);
+				});
+
+				it('creates task lists', function(){
+					fire('create_task_list');
+					expectSessionTouchCalled();
+					expect(taskIoMock.createTaskList).toHaveBeenCalledWith(socketMock, data);
+				});
+
+				it('adds task', function(){
+					fire('add_task');
+					expectSessionTouchCalled();
+					expect(taskIoMock.addTask).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				function expectSessionTouchCalled(){

@@ -40,6 +40,10 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             
             var timeout = createTimeout(maxReconnects, global);
             timeout.startPing();
+
+
+            // REMOVE
+            viewModel.navigation.tasks();
         }
 
         function initUi(){

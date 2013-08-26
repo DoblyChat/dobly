@@ -17,7 +17,6 @@ describe('Task list', function() {
 
 		beforeEach(function(){
 			taskListData = {
-				private: true,
 				createdById: new mongo.Types.ObjectId(),
 				groupId: new mongo.Types.ObjectId(),
 				name: 'test'
@@ -38,42 +37,131 @@ describe('Task list', function() {
 	});
 
 	describe('#default values', function(){
-		it('defaults private to false', function(){
-			var list = new TaskList();
-			expect(list.private).toBe(false);
+		it('defaults members to entire group', function(){
+		var list = new TaskList();
+			expect(list.members.entireGroup).toBe(false);
 		});
 	});
 
-	describe('#remove', function(){
-		var taskList, createdById;
+	describe('#find allowed', function(){
+		var groupId, otherGroupId, userId, otherUserId;
 
 		beforeEach(function(done){
-			var groupId = new mongo.Types.ObjectId();
-			createdById = new mongo.Types.ObjectId();
+			groupId = new mongo.Types.ObjectId();
+			otherGroupId = new mongo.Types.ObjectId();
+			userId = new mongo.Types.ObjectId();
+			otherUserId = new mongo.Types.ObjectId();
 
-			TaskList.create({ createdById: createdById, groupId: groupId, name: 'test'}, function(err, aTaskList){
-				taskList = aTaskList;
-				done();
+			var taskLists = [	
+				{ 
+					createdById: userId,
+					groupId: groupId,
+					name: 'my private',
+					members: {
+						entireGroup: false
+					}
+				},
+				{
+					createdById: userId,
+					groupId: groupId,
+					name: 'my public',
+					members: {
+						entireGroup: true
+					}
+				},
+				{
+					createdById: userId,
+					groupId: groupId,
+					name: 'my shared',
+					members: {
+						entireGroup: false,
+						users: [ otherUserId ]					
+					}
+				},
+				{
+					createdById: otherUserId,
+					groupId: groupId,
+					name: 'somebody elses private',
+					members: {
+						entireGroup: false
+					}
+				},
+				{
+					createdById: otherUserId,
+					groupId: groupId,
+					name: 'somebody elses public',
+					members: {
+						entireGroup: true
+					}
+				},
+				{
+					createdById: otherUserId,
+					groupId: groupId,
+					name: 'shared with me',
+					members: {
+						entireGroup: false,
+						users: [ userId ]
+					}
+				},
+				{
+					createdById: userId,
+					groupId: otherGroupId,
+					name: 'in another group',
+					members: {
+						entireGroup: true
+					}
+				}
+			];
+
+			TaskList.create(taskLists, done);
+		});
+
+		it('finds users task lists', function(done){
+			TaskList.findAllowedTasks(groupId, userId, function(err, taskLists){
+				expect(err).toBeNull();
+				expect(taskLists.length).toBe(5);
+				verifyExists(taskLists, 'my public');
+				verifyExists(taskLists, 'my private');
+				verifyExists(taskLists, 'my shared');
+				verifyExists(taskLists, 'somebody elses public');
+				verifyExists(taskLists, 'shared with me');
+
+				done(err);
 			});
 		});
 
-		it('removes all tasks associated with task list', function(done){
-			Task.create([
-					{ description: 'task 1', createdById: createdById, taskListId: taskList._id },
-					{ description: 'task 2', createdById: createdById, taskListId: taskList._id }
-				], 
-				function(err){
-					taskList.remove(function(err){
-						Task.count({ taskListId: taskList._id }, function(err, count){
-							expect(count).toBe(0);
-							done();
-						});
-					});
-				});
+		it('find other users task lists', function(done){
+			TaskList.findAllowedTasks(groupId, otherUserId, function(err, taskLists){
+				expect(err).toBeNull();
+				expect(taskLists.length).toBe(5);
+				verifyExists(taskLists, 'my public');
+				verifyExists(taskLists, 'my shared');
+				verifyExists(taskLists, 'somebody elses public');
+				verifyExists(taskLists, 'somebody elses private');
+				verifyExists(taskLists, 'shared with me');
+
+				done(err);
+			});
 		});
 
-		afterEach(function(done){
-			taskList.remove(done);
+		it('find other groups task lists', function(done){
+			TaskList.findAllowedTasks(otherGroupId, userId, function(err, taskLists){
+				expect(err).toBeNull();
+				expect(taskLists.length).toBe(1);
+				verifyExists(taskLists, 'in another group');
+
+				done(err);
+			});
 		});
+
+		function verifyExists(taskLists, title){
+			expect(taskLists.filter(function(taskList){
+				return taskList.name === title;
+			}).length).toBe(1);
+		}
+
+		afterEach(function(done){
+			TaskList.remove({ $or: [ { groupId: groupId }, { groupId: otherGroupId } ] }, done);
+		});	
 	});
 });

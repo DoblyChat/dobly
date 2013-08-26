@@ -20,7 +20,9 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
         self.forEntireGroup = data.members.entireGroup;
 
         if(data.messages) {
-            for(var i = 0; i < data.messages.length; i++) {
+            var messagesLength = data.messages.length;
+            
+            for(var i = 0; i < messagesLength; i++) {
               self.messages.push(createMessage(data.messages[i], true));
           }
         }

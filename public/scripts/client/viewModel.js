@@ -8,7 +8,8 @@ define([
         'client/conversation', 
         'client/newConversation', 
         'client/changeTopic',
-        'client/message'], function(ko, 
+        'client/message',
+        'client/tasks'], function(ko, 
                                     createGroup, 
                                     createDesktop, 
                                     createNotifier, 
@@ -17,7 +18,8 @@ define([
                                     createConversation,
                                     createNewConversation,
                                     createChangeTopic,
-                                    createMessage){
+                                    createMessage,
+                                    createTasks){
     'use strict';
     
     return function createViewModel(conversationsData, desktopData, groupData) {
@@ -44,6 +46,7 @@ define([
         self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
         self.newConversation = createNewConversation(self.navigation, self.group);
         self.changeTopic = createChangeTopic(self.navigation);
+        self.tasks = createTasks();
 
         app.socket.on('receive_message', function(message) {
             ko.utils.arrayForEach(self.conversations(), function(conversation){

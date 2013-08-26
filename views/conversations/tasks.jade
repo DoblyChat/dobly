@@ -1,18 +1,15 @@
 #tasks(data-bind="with: tasks, visible: navigation.showingTasks")
-	#new-task-list
-		input(data-bind="value: newTaskList")
-		button(data-bind="click: create") Create
-
-	#tasks-content
-		#task-lists(data-bind="foreach: lists")
-			.task-list(data-bind="css: { active: active }")
-				span(data-bind="text: name, click: $root.open")
+	#tasks-content(data-bind="visible: showTasks")
+		#task-lists
+			div(data-bind="foreach: lists")
+				.task-list(data-bind="css: { active: active }, click: $parent.open")
+					span(data-bind="text: name")
+			.add-task-list(data-bind="click: toggle")
+				span.icon-plus
+				span add new task list
 				
 		#open-task-list(data-bind="with: openList")
 			.task-list
-				.head
-					h2(data-bind="text: name")
-
 				ul.tasks(data-bind="foreach: tasks")
 					li.task
 						span.check
@@ -23,6 +20,18 @@
 					input(data-bind="value: newTask, event: { 'keypress': createTask }", placeholder="Enter a new task")
 							
 			
+	#new-task-list(data-bind="visible: showCreateTask, with: newTaskList")
+		p 
+			span Who would you like to share this task list with?
+		div
+			select#members-select(multiple="true", data-bind="options: options, optionsText: 'text', optionsValue: 'value', selectedOptions: selectedOptions")
+		p
+			span Write a name for this new list
+		div
+			textarea(maxlength=500, data-bind="value: name, valueUpdate: 'input', event: { keypress: createOnEnter }")
 
+		.buttons				
+			button.button-left(type="button", data-bind="click: cancel") Cancel
+			button.button-right(type="button", data-bind="click: create") Create
 	
 

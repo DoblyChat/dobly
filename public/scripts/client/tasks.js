@@ -1,4 +1,4 @@
-define(['knockout', 'client/tasklist.model'], function(ko, createTaskList){
+define(['knockout', 'client/common', 'client/tasklist.model'], function(ko, common, createTaskList){
 	'use strict';
 	return function(){
 		var self = {},
@@ -12,6 +12,8 @@ define(['knockout', 'client/tasklist.model'], function(ko, createTaskList){
 
 		self.lists = ko.observableArray();
 		self.openList = ko.observable();
+		self.showTasks = ko.observable(true);
+		self.showCreateTask = ko.observable(false);
 
 		function openFirst(){
 			var taskList = self.lists()[0];
@@ -19,22 +21,52 @@ define(['knockout', 'client/tasklist.model'], function(ko, createTaskList){
 			self.openList(taskList);
 		}
 
-		self.newTaskList = ko.observable();
-
-		self.create = function(){
-			var data = {
-				name: self.newTaskList(),
-				forEntireGroup: true,
-				selectedMembers: []
-			};
-
-			app.socket.emit('create_task_list', data);
-		};
-
 		self.open = function(taskList){
+			if(self.openList()) self.openList().active(false);
 			taskList.active(true);
 			self.openList(taskList);
 		};
+
+		self.toggle = function(){
+			self.showTasks(!self.showTasks());
+			self.showCreateTask(!self.showCreateTask());
+		};
+
+		self.newTaskList = (function(tasks){
+			var newList = {};
+
+			newList.name = ko.observable();
+			newList.options = [];
+			newList.selectedOptions = ko.observableArray([]);
+
+			newList.create = function(){
+				var data = {
+					name: newList.name(),
+					forEntireGroup: true,
+					selectedMembers: []
+				};
+
+				app.socket.emit('create_task_list', data);
+				newList.name('');
+			};
+
+			newList.createOnEnter = function(){
+				if (newList.name().length > 0 && common.enterKeyPressed(event)) {
+	                newList.create();
+	                return false;
+	            } else {
+	                return true;
+	            }
+			};
+
+			newList.cancel = function(){
+				newList.name('');
+				tasks.toggle();
+			};
+
+			return newList;
+
+		})(self);
 
 		app.socket.on('task_lists', function(lists){
 			var length = lists.length;

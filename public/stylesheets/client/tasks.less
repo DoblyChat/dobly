@@ -3,31 +3,6 @@
 	padding: 0 20px;
 }
 
-#new-task-list{
-	@base-height: 40px;
-	@bottom-margin: 5px;
-
-	.centered;
-	text-align: center;
-	margin-bottom: 20px;
-	font-size: 19px;
-
-	input{
-		font-weight: bold;
-		width: 400px;
-		border: @thick-blue-border;
-		padding: 0 32px 2px;
-		margin-right: 20px;
-		height: @base-height;
-	}
-
-	button{
-		.blue-button;
-		width: 180px;
-		height: @base-height + @bottom-margin;
-	}
-}
-
 #tasks-content{
 	.centered;
 	width: 800px;
@@ -36,23 +11,32 @@
 }
 
 #task-lists{
-	width: 15%;
+	width: 150px;
 	float:left;
-	.box-shadow;
+	font-size: 1em;
 
 	.task-list{
-		padding: 5px 10px;
-		background-color: @white;
-		cursor: pointer;
-		border-bottom: 1px solid @light-gray;
-
-		&:last-child{
-			border-bottom: none;
+		&.active{
+			font-size: 1.4em;
+			font-weight: bold;
 		}
 
-		&.active{
-			border-left: @thick-blue-border;
-			border-left-width: 4px;
+		cursor: pointer;
+		margin-bottom: 5px;
+
+		&:last-child{
+			margin-bottom: 0;
+		}
+	}
+
+	.add-task-list{
+		margin-top: 10px;
+		color: @blue;
+		cursor: pointer;
+		
+		.icon-plus{
+			margin-right: 5px;
+			font-size: 20px;
 		}
 	}
 }

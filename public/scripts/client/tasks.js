@@ -1,4 +1,4 @@
-define(['knockout', 'client/common', 'client/tasklist.model'], function(ko, common, createTaskList){
+define(['knockout', 'client/common', 'client/taskList.model'], function(ko, common, createTaskList){
 	'use strict';
 	return function(){
 		var self = {},

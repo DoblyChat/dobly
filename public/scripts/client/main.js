@@ -19,8 +19,8 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
                 global.app.inFocus = false;
             })
             .resize(function() {
-                global.app.desktop.ui.resize.stripAndConvos();
-                global.app.desktop.ui.resize.tilesAndConversationBodies();
+                global.app.desktop.ui.resize.stripAndLists();
+                global.app.desktop.ui.resize.tilesAndListBodies();
             });
 
         function start(){
@@ -40,16 +40,12 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             
             var timeout = createTimeout(maxReconnects, global);
             timeout.startPing();
-
-
-            // REMOVE
-            viewModel.navigation.tasks();
         }
 
         function initUi(){
             global.app.desktop.ui.setup();
             showRenderedElements();
-            global.app.desktop.ui.resize.tilesAndConversationBodies();
+            global.app.desktop.ui.resize.tilesAndListBodies();
             global.app.desktop.ui.scroll.setup();
         }
 

@@ -7,18 +7,18 @@ define(['jquery', 'jquery-ui'], function($){
         self.resize = (function () {
             var res = {};
 
-            res.stripAndConvos = function() {
+            res.stripAndLists = function() {
                 var includeMargin = true;
                 var bodyHeight = $('body').outerHeight(includeMargin);
                 var headerHeight = $('#header').outerHeight(includeMargin);
-                var convosMargin = $('#convos').outerHeight(includeMargin) - $('#convos').innerHeight();
+                var listsMargin = $('#lists').outerHeight(includeMargin) - $('#lists').innerHeight();
 
-                var height = bodyHeight - headerHeight - convosMargin;
-                $('#convos').height(height);
+                var height = bodyHeight - headerHeight - listsMargin;
+                $('#lists').height(height);
                 $('#strip').height(height);
             };
 
-            res.conversationBodies = function() {
+            res.listBodies = function() {
                 if (desktop.hasLeftConversation()) {
                     desktop.leftConversation().ui.resizeBody();
                 }
@@ -36,8 +36,8 @@ define(['jquery', 'jquery-ui'], function($){
                 $('#convo-tiles').height(stripHeight - newTileHeight - newMesageBar);
             }
 
-            res.tilesAndConversationBodies = function() {
-                res.conversationBodies();
+            res.tilesAndListBodies = function() {
+                res.listBodies();
                 tiles();
             };
 
@@ -48,11 +48,11 @@ define(['jquery', 'jquery-ui'], function($){
             var scr = {};
 
             scr.setup = function() {
-                scr.setupConvos();
+                scr.setupLists();
                 scr.tiles();
             };
 
-            scr.setupConvos = function(){
+            scr.setupLists = function(){
                 if (desktop.hasLeftConversation()) {
                     desktop.leftConversation().ui.scroll.setup();
                 }
@@ -134,18 +134,18 @@ define(['jquery', 'jquery-ui'], function($){
         };
 
         self.setup = function(){
-            self.resize.stripAndConvos();
+            self.resize.stripAndLists();
             self.setupStripDragAndDrop();
         };
 
         self.updateConversationUi = function(){
-            self.resize.conversationBodies();
-            self.scroll.setupConvos();
+            self.resize.listBodies();
+            self.scroll.setupLists();
             self.highlight();
         };
 
         self.show = function(){
-            self.resize.tilesAndConversationBodies();
+            self.resize.tilesAndListBodies();
             self.scroll.setup();
             self.setupStripDragAndDrop();
         };

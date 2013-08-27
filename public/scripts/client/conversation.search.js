@@ -178,7 +178,7 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
 
         self.exhausted.subscribe(function(isTrue) {
             if (isTrue) {
-                $(conversation.ui.getSelector('.convo-header .search .exhausted')).effect("highlight", { color: '#ffafbf' }, 2000);
+                $(conversation.ui.getSelector('.list-header .search .exhausted')).effect("highlight", { color: '#ffafbf' }, 2000);
             }
         });
 

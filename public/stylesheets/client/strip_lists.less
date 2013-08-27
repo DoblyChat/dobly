@@ -1,9 +1,9 @@
 @strip-width: @tile-width;
-@dual-convo-width: @list-width + @standard-margin + @list-width;
-@strip-dual-convo-width: @strip-width + @standard-margin + @dual-convo-width;
+@dual-list-width: @list-width + @standard-margin + @list-width;
+@strip-dual-list-width: @strip-width + @standard-margin + @dual-list-width;
 
-#strip-convos {
-	width: @strip-dual-convo-width;
+#strip-lists {
+	width: @strip-dual-list-width;
 	.centered;
 	display: table;
 }
@@ -18,7 +18,7 @@
 }
 
 #lists {
-	width: @dual-convo-width;
+	width: @dual-list-width;
 	float: right;
 	.margin-bottom;
 }

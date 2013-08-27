@@ -95,15 +95,15 @@
 	border-top: @tile-bottom-border-size solid @light-gray;
 }
 
-@new-convo-tile-height: 67px;
-@new-convo-tile-top-padding: 8px;
+@new-list-tile-height: 67px;
+@new-list-tile-top-padding: 8px;
 @new-message-bar-height: 4px;
 
-#new-convo-tile {
+#new-list-tile {
 	.tile-common;
-	height: @new-convo-tile-height - @new-convo-tile-top-padding - @new-message-bar-height;
+	height: @new-list-tile-height - @new-list-tile-top-padding - @new-message-bar-height;
 	width: @tile-width;
-	padding-top: @new-convo-tile-top-padding;
+	padding-top: @new-list-tile-top-padding;
 	text-align: center;
 	color: lighten(@gray, 40%);
 
@@ -112,7 +112,7 @@
 	}
 }
 
-#new-convo-tile .icon-plus {
+#new-list-tile .icon-plus {
 	font-size: 20px;
 }
 

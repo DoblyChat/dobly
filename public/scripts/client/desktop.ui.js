@@ -30,10 +30,10 @@ define(['jquery', 'jquery-ui'], function($){
 
             function tiles() {    
                 var stripHeight = $('#strip').outerHeight();
-                var newTileHeight = $('#new-convo-tile').outerHeight();
+                var newTileHeight = $('#new-list-tile').outerHeight();
                 var newMesageBar = $('#new-message-bar').outerHeight();
 
-                $('#convo-tiles').height(stripHeight - newTileHeight - newMesageBar);
+                $('#tiles').height(stripHeight - newTileHeight - newMesageBar);
             }
 
             res.tilesAndListBodies = function() {
@@ -63,11 +63,11 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             scr.tiles = function() {
-                $('#convo-tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
+                $('#tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
             };
 
             scr.bottomTile = function() {
-                $('#convo-tiles').nanoScroller({ scroll: 'bottom' });
+                $('#tiles').nanoScroller({ scroll: 'bottom' });
             };
 
             return scr;
@@ -91,7 +91,7 @@ define(['jquery', 'jquery-ui'], function($){
         self.setupStripDragAndDrop = function (){
             var currentSort;
 
-            $('#convo-tiles .content').sortable({      
+            $('#tiles .content').sortable({      
                 handle: ".icon-move-handle",
                 start: function(event, ui){
                     currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
@@ -130,7 +130,7 @@ define(['jquery', 'jquery-ui'], function($){
                 }
             }
 
-            $('#convo-tiles').disableSelection();
+            $('#tiles').disableSelection();
         };
 
         self.setup = function(){

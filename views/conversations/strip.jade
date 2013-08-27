@@ -1,5 +1,5 @@
 #strip(data-bind="with: desktop, visible: navigation.showingDesktop")					
-	.nano#convo-tiles
+	.nano#tiles
 		.content(data-bind="foreach: conversations")
 			.tile(data-bind="css: { highlight: active }, click: $parent.activate")
 				.highlight-placeholder
@@ -9,6 +9,6 @@
 						.icon-dismiss(data-bind="click: $parent.remove")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
 	#new-message-bar(data-bind="css: { active: $root.hasUnread }")
-	#new-convo-tile(data-bind="click: $parent.addNewConversation")				
+	#new-list-tile(data-bind="click: $parent.addNewConversation")				
 		.icon-plus
-		#new-convo-text New Conversation
+		#new-list-text New Conversation

@@ -4,6 +4,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
     return function (data, group) {
         var self = {};
 
+        self.template = 'convo-template';
         self.id = data._id ? data._id : 0;
         self.topic = ko.observable(data.topic);
         self.createdBy = ko.observable(data.createdBy);

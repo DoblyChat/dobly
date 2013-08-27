@@ -1,4 +1,4 @@
-#lists(data-bind="visible: navigation.showingDesktop, foreach: desktop.renderedConversations")
+script(id="convo-template", type="text/html")
 	.convo.list(data-bind="visible: active, css : { 'list-left': isLeft, 'list-right': isRight } ")
 		.list-header(data-bind="click: markAsRead")
 			.topic

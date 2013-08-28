@@ -28,10 +28,10 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             app.inFocus = true;
 
             var desktopData = JSON.parse(document.getElementById('desktop').value);
-            var conversationData = JSON.parse(document.getElementById('conversations').value);
+            var collaborationObjectsData = JSON.parse(document.getElementById('collaborationObjects').value);
             var groupData = JSON.parse(document.getElementById('group').value);
             
-            var viewModel = createViewModel(conversationData, desktopData, groupData);
+            var viewModel = createViewModel(collaborationObjectsData, desktopData, groupData);
 
             ko.applyBindings(viewModel);
             global.app.desktop = viewModel.desktop;

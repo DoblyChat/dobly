@@ -3,16 +3,16 @@ describe("Notifications", function() {
 
     describe("Offline Notification", function() {
 
-        var mandrillWrapperMock, conversationMock, userMock, groupMock, logMock;
+        var mandrillWrapperMock, collaborationObjectMock, userMock, groupMock, logMock;
         var offlineNotification;
-        var doug, bob, offlineUsers, conversation, message, group;
+        var doug, bob, offlineUsers, collaborationObject, message, group;
 
         beforeEach(function() {
             mockery.enable({ useCleanCache: true });
             mockery.registerAllowable('../../lib/notifications/offline_notification');
 
             mandrillWrapperMock = buildMock('./mandrill_wrapper','send');
-            conversationMock = buildMock('../models/conversation','findById');
+            collaborationObjectMock = buildMock('../models/collaboration_object','findById');
             userMock = buildMock('../models/user','findExcept');
             groupMock = buildMock('../models/group','findById');
             logMock = buildMock('../common/log','error');
@@ -42,7 +42,7 @@ describe("Notifications", function() {
 
             offlineUsers = [doug, bob];
 
-            conversation = {
+            collaborationObject = {
                 members: {
                     entireGroup: true
                 },
@@ -50,7 +50,7 @@ describe("Notifications", function() {
             };
 
             message = {
-                conversationId: '123',
+                collaborationObjectId: '123',
                 content: 'stop: collaborate and listen'
             };
 
@@ -100,7 +100,7 @@ describe("Notifications", function() {
         it("notifies entire group", function() {
             offlineNotification.notify(message);
 
-            conversationMock.findById.callback(null, conversation);
+            collaborationObjectMock.findById.callback(null, collaborationObject);
             userMock.findExcept.callback(null, offlineUsers);
             groupMock.findById.callback(null, group);
 
@@ -133,13 +133,13 @@ describe("Notifications", function() {
             expect(args.tags[0]).toEqual('offline-messages');
         });
 
-        it("notifies conversation members", function() {
-            conversation.members.entireGroup = false;
-            conversation.members.users = ['R','D'];
+        it("notifies collaboration object members", function() {
+            collaborationObject.members.entireGroup = false;
+            collaborationObject.members.users = ['R','D'];
 
             offlineNotification.notify(message);
 
-            conversationMock.findById.callback(null, conversation);
+            collaborationObjectMock.findById.callback(null, collaborationObject);
             userMock.findExcept.callback(null, offlineUsers);
             groupMock.findById.callback(null, group);
 
@@ -177,24 +177,24 @@ describe("Notifications", function() {
                 expect(logMock.error).toHaveBeenCalledWith('', err);
             });
 
-            it("conversation query", function() {
+            it("collaborationObject query", function() {
                 offlineNotification.notify(message);
 
-                var result = conversationMock.findById.callback(err, null);
+                var result = collaborationObjectMock.findById.callback(err, null);
                 expect(result).toBeUndefined();
             });
 
             it("user query", function() {
                 offlineNotification.notify(message);
 
-                conversationMock.findById.callback(null, conversation);
+                collaborationObjectMock.findById.callback(null, collaborationObject);
                 userMock.findExcept.callback(err, null);
             });
 
             it("group query", function() {
                 offlineNotification.notify(message);
 
-                conversationMock.findById.callback(null, conversation);
+                collaborationObjectMock.findById.callback(null, collaborationObject);
                 userMock.findExcept.callback(null, offlineUsers);
                 groupMock.findById.callback(err, null);
 

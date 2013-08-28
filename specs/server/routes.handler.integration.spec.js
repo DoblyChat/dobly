@@ -3,7 +3,7 @@ describe('Routes handler - integration', function(){
 
     var User = require('../../lib/models/user'),
 		Group = require('../../lib/models/group'),
-		Conversation = require('../../lib/models/conversation'),
+		CollaborationObject = require('../../lib/models/collaboration_object'),
 		Desktop = require('../../lib/models/desktop'),
 		Message = require('../../lib/models/message'),
 		UnreadMarker = require('../../lib/models/unread_marker'),
@@ -57,7 +57,7 @@ describe('Routes handler - integration', function(){
 	});
 
 	describe('#render desktop', function(){
-		var testUser, conversations;
+		var testUser, collaborationObjects;
 
 		beforeEach(function(done){
 			User.create({ email: TEST_EMAIL, name: TEST_NAME, groupId: group._id, password: 'pass' }, function(err, user){
@@ -70,25 +70,25 @@ describe('Routes handler - integration', function(){
 					desktop: function(callback){
 						Desktop.create({ userId: user._id }, callback);
 					},
-					conversations: function(callback){
-						var conversations = [];
+					collaborationObjects: function(callback){
+						var collaborationObjects = [];
 
 						for(var i = 0; i < 3; i++ ){
-							conversations.push({ topic: 'test ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true } });
+							collaborationObjects.push({ topic: 'test ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true }, type: 'C' });
 						}
 
-						Conversation.create(conversations, function(err){
-							var savedConversations = [ arguments[1], arguments[2], arguments[3] ];
+						CollaborationObject.create(collaborationObjects, function(err){
+							var savedCollaborationObjects = [ arguments[1], arguments[2], arguments[3] ];
 							async.parallel([
 								function(callback){
 									UnreadMarker.create([ 
 										{
-											conversationId: savedConversations[0]._id,
+											collaborationObjectId: savedCollaborationObjects[0]._id,
 											userId: user._id,
 											count: 1
 										},
 										{
-											conversationId: savedConversations[1]._id,
+											collaborationObjectId: savedCollaborationObjects[1]._id,
 											userId: user._id,
 											count: 23
 										}
@@ -98,23 +98,23 @@ describe('Routes handler - integration', function(){
 									var data = [];
 
 									for(var i = 0; i< 51; i++ ){
-										data.push({ content: 'test message 2.' + i, createdBy: TEST_NAME, conversationId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
+										data.push({ content: 'test message 2.' + i, createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
 									}
 
-									data.push({ content: 'test message 1', createdBy: TEST_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 17) });
-									data.push({ content: 'test message 1.2', createdBy: TEST_NAME, conversationId: savedConversations[0]._id, timestamp: new Date(2013, 9, 16) });
+									data.push({ content: 'test message 1', createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 17) });
+									data.push({ content: 'test message 1.2', createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 16) });
 
-									data.push({ content: 'test message 3', createdBy: TEST_NAME, conversationId: savedConversations[2]._id });
+									data.push({ content: 'test message 3', createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[2]._id });
 
 									Message.create(data, callback);
 								},
 							], function(err){
-								callback(err, savedConversations);
+								callback(err, savedCollaborationObjects);
 							});
 						});
 					}
 				}, function(err, results){
-					conversations = results.conversations;
+					collaborationObjects = results.collaborationObjects;
 					done(err);
 				});
 			});
@@ -123,16 +123,16 @@ describe('Routes handler - integration', function(){
 		afterEach(function(done){
 			async.parallel([
 				function(callback){
-					Conversation.remove({ groupId: group._id }, callback);
+					CollaborationObject.remove({ groupId: group._id }, callback);
 				},
 				function(callback){
 					Desktop.remove({ userId: testUser._id }, callback);
 				},
 				function(callback){
-					async.each(conversations, removeMessages, callback);
+					async.each(collaborationObjects, removeMessages, callback);
 
 					function removeMessages(conversation, callback){
-						Message.remove({ conversationId: conversation._id }, callback);
+						Message.remove({ collaborationObjectId: conversation._id }, callback);
 					}
 				},
 				function(callback){
@@ -149,7 +149,7 @@ describe('Routes handler - integration', function(){
 
 			res.render = function(url, result){
 				expect(url).toBe('conversations');
-				verifyConversations(JSON.parse(result.conversations));
+				verifyCollaborationObjects(JSON.parse(result.collaborationObjects));
 				verifyDesktop(JSON.parse(result.desktop));
 				verifyCurrentUser(JSON.parse(result.currentUser));
 				verifyGroup(JSON.parse(result.group));
@@ -160,39 +160,39 @@ describe('Routes handler - integration', function(){
 			handler.renderDesktop(req, res);
 		});
 
-		function verifyConversations(conversations){
-			expect(conversations.length).toBe(3);
+		function verifyCollaborationObjects(collaborationObjects){
+			expect(collaborationObjects.length).toBe(3);
 
-			for(var i = 0; i < conversations.length; i++){
-				var conversation = conversations[i];
-				expect(conversation.groupId).toBe(group._id.toString());
-				expect(conversation.createdById).toBe(testUser._id.toString());
-				expect(conversation.createdBy).toBe(testUser.name);
-				expect(conversation.topic).toContain('test');
+			for(var i = 0; i < collaborationObjects.length; i++){
+				var collaborationObject = collaborationObjects[i];
+				expect(collaborationObject.groupId).toBe(group._id.toString());
+				expect(collaborationObject.createdById).toBe(testUser._id.toString());
+				expect(collaborationObject.createdBy).toBe(testUser.name);
+				expect(collaborationObject.topic).toContain('test');
 			}
 
-			expect(conversations[0].messages.length).toBe(2);
+			expect(collaborationObjects[0].items.length).toBe(2);
 
-			// messages are provided in reverse order
-			expect(conversations[0].messages[1].content).toBe('test message 1');
-			expect(conversations[0].messages[0].content).toBe('test message 1.2');
+			// items are provided in reverse order
+			expect(collaborationObjects[0].items[1].content).toBe('test message 1');
+			expect(collaborationObjects[0].items[0].content).toBe('test message 1.2');
 
-			expect(conversations[1].messages.length).toBe(50);
-			expect(conversations[1].messages[0].content).toBe('test message 2.1');
-			expect(conversations[1].messages[49].content).toBe('test message 2.50');
+			expect(collaborationObjects[1].items.length).toBe(50);
+			expect(collaborationObjects[1].items[0].content).toBe('test message 2.1');
+			expect(collaborationObjects[1].items[49].content).toBe('test message 2.50');
 
-			expect(conversations[2].messages.length).toBe(1);
-			expect(conversations[2].messages[0].content).toBe('test message 3');
+			expect(collaborationObjects[2].items.length).toBe(1);
+			expect(collaborationObjects[2].items[0].content).toBe('test message 3');
 
-			expect(conversations[0].unread).toBe(1);
-			expect(conversations[1].unread).toBe(23);
+			expect(collaborationObjects[0].unread).toBe(1);
+			expect(collaborationObjects[1].unread).toBe(23);
 		}
 
 		function verifyDesktop(desktop){
 			expect(desktop.userId).toBe(testUser._id.toString());
-			expect(desktop.conversations).toContain(conversations[0]._id.toString());
-			expect(desktop.conversations).toContain(conversations[1]._id.toString());
-			expect(desktop.conversations).not.toContain(conversations[2]._id.toString());
+			expect(desktop.conversations).toContain(collaborationObjects[0]._id.toString());
+			expect(desktop.conversations).toContain(collaborationObjects[1]._id.toString());
+			expect(desktop.conversations).not.toContain(collaborationObjects[2]._id.toString());
 		}
 
 		function verifyCurrentUser(currentUser){

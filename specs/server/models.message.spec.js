@@ -9,7 +9,7 @@ describe('Message', function() {
 			content: 'hi there', 
 			createdBy: 'creator', 
 			timestamp: Date.now(),
-			conversationId: new mongo.Types.ObjectId()
+			collaborationObjectId: new mongo.Types.ObjectId()
 		};
 	});
 	
@@ -34,14 +34,14 @@ describe('Message', function() {
 			requiredFieldTest('timestamp', done);
 		});
 
-		it('conversationId', function(done){
-			requiredFieldTest('conversationId', done);
+		it('collaborationObjectId', function(done){
+			requiredFieldTest('collaborationObjectId', done);
 		});
 	});
 
 	describe('#content max length', function() {
 		afterEach(function(done){
-			Message.remove({ conversationId: messageData.conversationId }, done);
+			Message.remove({ collaborationObjectId: messageData.collaborationObjectId }, done);
 		});
 
 		it('saves with 1999', function(done) {
@@ -64,14 +64,14 @@ describe('Message', function() {
 	});
 
 	describe('#readMessagesByPage', function(){
-		var conversationId;
+		var collaborationObjectId;
 
 		beforeEach(function(){
-			conversationId = new mongo.Types.ObjectId();
+			collaborationObjectId = new mongo.Types.ObjectId();
 		});
 
 		afterEach(function(done){
-			Message.remove({ conversationId: conversationId }, done);
+			Message.remove({ collaborationObjectId: collaborationObjectId }, done);
 		});
 
 		describe('paging', function(){
@@ -82,7 +82,7 @@ describe('Message', function() {
 					messagesData.push({
 						content: i,
 						createdBy: 'messages model test',
-						conversationId: conversationId,
+						collaborationObjectId: collaborationObjectId,
 					});
 				}
 
@@ -90,7 +90,7 @@ describe('Message', function() {
 			});
 
 			it('reads the first page of messages', function(done){
-				Message.readMessagesByPage(conversationId, 0, function(err, messages){
+				Message.readMessagesByPage(collaborationObjectId, 0, function(err, messages){
 					expect(err).toBeNull();
 					expect(messages.length).toBe(50);
 					done(err);
@@ -98,7 +98,7 @@ describe('Message', function() {
 			});
 
 			it('reads the second page of messages', function(done){
-				Message.readMessagesByPage(conversationId, 1, function(err, messages){
+				Message.readMessagesByPage(collaborationObjectId, 1, function(err, messages){
 					expect(err).toBeNull();
 					expect(messages.length).toBe(50);
 					done(err);
@@ -106,7 +106,7 @@ describe('Message', function() {
 			});
 
 			it('reads the third page of messages', function(done){
-				Message.readMessagesByPage(conversationId, 2, function(err, messages){
+				Message.readMessagesByPage(collaborationObjectId, 2, function(err, messages){
 					expect(err).toBeNull();
 					expect(messages.length).toBe(1);
 					done(err);
@@ -114,7 +114,7 @@ describe('Message', function() {
 			});
 
 			it('includes message id', function(done) {
-				Message.readMessagesByPage(conversationId, 0, function(err, messages){
+				Message.readMessagesByPage(collaborationObjectId, 0, function(err, messages){
 					expect(messages[0]._id).not.toBeUndefined();
 					expect(messages[0]._id).not.toBeNull();
 					done(err);
@@ -125,11 +125,11 @@ describe('Message', function() {
 		describe('sorting', function(){
 			it('reads the messages in descending order by date', function(done){
 				Message.create([
-					{ content: 'some message', createdBy: 'model order test', conversationId: conversationId, timestamp: new Date(2012, 10, 1) },
-					{ content: 'some later message', createdBy: 'model order test', conversationId: conversationId, timestamp: new Date(2012, 10, 2) },
-					{ content: 'some earlier message', createdBy: 'model order test', conversationId: conversationId, timestamp: new Date(2011, 10, 1) }
+					{ content: 'some message', createdBy: 'model order test', collaborationObjectId: collaborationObjectId, timestamp: new Date(2012, 10, 1) },
+					{ content: 'some later message', createdBy: 'model order test', collaborationObjectId: collaborationObjectId, timestamp: new Date(2012, 10, 2) },
+					{ content: 'some earlier message', createdBy: 'model order test', collaborationObjectId: collaborationObjectId, timestamp: new Date(2011, 10, 1) }
 				], function(err){
-					Message.readMessagesByPage(conversationId, 0, function(err, messages){
+					Message.readMessagesByPage(collaborationObjectId, 0, function(err, messages){
 						expect(err).toBeNull();
 						expect(messages[0].content).toBe('some later message');
 						expect(messages[1].content).toBe('some message');

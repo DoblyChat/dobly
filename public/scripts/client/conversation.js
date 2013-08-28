@@ -20,11 +20,11 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
         self.search = createConversationSearch(self);
         self.forEntireGroup = data.members.entireGroup;
 
-        if(data.messages) {
-            var messagesLength = data.messages.length;
+        if(data.items) {
+            var messagesLength = data.items.length;
             
             for(var i = 0; i < messagesLength; i++) {
-              self.messages.push(createMessage(data.messages[i], true));
+              self.messages.push(createMessage(data.items[i], true));
           }
         }
 

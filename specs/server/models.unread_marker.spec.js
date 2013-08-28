@@ -4,16 +4,16 @@ describe('Unread Marker', function() {
 	var UnreadMarker = require('../../lib/models/unread_marker');
 
 	describe("#increaseCounter", function(){
-		var userId, conversationId;
+		var userId, collaborationObjectId;
 
 		beforeEach(function(){
 			userId = new mongo.Types.ObjectId();
-			conversationId = new mongo.Types.ObjectId();
+			collaborationObjectId = new mongo.Types.ObjectId();
 		});
 
 		it('creates a new counter with 1 if none exists', function(done){
-			UnreadMarker.increaseCounter(userId, conversationId, function(err){
-				UnreadMarker.findOne({ userId: userId, conversationId: conversationId }, function(err, marker){
+			UnreadMarker.increaseCounter(userId, collaborationObjectId, function(err){
+				UnreadMarker.findOne({ userId: userId, collaborationObjectId: collaborationObjectId }, function(err, marker){
 					expect(marker.count).toBe(1);
 					done();
 				});
@@ -21,9 +21,9 @@ describe('Unread Marker', function() {
 		});
 
 		it('increases an existing counter by 1', function(done){
-			UnreadMarker.increaseCounter(userId, conversationId, function(err){
-				UnreadMarker.increaseCounter(userId, conversationId, function(err){
-					UnreadMarker.findOne({ userId: userId, conversationId: conversationId }, function(err, marker){
+			UnreadMarker.increaseCounter(userId, collaborationObjectId, function(err){
+				UnreadMarker.increaseCounter(userId, collaborationObjectId, function(err){
+					UnreadMarker.findOne({ userId: userId, collaborationObjectId: collaborationObjectId }, function(err, marker){
 						expect(marker.count).toBe(2);
 						done();
 					});
@@ -43,7 +43,7 @@ describe('Unread Marker', function() {
 
 		beforeEach(function() {
 			unreadData = { 
-				conversationId: new mongo.Types.ObjectId(), 
+				collaborationObjectId: new mongo.Types.ObjectId(), 
 				userId: new mongo.Types.ObjectId(),
 				count: 123
 			};
@@ -57,8 +57,8 @@ describe('Unread Marker', function() {
 			});
 		}
 
-		it('conversationId', function(done) {
-			requiredFieldTest('conversationId', done);
+		it('collaborationObjectId', function(done) {
+			requiredFieldTest('collaborationObjectId', done);
 		});
 
 		it('userId', function(done) {
@@ -79,8 +79,8 @@ describe('Unread Marker', function() {
 			conversationTwo = new mongo.Types.ObjectId();
 
 			UnreadMarker.create([
-				{ userId: userId, conversationId: conversationOne, count: 2 },
-				{ userId: userId, conversationId: conversationTwo, count: 5 }
+				{ userId: userId, collaborationObjectId: conversationOne, count: 2 },
+				{ userId: userId, collaborationObjectId: conversationTwo, count: 5 }
 			], done);
 		});
 
@@ -92,7 +92,7 @@ describe('Unread Marker', function() {
 			UnreadMarker.removeMarkers(userId, conversationOne, function(err){
 				UnreadMarker.find({ userId: userId }, function(err, markers){
 					expect(markers.length).toBe(1);
-					expect(markers[0].conversationId.toString()).toBe(conversationTwo.toString());
+					expect(markers[0].collaborationObjectId.toString()).toBe(conversationTwo.toString());
 					done(err);
 				});
 			});

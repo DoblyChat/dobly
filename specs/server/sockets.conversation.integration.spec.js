@@ -8,7 +8,7 @@ describe('Sockets', function(){
 
         beforeEach(function(){
             conversationIo = require('../../lib/sockets/conversation_io');
-            Conversation = require('../../lib/models/conversation');
+            Conversation = require('../../lib/models/collaboration_object');
             Message = require('../../lib/models/message');
             Unread = require('../../lib/models/unread_marker');
             User = require('../../lib/models/user');
@@ -69,6 +69,7 @@ describe('Sockets', function(){
 
             beforeEach(function(done){
                 Conversation.create({
+                    type: 'C',
                     topic: 'sendMessage test',
                     groupId: socketMock.handshake.user.groupId,
                     createdById: socketMock.handshake.user._id,
@@ -76,6 +77,8 @@ describe('Sockets', function(){
                         entireGroup: true
                     }
                 }, function(err, conversation){
+                    if (err) { console.log(err) };
+
                     conversationId = conversation._id;
 
                     User.create({ 
@@ -84,6 +87,7 @@ describe('Sockets', function(){
                         groupId: socketMock.handshake.user.groupId,
                         password: 'pass'
                     }, function(err, user){
+                        if (err) { console.log(err) };
                         userId = user._id;
                         done(err);
                     });
@@ -112,7 +116,7 @@ describe('Sockets', function(){
                 conversationIo.sendMessage(socketMock, offlineNotification, data, function(message){
                     expect(message.content).toBe(content);
                     expect(message.createdBy).toBe(socketMock.handshake.user.name);
-                    expect(message.conversationId).toEqual(data.conversationId);
+                    expect(message.collaborationObjectId).toEqual(data.conversationId);
                     expect(message.timestamp).toEqual(data.timestamp);
                     expect(message._id).not.toBeNull();
 
@@ -123,7 +127,7 @@ describe('Sockets', function(){
                         Unread.find({ userId: userId }, function(err, markers){
                             expect(err).toBeNull();
                             expect(markers.length).toBe(1);
-                            expect(markers[0].conversationId).toEqual(data.conversationId);
+                            expect(markers[0].collaborationObjectId).toEqual(data.conversationId);
                             expect(markers[0].count).toBe(1);
                             done();
                         });
@@ -137,11 +141,11 @@ describe('Sockets', function(){
 
             beforeEach(function(done){  
                 conversationId = new mongo.Types.ObjectId();
-                Unread.create({ userId: socketMock.handshake.user._id, conversationId: conversationId, count: 1 }, done);
+                Unread.create({ userId: socketMock.handshake.user._id, collaborationObjectId: conversationId, count: 1 }, done);
             });
 
             afterEach(function(done){
-                Unread.remove({ conversationId: conversationId }, done);
+                Unread.remove({ collaborationObjectId: conversationId }, done);
             });
 
             it('removes unread markers', function(done){
@@ -152,7 +156,7 @@ describe('Sockets', function(){
                 });
                 
                 waitsFor(function(){
-                    Unread.count({ conversationId: conversationId }, function(err, count){
+                    Unread.count({ collaborationObjectId: conversationId }, function(err, count){
                         checkMatched = count === 0;
                     });
 
@@ -171,6 +175,7 @@ describe('Sockets', function(){
 
             beforeEach(function(done){
                 Conversation.create({ 
+                    type: 'C',
                     topic: 'socket-conversation-orig',
                     createdById: socketMock.handshake.user._id,
                     groupId: socketMock.handshake.user.groupId,
@@ -213,6 +218,7 @@ describe('Sockets', function(){
 
             beforeEach(function(done){
                 Conversation.create({ 
+                    type: 'C',
                     topic: 'socket-conversation',
                     createdById: socketMock.handshake.user._id,
                     groupId: socketMock.handshake.user.groupId,
@@ -223,14 +229,14 @@ describe('Sockets', function(){
                         content: 'socket-conversation-test',
                         createdBy: 'socket-test',
                         timestamp: new Date(),
-                        conversationId: conversationId
+                        collaborationObjectId: conversationId
                     }, done);
                 });
             });
 
             afterEach(function(done){
                 Conversation.findByIdAndRemove(conversationId, function(){
-                    Message.remove({ conversationId: conversationId }, done);
+                    Message.remove({ collaborationObjectId: conversationId }, done);
                 });
             });
 

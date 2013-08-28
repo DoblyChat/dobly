@@ -56,7 +56,7 @@ describe('Sockets', function(){
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../lib/sockets/conversation_io');
 
-			conversationMock = buildMock('../models/conversation', 'create', 'updateTopic', 'findById');
+			conversationMock = buildMock('../models/collaboration_object', 'create', 'updateTopic', 'findById');
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'removeMarkers');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
@@ -187,7 +187,7 @@ describe('Sockets', function(){
 					expect(messageData.content).toBe(data.content);
 					expect(messageData.createdBy).toBe('usr');
 					expect(messageData.timestamp).toBe(data.timestamp);
-					expect(messageData.conversationId).toBe(data.conversationId);
+					expect(messageData.collaborationObjectId).toBe(data.conversationId);
 
 					expect(messageMock.create.getCallback()).toBe(callback);
 				});

@@ -21,3 +21,5 @@ function logError(err){
 exports.connect = connect;
 exports.disconnect = disconnect;
 exports.logError = logError;
+exports.native = mongo.mongo;
+exports.databaseUri = databaseUri;

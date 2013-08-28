@@ -241,7 +241,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 _id: "8",
                 createdBy: "fernando",
                 groupId: "5",
-                messages: [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie(), testDataMessageDelta() ],
+                items: [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie(), testDataMessageDelta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
                 topic: "some topic",
                 unread: 1,
@@ -258,7 +258,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 _id: "8",
                 createdBy: "fernando",
                 groupId: "5",
-                messages: [ testDataMessageAlpha(), testDataMessageAlpha2(), testDataMessageCharlie(), testDataMessageDelta() ],
+                items: [ testDataMessageAlpha(), testDataMessageAlpha2(), testDataMessageCharlie(), testDataMessageDelta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
                 topic: "some topic",
                 unread: 1,
@@ -274,7 +274,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'a',
                 content: "alpha", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
                 createdBy: "carlos"
             };
@@ -284,7 +284,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'a2',
                 content: "alpha", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
                 createdBy: "carlos"
             };
@@ -294,7 +294,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'b',
                 content: "beta", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:14:14'), 
                 createdBy: "fernando"
             };
@@ -304,7 +304,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'c',
                 content: "charlie", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
                 createdBy: "carlos"
             };
@@ -314,7 +314,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'd',
                 content: "delta", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
                 createdBy: "fernando"
             };
@@ -324,7 +324,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'e',
                 content: "echo", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
                 createdBy: "carlos"
             };
@@ -334,7 +334,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             return {
                 _id: 'f',
                 content: "foxtrot", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
                 createdBy: "fernando"
             };

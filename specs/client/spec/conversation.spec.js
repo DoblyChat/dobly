@@ -245,16 +245,17 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
         describe("last messages", function() {
             it("3 messages", function() {
-                testData.messages = [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie() ];
+                testData.items = [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie() ];
                 conversation = createConversation(testData, group);
 
+                console.log(conversation.lastMessages());
                 expect(conversation.lastMessages().length).toBe(2);
                 expect(conversation.lastMessages()[0].content).toBe("beta");
                 expect(conversation.lastMessages()[1].content).toBe("charlie");
             });
 
             it("2 messages", function() {
-                testData.messages = [ testDataMessageAlpha(), testDataMessageBeta() ];
+                testData.items = [ testDataMessageAlpha(), testDataMessageBeta() ];
                 conversation = createConversation(testData, group);
 
                 expect(conversation.lastMessages().length).toBe(2);
@@ -263,7 +264,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("1 messages", function() {
-                testData.messages = [ testDataMessageAlpha() ];
+                testData.items = [ testDataMessageAlpha() ];
                 conversation = createConversation(testData, group);
 
                 expect(conversation.lastMessages().length).toBe(1);
@@ -526,7 +527,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 _id: "8",
                 createdBy: "fernando",
                 groupId: "5",
-                messages: [ testDataMessageAlpha(), testDataMessageBeta() ],
+                items: [ testDataMessageAlpha(), testDataMessageBeta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
                 topic: "some topic",
                 unread: 1,
@@ -543,7 +544,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 _id: "10",
                 createdBy: "fernando",
                 groupId: "5",
-                messages: [ ],
+                items: [ ],
                 timestamp: "2013-02-15T14:36:43.296Z",
                 topic: "some other topic",
                 unread: 0,
@@ -558,7 +559,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         function testDataMessageAlpha() {
             return {
                 content: "alpha", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
                 createdBy: "carlos"
             };
@@ -567,7 +568,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         function testDataMessageBeta() {
             return {
                 content: "beta", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:14:14'), 
                 createdBy: "fernando"
             };
@@ -576,7 +577,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         function testDataMessageCharlie() {
             return {
                 content: "charlie", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
                 createdBy: "carlos"
             };
@@ -585,7 +586,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         function testDataMessageDelta() {
             return {
                 content: "delta", 
-                conversationId: "8", 
+                collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
                 createdBy: "fernando"
             };

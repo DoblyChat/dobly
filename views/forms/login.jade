@@ -1,0 +1,13 @@
+#login
+	#prompt 
+		span Sign In to 
+		span= title
+	.form-container
+		form(method='post', action="/login")					
+			input#email.field(type="email", name="email", placeholder="Email", required, autofocus)
+			input#password.field(type="password", name="password", placeholder="Password", required)
+			input.button(type="submit", value="Sign In")
+	if showFlashError
+		#flash.error= error
+	if showFlashInfo
+		#flash.info= info

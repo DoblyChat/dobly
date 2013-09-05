@@ -1,0 +1,85 @@
+@prompt-height: 36px;
+@prompt-margin-bottom: 30px;
+@field-outer-width: 260px;
+@field-outer-height: 70px;
+@field-padding-left: 20px;
+@field-padding-right: 20px;
+@field-padding-top: 0;
+@field-padding-bottom: 0;
+@field-margin-right: 20px;
+@field-width-offset: (@thick-border-size * 2) + @field-padding-right + @field-padding-left;
+@field-height: @field-outer-height - (@thick-border-size * 2) - @field-padding-top - @field-padding-bottom;
+
+@flash-width-offset: @field-padding-left + @field-padding-right;;
+
+@login-width: 720px;
+@login-email-outer-width: 360px - @field-width-offset;
+@login-password-outer-width: 180px - @field-width-offset;
+@login-padding: 100px;
+@login-side-padding: @login-padding*2;
+
+#login {
+	font-family: @sans;
+	.middle-of-screen;
+	margin-top: -@prompt-height - @prompt-margin-bottom - @field-outer-height - @login-padding;
+	width: @login-width;
+	margin-left: -((@login-width + @login-side-padding)/2);
+	padding: @login-padding;
+	padding-top: 70px;
+	.white-box-shadow;
+
+	#prompt {
+		height: @prompt-height;
+		font-size: @prompt-height;
+		line-height: 1;
+		margin-bottom: @prompt-margin-bottom;
+	}
+
+	.form-container {
+		.float-parent;
+
+		.field {
+			height: @field-height;		
+			margin-right: @field-margin-right;
+			float: left;
+			padding: @field-padding-top @field-padding-right @field-padding-bottom @field-padding-left;
+		}
+
+		.button {
+			width: 140px;
+			height: 70px;
+			.blue-button;			
+		}
+
+		input {
+			&#email {
+				width: @login-email-outer-width;
+			}
+
+			&#password {
+				width: @login-password-outer-width;
+			}
+
+			&.button {
+				float: right;
+			}
+		}
+	}
+
+	#flash {
+		height: 50px;
+		padding-left: @field-padding-left;
+		padding-right: @field-padding-right;
+		line-height: 2.5;
+		width: @login-width - @flash-width-offset;
+		margin-top: 20px;
+
+		&.error {
+			background: @red;
+		}
+
+		&.info {
+			background: @flash-blue;
+		}
+	}
+}

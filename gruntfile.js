@@ -87,6 +87,7 @@ module.exports = function(grunt){
                 files: {
                     'public/stylesheets/release/index.css': 'public/stylesheets/index.less',
                     'public/stylesheets/release/style.css': 'public/stylesheets/style.less',
+                    'public/stylesheets/release/form.css': 'public/stylesheets/form.less'
                 }
             }
         },

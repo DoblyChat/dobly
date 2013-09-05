@@ -1,0 +1,40 @@
+@import "client/colors";
+@import "client/common";
+
+html {
+	background-color: @qwhite;
+	font-family: @sans;
+	font-size: 20px;
+	.text-color;
+}
+
+.field {
+	border: @thick-gray-border;
+	background: @white;
+	outline: none;
+
+	&:focus {
+		border: @thick-blue-border;
+	}
+
+	&:-moz-placeholder {
+		.placeholder-color;
+	}
+
+	&.placeholder {
+		.placeholder-color;
+	}
+}
+
+.prompt1 {
+	font-size: 36px;
+	line-height: 1;
+}
+
+.prompt2 {
+	margin-top: 30px;
+}
+
+@import "forms/group_signup";
+@import "forms/login";
+@import "forms/invite";

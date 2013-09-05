@@ -10,7 +10,7 @@
 	width: @text-input-outer-width;
 	font-family: @sans;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: @title-size;
 	.middle-of-screen;
 	margin-top: -@text-input-outer-height;
 	margin-left: -(@text-input-outer-width/2);
@@ -130,9 +130,6 @@
 .info-dialog{
 	background-color: @white;
 	.box-shadow;
-	.middle-of-screen;
-	margin-left: -150px;
-	margin-top: -120px;
 	padding: 20px;
 
 	.header {
@@ -142,32 +139,78 @@
 
 		h2{
 			margin: 0;
-			font-size: 2em;
-			text-transform: capitalize;
+			font-size: @header-size;
+			text-transform: none;
 			color: @gray;
 		}
 	}
 }
 
-#group-info{
-	.info-dialog;
+#group-grid{
+	.middle-of-screen;
+	margin-left: -400px;
+	margin-top: -120px;
+	font-size: @title-size;
 
-	.users {
-		font-size: 1.5em;
+	#info {
+		.info-dialog;
+		float: left;
+		margin-right: 60px;
 
-		tr td{
-			padding-bottom: 10px;
+		.users {
+			tr td{
+				padding-bottom: 10px;
+			}
+			.name{
+				width: 200px;
+			}
+
+			.online {
+				color: @blue;
+			}
+
+			.offline {
+				color: @light-gray;
+			}	
 		}
-		.name{
-			width: 200px;
+	}
+
+	#invitations {
+		.info-dialog;
+		float: right;
+
+		#prompt {
+			margin-bottom: 20px;
 		}
 
-		.online {
-			color: @blue;
+		#email {
+			input {
+				height: 50px;
+				width: 400px;
+				border: @thick-blue-border;
+				background: @white;
+				outline: none;
+				padding: 0 15px;
+
+				&:-moz-placeholder {
+					.placeholder-color;
+				}
+
+				&.placeholder {
+					.placeholder-color;
+				}
+			}
 		}
 
-		.offline {
-			color: @light-gray;
-		}	
+		#invite {
+			margin-top: 20px;
+			//float: right;
+
+			button {
+				width: 120px;
+				height: 50px;
+				.blue-button;
+			}
+		}
 	}
 }

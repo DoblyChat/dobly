@@ -197,7 +197,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
                 var messageData = app.socket.emit.mostRecentCall.args[1];
                 expect(messageData.content).toEqual('abc');
-                expect(messageData.conversationId).toEqual('8');
+                expect(messageData.collaborationObjectId).toEqual('8');
                 expect(messageData.timestamp.clearTime()).toEqual(Date.today());
                 expect(messageData.createdBy).toEqual('jimmy');
 

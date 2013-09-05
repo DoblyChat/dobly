@@ -32,7 +32,7 @@ define(['client/changeTopic', 'client/common', 'knockout'], function(createChang
 			var arg0 = app.socket.emit.mostRecentCall.args[0];
 			var arg1 = app.socket.emit.mostRecentCall.args[1];
 			expect(arg0).toEqual('update_topic');
-			expect(arg1.conversationId).toEqual('8');
+			expect(arg1.collaborationObjectId).toEqual('8');
 			expect(arg1.newTopic).toEqual('some new topic');
 
 			expect(changeTopic.newTopic()).toEqual('');

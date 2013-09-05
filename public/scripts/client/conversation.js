@@ -90,7 +90,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
         function getMessageData(){
             return { 
                 content: self.newMessage(), 
-                conversationId: self.id, 
+                collaborationObjectId: self.id, 
                 timestamp: new Date(),
                 createdBy: app.user.name
             };

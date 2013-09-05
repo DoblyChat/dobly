@@ -1,0 +1,44 @@
+@group-signup-width: 400px;
+
+#group-signup {
+	.centered;
+	display: table;
+	margin-top: 40px;
+	margin-bottom: 50px;
+	padding: 50px 70px 30px;
+	.white-box-shadow;
+
+	.row {
+		margin-top: 20px;
+		display: table;
+
+		.field {
+			height: 60px;
+			width: @group-signup-width;
+			padding: 0 20px;
+		}
+	}
+
+	.button {
+		margin-top: 20px;
+		float: right;
+
+		input {
+			width: 140px;
+			height: 70px;
+			.blue-button;
+		}
+	}
+
+	#validationErrors {
+		background: @red;
+		padding: 7px 20px 12px;
+		margin-top: 30px;
+
+		p {
+			margin-top: 5px;
+			margin-bottom: 0px;
+			width: @group-signup-width;
+		}
+	}
+}

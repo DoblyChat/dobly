@@ -5,6 +5,7 @@ define(['jquery', 'knockout'], function($, ko){
 		var self = {};
 
 		self.name = data.name;
+		self.rawName = data.rawName;
 
 		self.users = [];
 		self.otherUsers = [];
@@ -20,7 +21,7 @@ define(['jquery', 'knockout'], function($, ko){
 
 		function createUser(userData){
 			return { 
-				name: userData.name, 
+				fullName: userData.firstName + ' ' + userData.lastName, 
 				online: ko.observable(false),
 				id: userData._id
 			};

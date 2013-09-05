@@ -1,0 +1,46 @@
+@invite-width: 640px;
+@invite-prompt-width: @invite-width + 40px;
+@invite-side-padding: 70px;
+
+#invite {
+	.middle-of-screen;
+	margin-top: -250px;
+	margin-left: -((@invite-prompt-width + @invite-side-padding*2)/2);
+	display:table;
+	.white-box-shadow;
+	padding: 50px @invite-side-padding;
+
+	.prompt1, .prompt2 {
+		width: @invite-prompt-width;
+	}
+
+	.row {
+		margin-top: 30px;
+		display: table;
+
+		.field {
+			height: 60px;
+			width: @invite-width;
+			padding: 0 20px;
+		}
+	}
+
+	.button {
+		margin-top: 30px;
+		float: right;
+		margin-left: 10px;
+
+		input, button {
+			width: 140px;
+			height: 70px;
+		}
+
+		input {
+			.blue-button;
+		}
+
+		button {
+			.white-button;
+		}
+	}
+}

@@ -208,6 +208,17 @@ describe('Routes handler - integration', function(){
 		}
 	});
 
+	describe("#create group and user", function() {
+		it("test groupd unique", function() {
+		  	Group.create({name: 'abc', rawName: 'abc'}, function(err, myGroup) {
+		  		Group.create({name: 'abc', rawName: 'abc'}, function(err, otherGroup) {
+		  			console.log(err.err);
+		  			expect(err.err.indexOf('duplicate key error') > -1).toBe(true);
+		  		});
+		  	});
+		});
+	});
+
 	describe('#get groups', function(){
 		var anotherGroup;
 

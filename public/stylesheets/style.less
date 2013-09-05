@@ -6,16 +6,9 @@
 @convo-width: 500px;
 @tile-width: 150px;
 
-@sans: MuseoSlab-500;
-@sans-serif: 'Source Sans Pro', Helvetica, Arial, sans-serif;
-@arial: Arial;
-
 @text-size: 14px;
-
-@thick-border-size: 2px;
-@gray-border: 1px solid @light-gray;
-@thick-gray-border: @thick-border-size solid @light-gray;
-@thick-blue-border: @thick-border-size solid @blue;
+@title-size: 20px;
+@header-size: 26px;
 
 html {
 	background-color: @qwhite;
@@ -38,16 +31,6 @@ audio{
 	.hidden;
 }
 
-.centered {
-	margin: 0 auto;
-}
-
-.middle-of-screen {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-}
-
 .margin-bottom {
 	margin-bottom: @standard-margin;
 }
@@ -62,13 +45,6 @@ audio{
 
 .margin-right {
 	margin-right: @standard-margin;
-}
-
-.float-parent {
-	display: table;
-	line-height: 0;
-	content: "";
-	clear: both;
 }
 
 .ellipsis {
@@ -91,34 +67,11 @@ audio{
 	.counter-box-shadow;
 }
 
-.title-color {
-	color: @gray;
-}
-
-.caption-color {
-	color: @muted;
-}
-
-.text-color {
-	color: @gray;
-}
-
-.placeholder-color {
-	color: #aaa;
-}
-
 .light-gray-button {
 	background: @light-gray;
 	color: @white;
 	border: none;
 	line-height: 1;	
-}
-
-.box-shadow {
-	-moz-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
-	-webkit-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
-	-o-box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
-	box-shadow: 0px 0px 10px 0px rgba(33, 33, 33, 0.7);
 }
 
 .timer{
@@ -143,8 +96,6 @@ audio{
 	.timer;
 	margin-left:@timer-dimension/2;
 }
-
-@import "client/login";
 
 @import "client/icons";
 

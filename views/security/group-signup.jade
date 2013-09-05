@@ -1,23 +1,27 @@
 #group-signup
-	form(method='post', action="/group/signup")
-		.prompt1 Sign up to use Dobly
+	form(method='post', action="/signup")
+		.prompt1 
+			span Sign up to use 
+			span= title
+		
+		if validationErrors.length > 0
+			#validationErrors
+				each error in validationErrors
+					p= error
+
 		.prompt2 The name of your group
-		.field
-			input(type="text", name="groupname", placeholder="Name of your group", value=groupname)
+		.row
+			input.field(type="text", name="groupname", placeholder="Name of your group", value=groupname, required, autofocus)
 		.prompt2 Your information
-		.field 
-			input(type="text", name="firstname", placeholder="First name", value=firstname)
-		.field 
-			input(type="text", name="lastname", placeholder="Last name", value=lastname)
-		.field 
-			input(type="email", name="email", placeholder="Email", value=email)
-		.field 
-			input(type="password", name="password", placeholder="Password")
-		.field 
-			input(type="password", name="password2", placeholder="Verify password")
+		.row 
+			input.field(type="text", name="firstname", placeholder="First name", value=firstname, required)
+		.row 
+			input.field(type="text", name="lastname", placeholder="Last name", value=lastname, required)
+		.row 
+			input.field(type="email", name="email", placeholder="Email", value=email, required)
+		.row 
+			input.field(type="password", name="password", placeholder="Password", required)
+		.row 
+			input.field(type="password", name="password2", placeholder="Verify password", required)
 		.button 
 			input(type="submit", value="Sign Up")
-	if validationErrors.length > 0
-		#flash.error
-			each error in validationErrors
-				p= error

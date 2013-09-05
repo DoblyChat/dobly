@@ -1,0 +1,20 @@
+#group-grid(data-bind="with: group, visible: navigation.showingGroup")
+	#info
+		.header
+			h2(data-bind="text: rawName")
+
+		table.users(data-bind="foreach: users")
+			tr
+				td.name(data-bind="text: fullName")
+				td.status
+					span.online(data-bind="visible: online") online
+					span.offline(data-bind="visible: !online()") offline
+	#invitations
+		.header
+			h2 Invitations
+		#prompt
+			p Invite others to your group via email
+		#email
+			input(type="email", name="emailtoinvite", placeholder="Enter an email")
+		#invite
+			button(type="button") Invite

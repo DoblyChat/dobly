@@ -2,7 +2,7 @@ describe('Routes configuration', function(){
 	'use strict';
 
     var config = require('../../lib/routes/').config;
-	var appMock, handlerMock;
+	var appMock, handlerMock, signUpMock, inviteMock;
 
 	beforeEach(function(){
 		mockery.enable();
@@ -18,7 +18,6 @@ describe('Routes configuration', function(){
 			authenticate: jasmine.createSpy('authenticate'),
 			logOut: jasmine.createSpy('logOut'),
 			timeout: jasmine.createSpy('timeOut'),
-			signUp: jasmine.createSpy('signUp'),
 			createUser: jasmine.createSpy('createUser'),
 			checkUserIsLoggedIn: jasmine.createSpy('checkUserIsLoggedIn'),
 			renderDesktop: jasmine.createSpy('renderDesktop'),
@@ -26,6 +25,8 @@ describe('Routes configuration', function(){
 			createGroup: jasmine.createSpy('createGroup')
 		};
 
+		signUpMock = buildMock('./group_sign_up', 'get', 'post');
+		inviteMock = buildMock('./invite', 'get', 'post', 'getWelcome');
 		mockery.registerMock('./handler', handlerMock);
 
 		config(appMock);
@@ -37,7 +38,11 @@ describe('Routes configuration', function(){
 		verifyPost('/login', handlerMock.authenticate);
 		verifyGet('/logout', handlerMock.logOut);
 		verifyGet('/timeout', handlerMock.timeOut);
-		verifyGet('/sign-up/:group', handlerMock.signUp);
+		verifyGet('/signup', signUpMock.get);
+		verifyPost('/signup', signUpMock.post);
+		verifyGet('/invite', handlerMock.checkUserIsLoggedIn, inviteMock.get);
+		verifyPost('/invite', handlerMock.checkUserIsLoggedIn, inviteMock.post);
+		verifyGet('/welcome', handlerMock.checkUserIsLoggedIn, inviteMock.getWelcome);
 		verifyPost('/create-user', handlerMock.createUser);
 		verifyGet('/conversations', handlerMock.checkUserIsLoggedIn, handlerMock.renderDesktop);
 		verifyGet('/admin/groups', handlerMock.checkUserIsLoggedIn, handlerMock.getGroups);

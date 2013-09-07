@@ -3,12 +3,12 @@ describe('Sockets', function(){
 
     describe('Conversation - integration', function(){
         var conversationIo, socketMock,
-            Conversation, Message, 
+            CollaborationObject, Message, 
             Unread, User;
 
         beforeEach(function(){
             conversationIo = require('../../lib/sockets/conversation_io');
-            Conversation = require('../../lib/models/collaboration_object');
+            CollaborationObject = require('../../lib/models/collaboration_object');
             Message = require('../../lib/models/message');
             Unread = require('../../lib/models/unread_marker');
             User = require('../../lib/models/user');
@@ -19,7 +19,7 @@ describe('Sockets', function(){
                 broadcastToConversationMembers: jasmine.createSpy(),
                 handshake: {
                     user: {
-                        name: 'socket-convo-test',
+                        firstName: 'socket-convo-test',
                         groupId: new mongo.Types.ObjectId(),
                         _id: new mongo.Types.ObjectId(),
                     },
@@ -27,48 +27,16 @@ describe('Sockets', function(){
             };
         });
 
-        describe('#createConversation', function(){
-            var topic = 'socket-conversation-test';
-
-            afterEach(function(done){
-                Conversation.remove({ topic: topic }, done);
-            });
-
-            it('creates a conversation', function(done){
-                var data = { 
-                    topic: topic,
-                    forEntireGroup: true,
-                    selectedMembers: [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ]
-                };
-
-                socketMock.broadcastToConversationMembers = function(event, conversationId, conversation){
-                    expect(conversation.topic).toBe(topic);
-                    expect(conversation.createdById).toBe(socketMock.handshake.user._id);
-                    expect(conversation._doc.createdBy).toBe(socketMock.handshake.user.name);
-                    expect(conversation.groupId.toString()).toBe(socketMock.handshake.user.groupId.toString());
-                    expect(conversation._id).not.toBeNull();
-                    expect(conversation._id).toEqual(conversationId);
-                    expect(conversation.members.entireGroup).toBe(true);
-                    expect(conversation.members.users.length).toBe(2);
-                    expect(conversation.members.users).toContain(data.selectedMembers[0]);
-                    expect(conversation.members.users).toContain(data.selectedMembers[1]);
-
-                    done();
-                };
-
-                var sockets = { groupClients: function(){ return []; } };
-                conversationIo.createConversation(socketMock, sockets, data);
-            });
-        });
-
         describe('#sendMessage', function(){
-            var content = 'socket-send-message-test';
-            var name = 'user-send-message-test';
-            var email = 'send.message@test.com';
-            var userId, conversationId;
+            var content = 'socket-send-message-test',
+                firstName = 'user-send',
+                lastName = 'message-test',
+                email = 'send.message@test.com';
+
+            var userId, collaborationObjectId;
 
             beforeEach(function(done){
-                Conversation.create({
+                CollaborationObject.create({
                     type: 'C',
                     topic: 'sendMessage test',
                     groupId: socketMock.handshake.user.groupId,
@@ -76,13 +44,14 @@ describe('Sockets', function(){
                     members: {
                         entireGroup: true
                     }
-                }, function(err, conversation){
+                }, function(err, collaborationObject){
                     if (err) { console.log(err) };
 
-                    conversationId = conversation._id;
+                    collaborationObjectId = collaborationObject._id;
 
                     User.create({ 
-                        name: name,
+                        firstName: firstName,
+                        lastName: lastName,
                         email: email,
                         groupId: socketMock.handshake.user.groupId,
                         password: 'pass'
@@ -95,7 +64,7 @@ describe('Sockets', function(){
             });
 
             afterEach(function(done){
-                Conversation.findByIdAndRemove(conversationId, function(){
+                CollaborationObject.findByIdAndRemove(collaborationObjectId, function(){
                     Message.remove({ content: content }, function(){
                         User.remove({ email: email }, function(){
                             Unread.remove({ userId: userId }, done);
@@ -108,15 +77,15 @@ describe('Sockets', function(){
                 var data = {
                     content: content,
                     timestamp: new Date(),
-                    conversationId: conversationId,
+                    collaborationObjectId: collaborationObjectId,
                 };
 
                 var offlineNotification = jasmine.createSpyObj('offlineNotification', ['notify']);
 
                 conversationIo.sendMessage(socketMock, offlineNotification, data, function(message){
                     expect(message.content).toBe(content);
-                    expect(message.createdBy).toBe(socketMock.handshake.user.name);
-                    expect(message.collaborationObjectId).toEqual(data.conversationId);
+                    expect(message.createdBy).toBe(socketMock.handshake.user.firstName);
+                    expect(message.collaborationObjectId).toEqual(data.collaborationObjectId);
                     expect(message.timestamp).toEqual(data.timestamp);
                     expect(message._id).not.toBeNull();
 
@@ -127,7 +96,7 @@ describe('Sockets', function(){
                         Unread.find({ userId: userId }, function(err, markers){
                             expect(err).toBeNull();
                             expect(markers.length).toBe(1);
-                            expect(markers[0].collaborationObjectId).toEqual(data.conversationId);
+                            expect(markers[0].collaborationObjectId).toEqual(data.collaborationObjectId);
                             expect(markers[0].count).toBe(1);
                             done();
                         });
@@ -136,107 +105,30 @@ describe('Sockets', function(){
             });
         });
 
-        describe('#markAsRead', function(){
-            var conversationId, userId;
-
-            beforeEach(function(done){  
-                conversationId = new mongo.Types.ObjectId();
-                Unread.create({ userId: socketMock.handshake.user._id, collaborationObjectId: conversationId, count: 1 }, done);
-            });
-
-            afterEach(function(done){
-                Unread.remove({ collaborationObjectId: conversationId }, done);
-            });
-
-            it('removes unread markers', function(done){
-                var checkMatched = false;
-
-                runs(function(){
-                    conversationIo.markAsRead(socketMock, conversationId);
-                });
-                
-                waitsFor(function(){
-                    Unread.count({ collaborationObjectId: conversationId }, function(err, count){
-                        checkMatched = count === 0;
-                    });
-
-                    return checkMatched;
-
-                }, 'Waiting for unread marker to have been cleared', 2000);
-
-                runs(function(){
-                    done();
-                });
-            });
-        });
-
-        describe('#updateTopic', function(){
-            var conversationId;
-
-            beforeEach(function(done){
-                Conversation.create({ 
-                    type: 'C',
-                    topic: 'socket-conversation-orig',
-                    createdById: socketMock.handshake.user._id,
-                    groupId: socketMock.handshake.user.groupId,
-                }, 
-                function(err, conversation){
-                    conversationId = conversation._id;
-                    done(err); 
-                });
-            });
-
-            afterEach(function(done){
-                Conversation.findByIdAndRemove(conversationId, done);
-            });
-
-            it('updates conversation topic', function(done){
-                var checkMatched = false,
-                    newTopic = 'new socket-io topic';
-
-                runs(function(){
-                    conversationIo.updateTopic({ conversationId: conversationId, newTopic: 'new socket-io topic'});
-                });
-                
-                waitsFor(function(){
-                    Conversation.findById(conversationId, function(err, conversation){
-                        checkMatched = conversation.topic === newTopic;
-                    });
-
-                    return checkMatched;
-
-                }, 'Waiting for topic to be updated', 2000);
-
-                runs(function(){
-                    done();
-                });
-            });
-        });
-
         describe('#readMessages', function(){
-            var conversationId;
+            var collaborationObjectId;
 
             beforeEach(function(done){
-                Conversation.create({ 
+                CollaborationObject.create({ 
                     type: 'C',
                     topic: 'socket-conversation',
                     createdById: socketMock.handshake.user._id,
                     groupId: socketMock.handshake.user.groupId,
-                }, function(err, conversation){
-                    conversationId = conversation._id;
+                }, function(err, collaborationObject){
+                    collaborationObjectId = collaborationObject._id;
 
                     Message.create({
-                        content: 'socket-conversation-test',
+                        content: 'socket-collaborationObject-test',
                         createdBy: 'socket-test',
                         timestamp: new Date(),
-                        collaborationObjectId: conversationId
+                        collaborationObjectId: collaborationObjectId
                     }, done);
                 });
             });
 
             afterEach(function(done){
-                Conversation.findByIdAndRemove(conversationId, function(){
-                    Message.remove({ collaborationObjectId: conversationId }, done);
+                CollaborationObject.findByIdAndRemove(collaborationObjectId, function(){
+                    Message.remove({ collaborationObjectId: collaborationObjectId }, done);
                 });
             });
 
@@ -246,7 +138,7 @@ describe('Sockets', function(){
                     done();
                 };
 
-                conversationIo.readMessages({ conversationId: conversationId, page: 0 }, confirm);
+                conversationIo.readMessages({ collaborationObjectId: collaborationObjectId, page: 0 }, confirm);
             });
 
             it('pages messages', function(done){
@@ -255,7 +147,7 @@ describe('Sockets', function(){
                     done();
                 };
 
-                conversationIo.readMessages({ conversationId: conversationId, page: 1 }, confirm);
+                conversationIo.readMessages({ collaborationObjectId: collaborationObjectId, page: 1 }, confirm);
             });
         });
     });

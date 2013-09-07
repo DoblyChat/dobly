@@ -9,7 +9,7 @@ describe("Common", function() {
             var log = require('../../lib/common/log');
 
             var err = {};
-            log.error('Some Error', err);
+            log.error(err, 'Some Error');
 
             expect(console.error).toHaveBeenCalledWith('~~~ Some Error ~~~', err);
             expect(console.trace).toHaveBeenCalledWith('~~~ Some Error ~~~');

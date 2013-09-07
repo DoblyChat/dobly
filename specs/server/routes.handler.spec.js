@@ -81,14 +81,45 @@ describe('Routes handler', function(){
 			req.flash = jasmine.createSpy().andReturn('');
 			handler.logIn(req, res);
 
-			expect(res.render).toHaveBeenCalledWith('security/login', { title: APP_TITLE, info: '', showFlash: false });
+			expect(res.render).toHaveBeenCalledWith('forms/login', { 
+				title: APP_TITLE, 
+				info: '', 
+				error: '',
+				showFlashError: false,
+				showFlashInfo: false 
+			});
 		});
 
-		it('sets flash if available', function(){
-			req.flash = jasmine.createSpy().andReturn('flash');
+		it('sets info flash if available', function(){
+			req.flash = jasmine.createSpy().andCallFake(function(key){
+				return key === 'info' ? 'flash' : '';
+			});
+
 			handler.logIn(req, res);
 
-			expect(res.render).toHaveBeenCalledWith('security/login', { title: APP_TITLE, info: 'flash', showFlash: true });
+			expect(res.render).toHaveBeenCalledWith('forms/login', { 
+				title: APP_TITLE, 
+				info: 'flash',
+				error: '',
+				showFlashInfo: true,
+				showFlashError: false 
+			});
+		});
+
+		it('sets error flash if available', function(){
+			req.flash = jasmine.createSpy().andCallFake(function(key){
+				return key === 'error' ? 'flash' : '';
+			});
+
+			handler.logIn(req, res);
+
+			expect(res.render).toHaveBeenCalledWith('forms/login', { 
+				title: APP_TITLE, 
+				info: '',
+				error: 'flash',
+				showFlashInfo: false,
+				showFlashError: true 
+			});
 		});
 
 		it('redirects to conversations if already logged in', function(){
@@ -128,12 +159,12 @@ describe('Routes handler', function(){
 		it('sets flash and redirects to login page', function(){
 			req.flash = jasmine.createSpy();
 			handler.timeOut(req, res);
-			expect(req.flash).toHaveBeenCalledWith('error', 'Your session timed out.');
+			expect(req.flash).toHaveBeenCalledWith('info', 'Your session timed out.');
 			expect(res.redirect).toHaveBeenCalledWith('/login');
 		});
 	});
 
-	describe('#signUp', function(){
+	xdescribe('#signUp', function(){
 		it('shows sign-up page with flash message', function(){
 			req.flash = jasmine.createSpy().andReturn('flash message');
 			req.params = { group: 'gru' };
@@ -175,7 +206,8 @@ describe('Routes handler', function(){
 			};
 			req.body = {};
 			req.body.email = 'user@email.com';
-			req.body.name = 'user';
+			req.body.firstName = 'user';
+			req.body.lastName = 'last';
 			req.body.password = 'pass';
 			req.body.password2 = 'pass';
 			req.body.group = 'gru';
@@ -214,7 +246,8 @@ describe('Routes handler', function(){
 			expect(userMock.create).toHaveBeenCalled();
 
 			var userData = userMock.create.mostRecentCall.args[0];
-			expect(userData.name).toBe('user');
+			expect(userData.firstName).toBe('user');
+			expect(userData.lastName).toBe('last');
 			expect(userData.email).toBe('user@email.com');
 			expect(userData.groupId).toBe('id');
 			expect(userData.password).toBe('pass');
@@ -344,7 +377,7 @@ describe('Routes handler', function(){
 
 				var args = groupMock.findById.mostRecentCall.args;
 				expect(args[0]).toBe('groupid');
-				expect(args[1]).toBe('name');
+				expect(args[1]).toBe('name rawName');
 				expect(args[2].lean).toBe(true);
 				expect(args[3]).toBe(dummyCallback);
 			});
@@ -438,9 +471,9 @@ describe('Routes handler', function(){
 				it('adds created by names for each conversation', function(){
 					render(null, data);
 
-					expect(data.collaborationObjects[0].createdBy).toBe(user1.name);
-					expect(data.collaborationObjects[1].createdBy).toBe(user2.name);
-					expect(data.collaborationObjects[2].createdBy).toBe(user3.name);
+					expect(data.collaborationObjects[0].createdBy).toBe(user1.firstName);
+					expect(data.collaborationObjects[1].createdBy).toBe(user2.firstName);
+					expect(data.collaborationObjects[2].createdBy).toBe(user3.firstName);
 				});
 			});
 

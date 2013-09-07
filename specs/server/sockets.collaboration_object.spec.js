@@ -12,7 +12,7 @@ describe('Sockets', function(){
 				handshake: {
 					user: {
 						groupId: 'gru-id',
-						name: 'usr',
+						firstName: 'usr',
 						_id: 'usr-id',
 					},
 				},
@@ -61,7 +61,7 @@ describe('Sockets', function(){
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'removeMarkers');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
 
-			collaborationObjectIo = require('../../lib/sockets/conversation_io');
+			collaborationObjectIo = require('../../lib/sockets/collaboration_object_io');
 		});
 
 		describe('#createCollaborationObject', function(){
@@ -115,7 +115,7 @@ describe('Sockets', function(){
 
 					expect(args[1]._id).toEqual(collaborationObject._id);
 					expect(args[1].topic).toBe(collaborationObject.topic);
-					expect(args[1]._doc.createdBy).toBe(socketMock.handshake.user.name);
+					expect(args[1]._doc.createdBy).toBe(socketMock.handshake.user.firstName);
 				});
 
 				it('communicates to other users that created collaboration object when creation successfull', function(){
@@ -127,7 +127,7 @@ describe('Sockets', function(){
 					expect(args[1]).toEqual(collaborationObject._id);
 					expect(args[2]._id).toEqual(collaborationObject._id);
 					expect(args[2].topic).toBe(collaborationObject.topic);
-					expect(args[2]._doc.createdBy).toBe(socketMock.handshake.user.name);
+					expect(args[2]._doc.createdBy).toBe(socketMock.handshake.user.firstName);
 				});
 
 				it('joins all sockets in group if collaboration object for the entire group', function(){

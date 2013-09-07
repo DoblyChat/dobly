@@ -41,13 +41,15 @@ describe('Routes handler - integration', function(){
 	it('#creates user', function(done){
 		req.body.password = req.body.password2 = 'pass';
 		req.body.group = group.name;
-		req.body.name = TEST_NAME;
+		req.body.firstName = TEST_NAME;
+		req.body.lastName = 'last';
 		req.body.email = TEST_EMAIL;
 
 		res.redirect = function(){
 			User.findOne({ email: TEST_EMAIL }, function(err, user){
 				expect(user).toBeDefined();
-				expect(user.name).toBe(TEST_NAME);
+				expect(user.firstName).toBe(TEST_NAME);
+				expect(user.lastName).toBe('last');
 				expect(user.groupId).toEqual(group._id);
 				done(err);
 			});
@@ -60,12 +62,12 @@ describe('Routes handler - integration', function(){
 		var testUser, collaborationObjects;
 
 		beforeEach(function(done){
-			User.create({ email: TEST_EMAIL, name: TEST_NAME, groupId: group._id, password: 'pass' }, function(err, user){
+			User.create({ email: TEST_EMAIL, firstName: TEST_NAME, lastName: 'last', groupId: group._id, password: 'pass' }, function(err, user){
 				testUser = user;
 
 				async.parallel({
 					user2: function(callback){
-						User.create({ email: 'routes.int.2@test.com', name: TEST_NAME + '2', groupId: group._id, password: 'pass' }, callback);
+						User.create({ email: 'routes.int.2@test.com', firstName: TEST_NAME + '2', lastName: 'last', groupId: group._id, password: 'pass' }, callback);
 					},
 					desktop: function(callback){
 						Desktop.create({ userId: user._id }, callback);
@@ -167,7 +169,7 @@ describe('Routes handler - integration', function(){
 				var collaborationObject = collaborationObjects[i];
 				expect(collaborationObject.groupId).toBe(group._id.toString());
 				expect(collaborationObject.createdById).toBe(testUser._id.toString());
-				expect(collaborationObject.createdBy).toBe(testUser.name);
+				expect(collaborationObject.createdBy).toBe(testUser.firstName);
 				expect(collaborationObject.topic).toContain('test');
 			}
 
@@ -203,20 +205,9 @@ describe('Routes handler - integration', function(){
 		function verifyGroup(resultGroup){
 			expect(resultGroup.name).toBe(group.name);
 			expect(resultGroup.users.length).toBe(2);
-			expect(resultGroup.users[0].name).toBe(TEST_NAME);
-			expect(resultGroup.users[1].name).toBe(TEST_NAME + '2');
+			expect(resultGroup.users[0].firstName).toBe(TEST_NAME);
+			expect(resultGroup.users[1].firstName).toBe(TEST_NAME + '2');
 		}
-	});
-
-	describe("#create group and user", function() {
-		it("test groupd unique", function() {
-		  	Group.create({name: 'abc', rawName: 'abc'}, function(err, myGroup) {
-		  		Group.create({name: 'abc', rawName: 'abc'}, function(err, otherGroup) {
-		  			console.log(err.err);
-		  			expect(err.err.indexOf('duplicate key error') > -1).toBe(true);
-		  		});
-		  	});
-		});
 	});
 
 	describe('#get groups', function(){
@@ -229,15 +220,15 @@ describe('Routes handler - integration', function(){
 				async.parallel([
 					function(callback){
 						User.create([
-							{ name: TEST_NAME + 'A', email: 'get.groups@test.com', groupId: group._id, password: 'pass' },
-							{ name: TEST_NAME + 'C', email: 'get.groups2@test.com', groupId: group._id, password: 'pass' },
-							{ name: TEST_NAME + 'B', email: 'get.groups3@test.com', groupId: group._id, password: 'pass' }
+							{ firstName: TEST_NAME + 'A', lastName: 'last', email: 'get.groups@test.com', groupId: group._id, password: 'pass' },
+							{ firstName: TEST_NAME + 'C', lastName: 'last', email: 'get.groups2@test.com', groupId: group._id, password: 'pass' },
+							{ firstName: TEST_NAME + 'B', lastName: 'last', email: 'get.groups3@test.com', groupId: group._id, password: 'pass' }
 						], callback);
 					},
 					function(callback){
 						User.create([
-							{ name: TEST_NAME + 'Z', email: 'get.groups4@test.com', groupId: anotherGroup._id, password: 'pass' },
-							{ name: TEST_NAME + 'X', email: 'get.groups5@test.com', groupId: anotherGroup._id, password: 'pass' }
+							{ firstName: TEST_NAME + 'Z', lastName: 'last', email: 'get.groups4@test.com', groupId: anotherGroup._id, password: 'pass' },
+							{ firstName: TEST_NAME + 'X', lastName: 'last', email: 'get.groups5@test.com', groupId: anotherGroup._id, password: 'pass' }
 						], callback);
 					}
 				], done);
@@ -259,21 +250,34 @@ describe('Routes handler - integration', function(){
 				expect(firstGroup.users.length).toBe(2);
 				expect(firstGroup.name).toBe('another group');
 
-				expect(firstGroup.users[0].name).toBe(TEST_NAME + 'x');
-				expect(firstGroup.users[1].name).toBe(TEST_NAME + 'z');
+				contains(firstGroup.users, TEST_NAME + 'Z');
+				contains(firstGroup.users, TEST_NAME + 'X');
 
 				var secondGroup = result.groups[1];
 				expect(secondGroup.name).toBe('test');
 				expect(secondGroup.users.length).toBe(3);
 
-				expect(secondGroup.users[0].name).toBe(TEST_NAME + 'a');
-				expect(secondGroup.users[1].name).toBe(TEST_NAME + 'b');
-				expect(secondGroup.users[2].name).toBe(TEST_NAME + 'c');
+				contains(secondGroup.users, TEST_NAME + 'A');
+				contains(secondGroup.users, TEST_NAME + 'B');
+				contains(secondGroup.users, TEST_NAME + 'C');
 
 				done();
 			};
 
 			handler.getGroups(req, res);
+
+			function contains(users, name){
+				var found = false;
+
+				for(var i = 0; i < users.length; i++){
+					if(users[i].firstName === name){
+						found = true;
+						break;
+					}
+				}
+
+				expect(found).toBe(true);
+			}
 		});
 	});
 
@@ -298,6 +302,15 @@ describe('Routes handler - integration', function(){
 			};
 
 			handler.createGroup(req, res);
+		});
+
+		it("test group name is unique", function(done) {
+		  	Group.create({name: groupName, rawName: 'abc'}, function(err, myGroup) {
+		  		Group.create({name: groupName, rawName: 'abc'}, function(err, otherGroup) {
+		  			expect(err.err.indexOf('duplicate key error') > -1).toBe(true);
+		  			done();
+		  		});
+		  	});
 		});
 	});
 });

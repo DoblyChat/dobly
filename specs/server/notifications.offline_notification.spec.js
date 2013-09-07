@@ -174,10 +174,10 @@ describe("Notifications", function() {
             var err = { message: 'some error'};
 
             afterEach(function() {
-                expect(logMock.error).toHaveBeenCalledWith('', err);
+                expect(logMock.error).toHaveBeenCalledWith(err);
             });
 
-            it("collaborationObject query", function() {
+            it("collaboration object query", function() {
                 offlineNotification.notify(message);
 
                 var result = collaborationObjectMock.findById.callback(err, null);
@@ -188,7 +188,7 @@ describe("Notifications", function() {
                 offlineNotification.notify(message);
 
                 collaborationObjectMock.findById.callback(null, collaborationObject);
-                userMock.findExcept.callback(err, null);
+                userMock.findExcept.callback(err);
             });
 
             it("group query", function() {
@@ -196,7 +196,7 @@ describe("Notifications", function() {
 
                 collaborationObjectMock.findById.callback(null, collaborationObject);
                 userMock.findExcept.callback(null, offlineUsers);
-                groupMock.findById.callback(err, null);
+                groupMock.findById.callback(err);
 
                 expect(mandrillWrapperMock.send).not.toHaveBeenCalled();
             });

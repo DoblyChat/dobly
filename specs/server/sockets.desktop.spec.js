@@ -16,8 +16,8 @@ describe('Sockets', function(){
 			};
 
 			socketMock = {
-				joinConversationRoom: jasmine.createSpy(),
-				leaveConversationRoom: jasmine.createSpy()
+				joinCollaborationObjectRoom: jasmine.createSpy(),
+				leaveCollaborationObjectRoom: jasmine.createSpy()
 			};
 
 			spyOn(console, 'error');
@@ -38,7 +38,7 @@ describe('Sockets', function(){
 				var addCallback = modelMock.addConversation.getCallback();
 				addCallback('add-error');
 				expect(console.error).toHaveBeenCalledWith('Desktop error adding conversation', 'add-error');
-				expect(socketMock.joinConversationRoom).not.toHaveBeenCalled();
+				expect(socketMock.joinCollaborationObjectRoom).not.toHaveBeenCalled();
 			});
 
 			it('joins conversation room if save successfull', function(){
@@ -46,7 +46,7 @@ describe('Sockets', function(){
 				var callback = modelMock.addConversation.getCallback();
 				callback(null);
 				expect(console.error).not.toHaveBeenCalled();
-				expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(34);
+				expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(34);
 			});
 		});
 
@@ -67,7 +67,7 @@ describe('Sockets', function(){
 				var callback = modelMock.removeConversation.getCallback();
 				callback('remove-error');
 				expect(console.error).toHaveBeenCalledWith('Desktop error removing conversation', 'remove-error');
-				expect(socketMock.leaveConversationRoom).not.toHaveBeenCalled();
+				expect(socketMock.leaveCollaborationObjectRoom).not.toHaveBeenCalled();
 			});
 
 			it('leaves conversation room if save successfull', function(){
@@ -75,7 +75,7 @@ describe('Sockets', function(){
 				var callback = modelMock.removeConversation.getCallback();
 				callback(null);
 				expect(console.error).not.toHaveBeenCalled();
-				expect(socketMock.leaveConversationRoom).toHaveBeenCalledWith(34);
+				expect(socketMock.leaveCollaborationObjectRoom).toHaveBeenCalledWith(34);
 			});
 		});
 

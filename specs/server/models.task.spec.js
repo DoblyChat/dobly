@@ -17,7 +17,7 @@ describe('Task', function() {
 		beforeEach(function(){
 			taskData = {
 				createdById: new mongo.Types.ObjectId(),
-				taskListId: new mongo.Types.ObjectId(),
+				collaboratiobObjectId: new mongo.Types.ObjectId(),
 				description: 'test'
 			};
 		});
@@ -26,8 +26,8 @@ describe('Task', function() {
 			requiredFieldTest('createdById', done);
 		});		
 
-		it('taskListId', function(done) {
-			requiredFieldTest('taskListId', done);
+		it('collaborationObjectId', function(done) {
+			requiredFieldTest('collaborationObjectId', done);
 		});
 
 		it('description', function(done) {

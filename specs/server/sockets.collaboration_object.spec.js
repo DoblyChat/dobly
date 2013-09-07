@@ -18,8 +18,8 @@ describe('Sockets', function(){
 				},
 				emit: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
-				broadcastToConversationMembers: jasmine.createSpy(),
-				joinConversationRoom: jasmine.createSpy()
+				broadcastToCollaborationObjectMembers: jasmine.createSpy(),
+				joinCollaborationObjectRoom: jasmine.createSpy()
 			};
 
 			sockets = {};
@@ -31,7 +31,7 @@ describe('Sockets', function(){
 							_id: 'usr-id'
 						}
 					},
-					joinConversationRoom: jasmine.createSpy('join-1')
+					joinCollaborationObjectRoom: jasmine.createSpy('join-1')
 				},
 				{ 
 					handshake: {
@@ -39,7 +39,7 @@ describe('Sockets', function(){
 							_id: 'usr-id-2'
 						}
 					},
-					joinConversationRoom: jasmine.createSpy('join-2')
+					joinCollaborationObjectRoom: jasmine.createSpy('join-2')
 				},
 				{ 
 					handshake: {
@@ -47,7 +47,7 @@ describe('Sockets', function(){
 							_id: 'usr-id-3'
 						}
 					},
-					joinConversationRoom: jasmine.createSpy('join-3')
+					joinCollaborationObjectRoom: jasmine.createSpy('join-3')
 				},
 			];
 
@@ -120,9 +120,9 @@ describe('Sockets', function(){
 
 				it('communicates to other users that created collaboration object when creation successfull', function(){
 					callback(null, collaborationObject);
-					expect(socketMock.broadcastToConversationMembers).toHaveBeenCalled();
+					expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalled();
 
-					var args = socketMock.broadcastToConversationMembers.mostRecentCall.args;
+					var args = socketMock.broadcastToCollaborationObjectMembers.mostRecentCall.args;
 					expect(args[0]).toBe('new_conversation');
 					expect(args[1]).toEqual(collaborationObject._id);
 					expect(args[2]._id).toEqual(collaborationObject._id);
@@ -134,9 +134,9 @@ describe('Sockets', function(){
 					data.forEntireGroup = true;
 					callback(null, collaborationObject);
 					expect(sockets.groupClients).toHaveBeenCalledWith(socketMock.handshake.user.groupId);
-					expect(clients[0].joinConversationRoom).toHaveBeenCalledWith(collaborationObject._id);
-					expect(clients[1].joinConversationRoom).toHaveBeenCalledWith(collaborationObject._id);
-					expect(clients[2].joinConversationRoom).toHaveBeenCalledWith(collaborationObject._id);
+					expect(clients[0].joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObject._id);
+					expect(clients[1].joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObject._id);
+					expect(clients[2].joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObject._id);
 				});
 
 				it('joins only users specified and current user if not for entire group', function(){
@@ -144,11 +144,11 @@ describe('Sockets', function(){
 					data.selectedMembers = [ 'usr-id', 'usr-id-3' ];
 					callback(null, collaborationObject);
 
-					expect(clients[0].joinConversationRoom).toHaveBeenCalledWith(collaborationObject._id);
-					expect(clients[1].joinConversationRoom).not.toHaveBeenCalledWith(collaborationObject._id);
-					expect(clients[2].joinConversationRoom).toHaveBeenCalledWith(collaborationObject._id);
+					expect(clients[0].joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObject._id);
+					expect(clients[1].joinCollaborationObjectRoom).not.toHaveBeenCalledWith(collaborationObject._id);
+					expect(clients[2].joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObject._id);
 
-					expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(collaborationObject._id);
+					expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObject._id);
 				});
 			});
 		});
@@ -308,8 +308,8 @@ describe('Sockets', function(){
 					var item = {};
 					broadcast(null, [ item ]);
 
-					expect(socketMock.broadcastToConversationMembers).toHaveBeenCalled();
-					var args = socketMock.broadcastToConversationMembers.mostRecentCall.args;
+					expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalled();
+					var args = socketMock.broadcastToCollaborationObjectMembers.mostRecentCall.args;
 
 					expect(args[0]).toBe('receive_message');
 					expect(args[1]).toBe('convo-id');

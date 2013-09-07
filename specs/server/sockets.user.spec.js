@@ -6,9 +6,9 @@ describe('Sockets', function(){
 
 		beforeEach(function(){
 			socketMock = {
-				joinConversationRoom: jasmine.createSpy(),
+				joinCollaborationObjectRoom: jasmine.createSpy(),
 				joinGroupRoom: jasmine.createSpy(),
-				leaveConversationRoom: jasmine.createSpy(),
+				leaveCollaborationObjectRoom: jasmine.createSpy(),
 				leaveGroupRoom: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
 				emit: jasmine.createSpy(),
@@ -64,13 +64,13 @@ describe('Sockets', function(){
 			var conversations = [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ];
 			userIo.subscribeToConversations(socketMock, conversations);
 
-			expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(conversations[0]);
-			expect(socketMock.joinConversationRoom).toHaveBeenCalledWith(conversations[1]);
+			expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(conversations[0]);
+			expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(conversations[1]);
 		});
 
 		it('unsubscribe user from conversation notifications', function(){
 			userIo.unsubscribeToConversation(socketMock, 'convo-id');
-			expect(socketMock.leaveConversationRoom).toHaveBeenCalledWith('convo-id');
+			expect(socketMock.leaveCollaborationObjectRoom).toHaveBeenCalledWith('convo-id');
 		});
 
 		describe('checks for active sessions', function(){

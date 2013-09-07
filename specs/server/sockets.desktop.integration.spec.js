@@ -9,8 +9,8 @@ describe('Sockets', function(){
 			Desktop = require('../../lib/models/desktop');
 
 			socketMock = {
-				joinConversationRoom: jasmine.createSpy(),
-				leaveConversationRoom: jasmine.createSpy(),
+				joinCollaborationObjectRoom: jasmine.createSpy(),
+				leaveCollaborationObjectRoom: jasmine.createSpy(),
 			};
 
 			Desktop.create({

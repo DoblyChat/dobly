@@ -16,7 +16,7 @@ describe('Sockets', function(){
             socketMock = {
                 emit: jasmine.createSpy(),
                 broadcastToGroup: jasmine.createSpy(),
-                broadcastToConversationMembers: jasmine.createSpy(),
+                broadcastToCollaborationObjectMembers: jasmine.createSpy(),
                 handshake: {
                     user: {
                         firstName: 'socket-convo-test',

@@ -137,10 +137,10 @@ describe('Socket', function(){
 					expect(socketMock.in).toHaveBeenCalledWith('g-gru-id');
 				});
 
-				it('defines a broadcastToConversationMembers method', function(){
-					expect(socketMock.broadcastToConversationMembers).toBeDefined();
+				it('defines a broadcastToCollaborationObjectMembers method', function(){
+					expect(socketMock.broadcastToCollaborationObjectMembers).toBeDefined();
 					var data = {};
-					socketMock.broadcastToConversationMembers('my-event', 'convo-id', data);
+					socketMock.broadcastToCollaborationObjectMembers('my-event', 'convo-id', data);
 					expect(groupSockets.broadcast.emit).toHaveBeenCalledWith('my-event', data);
 					expect(socketMock.in).toHaveBeenCalledWith('c-convo-id');
 				});
@@ -161,15 +161,15 @@ describe('Socket', function(){
 					expect(callback).toHaveBeenCalledWith(data, confirm);
 				});
 
-				it('defines a joinConversationRoom method', function(){
-					expect(socketMock.joinConversationRoom).toBeDefined();
-					socketMock.joinConversationRoom('convo-id');
+				it('defines a joinCollaborationObjectRoom method', function(){
+					expect(socketMock.joinCollaborationObjectRoom).toBeDefined();
+					socketMock.joinCollaborationObjectRoom('convo-id');
 					expect(socketMock.join).toHaveBeenCalledWith('c-convo-id');
 				});
 
-				it('defines a leaveConversationRoom method', function(){
-					expect(socketMock.leaveConversationRoom).toBeDefined();
-					socketMock.leaveConversationRoom('convo-id');
+				it('defines a leaveCollaborationObjectRoom method', function(){
+					expect(socketMock.leaveCollaborationObjectRoom).toBeDefined();
+					socketMock.leaveCollaborationObjectRoom('convo-id');
 					expect(socketMock.leave).toHaveBeenCalledWith('c-convo-id');
 				});
 

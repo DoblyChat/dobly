@@ -15,7 +15,7 @@ describe('Sockets', function(){
             socketMock = {
                 emit: jasmine.createSpy(),
                 broadcastToGroup: jasmine.createSpy(),
-                broadcastToConversationMembers: jasmine.createSpy(),
+                broadcastToCollaborationObjectMembers: jasmine.createSpy(),
                 handshake: {
                     user: {
                         firstName: 'socket-collaboration-object-test',
@@ -40,7 +40,7 @@ describe('Sockets', function(){
                     selectedMembers: [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ]
                 };
 
-                socketMock.broadcastToConversationMembers = function(event, collaborationObjectId, collaborationObject){
+                socketMock.broadcastToCollaborationObjectMembers = function(event, collaborationObjectId, collaborationObject){
                     expect(collaborationObject.topic).toBe(topic);
                     expect(collaborationObject.createdById).toBe(socketMock.handshake.user._id);
                     expect(collaborationObject._doc.createdBy).toBe(socketMock.handshake.user.firstName);

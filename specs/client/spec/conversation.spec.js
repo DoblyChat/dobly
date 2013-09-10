@@ -248,7 +248,6 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 testData.items = [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie() ];
                 conversation = createConversation(testData, group);
 
-                console.log(conversation.lastMessages());
                 expect(conversation.lastMessages().length).toBe(2);
                 expect(conversation.lastMessages()[0].content).toBe("beta");
                 expect(conversation.lastMessages()[1].content).toBe("charlie");

@@ -272,24 +272,6 @@ describe('Socket', function(){
 					expect(conversationIoMock.updateTopic).toHaveBeenCalledWith(data);
 				});
 
-				it('requests task lists', function(){
-					fire('request_task_lists');
-					expectSessionTouchCalled();
-					expect(taskIoMock.readTaskLists).toHaveBeenCalledWith(socketMock);
-				});
-
-				it('creates task lists', function(){
-					fire('create_task_list');
-					expectSessionTouchCalled();
-					expect(taskIoMock.createTaskList).toHaveBeenCalledWith(socketMock, data);
-				});
-
-				it('adds task', function(){
-					fire('add_task');
-					expectSessionTouchCalled();
-					expect(taskIoMock.addTask).toHaveBeenCalledWith(socketMock, data);
-				});
-
 				function expectSessionTouchCalled(){
 					expect(socketMock.handshake.session.touch).toHaveBeenCalled();
 				}

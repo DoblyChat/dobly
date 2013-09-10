@@ -16,7 +16,7 @@ define(['client/group'], function(createGroup){
 				name: 'some test group',
 				users: [ 
 					{ firstName: 'Fernando', lastName: 'Green', _id: '123' }, 
-					{ firstName: 'Carlos', lastName: 'White'  _id: '456'},
+					{ firstName: 'Carlos', lastName: 'White',  _id: '456'},
 					{ firstName: 'Fido', lastName: 'Dido', _id: '789'},
 					{ firstName: 'Current', lastName: 'Wave', _id: '888' }
 				],
@@ -38,7 +38,7 @@ define(['client/group'], function(createGroup){
 			expect(group.users.length).toBe(4);
 			expect(app.socket.emit).toHaveBeenCalledWith('request_online_users');
 
-			expect(fernando.fullName).toEqual('Fernando Trigoso');
+			expect(fernando.fullName).toEqual('Fernando Green');
 			expect(fernando.online()).toBe(false);
 			expect(fernando.id).toBe('123');
 			expect(carlos.online()).toBe(false);

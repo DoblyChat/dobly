@@ -255,7 +255,7 @@ describe('Socket', function(){
 				});
 
 				it('creates a conversation', function(){
-					fire('create_conversation');
+					fire('create_collaboration_object');
 					expectSessionTouchCalled();
 					expect(conversationIoMock.createConversation).toHaveBeenCalledWith(socketMock, ioMock.sockets, data);
 				});

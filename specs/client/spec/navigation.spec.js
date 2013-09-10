@@ -6,7 +6,7 @@ define(['client/navigation'], function(createNavigationModule){
             var nav = createNavigationModule();
             expect(nav.showingDesktop()).toBe(true);
             expect(nav.showingAll()).toBe(false);
-            expect(nav.showingNewConvo()).toBe(false);
+            expect(nav.showingNewCollaborationObject()).toBe(false);
             expect(nav.showingNotificationSetup()).toBe(false);
             expect(nav.showingGroup()).toBe(false);
             expect(nav.changingTopic()).toBe(false);
@@ -27,7 +27,7 @@ define(['client/navigation'], function(createNavigationModule){
             expect(viewModel.allConversations.refresh).toHaveBeenCalled();
             expect(nav.showingDesktop()).toBe(false);
             expect(nav.showingAll()).toBe(true);
-            expect(nav.showingNewConvo()).toBe(false);
+            expect(nav.showingNewCollaborationObject()).toBe(false);
             expect(nav.showingNotificationSetup()).toBe(false);
             expect(nav.showingGroup()).toBe(false);
             expect(nav.changingTopic()).toBe(false);
@@ -51,20 +51,20 @@ define(['client/navigation'], function(createNavigationModule){
             expect(viewModel.desktop.ui.show).toHaveBeenCalled();
             expect(nav.showingDesktop()).toBe(true);
             expect(nav.showingAll()).toBe(false);
-            expect(nav.showingNewConvo()).toBe(false);
+            expect(nav.showingNewCollaborationObject()).toBe(false);
             expect(nav.showingNotificationSetup()).toBe(false);
             expect(nav.showingGroup()).toBe(false);
             expect(nav.changingTopic()).toBe(false);
         });
 
-        it("new conversation", function() {
+        it("new collaboration object", function() {
             var nav = createNavigationModule();
 
-            nav.newConvo();
+            nav.newCollaborationObject();
 
             expect(nav.showingDesktop()).toBe(false);
             expect(nav.showingAll()).toBe(false);
-            expect(nav.showingNewConvo()).toBe(true);
+            expect(nav.showingNewCollaborationObject()).toBe(true);
             expect(nav.showingNotificationSetup()).toBe(false);
             expect(nav.showingGroup()).toBe(false);
             expect(nav.changingTopic()).toBe(false);
@@ -77,7 +77,7 @@ define(['client/navigation'], function(createNavigationModule){
 
             expect(nav.showingDesktop()).toBe(false);
             expect(nav.showingAll()).toBe(false);
-            expect(nav.showingNewConvo()).toBe(false);
+            expect(nav.showingNewCollaborationObject()).toBe(false);
             expect(nav.showingNotificationSetup()).toBe(true);
             expect(nav.showingGroup()).toBe(false);
             expect(nav.changingTopic()).toBe(false);
@@ -90,7 +90,7 @@ define(['client/navigation'], function(createNavigationModule){
 
             expect(nav.showingDesktop()).toBe(false);
             expect(nav.showingAll()).toBe(false);
-            expect(nav.showingNewConvo()).toBe(false);
+            expect(nav.showingNewCollaborationObject()).toBe(false);
             expect(nav.showingNotificationSetup()).toBe(false);
             expect(nav.showingGroup()).toBe(true);
             expect(nav.changingTopic()).toBe(false);
@@ -103,7 +103,7 @@ define(['client/navigation'], function(createNavigationModule){
 
             expect(nav.showingDesktop()).toBe(false);
             expect(nav.showingAll()).toBe(false);
-            expect(nav.showingNewConvo()).toBe(false);
+            expect(nav.showingNewCollaborationObject()).toBe(false);
             expect(nav.showingNotificationSetup()).toBe(false);
             expect(nav.showingGroup()).toBe(false);
             expect(nav.changingTopic()).toBe(true);
@@ -122,7 +122,7 @@ define(['client/navigation'], function(createNavigationModule){
             var nav = createNavigationModule(viewModel);
             nav.showingDesktop(true);
             nav.showingAll(true);
-            nav.showingNewConvo(true);
+            nav.showingNewCollaborationObject(true);
             nav.showingNotificationSetup(true);
             nav.showingGroup(true);
             nav.changingTopic(true);
@@ -134,7 +134,7 @@ define(['client/navigation'], function(createNavigationModule){
 
             // Verify the state for all views did not change
             expect(nav.showingAll()).toBe(true);
-            expect(nav.showingNewConvo()).toBe(true);
+            expect(nav.showingNewCollaborationObject()).toBe(true);
             expect(nav.showingNotificationSetup()).toBe(true);
             expect(nav.showingGroup()).toBe(true);
             expect(nav.changingTopic()).toBe(true);

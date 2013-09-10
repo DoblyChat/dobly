@@ -31,7 +31,7 @@ describe('Desktop route - integration', function(){
 		group.remove(done);
 	});
 
-	describe('#render desktop', function(){
+	describe('#get', function(){
 		var testUser, collaborationObjects;
 
 		beforeEach(function(done){

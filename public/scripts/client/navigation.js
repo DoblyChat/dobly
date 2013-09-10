@@ -6,7 +6,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
         self.showingDesktop = ko.observable(true);
         self.showingAll = ko.observable(false);
-        self.showingNewConvo = ko.observable(false);
+        self.showingNewCollaborationObject = ko.observable(false);
         self.showingNotificationSetup = ko.observable(false);
         self.showingGroup = ko.observable(false);
         self.changingTopic = ko.observable(false);
@@ -15,7 +15,7 @@ define(['knockout', 'client/common'], function(ko, common){
         var flags = [ 
             self.showingDesktop, 
             self.showingAll, 
-            self.showingNewConvo, 
+            self.showingNewCollaborationObject, 
             self.showingNotificationSetup, 
             self.showingGroup, 
             self.changingTopic,
@@ -48,8 +48,8 @@ define(['knockout', 'client/common'], function(ko, common){
             });
         };
 
-        self.newConvo = function() {
-            onlyShow(self.showingNewConvo);
+        self.newCollaborationObject = function() {
+            onlyShow(self.showingNewCollaborationObject);
         };
 
         self.notificationSetup = function(){

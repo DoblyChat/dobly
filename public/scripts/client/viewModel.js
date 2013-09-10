@@ -6,7 +6,7 @@ define([
         'client/navigation', 
         'client/allConversations', 
         'client/conversation', 
-        'client/newConversation', 
+        'client/collaborationObject.new', 
         'client/changeTopic',
         'client/message'], function(ko, 
                                     createGroup, 
@@ -15,7 +15,7 @@ define([
                                     createNavigationModule, 
                                     createAllConversations,
                                     createConversation,
-                                    createNewConversation,
+                                    createNewCollaborationObject,
                                     createChangeTopic,
                                     createMessage){
     'use strict';
@@ -42,7 +42,7 @@ define([
         self.notifier = createNotifier(self.desktop);
         self.navigation = createNavigationModule(self);
         self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
-        self.newConversation = createNewConversation(self.navigation, self.group);
+        self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
         self.changeTopic = createChangeTopic(self.navigation);
 
         app.socket.on('receive_message', function(message) {
@@ -92,8 +92,8 @@ define([
         });
 
         self.addNewConversation = function(){
-            self.navigation.newConvo(); 
-            self.newConversation.setup();
+            self.navigation.newCollaborationObject(); 
+            self.newCollaborationObject.setup();
         };
 
         if(self.notifier.needsToAskForPermission()){

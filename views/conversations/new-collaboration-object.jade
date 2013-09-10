@@ -1,0 +1,13 @@
+#new-collaboration-object(data-bind="with: newCollaborationObject, visible: navigation.showingNewCollaborationObject")
+	p 
+		span Who would you like to share this with?
+	div
+		select#members-select(multiple="true", data-bind="options: options, optionsText: 'text', optionsValue: 'value', selectedOptions: selectedOptions")
+	p
+		span Write a topic or question	
+	div
+		textarea(maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
+
+	.buttons				
+		button.button-left(type="button", data-bind="click: cancel") Cancel
+		button.button-right(type="button", data-bind="click: createOnClick") Create

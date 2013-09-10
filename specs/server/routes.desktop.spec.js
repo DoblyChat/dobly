@@ -29,7 +29,7 @@ describe('Desktop route', function(){
 		desktopRoute = require('../../lib/routes/desktop');
 	});
 
-	describe('#renderDesktop', function(){
+	describe('#get', function(){
 		var render, setup, dummyCallback;
 
 		beforeEach(function(){

@@ -6,5 +6,4 @@ dump/
 _SpecRunner.html
 .grunt
 .env
-public/stylesheets/index.css
-public/stylesheets/style.css
+public/stylesheets/*.css

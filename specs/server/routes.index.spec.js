@@ -2,7 +2,7 @@ describe('Routes configuration', function(){
 	'use strict';
 
     var config = require('../../lib/routes/').config;
-	var appMock, handlerMock, signUpMock, inviteMock;
+	var appMock, handlerMock, signUpMock, inviteMock, desktopMock;
 
 	beforeEach(function(){
 		mockery.enable();
@@ -27,6 +27,7 @@ describe('Routes configuration', function(){
 
 		signUpMock = buildMock('./group_sign_up', 'get', 'post');
 		inviteMock = buildMock('./invite', 'get', 'post', 'getWelcome');
+		desktopMock = buildMock('./desktop', 'get');
 		mockery.registerMock('./handler', handlerMock);
 
 		config(appMock);
@@ -44,7 +45,7 @@ describe('Routes configuration', function(){
 		verifyPost('/invite', handlerMock.checkUserIsLoggedIn, inviteMock.post);
 		verifyGet('/welcome', handlerMock.checkUserIsLoggedIn, inviteMock.getWelcome);
 		verifyPost('/create-user', handlerMock.createUser);
-		verifyGet('/conversations', handlerMock.checkUserIsLoggedIn, handlerMock.renderDesktop);
+		verifyGet('/conversations', handlerMock.checkUserIsLoggedIn, desktopMock.get);
 		verifyGet('/admin/groups', handlerMock.checkUserIsLoggedIn, handlerMock.getGroups);
 		verifyPost('/admin/create-group', handlerMock.checkUserIsLoggedIn, handlerMock.createGroup);
 	});

@@ -57,18 +57,6 @@ describe('User', function() {
 		});
 	});
 
-	xdescribe('#name', function(){
-		it('is lower cased automatically', function(done){
-			userData.name = 'TEST ME';
-
-			User.create(userData, function(err, user){
-				expect(user.firstName).not.toBe('TEST ME');
-				expect(user.name).toBe('test me');
-				done();
-			});
-		});
-	});
-
 	describe('#email', function(){
 		
 		it('must be unique', function(done) {

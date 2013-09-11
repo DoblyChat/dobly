@@ -111,7 +111,7 @@ describe('Sockets', function(){
 					expect(socketMock.emit).toHaveBeenCalled();
 
 					var args = socketMock.emit.mostRecentCall.args;
-					expect(args[0]).toBe('my_new_conversation');
+					expect(args[0]).toBe('my_new_collaboration_object');
 
 					expect(args[1]._id).toEqual(collaborationObject._id);
 					expect(args[1].topic).toBe(collaborationObject.topic);
@@ -123,7 +123,7 @@ describe('Sockets', function(){
 					expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalled();
 
 					var args = socketMock.broadcastToCollaborationObjectMembers.mostRecentCall.args;
-					expect(args[0]).toBe('new_conversation');
+					expect(args[0]).toBe('new_collaboration_object');
 					expect(args[1]).toEqual(collaborationObject._id);
 					expect(args[2]._id).toEqual(collaborationObject._id);
 					expect(args[2].topic).toBe(collaborationObject.topic);

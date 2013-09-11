@@ -77,7 +77,7 @@ define([
             return self.unreadCounter() > 0;
         });
 
-        app.socket.on('my_new_conversation', function(data) {
+        app.socket.on('my_new_collaboration_object', function(data) {
             var conversation = createConversation(data, self.group);
             self.conversations.push(conversation);
             self.desktop.addAndActivate(conversation);
@@ -85,7 +85,7 @@ define([
             conversation.hasFocus(true);
         });
 
-        app.socket.on('new_conversation', function(data){
+        app.socket.on('new_collaboration_object', function(data){
             var conversation = createConversation(data, self.group);
             self.conversations.push(conversation);
             self.desktop.add(conversation); 

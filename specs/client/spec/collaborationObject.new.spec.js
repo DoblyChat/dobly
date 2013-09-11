@@ -42,6 +42,14 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 			expect(newCollaborationObject.selectedOptions()[0]).toBe('g');
 		});
 
+		it('defaults type to conversation', function(){
+			expect(newCollaborationObject.type()).toBe('C');
+		});
+
+		it('defaults topic to nothing', function(){
+			expect(newCollaborationObject.topic()).toBe('');
+		});
+
 		describe('create new collaboration object on enter', function(){
 			var event = {};
 
@@ -159,6 +167,18 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 				newCollaborationObject.create();
 				expect(newCollaborationObject.topic()).toBe('');
 				expect(newCollaborationObject.selectedOptions()).toEqual(['g']);
+			});
+
+			it('creates a collaboraton object with a different type than default', function(){
+				newCollaborationObject.type('T');
+				newCollaborationObject.create();
+				expect(newCollaborationObject.type()).toBe('C');
+				expect(app.socket.emit).toHaveBeenCalledWith('create_collaboration_object', {
+					topic: 'create-t',
+					forEntireGroup: false,
+					selectedMembers: [],
+					type: 'T'
+				});
 			});
 		});
 

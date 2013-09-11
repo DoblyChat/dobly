@@ -4,9 +4,11 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
     return function (navigation, group) {
         var self = {},
             otherUsers = group.otherUsers,
-            groupKey = 'g';
+            groupKey = 'g',
+            CONVERSATION_TYPE = 'C';
 
-        self.topic = ko.observable();
+        self.type = ko.observable(CONVERSATION_TYPE);
+        self.topic = ko.observable('');
         self.options = ko.observableArray();
 
         for(var i = 0; i < otherUsers.length; i++){
@@ -60,7 +62,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
                 topic: self.topic(), 
                 forEntireGroup: groupKeyIndex >= 0, 
                 selectedMembers: selectedOptions,
-                type: 'C'
+                type: self.type()
             };
 
             app.socket.emit('create_collaboration_object', data);
@@ -75,6 +77,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
 
         function restoreDefaults(){
             self.topic('');
+            self.type(CONVERSATION_TYPE);
             self.selectedOptions([ groupKey ]);
         }
 

@@ -52,7 +52,7 @@ describe('Socket', function(){
 			mockery.registerAllowable('../../lib/notifications');
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createCollaborationObject', 'markAsRead', 'updateTopic', 'readMessages');
-			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToConversations', 'unsubscribeToConversation');
+			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
 			taskIoMock = buildMock('./task_io', 'readTaskLists', 'createTaskList', 'addTask');
 			authorizeMock = jasmine.createSpy();
@@ -214,13 +214,13 @@ describe('Socket', function(){
 				});
 
 				it('subscribe to conversations', function(){
-					fire('subscribe_to_conversations');
-					expect(userIoMock.subscribeToConversations).toHaveBeenCalledWith(socketMock, data);
+					fire('subscribe_to_collaboration_objects');
+					expect(userIoMock.subscribeToCollaborationObjects).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('unsubscribe to conversation', function(){
-					fire('unsubscribe_to_conversation');
-					expect(userIoMock.unsubscribeToConversation).toHaveBeenCalledWith(socketMock, data);
+					fire('unsubscribe_to_collaboration_object');
+					expect(userIoMock.unsubscribeToCollaborationObject).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('adds conversation to desktop', function(){

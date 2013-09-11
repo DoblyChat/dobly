@@ -36,7 +36,7 @@ define([
             toSubscribe.push(conversationsData[i]._id);
         }
 
-        app.socket.emit('subscribe_to_conversations', toSubscribe);
+        app.socket.emit('subscribe_to_collaboration_objects', toSubscribe);
 
         self.desktop = createDesktop(desktopData, self.conversations());
         self.notifier = createNotifier(self.desktop);

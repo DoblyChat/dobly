@@ -9,6 +9,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         beforeEach(function() {
             app.topicSearch = ko.observable('');
+            app.groupUsers['FT'] = 'Fernando Trigoso';
+            app.groupUsers['CA'] = 'Carlos Atencio';
             testData = testDataConversation();
             conversation = createConversation(testData);
             search = createConversationSearch(conversation);
@@ -239,7 +241,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
         function testDataConversation() {
             return {
                 _id: "8",
-                createdBy: "fernando",
+                createdById: "FT",
                 groupId: "5",
                 items: [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie(), testDataMessageDelta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -256,7 +258,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
         function testDataConversationForPrevious() {
             return {
                 _id: "8",
-                createdBy: "fernando",
+                createdById: "FT",
                 groupId: "5",
                 items: [ testDataMessageAlpha(), testDataMessageAlpha2(), testDataMessageCharlie(), testDataMessageDelta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -276,7 +278,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "alpha", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
-                createdBy: "carlos"
+                createdById: "CA"
             };
         }
 
@@ -286,7 +288,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "alpha", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
-                createdBy: "carlos"
+                createdById: "CA"
             };
         }
 
@@ -296,7 +298,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "beta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:14:14'), 
-                createdBy: "fernando"
+                createdById: "FT"
             };
         }
 
@@ -306,7 +308,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "charlie", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
-                createdBy: "carlos"
+                createdById: "CA"
             };
         }
 
@@ -316,7 +318,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "delta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
-                createdBy: "fernando"
+                createdById: "FT"
             };
         }
 
@@ -326,7 +328,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "echo", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
-                createdBy: "carlos"
+                createdBy: "CA"
             };
         }
 
@@ -336,7 +338,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
                 content: "foxtrot", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
-                createdBy: "fernando"
+                createdBy: "FT"
             };
         }
     });

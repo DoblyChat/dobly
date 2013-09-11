@@ -12,7 +12,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
         for(var i = 0; i < otherUsers.length; i++){
             self.options.push({
                 value: otherUsers[i].id,
-                text: otherUsers[i].name
+                text: otherUsers[i].firstName + ' ' + otherUsers[i].lastName
             });
         }
 

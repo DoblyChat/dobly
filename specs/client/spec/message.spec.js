@@ -6,6 +6,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
                 return 'e-' + string;
             });
+            app.groupUsers["SO"] = "Someone Else";
         });
 
         it("creates message", function() {
@@ -13,7 +14,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
                 content: "check", 
                 conversationId: "123", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
-                createdBy: "someone",
+                createdById: "SO",
                 _id: 'm-id'
             };
 
@@ -21,7 +22,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
             expect(message.content).toBe('e-check');
             expect(message.rawContent).toBe('check');
             expect(message.timestamp).toBe(common.formatTimestamp(data.timestamp));
-            expect(message.createdBy).toBe('someone');
+            expect(message.createdBy).toBe('Someone Else');
             expect(message.simpleTimestamp).toBe(common.formatTimestamp(data.timestamp));
             expect(message.confirmedSent()).toBe(true);
             expect(message.id()).toBe('m-id');
@@ -34,7 +35,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
                 data = {
                     conversationId: "456", 
                     timestamp: new Date(), 
-                    createdBy: "someone"
+                    createdById: "SO"
                 };
             });
 

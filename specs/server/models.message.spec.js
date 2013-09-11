@@ -7,7 +7,7 @@ describe('Message', function() {
 	beforeEach(function() {
 		messageData = { 
 			content: 'hi there', 
-			createdBy: 'creator', 
+			createdById: new mongo.Types.ObjectId(), 
 			timestamp: Date.now(),
 			collaborationObjectId: new mongo.Types.ObjectId()
 		};
@@ -27,7 +27,7 @@ describe('Message', function() {
 		});		
 
 		it('createdBy', function(done) {
-			requiredFieldTest('createdBy', done);
+			requiredFieldTest('createdById', done);
 		});
 
 		it('timestamp', function(done) {
@@ -65,9 +65,11 @@ describe('Message', function() {
 
 	describe('#readMessagesByPage', function(){
 		var collaborationObjectId;
+		var createdByObjectId;
 
 		beforeEach(function(){
 			collaborationObjectId = new mongo.Types.ObjectId();
+			createdByObjectId = new mongo.Types.ObjectId();
 		});
 
 		afterEach(function(done){
@@ -81,7 +83,7 @@ describe('Message', function() {
 				for(var i = 0; i < 101; i++){
 					messagesData.push({
 						content: i,
-						createdBy: 'messages model test',
+						createdById: createdByObjectId,
 						collaborationObjectId: collaborationObjectId,
 					});
 				}
@@ -125,9 +127,9 @@ describe('Message', function() {
 		describe('sorting', function(){
 			it('reads the messages in descending order by date', function(done){
 				Message.create([
-					{ content: 'some message', createdBy: 'model order test', collaborationObjectId: collaborationObjectId, timestamp: new Date(2012, 10, 1) },
-					{ content: 'some later message', createdBy: 'model order test', collaborationObjectId: collaborationObjectId, timestamp: new Date(2012, 10, 2) },
-					{ content: 'some earlier message', createdBy: 'model order test', collaborationObjectId: collaborationObjectId, timestamp: new Date(2011, 10, 1) }
+					{ content: 'some message', createdById: createdByObjectId, collaborationObjectId: collaborationObjectId, timestamp: new Date(2012, 10, 1) },
+					{ content: 'some later message', createdById: createdByObjectId, collaborationObjectId: collaborationObjectId, timestamp: new Date(2012, 10, 2) },
+					{ content: 'some earlier message', createdById: createdByObjectId, collaborationObjectId: collaborationObjectId, timestamp: new Date(2011, 10, 1) }
 				], function(err){
 					Message.readMessagesByPage(collaborationObjectId, 0, function(err, messages){
 						expect(err).toBeNull();

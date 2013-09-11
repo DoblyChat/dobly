@@ -6,6 +6,8 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         var conversation, testData, group;
 
         beforeEach(function() {
+            app.groupUsers['FT'] = 'Freddy Teddy';
+            app.groupUsers['CA'] = 'Charlie App';            
             testData = testDataConversation();
             app.socket = createMockSocket();
             app.topicSearch = ko.observable('');
@@ -27,7 +29,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 conversation = createConversation(testData, group);
                 expect(conversation.id).toEqual('8');
                 expect(conversation.topic()).toEqual("some topic");
-                expect(conversation.createdBy()).toEqual("fernando");
+                expect(conversation.createdBy.toEqual("Freddy Teddy");
                 expect(conversation.unreadCounter()).toBe(1);
                 expect(conversation.newMessage()).toEqual("");
                 expect(conversation.isLeft()).toBe(false);
@@ -524,7 +526,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         function testDataConversation() {
             return {
                 _id: "8",
-                createdBy: "fernando",
+                createdById: "FT",
                 groupId: "5",
                 items: [ testDataMessageAlpha(), testDataMessageBeta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -541,7 +543,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         function testDataSomeOtherConversation() {
             return {
                 _id: "10",
-                createdBy: "fernando",
+                createdById: "FT",
                 groupId: "5",
                 items: [ ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -560,7 +562,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 content: "alpha", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
-                createdBy: "carlos"
+                createdById: "CA"
             };
         }
 
@@ -569,7 +571,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 content: "beta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:14:14'), 
-                createdBy: "fernando"
+                createdById: "FT"
             };
         }
 
@@ -578,7 +580,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 content: "charlie", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
-                createdBy: "carlos"
+                createdById: "CA"
             };
         }
 
@@ -587,7 +589,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 content: "delta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
-                createdBy: "fernando"
+                createdById: "FT"
             };
         }
     });

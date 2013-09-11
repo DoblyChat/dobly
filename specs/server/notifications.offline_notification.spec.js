@@ -26,18 +26,21 @@ describe("Notifications", function() {
             offlineNotification.onlineUsersIds = ['P','R'];
             offlineNotification.senderUser = {
                 groupId: 'ABC',
-                name: 'Mike'
+                firstName: 'Mike',
+                lastName: 'Myers'
             };
 
             doug = {
                 _id: 'D',
                 email: 'doug@abc.com',
-                name: 'doug'
+                firstName: 'doug',
+                lastName: 'teeks'
             };
             bob = {
                 _id: 'B',
                 email: 'bob@abc.com',
-                name: 'bob'
+                firstName: 'bob',
+                lastName: 'doe'
             };
 
             offlineUsers = [doug, bob];
@@ -120,13 +123,13 @@ describe("Notifications", function() {
                 tags: getArg(6)
             };
 
-            expect(args.fromName).toEqual('Mike');
+            expect(args.fromName).toEqual('Mike Myers');
             expect(args.fromEmail).toEqual('notification@dobly.com');
             expect(args.to.length).toBe(2);
             expect(args.to[0].email).toEqual('doug@abc.com');
-            expect(args.to[0].name).toEqual('doug');
+            expect(args.to[0].name).toEqual('doug teeks');
             expect(args.to[1].email).toEqual('bob@abc.com');
-            expect(args.to[1].name).toEqual('bob');
+            expect(args.to[1].name).toEqual('bob doe');
             expect(args.replyToEmail).toEqual('no-reply@dobly.com');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
@@ -159,11 +162,11 @@ describe("Notifications", function() {
                 tags: getArg(6)
             };
 
-            expect(args.fromName).toEqual('Mike');
+            expect(args.fromName).toEqual('Mike Myers');
             expect(args.fromEmail).toEqual('notification@dobly.com');
             expect(args.to.length).toBe(1);
             expect(args.to[0].email).toEqual('doug@abc.com');
-            expect(args.to[0].name).toEqual('doug');
+            expect(args.to[0].name).toEqual('doug teeks');
             expect(args.replyToEmail).toEqual('no-reply@dobly.com');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');

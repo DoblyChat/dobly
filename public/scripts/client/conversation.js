@@ -1,7 +1,7 @@
 define(['knockout', 'client/common', 'client/message', 'client/conversation.search', 'client/conversation.ui'], function(ko, common, createMessage, createConversationSearch, createConversationUi){
     'use strict';
     
-    return function (data, group) {
+    return function (data) {
         var self = {};
 
         self.template = 'convo-template';
@@ -30,7 +30,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
         var usersArray = [];
 
-        ko.utils.arrayForEach(data.members, function(userId) {
+        ko.utils.arrayForEach(data.members.users, function(userId) {
             usersArray.push(app.groupUsers[userId]);
         });
 

@@ -3,7 +3,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
     describe("conversation", function() {
 
-        var conversation, testData, group;
+        var conversation, testData;
 
         beforeEach(function() {
             app.groupUsers['FT'] = 'Freddy Teddy';
@@ -11,12 +11,6 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             testData = testDataConversation();
             app.socket = createMockSocket();
             app.topicSearch = ko.observable('');
-            group = {
-                users: [ 
-                    { id: '1', name: 'uno' },
-                    { id: '2', name: 'dos' }
-                ]
-            };
         });
 
         afterEach(function(){
@@ -26,10 +20,10 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         describe("creation", function() {
 
             it("load properties", function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.id).toEqual('8');
                 expect(conversation.topic()).toEqual("some topic");
-                expect(conversation.createdBy.toEqual("Freddy Teddy");
+                expect(conversation.createdBy).toEqual("Freddy Teddy");
                 expect(conversation.unreadCounter()).toBe(1);
                 expect(conversation.newMessage()).toEqual("");
                 expect(conversation.isLeft()).toBe(false);
@@ -45,38 +39,38 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("loads users", function() {
-                conversation = createConversation(testDataSomeOtherConversation(), group);
+                conversation = createConversation(testDataSomeOtherConversation());
 
                 expect(conversation.forEntireGroup).toBe(false);
-                expect(conversation.users).toEqual('uno, dos');
+                expect(conversation.users).toEqual('Freddy Teddy, Charlie App');
             });
 
             it("undefined id", function() {
                 testData._id = undefined;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.id).toBe(0);
             });
 
             it("undefined unread", function() {
                 testData.unread = undefined;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.unreadCounter()).toBe(0);
             });
 
             it("undefined totalMessages", function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.allMessagesLoaded()).toBe(false);
 
                 testData.totalMessages = undefined;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.allMessagesLoaded()).toBe(true);
             });
 
             it("pushes messages", function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.messages().length).toBe(2);
                 expect(conversation.messages()[0].content).toEqual("alpha");
@@ -88,7 +82,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             describe("when app in focus", function() {
                 beforeEach(function() {
                     app.inFocus = true;
-                    conversation = createConversation(testData, group);                
+                    conversation = createConversation(testData);                
                     expect(conversation.unreadCounter()).toBe(1);                                
                     expect(conversation.messages().length).toBe(2);
                     spyOn(conversation.ui.scroll, 'adjust');
@@ -138,7 +132,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             describe("when app not in focus", function() {
                 beforeEach(function() {
                     app.inFocus = false;
-                    conversation = createConversation(testData, group);                
+                    conversation = createConversation(testData);                
                     expect(conversation.unreadCounter()).toBe(1);                                
                     expect(conversation.messages().length).toBe(2);
                     spyOn(conversation.ui.scroll, 'adjust');
@@ -168,7 +162,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
         describe("send message", function() {
             beforeEach(function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 spyOn(conversation, 'markAsRead');
             });
 
@@ -181,7 +175,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 spyOn(common, 'enterKeyPressed').andReturn(true);
                 var testEvent = { shiftKey: false };
                 spyOn(conversation, 'addMessage');
-                app.user = { name: 'jimmy' };
+                app.user = { _id: 'CA' };
 
                 var returnValue = conversation.sendMessage(null, testEvent);
 
@@ -189,7 +183,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
                 var message = conversation.addMessage.mostRecentCall.args[0];
                 expect(message.content).toEqual('abc');
-                expect(message.createdBy).toEqual('jimmy');
+                expect(message.createdBy).toEqual('Charlie App');
                 expect(message.confirmedSent()).toBe(false);
                 
                 expect(app.socket.emit).toHaveBeenCalled();
@@ -201,7 +195,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(messageData.content).toEqual('abc');
                 expect(messageData.collaborationObjectId).toEqual('8');
                 expect(messageData.timestamp.clearTime()).toEqual(Date.today());
-                expect(messageData.createdBy).toEqual('jimmy');
+                expect(messageData.createdById).toEqual('CA');
 
                 var confirmation = app.socket.emit.mostRecentCall.args[2];
                 expect(message.confirmedSent()).toBe(false);
@@ -248,7 +242,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         describe("last messages", function() {
             it("3 messages", function() {
                 testData.items = [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie() ];
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.lastMessages().length).toBe(2);
                 expect(conversation.lastMessages()[0].content).toBe("beta");
@@ -257,7 +251,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
             it("2 messages", function() {
                 testData.items = [ testDataMessageAlpha(), testDataMessageBeta() ];
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.lastMessages().length).toBe(2);
                 expect(conversation.lastMessages()[0].content).toBe("alpha");
@@ -266,7 +260,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
             it("1 messages", function() {
                 testData.items = [ testDataMessageAlpha() ];
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
 
                 expect(conversation.lastMessages().length).toBe(1);
                 expect(conversation.lastMessages()[0].content).toBe("alpha");
@@ -276,19 +270,19 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         describe("unread counter", function() {
             it("0 messages", function() {
                 testData.unread = 0;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.showUnreadCounter()).toBe(false);
             });
 
             it("1 message", function() {
                 testData.unread = 1;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.showUnreadCounter()).toBe(true);
             });
 
             it("2 messages", function() {
                 testData.unread = 2;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.showUnreadCounter()).toBe(true);
             });
         });
@@ -296,7 +290,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         describe("mark as read", function() {
             it("when unread counter is 1", function() {
                 testData.unread = 1;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.unreadCounter()).toBe(1);
 
                 conversation.markAsRead();
@@ -307,7 +301,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
             it("when unread counter is 0", function() {
                 testData.unread = 0;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 expect(conversation.unreadCounter()).toBe(0);
 
                 conversation.markAsRead();
@@ -319,7 +313,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
         describe("has focus", function() {
             it("true", function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 spyOn(conversation, 'markAsRead');
 
                 conversation.hasFocus(true);
@@ -328,7 +322,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("false", function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 spyOn(conversation, 'markAsRead');
 
                 conversation.hasFocus(false);
@@ -340,7 +334,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         describe("activate", function() {
 
             beforeEach(function() {
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
             });
 
             it("on the left", function() {
@@ -378,7 +372,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             var conversation, event;
 
             beforeEach(function(){
-                conversation = createConversation(testDataConversation(), group);            
+                conversation = createConversation(testDataConversation());            
                 event = {
                     target: {
                         scrollTop: 0,
@@ -403,7 +397,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             it('does not initiate request if all messages have been loaded', function(){
                 var testData = testDataConversation();
                 testData.totalMessages = 2;
-                conversation = createConversation(testData, group);
+                conversation = createConversation(testData);
                 conversation.scrolled(null, event);
                 expect(app.socket.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
@@ -487,8 +481,8 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             var someTopic, someOtherTopic;
 
             beforeEach(function() {
-                someTopic = createConversation(testDataConversation(), group);
-                someOtherTopic = createConversation(testDataSomeOtherConversation(), group);
+                someTopic = createConversation(testDataConversation());
+                someOtherTopic = createConversation(testDataSomeOtherConversation());
             });
 
             it("blank", function() {
@@ -552,7 +546,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 totalMessages: 3,
                 members: {
                     entireGroup: false,
-                    users: [ '1', '2' ]
+                    users: [ 'FT', 'CA' ]
                 }
             };
         }

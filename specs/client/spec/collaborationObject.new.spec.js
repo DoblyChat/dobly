@@ -12,21 +12,23 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 
 			groupMock = {
 				otherUsers: [
-					{ id: 'usr-1', name: 'user one' },
-					{ id: 'usr-2', name: 'user two' },
+					{ id: 'usr-1', fullName: 'user one' },
+					{ id: 'usr-2', fullName: 'user two' },
 				]
 			};
 			newCollaborationObject = createNewCollaborationObject(navMock, groupMock);
 		});
 
 		it('sets up', function(){
-			spyOn($.fn, 'chosen');
+			var chzn = { change: jasmine.createSpy() };
+			spyOn($.fn, 'chosen').andReturn(chzn);
 			spyOn(common, 'delayedFocus');
 
 			newCollaborationObject.setup();
 
 			expect($.fn.chosen).toHaveBeenCalledWith({ placeholder: '' });
 			expect(common.delayedFocus).toHaveBeenCalledWith('#new-collaboration-object textarea');
+			expect(chzn.change).toHaveBeenCalled();
 		});
 
 		it('populates options', function(){

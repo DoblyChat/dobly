@@ -32,7 +32,7 @@ define([
         var toSubscribe = [];
 
         for(var i = 0; i < conversationsData.length; i++){
-            self.conversations.push(createConversation(conversationsData[i], self.group));
+            self.conversations.push(createConversation(conversationsData[i]));
             toSubscribe.push(conversationsData[i]._id);
         }
 

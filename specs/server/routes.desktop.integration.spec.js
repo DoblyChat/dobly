@@ -73,13 +73,13 @@ describe('Desktop route - integration', function(){
 									var data = [];
 
 									for(var i = 0; i< 51; i++ ){
-										data.push({ content: 'test message 2.' + i, createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
+										data.push({ content: 'test message 2.' + i, createdById: user._id, collaborationObjectId: savedCollaborationObjects[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
 									}
 
-									data.push({ content: 'test message 1', createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 17) });
-									data.push({ content: 'test message 1.2', createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 16) });
+									data.push({ content: 'test message 1', createdById: user._id, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 17) });
+									data.push({ content: 'test message 1.2', createdById: user._id, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 16) });
 
-									data.push({ content: 'test message 3', createdBy: TEST_NAME, collaborationObjectId: savedCollaborationObjects[2]._id });
+									data.push({ content: 'test message 3', createdById: user._id, collaborationObjectId: savedCollaborationObjects[2]._id });
 
 									Message.create(data, callback);
 								},
@@ -142,7 +142,6 @@ describe('Desktop route - integration', function(){
 				var collaborationObject = collaborationObjects[i];
 				expect(collaborationObject.groupId).toBe(group._id.toString());
 				expect(collaborationObject.createdById).toBe(testUser._id.toString());
-				expect(collaborationObject.createdBy).toBe(testUser.firstName);
 				expect(collaborationObject.topic).toContain('test');
 			}
 

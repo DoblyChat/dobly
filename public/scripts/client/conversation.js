@@ -7,7 +7,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
         self.template = 'convo-template';
         self.id = data._id ? data._id : 0;
         self.topic = ko.observable(data.topic);
-        self.createdBy = ko.observable(data.createdBy);
+        self.createdBy = app.groupUsers[data.createdById];
         self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
         self.newMessage = ko.observable('');
         self.isLeft = ko.observable(false);
@@ -30,14 +30,9 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
 
         var usersArray = [];
 
-        for(var n = 0; n < data.members.users.length; n++){
-            for(var j = 0; j < group.users.length; j++){
-                if(data.members.users[n] === group.users[j].id){
-                    usersArray.push(group.users[j].name);
-                    break;
-                }
-            }
-        }
+        ko.utils.arrayForEach(data.members, function(userId) {
+            usersArray.push(app.groupUsers[userId]);
+        });
 
         self.users = usersArray.join(', ');
 
@@ -92,7 +87,7 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
                 content: self.newMessage(), 
                 collaborationObjectId: self.id, 
                 timestamp: new Date(),
-                createdBy: app.user.name
+                createdById: app.user._id
             };
         }
 

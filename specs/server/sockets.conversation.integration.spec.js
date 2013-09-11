@@ -84,7 +84,7 @@ describe('Sockets', function(){
 
                 conversationIo.sendMessage(socketMock, offlineNotification, data, function(message){
                     expect(message.content).toBe(content);
-                    expect(message.createdBy).toBe(socketMock.handshake.user.firstName);
+                    expect(message.createdById).toBe(socketMock.handshake.user._id);
                     expect(message.collaborationObjectId).toEqual(data.collaborationObjectId);
                     expect(message.timestamp).toEqual(data.timestamp);
                     expect(message._id).not.toBeNull();
@@ -119,7 +119,7 @@ describe('Sockets', function(){
 
                     Message.create({
                         content: 'socket-collaborationObject-test',
-                        createdBy: 'socket-test',
+                        createdById: socketMock.handshake.user._id,
                         timestamp: new Date(),
                         collaborationObjectId: collaborationObjectId
                     }, done);

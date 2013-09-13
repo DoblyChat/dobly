@@ -60,17 +60,17 @@ describe('Sockets', function(){
 			expect(socketMock.emit).toHaveBeenCalledWith('receive_online_users', [ 1, 2 ]);
 		});
 
-		it('subscribes user to conversations', function(){
-			var conversations = [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ];
-			userIo.subscribeToConversations(socketMock, conversations);
+		it('subscribes user to collaboration objectss', function(){
+			var collaborationObjects = [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ];
+			userIo.subscribeToCollaborationObjects(socketMock, collaborationObjects);
 
-			expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(conversations[0]);
-			expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(conversations[1]);
+			expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObjects[0]);
+			expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(collaborationObjects[1]);
 		});
 
-		it('unsubscribe user from conversation notifications', function(){
-			userIo.unsubscribeToConversation(socketMock, 'convo-id');
-			expect(socketMock.leaveCollaborationObjectRoom).toHaveBeenCalledWith('convo-id');
+		it('unsubscribe user from collaboration objects notifications', function(){
+			userIo.unsubscribeToCollaborationObject(socketMock, 'object-id');
+			expect(socketMock.leaveCollaborationObjectRoom).toHaveBeenCalledWith('object-id');
 		});
 
 		describe('checks for active sessions', function(){

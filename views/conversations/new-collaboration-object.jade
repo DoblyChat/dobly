@@ -1,10 +1,17 @@
 #new-collaboration-object(data-bind="with: newCollaborationObject, visible: navigation.showingNewCollaborationObject")
+	p
+		span What would you like to start?
+	.types
+		input#conversation-radio(type="radio", name="type", value="C", data-bind="checked: type") 
+		label(for="conversation-radio") Conversation
+		input#task-list-radio(type="radio", name="type", value="T", data-bind="checked: type") 
+		label(for="task-list-radio") Task List
 	p 
 		span Who would you like to share this with?
 	div
 		select#members-select(multiple="true", data-bind="options: options, optionsText: 'text', optionsValue: 'value', selectedOptions: selectedOptions")
 	p
-		span Write a topic or question	
+		span Write a topic	
 	div
 		textarea(maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
 

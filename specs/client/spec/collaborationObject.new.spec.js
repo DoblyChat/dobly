@@ -12,21 +12,23 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 
 			groupMock = {
 				otherUsers: [
-					{ id: 'usr-1', name: 'user one' },
-					{ id: 'usr-2', name: 'user two' },
+					{ id: 'usr-1', fullName: 'user one' },
+					{ id: 'usr-2', fullName: 'user two' },
 				]
 			};
 			newCollaborationObject = createNewCollaborationObject(navMock, groupMock);
 		});
 
 		it('sets up', function(){
-			spyOn($.fn, 'chosen');
+			var chzn = { change: jasmine.createSpy() };
+			spyOn($.fn, 'chosen').andReturn(chzn);
 			spyOn(common, 'delayedFocus');
 
 			newCollaborationObject.setup();
 
 			expect($.fn.chosen).toHaveBeenCalledWith({ placeholder: '' });
 			expect(common.delayedFocus).toHaveBeenCalledWith('#new-collaboration-object textarea');
+			expect(chzn.change).toHaveBeenCalled();
 		});
 
 		it('populates options', function(){
@@ -40,6 +42,14 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 		it('defaults selection to entire group', function(){
 			expect(newCollaborationObject.selectedOptions().length).toBe(1);
 			expect(newCollaborationObject.selectedOptions()[0]).toBe('g');
+		});
+
+		it('defaults type to conversation', function(){
+			expect(newCollaborationObject.type()).toBe('C');
+		});
+
+		it('defaults topic to nothing', function(){
+			expect(newCollaborationObject.topic()).toBe('');
 		});
 
 		describe('create new collaboration object on enter', function(){
@@ -159,6 +169,18 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 				newCollaborationObject.create();
 				expect(newCollaborationObject.topic()).toBe('');
 				expect(newCollaborationObject.selectedOptions()).toEqual(['g']);
+			});
+
+			it('creates a collaboraton object with a different type than default', function(){
+				newCollaborationObject.type('T');
+				newCollaborationObject.create();
+				expect(newCollaborationObject.type()).toBe('C');
+				expect(app.socket.emit).toHaveBeenCalledWith('create_collaboration_object', {
+					topic: 'create-t',
+					forEntireGroup: false,
+					selectedMembers: [],
+					type: 'T'
+				});
 			});
 		});
 

@@ -4,15 +4,17 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
     return function (navigation, group) {
         var self = {},
             otherUsers = group.otherUsers,
-            groupKey = 'g';
+            groupKey = 'g',
+            CONVERSATION_TYPE = 'C';
 
-        self.topic = ko.observable();
+        self.type = ko.observable(CONVERSATION_TYPE);
+        self.topic = ko.observable('');
         self.options = ko.observableArray();
 
         for(var i = 0; i < otherUsers.length; i++){
             self.options.push({
                 value: otherUsers[i].id,
-                text: otherUsers[i].firstName + ' ' + otherUsers[i].lastName
+                text: otherUsers[i].fullName
             });
         }
 
@@ -21,11 +23,15 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
             text: 'Entire Group'
         });
 
-        self.selectedOptions = ko.observableArray([ groupKey ]); 
+        self.selectedOptions = ko.observableArray([ groupKey ]);
         
         self.setup = function() {
             common.delayedFocus('#new-collaboration-object textarea');
-            $('#members-select').chosen({ placeholder: '' });
+            var select = $('#members-select');
+
+            select.chosen({ placeholder: '' }).change(function(){
+                self.selectedOptions(select.val());
+            });
         };
 
         self.createOnEnter = function(data, event) {
@@ -52,15 +58,15 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
             var selectedOptions = self.selectedOptions();
             var groupKeyIndex = selectedOptions.indexOf(groupKey);
             
-            if(groupKeyIndex >= 0){
+            if(groupKeyIndex > -1){
                 selectedOptions.splice(groupKeyIndex, 1);
             }
 
             var data = { 
                 topic: self.topic(), 
-                forEntireGroup: groupKeyIndex >= 0, 
+                forEntireGroup: groupKeyIndex > -1, 
                 selectedMembers: selectedOptions,
-                type: 'C'
+                type: self.type()
             };
 
             app.socket.emit('create_collaboration_object', data);
@@ -75,6 +81,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
 
         function restoreDefaults(){
             self.topic('');
+            self.type(CONVERSATION_TYPE);
             self.selectedOptions([ groupKey ]);
         }
 

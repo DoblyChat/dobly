@@ -5,7 +5,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
         var self = {},
             otherUsers = group.otherUsers,
             groupKey = 'g',
-            CONVERSATION_TYPE = 'C';
+            CONVERSATION_TYPE = 'C'
 
         self.type = ko.observable(CONVERSATION_TYPE);
         self.topic = ko.observable('');
@@ -27,11 +27,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
         
         self.setup = function() {
             common.delayedFocus('#new-collaboration-object textarea');
-            var select = $('#members-select');
-
-            select.chosen({ placeholder: '' }).change(function(){
-                self.selectedOptions(select.val());
-            });
+            $('#members-select').chosen({ placeholder: '' });
         };
 
         self.createOnEnter = function(data, event) {
@@ -83,6 +79,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
             self.topic('');
             self.type(CONVERSATION_TYPE);
             self.selectedOptions([ groupKey ]);
+            $('#members-select').trigger('liszt:updated');
         }
 
         return self;

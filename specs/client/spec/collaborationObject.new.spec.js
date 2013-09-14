@@ -5,6 +5,7 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 		var newCollaborationObject, navMock, groupMock;
 
 		beforeEach(function(){
+			spyOn($.fn, 'trigger');
 			app.socket = createMockSocket();
 			navMock = {
 				desktop: jasmine.createSpy()
@@ -20,15 +21,13 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 		});
 
 		it('sets up', function(){
-			var chzn = { change: jasmine.createSpy() };
-			spyOn($.fn, 'chosen').andReturn(chzn);
+			spyOn($.fn, 'chosen')
 			spyOn(common, 'delayedFocus');
 
 			newCollaborationObject.setup();
 
 			expect($.fn.chosen).toHaveBeenCalledWith({ placeholder: '' });
 			expect(common.delayedFocus).toHaveBeenCalledWith('#new-collaboration-object textarea');
-			expect(chzn.change).toHaveBeenCalled();
 		});
 
 		it('populates options', function(){
@@ -167,8 +166,7 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 			it('restores defaults after it creates', function(){
 				newCollaborationObject.selectedOptions.push('usr-1');
 				newCollaborationObject.create();
-				expect(newCollaborationObject.topic()).toBe('');
-				expect(newCollaborationObject.selectedOptions()).toEqual(['g']);
+				checkDefaults();
 			});
 
 			it('creates a collaboraton object with a different type than default', function(){
@@ -195,7 +193,9 @@ define(['client/collaborationObject.new', 'client/common'], function(createNewCo
 
 		function checkDefaults(){
 			expect(newCollaborationObject.topic()).toBe('');
+			expect(newCollaborationObject.type()).toBe('C');
 			expect(newCollaborationObject.selectedOptions()).toEqual(['g']);
+			expect($.fn.trigger).toHaveBeenCalledWith('liszt:updated');
 		}
 	});
 });

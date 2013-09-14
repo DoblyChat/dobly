@@ -13,8 +13,8 @@ define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
         self.loading = ko.observable(false);
         self.ui = createDesktopUi(self);
 
-        for(var i = 0; i < data.conversations.length; i++){
-            var conversation = getConversationBy(data.conversations[i]);
+        for(var i = 0; i < data.collaborationObjects.length; i++){
+            var conversation = getConversationBy(data.collaborationObjects[i]);
             if(conversation){
                 self.conversations.push(conversation);
             }

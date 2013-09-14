@@ -16,7 +16,7 @@ define(['client/desktop'], function(createDesktop){
                 desktopData = {
                     _id: '1',
                     userId: '2',
-                    conversations: [ 'A', 'C', 'E' ]
+                    collaborationObjects: [ 'A', 'C', 'E' ]
                 };
 
                 allConversations = testDataAllConversations();
@@ -192,7 +192,7 @@ define(['client/desktop'], function(createDesktop){
                 desktopData = {
                     _id: '3',
                     userId: '2',
-                    conversations: [ 'B', 'C' ]
+                    collaborationObjects: [ 'B', 'C' ]
                 };
 
                 allConversations = testDataAllConversations();
@@ -227,7 +227,7 @@ define(['client/desktop'], function(createDesktop){
                 desktopData = {
                     _id: '1',
                     userId: '2',
-                    conversations: [ 'B' ]
+                    collaborationObjects: [ 'B' ]
                 };
 
                 allConversations = testDataAllConversations();
@@ -301,7 +301,7 @@ define(['client/desktop'], function(createDesktop){
                 desktopData = {
                     _id: '1',
                     userId: '2',
-                    conversations: [ ]
+                    collaborationObjects: [ ]
                 };
 
                 allConversations = testDataAllConversations();

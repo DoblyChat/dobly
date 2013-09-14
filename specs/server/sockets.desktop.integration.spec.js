@@ -17,7 +17,7 @@ describe('Sockets', function(){
 				userId: new mongo.Types.ObjectId()
 			}, function(err, desktop){
 				desktopId = desktop._id;
-				done();
+				done(err);
 			});
 		});
 
@@ -25,17 +25,17 @@ describe('Sockets', function(){
 			Desktop.findByIdAndRemove(desktopId, done);
 		});
 
-		it('adds a conversation to the desktop', function(done){
-			var conversationId = new mongo.Types.ObjectId();
+		it('adds a collaboration object to the desktop', function(done){
+			var collaborationObjectId = new mongo.Types.ObjectId();
 			var checkCompleted = false;
 
 			runs(function(){
-				desktopIo.addConversation(socketMock, { id: desktopId, conversationId: conversationId });
+				desktopIo.addCollaborationObject(socketMock, { id: desktopId, collaborationObjectId: collaborationObjectId });
 			});
 
 			waitsFor(function(){
 				Desktop.findById(desktopId, function(err, desktop){
-					checkCompleted = desktop.conversations.indexOf(conversationId) >= 0;
+					checkCompleted = desktop.collaborationObjects.indexOf(collaborationObjectId) >= 0;
 				});
 
 				return checkCompleted;
@@ -46,22 +46,22 @@ describe('Sockets', function(){
 			});
 		});
 
-		describe('removes a conversation from the desktop', function(){
-			var conversationId = new mongo.Types.ObjectId();
+		describe('removes a collaboration object from the desktop', function(){
+			var collaborationObjectId = new mongo.Types.ObjectId();
 			var checkCompleted = false;
 
 			beforeEach(function(done){
-				Desktop.addConversation(desktopId, conversationId, done);
+				Desktop.addCollaborationObject(desktopId, collaborationObjectId, done);
 			});
 
-			it('removes conversation', function(done){
+			it('removes collaboration object', function(done){
 				runs(function(){
-					desktopIo.removeConversation(socketMock, { id: desktopId, conversationId: conversationId });
+					desktopIo.removeCollaborationObject(socketMock, { id: desktopId, collaborationObjectId: collaborationObjectId });
 				});
 
 				waitsFor(function(){
 					Desktop.findById(desktopId, function(err, desktop){
-						checkCompleted = desktop.conversations.indexOf(conversationId) < 0;
+						checkCompleted = desktop.collaborationObjects.indexOf(collaborationObjectId) < 0;
 					});
 
 					return checkCompleted;
@@ -80,12 +80,12 @@ describe('Sockets', function(){
 				first = new mongo.Types.ObjectId();
 				second = new mongo.Types.ObjectId();
 
-				Desktop.addConversation(desktopId, first, function(err){
-					Desktop.addConversation(desktopId, second, function(err){
+				Desktop.addCollaborationObject(desktopId, first, function(err){
+					Desktop.addCollaborationObject(desktopId, second, function(err){
 						Desktop.findById(desktopId, function(err, desktop){
-							expect(desktop.conversations.length).toBe(2);
-							expect(desktop.conversations[0]).toEqual(first);
-							expect(desktop.conversations[1]).toEqual(second);
+							expect(desktop.collaborationObjects.length).toBe(2);
+							expect(desktop.collaborationObjects[0]).toEqual(first);
+							expect(desktop.collaborationObjects[1]).toEqual(second);
 							done();
 						});
 					});
@@ -101,7 +101,7 @@ describe('Sockets', function(){
 
 				waitsFor(function(){
 					Desktop.findById(desktopId, function(err, desktop){
-						checkCompleted = desktop.conversations.indexOf(first) == 1 && desktop.conversations.indexOf(second) === 0;
+						checkCompleted = desktop.collaborationObjects.indexOf(first) === 1 && desktop.collaborationObjects.indexOf(second) === 0;
 					});
 
 					return checkCompleted;

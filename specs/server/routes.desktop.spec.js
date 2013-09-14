@@ -162,7 +162,7 @@ describe('Desktop route', function(){
 					users: [],
 					collaborationObjects: [],
 					desktop: {
-						conversations: [],
+						collaborationObjects: [],
 						isModified: jasmine.createSpy(),
 					},
 					markers: [],
@@ -223,11 +223,11 @@ describe('Desktop route', function(){
 				});
 
 				it('adds missing collaborationObjects to the desktop if they have unread messages', function(){
-					data.desktop.conversations.push(object2);
+					data.desktop.collaborationObjects.push(object2);
 					render(null, data);
 
-					expect(data.desktop.conversations.indexOf(object3)).toBeGreaterThan(-1);
-					expect(data.desktop.conversations.indexOf(object1)).toBe(-1);
+					expect(data.desktop.collaborationObjects.indexOf(object3)).toBeGreaterThan(-1);
+					expect(data.desktop.collaborationObjects.indexOf(object1)).toBe(-1);
 				});
 			});
 
@@ -238,7 +238,7 @@ describe('Desktop route', function(){
 					data.collaborationObjects[2].createdById = user3._id;
 				});
 
-				it('adds created by names for each conversation', function(){
+				it('adds created by names for each collaboration object', function(){
 					render(null, data);
 
 					expect(data.collaborationObjects[0].createdBy).toBe(user1.firstName);

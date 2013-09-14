@@ -164,9 +164,9 @@ describe('Desktop route - integration', function(){
 
 		function verifyDesktop(desktop){
 			expect(desktop.userId).toBe(testUser._id.toString());
-			expect(desktop.conversations).toContain(collaborationObjects[0]._id.toString());
-			expect(desktop.conversations).toContain(collaborationObjects[1]._id.toString());
-			expect(desktop.conversations).not.toContain(collaborationObjects[2]._id.toString());
+			expect(desktop.collaborationObjects).toContain(collaborationObjects[0]._id.toString());
+			expect(desktop.collaborationObjects).toContain(collaborationObjects[1]._id.toString());
+			expect(desktop.collaborationObjects).not.toContain(collaborationObjects[2]._id.toString());
 		}
 
 		function verifyCurrentUser(currentUser){

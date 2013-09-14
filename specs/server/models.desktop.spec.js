@@ -9,7 +9,7 @@ describe('Desktop', function(){
 		desktop = new Desktop();
 	});
 
-	describe('#removeConversation', function(){
+	describe('#removeCollaborationObject', function(){
 		beforeEach(function(done){
 			Desktop.create({
 				userId: new mongo.Types.ObjectId()
@@ -23,17 +23,17 @@ describe('Desktop', function(){
 			desktop.remove(done);
 		});
 
-		it('removes a conversation', function(done){
-			var conversationId = new mongo.Types.ObjectId();
-			desktop.conversations.push(conversationId);
+		it('removes a collaboration object', function(done){
+			var collaborationObjectId = new mongo.Types.ObjectId();
+			desktop.collaborationObjects.push(collaborationObjectId);
 			
 			desktop.save(function(err){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
-					expect(savedDesktop.conversations).toContain(conversationId);
+					expect(savedDesktop.collaborationObjects).toContain(collaborationObjectId);
 
-					Desktop.removeConversation(savedDesktop._id, conversationId, function(err){
+					Desktop.removeCollaborationObject(savedDesktop._id, collaborationObjectId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
-							expect(savedDesktop.conversations).not.toContain(conversationId);
+							expect(savedDesktop.collaborationObjects).not.toContain(collaborationObjectId);
 							done(err);
 						});
 					});
@@ -41,29 +41,29 @@ describe('Desktop', function(){
 			});
 		});
 
-		it('does not throw error if conversation list empty', function(done){
-			var conversationId = new mongo.Types.ObjectId();
-			expect(desktop.conversations).not.toContain(conversationId);
+		it('does not throw error if collaboration object list empty', function(done){
+			var collaborationObjectId = new mongo.Types.ObjectId();
+			expect(desktop.collaborationObjects).not.toContain(collaborationObjectId);
 
-			Desktop.removeConversation(desktop._id, conversationId, function(err){
+			Desktop.removeCollaborationObject(desktop._id, collaborationObjectId, function(err){
 				expect(err).toBeNull();
 				done(err);
 			});
 		});
 
-		it('removes the right conversation', function(done){
-			var conversationId = new mongo.Types.ObjectId();
+		it('removes the right collaboration object', function(done){
+			var collaborationObjectId = new mongo.Types.ObjectId();
 			var otherId = new mongo.Types.ObjectId();
 
-			desktop.update({ $push: { conversations: { $each: [ conversationId, otherId ] }}}, function(err){
+			desktop.update({ $push: { collaborationObjects: { $each: [ collaborationObjectId, otherId ] }}}, function(err){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
-					expect(savedDesktop.conversations).toContain(conversationId);
-					expect(savedDesktop.conversations).toContain(otherId);
+					expect(savedDesktop.collaborationObjects).toContain(collaborationObjectId);
+					expect(savedDesktop.collaborationObjects).toContain(otherId);
 
-					Desktop.removeConversation(savedDesktop._id, otherId, function(err){
+					Desktop.removeCollaborationObject(savedDesktop._id, otherId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
-							expect(savedDesktop.conversations).toContain(conversationId);
-							expect(savedDesktop.conversations).not.toContain(otherId);
+							expect(savedDesktop.collaborationObjects).toContain(collaborationObjectId);
+							expect(savedDesktop.collaborationObjects).not.toContain(otherId);
 							done(err);
 						});
 					});
@@ -72,7 +72,7 @@ describe('Desktop', function(){
 		});
 	});
 
-	describe('#addConversation', function(){
+	describe('#addCollaborationObject', function(){
 		beforeEach(function(done){
 			Desktop.create({
 				userId: new mongo.Types.ObjectId()
@@ -86,19 +86,19 @@ describe('Desktop', function(){
 			desktop.remove(done);
 		});
 
-		it('adds a conversation', function(done){
-			var conversationId = new mongo.Types.ObjectId();
+		it('adds a collaboration object', function(done){
+			var collaborationObjectId = new mongo.Types.ObjectId();
 
-			Desktop.addConversation(desktop._id, conversationId, function(err){
+			Desktop.addCollaborationObject(desktop._id, collaborationObjectId, function(err){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
-					expect(savedDesktop.conversations).toContain(conversationId);
+					expect(savedDesktop.collaborationObjects).toContain(collaborationObjectId);
 					
 					var anotherConversationId = new mongo.Types.ObjectId();
 
-					Desktop.addConversation(savedDesktop._id, anotherConversationId, function(err){
+					Desktop.addCollaborationObject(savedDesktop._id, anotherConversationId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
-							expect(savedDesktop.conversations.length).toBe(2);
-							expect(savedDesktop.conversations).toContain(anotherConversationId);
+							expect(savedDesktop.collaborationObjects.length).toBe(2);
+							expect(savedDesktop.collaborationObjects).toContain(anotherConversationId);
 							done(err);
 						});
 					});
@@ -106,16 +106,16 @@ describe('Desktop', function(){
 			});
 		});
 
-		it('does not add the same conversation twice', function(done){
-			var conversationId = new mongo.Types.ObjectId();
+		it('does not add the same collaboration object twice', function(done){
+			var collaborationObjectId = new mongo.Types.ObjectId();
 
-			Desktop.addConversation(desktop._id, conversationId, function(err){
+			Desktop.addCollaborationObject(desktop._id, collaborationObjectId, function(err){
 				Desktop.findById(desktop._id, function(err, savedDesktop){
-					expect(savedDesktop.conversations).toContain(conversationId);
+					expect(savedDesktop.collaborationObjects).toContain(collaborationObjectId);
 
-					Desktop.addConversation(desktop._id, conversationId, function(err){
+					Desktop.addCollaborationObject(desktop._id, collaborationObjectId, function(err){
 						Desktop.findById(desktop._id, function(err, savedDesktop){
-							expect(savedDesktop.conversations.length).toBe(1);
+							expect(savedDesktop.collaborationObjects.length).toBe(1);
 							done(err);
 						});
 					});
@@ -124,7 +124,7 @@ describe('Desktop', function(){
 		});
 	});
 
-	describe('#moveConversation', function(){
+	describe('#moveCollaborationObject', function(){
 		beforeEach(function(done){
 			Desktop.create({
 				userId: new mongo.Types.ObjectId()
@@ -138,25 +138,25 @@ describe('Desktop', function(){
 			desktop.remove(done);
 		});
 
-		it('moves conversation to new location', function(done){
-			var convo1 = new mongo.Types.ObjectId();
-			var convo2 = new mongo.Types.ObjectId();
-			var convo3 = new mongo.Types.ObjectId();
+		it('moves collaboration object to new location', function(done){
+			var object1 = new mongo.Types.ObjectId();
+			var object2 = new mongo.Types.ObjectId();
+			var object3 = new mongo.Types.ObjectId();
 
-			desktop.conversations.push(convo1);
-			desktop.conversations.push(convo2);
-			desktop.conversations.push(convo3);
+			desktop.collaborationObjects.push(object1);
+			desktop.collaborationObjects.push(object2);
+			desktop.collaborationObjects.push(object3);
 
 			desktop.save(function(err){
-				verifyOrder(convo1, convo2, convo3, function(desktop){
-					desktop.moveConversation(0, 1, function(){
-						verifyOrder(convo2, convo1, convo3, function(desktop){
-							desktop.moveConversation(0, 2, function(){
-								verifyOrder(convo1, convo3, convo2, function(desktop){
-									desktop.moveConversation(1, 1, function(){
-										verifyOrder(convo1, convo3, convo2, function(desktop){
-											desktop.moveConversation(1, 2, function(){
-												verifyOrder(convo1, convo2, convo3, function(desktop){
+				verifyOrder(object1, object2, object3, function(desktop){
+					desktop.moveCollaborationObject(0, 1, function(){
+						verifyOrder(object2, object1, object3, function(desktop){
+							desktop.moveCollaborationObject(0, 2, function(){
+								verifyOrder(object1, object3, object2, function(desktop){
+									desktop.moveCollaborationObject(1, 1, function(){
+										verifyOrder(object1, object3, object2, function(desktop){
+											desktop.moveCollaborationObject(1, 2, function(){
+												verifyOrder(object1, object2, object3, function(desktop){
 													done();
 												});
 											});
@@ -172,9 +172,9 @@ describe('Desktop', function(){
 
 		function verifyOrder(first, second, third, callback){
 			Desktop.findById(desktop._id, function(err, savedDesktop){
-				expect(savedDesktop.conversations[0].toString()).toBe(first.toString());
-				expect(savedDesktop.conversations[1].toString()).toBe(second.toString());
-				expect(savedDesktop.conversations[2].toString()).toBe(third.toString());
+				expect(savedDesktop.collaborationObjects[0].toString()).toBe(first.toString());
+				expect(savedDesktop.collaborationObjects[1].toString()).toBe(second.toString());
+				expect(savedDesktop.collaborationObjects[2].toString()).toBe(third.toString());
 
 				callback(savedDesktop);
 			});
@@ -193,7 +193,7 @@ describe('Desktop', function(){
 			Desktop.findOrCreateByUserId(userId, function(err, savedDesktop){ 
 				expect(arguments.length).toBe(2);
 				expect(savedDesktop.userId).toBe(userId);
-				expect(savedDesktop.conversations).not.toBe(null);
+				expect(savedDesktop.collaborationObjects).not.toBe(null);
 				done(err);
 			});
 		});
@@ -223,10 +223,10 @@ describe('Desktop', function(){
 			});
 		});
 
-		it('has a default empty array of conversations', function(){
+		it('has a default empty array of collaboration objects', function(){
 			var desktop = new Desktop();
-			expect(desktop.conversations).not.toBe(null);
-			expect(desktop.conversations.length).toBe(0);
+			expect(desktop.collaborationObjects).not.toBe(null);
+			expect(desktop.collaborationObjects.length).toBe(0);
 		});
 	});
 });

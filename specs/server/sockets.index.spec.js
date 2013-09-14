@@ -53,7 +53,7 @@ describe('Socket', function(){
 
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createCollaborationObject', 'markAsRead', 'updateTopic', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
-			desktopIoMock = buildMock('./desktop_io', 'addConversation', 'removeConversation', 'updateStripOrder');
+			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
 			taskIoMock = buildMock('./task_io', 'readTaskLists', 'createTaskList', 'addTask');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
@@ -226,13 +226,13 @@ describe('Socket', function(){
 				it('adds conversation to desktop', function(){
 					fire('add_to_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.addConversation).toHaveBeenCalledWith(socketMock, data);
+					expect(desktopIoMock.addCollaborationObject).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('removes conversation from desktop', function(){
 					fire('remove_from_desktop');
 					expectSessionTouchCalled();
-					expect(desktopIoMock.removeConversation).toHaveBeenCalledWith(socketMock, data);
+					expect(desktopIoMock.removeCollaborationObject).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('updates strip order', function(){

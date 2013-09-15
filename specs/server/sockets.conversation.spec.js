@@ -9,7 +9,7 @@ describe('Sockets', function(){
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../lib/sockets/conversation_io');
 
-			collaborationObjectIo = buildMock('./collaboration_object_io', 'sendItem');
+			collaborationObjectIo = buildMock('./base_collaboration_object_io', 'sendItem');
 			messageMock = buildMock('../models/message', 'create', 'readMessagesByPage');
 
 			conversationIo = require('../../lib/sockets/conversation_io');

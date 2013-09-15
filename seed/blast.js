@@ -1,4 +1,4 @@
-var Conversation = require('../lib/models/conversation')
+var CollaborationObject = require('../lib/models/collaboration_object')
   , Message = require('../lib/models/message')
   , User = require('../lib/models/user')
   , Group = require('../lib/models/group')
@@ -12,45 +12,45 @@ mongo.connect(databaseUri);
 function blast(callback){
 	Group.findOne({ name: 'founders' }, function(err, group){
 		User.create([{ name: 'blast', email: 'blast@dobly.com', password: 'pass', groupId: group._id}], function(err, user){
-			var conversationArray = [];
+			var collaborationObjectsArray = [];
 
 			for(var i = 0; i < 100; i++){
-				conversationArray.push({ 
+				collaborationObjectsArray.push({ 
 					topic: 'Convo ' + i,
 					createdById: user._id,
 					groupId: user.groupId
 				});
 			}
 
-			Conversation.create(conversationArray, function(err){
-				var conversations = [];
+			CollaborationObject.create(collaborationObjectsArray, function(err){
+				var collaborationObjects = [];
 
 				for(var i = 1; i < arguments.length; i++ ){
-					conversations.push(arguments[i]);
+					collaborationObjects.push(arguments[i]);
 				}
 
-				async.each(conversations, saveConversation, saveDesktop);
+				async.each(collaborationObjects, saveCollaborationObject, saveDesktop);
 
-				function saveConversation(conversation, callback){
+				function saveCollaborationObject(collaborationObject, callback){
 					var messages = [];
 
 					for(var j = 0; j < 500; j++){
 						messages.push({ 
 							content: j,
 							createdBy: user.name,
-							conversationId: conversation._id,
+							collaborationObjectId: collaborationObject._id,
 						});
 					}
 
 					Message.create(messages, function(err){
-						conversation.save(callback);
+						collaborationObject.save(callback);
 					});
 				}
 
 				function saveDesktop(err){
 					Desktop.findOrCreateByUserId(user._id, function(err, desktop){
-						for(var j = 0; j < conversations.length; j++){
-							desktop.conversations.push(conversations[j]._id);
+						for(var j = 0; j < collaborationObjects.length; j++){
+							desktop.collaborationObjects.push(collaborationObjects[j]._id);
 						}
 
 						desktop.save(function(err){
@@ -68,7 +68,7 @@ async.series([
 		User.findOneAndRemove({ email: 'blast@dobly.com' }, callback);
 	},
 	function(callback){
-		Conversation.remove({ topic: new RegExp('^Convo.*$') }, callback);
+		CollaborationObject.remove({ topic: new RegExp('^Convo.*$') }, callback);
 	},
 	function(callback){
 		Desktop.remove({}, callback);
@@ -81,7 +81,7 @@ async.series([
 			console.log(err);
 			process.exit(0);
 		}else{
-			console.log('all conversations have been created');
+			console.log('all collaborationObjects have been created');
 			process.exit(0)
 		}
 	}

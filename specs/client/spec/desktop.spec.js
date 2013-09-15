@@ -5,12 +5,12 @@ define(['client/desktop'], function(createDesktop){
 
         var desktop;
         var desktopData;
-        var allConversations;
-        var testConversation;
+        var allCollaborationObjects;
+        var testCollaborationObject;
 
-        describe("3 conversations", function() {
+        describe("3 collaboration objects", function() {
 
-            var firstConversation, secondConversation, thirdConversation;
+            var firstCollaborationObject, secondCollaborationObject, thirdCollaborationObject;
 
             beforeEach(function() {
                 desktopData = {
@@ -19,13 +19,13 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ 'A', 'C', 'E' ]
                 };
 
-                allConversations = testDataAllConversations();
-                desktop = createDesktop(desktopData, allConversations);
+                allCollaborationObjects = testDataAllCollaborationObjects();
+                desktop = createDesktop(desktopData, allCollaborationObjects);
                 app.socket = createMockSocket();
 
-                firstConversation = allConversations[0];
-                secondConversation = allConversations[2];
-                thirdConversation = allConversations[4];
+                firstCollaborationObject = allCollaborationObjects[0];
+                secondCollaborationObject = allCollaborationObjects[2];
+                thirdCollaborationObject = allCollaborationObjects[4];
             });
 
             describe("creation", function() {
@@ -35,29 +35,29 @@ define(['client/desktop'], function(createDesktop){
                     expect(desktop.loading()).toBe(false);
                 });
 
-                it("conversations", function() {
-                    expect(desktop.conversations().length).toBe(3);
-                    expect(desktop.conversations()[0]).toEqual(firstConversation);
-                    expect(desktop.conversations()[1]).toEqual(secondConversation);
-                    expect(desktop.conversations()[2]).toEqual(thirdConversation);
+                it("collaboration objects", function() {
+                    expect(desktop.collaborationObjects().length).toBe(3);
+                    expect(desktop.collaborationObjects()[0]).toEqual(firstCollaborationObject);
+                    expect(desktop.collaborationObjects()[1]).toEqual(secondCollaborationObject);
+                    expect(desktop.collaborationObjects()[2]).toEqual(thirdCollaborationObject);
                 });
 
-                it("rendered conversations", function() {
-                    expect(desktop.renderedConversations().length).toBe(2);
-                    expect(desktop.renderedConversations()[0]).toEqual(firstConversation);
-                    expect(desktop.renderedConversations()[1]).toEqual(secondConversation);
+                it("rendered collaboration objects", function() {
+                    expect(desktop.renderedCollaborationObjects().length).toBe(2);
+                    expect(desktop.renderedCollaborationObjects()[0]).toEqual(firstCollaborationObject);
+                    expect(desktop.renderedCollaborationObjects()[1]).toEqual(secondCollaborationObject);
                 });
 
-                it("left conversation", function() {
-                    expect(desktop.leftConversation()).toEqual(firstConversation);
-                    expect(desktop.leftConversation().activateOnTheLeft).toHaveBeenCalled();
-                    expect(desktop.hasLeftConversation()).toBe(true);               
+                it("left collaboration object", function() {
+                    expect(desktop.leftCollaborationObject()).toEqual(firstCollaborationObject);
+                    expect(desktop.leftCollaborationObject().activateOnTheLeft).toHaveBeenCalled();
+                    expect(desktop.hasLeftCollaborationObject()).toBe(true);               
                 });
 
-                it("right conversations", function() {
-                    expect(desktop.rightConversation()).toEqual(secondConversation);
-                    expect(desktop.rightConversation().activateOnTheRight).toHaveBeenCalled();              
-                    expect(desktop.hasRightConversation()).toBe(true);              
+                it("right collaboration objects", function() {
+                    expect(desktop.rightCollaborationObject()).toEqual(secondCollaborationObject);
+                    expect(desktop.rightCollaborationObject().activateOnTheRight).toHaveBeenCalled();              
+                    expect(desktop.hasRightCollaborationObject()).toBe(true);              
                 });
             }); 
 
@@ -65,30 +65,30 @@ define(['client/desktop'], function(createDesktop){
                 
                 it("adds but does not activate", function() {
                     spyDesktopUi(desktop);
-                    testConversation = allConversations[1];
-                    expect(desktop.conversations()).not.toContain(testConversation);
+                    testCollaborationObject = allCollaborationObjects[1];
+                    expect(desktop.collaborationObjects()).not.toContain(testCollaborationObject);
 
-                    desktop.add(testConversation);
+                    desktop.add(testCollaborationObject);
 
-                    expect(desktop.hasLeftConversation()).toBe(true);
-                    expect(desktop.hasRightConversation()).toBe(true);
-                    expect(desktop.leftConversation()).not.toEqual(testConversation);
-                    expect(desktop.rightConversation()).not.toEqual(testConversation);
-                    expect(desktop.renderedConversations()).not.toContain(testConversation);
-                    expect(desktop.conversations()).toContain(testConversation);
+                    expect(desktop.hasLeftCollaborationObject()).toBe(true);
+                    expect(desktop.hasRightCollaborationObject()).toBe(true);
+                    expect(desktop.leftCollaborationObject()).not.toEqual(testCollaborationObject);
+                    expect(desktop.rightCollaborationObject()).not.toEqual(testCollaborationObject);
+                    expect(desktop.renderedCollaborationObjects()).not.toContain(testCollaborationObject);
+                    expect(desktop.collaborationObjects()).toContain(testCollaborationObject);
 
                     expect(desktop.ui.scroll.tiles).toHaveBeenCalled();
                     expectSocketEmitAddToDesktop('1','B');
                 });
 
-                it("does not add same conversation", function() {
-                    testConversation = firstConversation;
-                    expect(desktop.conversations()).toContain(testConversation);
-                    expect(desktop.conversations().length).toBe(3);
+                it("does not add same collaboration object", function() {
+                    testCollaborationObject = firstCollaborationObject;
+                    expect(desktop.collaborationObjects()).toContain(testCollaborationObject);
+                    expect(desktop.collaborationObjects().length).toBe(3);
 
-                    desktop.add(testConversation);
+                    desktop.add(testCollaborationObject);
 
-                    expect(desktop.conversations().length).toBe(3);
+                    expect(desktop.collaborationObjects().length).toBe(3);
                     expect(app.socket.emit).not.toHaveBeenCalled();
                 });
             }); 
@@ -97,96 +97,96 @@ define(['client/desktop'], function(createDesktop){
                 it("adds and activates", function() {
                     spyOn(desktop, "add");
                     spyOn(desktop, "activate");
-                    testConversation = firstConversation;
+                    testCollaborationObject = firstCollaborationObject;
 
-                    desktop.addAndActivate(testConversation);
+                    desktop.addAndActivate(testCollaborationObject);
 
-                    expect(desktop.add).toHaveBeenCalledWith(testConversation);
-                    expect(desktop.activate).toHaveBeenCalledWith(testConversation);
+                    expect(desktop.add).toHaveBeenCalledWith(testCollaborationObject);
+                    expect(desktop.activate).toHaveBeenCalledWith(testCollaborationObject);
                 });       
             });
 
             describe("activate", function() {
                 it("activates", function() {
                     spyDesktopUi(desktop);
-                    desktop.add(allConversations[1]);
-                    expect(desktop.conversations().length).toBe(4);
-                    expect(desktop.conversations()[0]).toEqual(firstConversation);
-                    expect(desktop.conversations()[1]).toEqual(secondConversation);
-                    expect(desktop.conversations()[2]).toEqual(thirdConversation);
-                    expect(desktop.conversations()[3]).toEqual(allConversations[1]);
+                    desktop.add(allCollaborationObjects[1]);
+                    expect(desktop.collaborationObjects().length).toBe(4);
+                    expect(desktop.collaborationObjects()[0]).toEqual(firstCollaborationObject);
+                    expect(desktop.collaborationObjects()[1]).toEqual(secondCollaborationObject);
+                    expect(desktop.collaborationObjects()[2]).toEqual(thirdCollaborationObject);
+                    expect(desktop.collaborationObjects()[3]).toEqual(allCollaborationObjects[1]);
 
-                    expect(desktop.leftConversation()).toEqual(firstConversation);
-                    expect(desktop.rightConversation()).toEqual(secondConversation);
+                    expect(desktop.leftCollaborationObject()).toEqual(firstCollaborationObject);
+                    expect(desktop.rightCollaborationObject()).toEqual(secondCollaborationObject);
 
-                    var testConversation = desktop.conversations()[2];
+                    var testCollaborationObject = desktop.collaborationObjects()[2];
 
                     runs(function() {
-                        desktop.activate(testConversation);
+                        desktop.activate(testCollaborationObject);
                     });
 
                     waitsFor(function() {
-                        return testConversation.hasFocus() === true;
-                    }, "test conversation should have focus", 450);
+                        return testCollaborationObject.hasFocus() === true;
+                    }, "test collaboration object should have focus", 450);
 
                     runs(function() {
-                        expect(desktop.conversations()[0].deactivate).toHaveBeenCalled();
-                        expect(desktop.conversations()[1].deactivate).toHaveBeenCalled();
-                        expect(desktop.conversations()[2].deactivate).toHaveBeenCalled();
-                        expect(desktop.conversations()[3].deactivate).toHaveBeenCalled();
+                        expect(desktop.collaborationObjects()[0].deactivate).toHaveBeenCalled();
+                        expect(desktop.collaborationObjects()[1].deactivate).toHaveBeenCalled();
+                        expect(desktop.collaborationObjects()[2].deactivate).toHaveBeenCalled();
+                        expect(desktop.collaborationObjects()[3].deactivate).toHaveBeenCalled();
 
-                        expect(desktop.conversations()[0].hasFocus()).toBe(false);
-                        expect(desktop.conversations()[1].hasFocus()).toBe(false);
-                        expect(desktop.conversations()[2].hasFocus()).toBe(true);
-                        expect(desktop.conversations()[3].hasFocus()).toBe(false);
+                        expect(desktop.collaborationObjects()[0].hasFocus()).toBe(false);
+                        expect(desktop.collaborationObjects()[1].hasFocus()).toBe(false);
+                        expect(desktop.collaborationObjects()[2].hasFocus()).toBe(true);
+                        expect(desktop.collaborationObjects()[3].hasFocus()).toBe(false);
 
-                        expect(desktop.leftConversation()).toEqual(testConversation);
-                        expect(desktop.rightConversation()).toEqual(desktop.conversations()[3]);
+                        expect(desktop.leftCollaborationObject()).toEqual(testCollaborationObject);
+                        expect(desktop.rightCollaborationObject()).toEqual(desktop.collaborationObjects()[3]);
 
-                        expect(desktop.renderedConversations()).toContain(testConversation);
-                        expect(desktop.renderedConversations()).toContain(desktop.conversations()[3]);
+                        expect(desktop.renderedCollaborationObjects()).toContain(testCollaborationObject);
+                        expect(desktop.renderedCollaborationObjects()).toContain(desktop.collaborationObjects()[3]);
 
-                        expect(testConversation.activateOnTheLeft).toHaveBeenCalled();
-                        expect(desktop.conversations()[3].activateOnTheRight).toHaveBeenCalled();
+                        expect(testCollaborationObject.activateOnTheLeft).toHaveBeenCalled();
+                        expect(desktop.collaborationObjects()[3].activateOnTheRight).toHaveBeenCalled();
 
                         expect(desktop.loading()).toBe(false);
-                        expect(desktop.ui.updateConversationUi).toHaveBeenCalled();                 
+                        expect(desktop.ui.updateCollaborationObjectUi).toHaveBeenCalled();                 
                     });
                 });   
             });
 
             describe("remove", function() {
-                it("third conversation", function() {
+                it("third collaboration object", function() {
                     spyDesktopUi(desktop);
                     
-                    desktop.remove(thirdConversation);
+                    desktop.remove(thirdCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('1','E');
-                    expect(desktop.conversations().length).toBe(2);
-                    expect(desktop.leftConversation()).toEqual(firstConversation);
-                    expect(desktop.rightConversation()).toEqual(secondConversation);
-                    expect(desktop.ui.updateConversationUi).not.toHaveBeenCalled();
+                    expect(desktop.collaborationObjects().length).toBe(2);
+                    expect(desktop.leftCollaborationObject()).toEqual(firstCollaborationObject);
+                    expect(desktop.rightCollaborationObject()).toEqual(secondCollaborationObject);
+                    expect(desktop.ui.updateCollaborationObjectUi).not.toHaveBeenCalled();
                     expect(desktop.ui.scroll.tiles).toHaveBeenCalled();
                 });
 
-                it("first conversation", function() {
+                it("first collaboration object", function() {
                     spyDesktopUi(desktop);
                     
-                    desktop.remove(firstConversation);
+                    desktop.remove(firstCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('1','A');
-                    expect(desktop.conversations().length).toBe(2);
-                    expect(desktop.leftConversation()).toEqual(secondConversation);
-                    expect(desktop.rightConversation()).toEqual(thirdConversation);
-                    expect(firstConversation.active()).toBe(false);
+                    expect(desktop.collaborationObjects().length).toBe(2);
+                    expect(desktop.leftCollaborationObject()).toEqual(secondCollaborationObject);
+                    expect(desktop.rightCollaborationObject()).toEqual(thirdCollaborationObject);
+                    expect(firstCollaborationObject.active()).toBe(false);
                     expectDesktopUiToHaveBeenCalled(desktop);
                 });
             });
         });
 
-        describe("2 conversations", function() {
+        describe("2 collaboration objects", function() {
 
-            var firstConversation, secondConversation;
+            var firstCollaborationObject, secondCollaborationObject;
 
             beforeEach(function() {
                 desktopData = {
@@ -195,33 +195,33 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ 'B', 'C' ]
                 };
 
-                allConversations = testDataAllConversations();
-                desktop = createDesktop(desktopData, allConversations);
+                allCollaborationObjects = testDataAllCollaborationObjects();
+                desktop = createDesktop(desktopData, allCollaborationObjects);
                 app.socket = createMockSocket();
 
-                firstConversation = allConversations[1];
-                secondConversation = allConversations[2];
+                firstCollaborationObject = allCollaborationObjects[1];
+                secondCollaborationObject = allCollaborationObjects[2];
             });
 
             describe("remove", function() {
-                it("second conversation", function() {
+                it("second collaboration object", function() {
                     spyDesktopUi(desktop);
                     
-                    desktop.remove(secondConversation);
+                    desktop.remove(secondCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('3','C');
-                    expect(desktop.conversations().length).toBe(1);
-                    expect(desktop.leftConversation()).toEqual(firstConversation);
-                    expect(desktop.hasRightConversation()).toBe(false);
-                    expect(secondConversation.active()).toBe(false);
+                    expect(desktop.collaborationObjects().length).toBe(1);
+                    expect(desktop.leftCollaborationObject()).toEqual(firstCollaborationObject);
+                    expect(desktop.hasRightCollaborationObject()).toBe(false);
+                    expect(secondCollaborationObject.active()).toBe(false);
                     expectDesktopUiToHaveBeenCalled(desktop);
                 });
             });
         });
 
-        describe("1 conversation", function() {
+        describe("1 collaboration object", function() {
 
-            var firstConversation;
+            var firstCollaborationObject;
 
             beforeEach(function() {
                 desktopData = {
@@ -230,33 +230,33 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ 'B' ]
                 };
 
-                allConversations = testDataAllConversations();
-                desktop = createDesktop(desktopData, allConversations);
+                allCollaborationObjects = testDataAllCollaborationObjects();
+                desktop = createDesktop(desktopData, allCollaborationObjects);
 
-                firstConversation = allConversations[1];
+                firstCollaborationObject = allCollaborationObjects[1];
             });
 
             describe("creation", function() {
 
-                it("conversations", function() {
-                    expect(desktop.conversations().length).toBe(1);
-                    expect(desktop.conversations()[0]).toEqual(firstConversation);
+                it("collaboration objects", function() {
+                    expect(desktop.collaborationObjects().length).toBe(1);
+                    expect(desktop.collaborationObjects()[0]).toEqual(firstCollaborationObject);
                 });
 
-                it("rendered conversations", function() {
-                    expect(desktop.renderedConversations().length).toBe(1);
-                    expect(desktop.renderedConversations()[0]).toEqual(firstConversation);
+                it("rendered collaboration objects", function() {
+                    expect(desktop.renderedCollaborationObjects().length).toBe(1);
+                    expect(desktop.renderedCollaborationObjects()[0]).toEqual(firstCollaborationObject);
                 });
 
-                it("left conversation", function() {
-                    expect(desktop.leftConversation()).toEqual(firstConversation);
-                    expect(desktop.leftConversation().activateOnTheLeft).toHaveBeenCalled();
-                    expect(desktop.hasLeftConversation()).toBe(true);                               
+                it("left collaboration object", function() {
+                    expect(desktop.leftCollaborationObject()).toEqual(firstCollaborationObject);
+                    expect(desktop.leftCollaborationObject().activateOnTheLeft).toHaveBeenCalled();
+                    expect(desktop.hasLeftCollaborationObject()).toBe(true);                               
                 });
 
-                it("right conversations", function() {
-                    expect(desktop.rightConversation()).toBeNull();
-                    expect(desktop.hasRightConversation()).toBe(false);                             
+                it("right collaboration objects", function() {
+                    expect(desktop.rightCollaborationObject()).toBeNull();
+                    expect(desktop.hasRightCollaborationObject()).toBe(false);                             
                 });
             });     
 
@@ -264,15 +264,15 @@ define(['client/desktop'], function(createDesktop){
                 
                 it("activates on the right", function() {
                     spyDesktopUi(desktop);
-                    testConversation = allConversations[4];
-                    expect(desktop.conversations()).not.toContain(testConversation);
+                    testCollaborationObject = allCollaborationObjects[4];
+                    expect(desktop.collaborationObjects()).not.toContain(testCollaborationObject);
 
-                    desktop.add(testConversation);
+                    desktop.add(testCollaborationObject);
 
-                    expect(desktop.hasLeftConversation()).toBe(true);
-                    expect(desktop.hasRightConversation()).toBe(true);
-                    expect(desktop.rightConversation()).toEqual(testConversation);
-                    expect(desktop.renderedConversations()[1]).toEqual(testConversation);
+                    expect(desktop.hasLeftCollaborationObject()).toBe(true);
+                    expect(desktop.hasRightCollaborationObject()).toBe(true);
+                    expect(desktop.rightCollaborationObject()).toEqual(testCollaborationObject);
+                    expect(desktop.renderedCollaborationObjects()[1]).toEqual(testCollaborationObject);
 
                     expectDesktopUiToHaveBeenCalled(desktop);
                     expectSocketEmitAddToDesktop('1','E');
@@ -280,22 +280,22 @@ define(['client/desktop'], function(createDesktop){
             });
 
             describe("remove", function() {
-                it("first conversation", function() {
+                it("first collaboration object", function() {
                     spyDesktopUi(desktop);
                     
-                    desktop.remove(firstConversation);
+                    desktop.remove(firstCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('1','B');
-                    expect(desktop.conversations().length).toBe(0);
-                    expect(desktop.hasLeftConversation()).toBe(false);
-                    expect(desktop.hasRightConversation()).toBe(false);
-                    expect(firstConversation.active()).toBe(false);
+                    expect(desktop.collaborationObjects().length).toBe(0);
+                    expect(desktop.hasLeftCollaborationObject()).toBe(false);
+                    expect(desktop.hasRightCollaborationObject()).toBe(false);
+                    expect(firstCollaborationObject.active()).toBe(false);
                     expectDesktopUiToHaveBeenCalled(desktop);
                 });
             });
         });
 
-        describe("0 conversations", function() {
+        describe("0 collaboration objects", function() {
 
             beforeEach(function() {
                 desktopData = {
@@ -304,28 +304,28 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ ]
                 };
 
-                allConversations = testDataAllConversations();
-                desktop = createDesktop(desktopData, allConversations);
+                allCollaborationObjects = testDataAllCollaborationObjects();
+                desktop = createDesktop(desktopData, allCollaborationObjects);
             });
 
             describe("creation", function() {
 
-                it("conversations", function() {
-                    expect(desktop.conversations().length).toBe(0);
+                it("collaboration objects", function() {
+                    expect(desktop.collaborationObjects().length).toBe(0);
                 });
 
-                it("rendered conversations", function() {
-                    expect(desktop.renderedConversations().length).toBe(0);
+                it("rendered collaboration objects", function() {
+                    expect(desktop.renderedCollaborationObjects().length).toBe(0);
                 });
 
-                it("left conversation", function() {
-                    expect(desktop.leftConversation()).toBeNull();
-                    expect(desktop.hasLeftConversation()).toBe(false);
+                it("left collaboration object", function() {
+                    expect(desktop.leftCollaborationObject()).toBeNull();
+                    expect(desktop.hasLeftCollaborationObject()).toBe(false);
                 });
 
-                it("right conversations", function() {
-                    expect(desktop.rightConversation()).toBeNull();
-                    expect(desktop.hasRightConversation()).toBe(false);
+                it("right collaboration objects", function() {
+                    expect(desktop.rightCollaborationObject()).toBeNull();
+                    expect(desktop.hasRightCollaborationObject()).toBe(false);
                 });
             });
 
@@ -333,15 +333,15 @@ define(['client/desktop'], function(createDesktop){
                 
                 it("activates on the left", function() {
                     spyDesktopUi(desktop);
-                    testConversation = allConversations[2];
-                    expect(desktop.conversations()).not.toContain(testConversation);
+                    testCollaborationObject = allCollaborationObjects[2];
+                    expect(desktop.collaborationObjects()).not.toContain(testCollaborationObject);
 
-                    desktop.add(testConversation);
+                    desktop.add(testCollaborationObject);
 
-                    expect(desktop.hasLeftConversation()).toBe(true);
-                    expect(desktop.hasRightConversation()).toBe(false);
-                    expect(desktop.leftConversation()).toEqual(testConversation);
-                    expect(desktop.renderedConversations()[0]).toEqual(testConversation);               
+                    expect(desktop.hasLeftCollaborationObject()).toBe(true);
+                    expect(desktop.hasRightCollaborationObject()).toBe(false);
+                    expect(desktop.leftCollaborationObject()).toEqual(testCollaborationObject);
+                    expect(desktop.renderedCollaborationObjects()[0]).toEqual(testCollaborationObject);               
 
                     expectDesktopUiToHaveBeenCalled(desktop);
                     expectSocketEmitAddToDesktop('1','C');
@@ -349,28 +349,22 @@ define(['client/desktop'], function(createDesktop){
             });     
         });
 
-        function testDataAllConversations() {
-            var conversationsTestData = [
-                createMockConversation('A'),
-                createMockConversation('B'),
-                createMockConversation('C'),
-                createMockConversation('D'),
-                createMockConversation('E'),
+        function testDataAllCollaborationObjects() {
+            var collaborationObjectsTestData = [
+                createMockCollaborationObject('A'),
+                createMockCollaborationObject('B'),
+                createMockCollaborationObject('C'),
+                createMockCollaborationObject('D'),
+                createMockCollaborationObject('E'),
             ];
 
-            var mockConversation;
-            for (var i = conversationsTestData.length - 1; i >= 0; i--) {
-                mockConversation = conversationsTestData[i];
-                
-            }
-
-            return conversationsTestData;
+            return collaborationObjectsTestData;
         }
 
-        function createMockConversation(conversationId) {
+        function createMockCollaborationObject(collaborationObjectId) {
             var self = {};
 
-            self.id = conversationId;
+            self.id = collaborationObjectId;
 
             self.activeValue = false;
             self.activateOnTheLeft = jasmine.createSpy('activateOnTheLeft').andCallFake(function() {
@@ -399,16 +393,16 @@ define(['client/desktop'], function(createDesktop){
         }
 
         function spyDesktopUi(desktop) {
-            desktop.ui = jasmine.createSpyObj('ui', ['scroll','updateConversationUi']);
+            desktop.ui = jasmine.createSpyObj('ui', ['scroll','updateCollaborationObjectUi']);
             desktop.ui.scroll = jasmine.createSpyObj('scroll', ['tiles']);
         }
 
         function expectDesktopUiToHaveBeenCalled(desktop) {
-            expect(desktop.ui.updateConversationUi).toHaveBeenCalled();
+            expect(desktop.ui.updateCollaborationObjectUi).toHaveBeenCalled();
             expect(desktop.ui.scroll.tiles).toHaveBeenCalled();
         }
 
-        function expectSocketEmitAddToDesktop(id, conversationId) {
+        function expectSocketEmitAddToDesktop(id, collaborationObjectId) {
             expect(app.socket.emit).toHaveBeenCalled();
 
             var arg0 = app.socket.emit.mostRecentCall.args[0];
@@ -416,10 +410,10 @@ define(['client/desktop'], function(createDesktop){
 
             expect(arg0).toEqual('add_to_desktop');
             expect(arg1.id).toEqual(id);
-            expect(arg1.conversationId).toEqual(conversationId);
+            expect(arg1.collaborationObjectId).toEqual(collaborationObjectId);
         }
 
-        function expectSocketEmitRemoveFromDesktop(id, conversationId) {
+        function expectSocketEmitRemoveFromDesktop(id, collaborationObjectId) {
             expect(app.socket.emit).toHaveBeenCalled();
 
             var arg0 = app.socket.emit.mostRecentCall.args[0];
@@ -427,7 +421,7 @@ define(['client/desktop'], function(createDesktop){
 
             expect(arg0).toEqual('remove_from_desktop');
             expect(arg1.id).toEqual(id);
-            expect(arg1.conversationId).toEqual(conversationId);
+            expect(arg1.collaborationObjectId).toEqual(collaborationObjectId);
         }
     });
 });

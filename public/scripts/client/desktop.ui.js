@@ -19,12 +19,12 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             res.listBodies = function() {
-                if (desktop.hasLeftConversation()) {
-                    desktop.leftConversation().ui.resizeBody();
+                if (desktop.hasLeftCollaborationObject()) {
+                    desktop.leftCollaborationObject().ui.resizeBody();
                 }
             
-                if (desktop.hasRightConversation()) {
-                    desktop.rightConversation().ui.resizeBody();
+                if (desktop.hasRightCollaborationObject()) {
+                    desktop.rightCollaborationObject().ui.resizeBody();
                 }
             };
 
@@ -53,12 +53,12 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             scr.setupLists = function(){
-                if (desktop.hasLeftConversation()) {
-                    desktop.leftConversation().ui.scroll.setup();
+                if (desktop.hasLeftCollaborationObject()) {
+                    desktop.leftCollaborationObject().ui.scroll.setup();
                 }
             
-                if (desktop.hasRightConversation()) {
-                    desktop.rightConversation().ui.scroll.setup();
+                if (desktop.hasRightCollaborationObject()) {
+                    desktop.rightCollaborationObject().ui.scroll.setup();
                 }
             };
 
@@ -74,15 +74,15 @@ define(['jquery', 'jquery-ui'], function($){
         })();
 
         self.highlight = function(){
-            var leftObs = desktop.leftConversation;
-            var rightObs = desktop.rightConversation;
+            var leftObs = desktop.leftCollaborationObject;
+            var rightObs = desktop.rightCollaborationObject;
 
             setTimeout(function(){
-                if (desktop.hasLeftConversation() && leftObs().unreadCounter() > 0) {
+                if (desktop.hasLeftCollaborationObject() && leftObs().unreadCounter() > 0) {
                     leftObs().ui.highlight(leftObs().unreadCounter());
                 }
             
-                if (desktop.hasRightConversation() && rightObs().unreadCounter() > 0) {
+                if (desktop.hasRightCollaborationObject() && rightObs().unreadCounter() > 0) {
                     rightObs().ui.highlight(rightObs().unreadCounter());
                 }
             }, 200);
@@ -101,10 +101,10 @@ define(['jquery', 'jquery-ui'], function($){
 
                     if (currentSort.startIndex !== currentSort.stopIndex) {
                         app.socket.emit('update_strip_order', { id: desktop.id, currentSort: currentSort });
-                        var conversation = desktop.conversations()[currentSort.startIndex];
-                        reorder(conversation);
-                        if (conversation.active()) {
-                            desktop.changeActiveConversations(currentSort.stopIndex);
+                        var collaborationObject = desktop.collaborationObjects()[currentSort.startIndex];
+                        reorder(collaborationObject);
+                        if (collaborationObject.active()) {
+                            desktop.changeActiveCollaborationObjects(currentSort.stopIndex);
                         }
                         else {
                             checkIfItNeedsToBeActivated();
@@ -113,19 +113,19 @@ define(['jquery', 'jquery-ui'], function($){
                 },
             });
 
-            function reorder(conversation) {      
-                desktop.conversations.splice(currentSort.startIndex, 1);
-                desktop.conversations.splice(currentSort.stopIndex, 0, conversation);
+            function reorder(collaborationObject) {      
+                desktop.collaborationObjects.splice(currentSort.startIndex, 1);
+                desktop.collaborationObjects.splice(currentSort.stopIndex, 0, collaborationObject);
             }
 
             function checkIfItNeedsToBeActivated() {
-                var leftActiveIndex = desktop.conversations.indexOf(desktop.leftConversation());
+                var leftActiveIndex = desktop.collaborationObjects.indexOf(desktop.leftCollaborationObject());
 
-                if (movedAfterActiveConversation(leftActiveIndex)) {
-                    desktop.changeActiveConversations(leftActiveIndex);
+                if (movedAfterActiveCollaborationObject(leftActiveIndex)) {
+                    desktop.changeActiveCollaborationObjects(leftActiveIndex);
                 }
 
-                function movedAfterActiveConversation(leftActiveIndex){
+                function movedAfterActiveCollaborationObject(leftActiveIndex){
                     return leftActiveIndex + 1 === currentSort.stopIndex;
                 }
             }
@@ -138,7 +138,7 @@ define(['jquery', 'jquery-ui'], function($){
             self.setupStripDragAndDrop();
         };
 
-        self.updateConversationUi = function(){
+        self.updateCollaborationObjectUi = function(){
             self.resize.listBodies();
             self.scroll.setupLists();
             self.highlight();

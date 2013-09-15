@@ -1,6 +1,6 @@
 #strip(data-bind="with: desktop, visible: navigation.showingDesktop")					
 	.nano#tiles
-		.content(data-bind="foreach: conversations")
+		.content(data-bind="foreach: collaborationObjects")
 			.tile(data-bind="css: { highlight: active }, click: $parent.activate")
 				.highlight-placeholder
 					.tile-text(data-bind="text:topic")
@@ -11,4 +11,4 @@
 	#new-message-bar(data-bind="css: { active: $root.hasUnread }")
 	#new-list-tile(data-bind="click: $parent.addNewConversation")				
 		.icon-plus
-		#new-list-text New Conversation
+		#new-list-text start

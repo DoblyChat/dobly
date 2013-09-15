@@ -1,165 +1,165 @@
 define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
     'use strict';
     
-    return function (data, allConversations){
+    return function (data, allCollaborationObjects){
         var self = {};
 
         self.id = data._id;
 
-        self.conversations = ko.observableArray([]);
-        self.renderedConversations = ko.observableArray([]);
-        self.leftConversation = ko.observable(null);
-        self.rightConversation = ko.observable(null);
+        self.collaborationObjects = ko.observableArray([]);
+        self.renderedCollaborationObjects = ko.observableArray([]);
+        self.leftCollaborationObject = ko.observable(null);
+        self.rightCollaborationObject = ko.observable(null);
         self.loading = ko.observable(false);
         self.ui = createDesktopUi(self);
 
         for(var i = 0; i < data.collaborationObjects.length; i++){
-            var conversation = getConversationBy(data.collaborationObjects[i]);
-            if(conversation){
-                self.conversations.push(conversation);
+            var collaborationObject = getCollaborationObject(data.collaborationObjects[i]);
+            if(collaborationObject){
+                self.collaborationObjects.push(collaborationObject);
             }
         }
 
-        function getConversationBy(id){
-            for(var c = 0; c < allConversations.length; c++){
-                if(allConversations[c].id == id){
-                    return allConversations[c];
+        function getCollaborationObject(id){
+            for(var c = 0; c < allCollaborationObjects.length; c++){
+                if(allCollaborationObjects[c].id == id){
+                    return allCollaborationObjects[c];
                 }
             }
         }
 
-        self.hasLeftConversation = ko.computed(function(){
-            return self.leftConversation() !== null;
+        self.hasLeftCollaborationObject = ko.computed(function(){
+            return self.leftCollaborationObject() !== null;
         });
 
-        self.hasRightConversation = ko.computed(function(){
-            return self.rightConversation() !== null;
+        self.hasRightCollaborationObject = ko.computed(function(){
+            return self.rightCollaborationObject() !== null;
         });
 
-        function hasConversation(conversation){
-            return self.conversations.indexOf(conversation) >= 0;
+        function hasCollaborationObject(collaborationObject){
+            return self.collaborationObjects.indexOf(collaborationObject) >= 0;
         }
 
-        self.add = function(conversation){
-            if(!hasConversation(conversation)){
-                self.persistNewConversation(conversation);
-                self.conversations.push(conversation);
+        self.add = function(collaborationObject){
+            if(!hasCollaborationObject(collaborationObject)){
+                self.persistNewCollaborationObject(collaborationObject);
+                self.collaborationObjects.push(collaborationObject);
                 self.ui.scroll.tiles();
-                if (!self.hasLeftConversation() || !self.hasRightConversation()) {
-                    activateLastConversation();
+                if (!self.hasLeftCollaborationObject() || !self.hasRightCollaborationObject()) {
+                    activateLastCollaborationObject();
                 }
             }
         };
 
-        function activateLastConversation() {
-            if (!self.hasLeftConversation()) {
-                activateLeftConversationBy(self.conversations().length - 1);
+        function activateLastCollaborationObject() {
+            if (!self.hasLeftCollaborationObject()) {
+                activateLeftCollaborationObjectBy(self.collaborationObjects().length - 1);
             } 
-            else if (!self.hasRightConversation()) {
-                activateRightConversationBy(self.conversations().length - 1);
+            else if (!self.hasRightCollaborationObject()) {
+                activateRightCollaborationObjectBy(self.collaborationObjects().length - 1);
             }
-            self.ui.updateConversationUi();
+            self.ui.updateCollaborationObjectUi();
         }
         
-        self.persistNewConversation = function(conversation) {
-            app.socket.emit('add_to_desktop', { id: self.id, conversationId: conversation.id });
+        self.persistNewCollaborationObject = function(collaborationObject) {
+            app.socket.emit('add_to_desktop', { id: self.id, collaborationObjectId: collaborationObject.id });
         };
 
-        self.addAndActivate = function(conversation) {
-            self.add(conversation);
-            self.activate(conversation);
+        self.addAndActivate = function(collaborationObject) {
+            self.add(collaborationObject);
+            self.activate(collaborationObject);
         };
 
-        self.remove = function(conversation) {
-            app.socket.emit('remove_from_desktop', { id: self.id, conversationId: conversation.id });
-            var index = self.conversations.indexOf(conversation);
-            self.conversations.splice(index, 1);
-            if(conversation.active()) {
-                removeActive(conversation, index);
+        self.remove = function(collaborationObject) {
+            app.socket.emit('remove_from_desktop', { id: self.id, collaborationObjectId: collaborationObject.id });
+            var index = self.collaborationObjects.indexOf(collaborationObject);
+            self.collaborationObjects.splice(index, 1);
+            if(collaborationObject.active()) {
+                removeActive(collaborationObject, index);
             }
 
             self.ui.scroll.tiles();
         };
 
-        function removeActive(conversation, index) {
-            conversation.deactivate();
+        function removeActive(collaborationObject, index) {
+            collaborationObject.deactivate();
 
-            if (isLeft(conversation)) {
-                activateLeftConversationBy(index);      
-                activateRightConversationBy(index + 1);
+            if (isLeft(collaborationObject)) {
+                activateLeftCollaborationObjectBy(index);      
+                activateRightCollaborationObjectBy(index + 1);
             }
-            else if (isRight(conversation)) {
-                activateRightConversationBy(index);
+            else if (isRight(collaborationObject)) {
+                activateRightCollaborationObjectBy(index);
             }
-            self.ui.updateConversationUi();
+            self.ui.updateCollaborationObjectUi();
         }
 
-        function activateLeftConversationBy(index) {
-            self.leftConversation(getConversationAt(index));
-            if (self.hasLeftConversation()) {
-                renderConversationIfNeeded(self.leftConversation());
-                self.leftConversation().activateOnTheLeft();
-            }
-        }
-
-        function activateRightConversationBy(index) {
-            self.rightConversation(getConversationAt(index));
-            if (self.hasRightConversation()) {
-                renderConversationIfNeeded(self.rightConversation());
-                self.rightConversation().activateOnTheRight();
+        function activateLeftCollaborationObjectBy(index) {
+            self.leftCollaborationObject(getCollaborationObjectAt(index));
+            if (self.hasLeftCollaborationObject()) {
+                renderCollaborationObjectIfNeeded(self.leftCollaborationObject());
+                self.leftCollaborationObject().activateOnTheLeft();
             }
         }
 
-        function renderConversationIfNeeded(conversation) {
-            if (self.renderedConversations.indexOf(conversation) <= -1) {
-                self.renderedConversations.push(conversation);
+        function activateRightCollaborationObjectBy(index) {
+            self.rightCollaborationObject(getCollaborationObjectAt(index));
+            if (self.hasRightCollaborationObject()) {
+                renderCollaborationObjectIfNeeded(self.rightCollaborationObject());
+                self.rightCollaborationObject().activateOnTheRight();
             }
         }
 
-        function getConversationAt(index){
-            if (index >= self.conversations().length) {
+        function renderCollaborationObjectIfNeeded(collaborationObject) {
+            if (self.renderedCollaborationObjects.indexOf(collaborationObject) <= -1) {
+                self.renderedCollaborationObjects.push(collaborationObject);
+            }
+        }
+
+        function getCollaborationObjectAt(index){
+            if (index >= self.collaborationObjects().length) {
                 return null;
             } else {
-                return self.conversations()[index];
+                return self.collaborationObjects()[index];
             }
         }
 
-        function isRight(conversation) {
-            return conversation === self.rightConversation();
+        function isRight(collaborationObject) {
+            return collaborationObject === self.rightCollaborationObject();
         }
 
-        function isLeft(conversation) {
-            return conversation === self.leftConversation();
+        function isLeft(collaborationObject) {
+            return collaborationObject === self.leftCollaborationObject();
         }
 
-        self.activate = function(conversation) {
-            var index = self.conversations.indexOf(conversation);
-            var leftIndex = self.conversations.indexOf(self.leftConversation());
+        self.activate = function(collaborationObject) {
+            var index = self.collaborationObjects.indexOf(collaborationObject);
+            var leftIndex = self.collaborationObjects.indexOf(self.leftCollaborationObject());
 
             if (index !== leftIndex) {
                 self.loading(true);
-                setTimeout(function() { self.changeActiveConversations(index); }, 0);
+                setTimeout(function() { self.changeActiveCollaborationObjects(index); }, 0);
             }
         };
 
-        self.changeActiveConversations = function(leftIndex) {
-            deactivateConversations();
-            activateLeftConversationBy(leftIndex);
-            activateRightConversationBy(leftIndex + 1);
+        self.changeActiveCollaborationObjects = function(leftIndex) {
+            deactivateCollaborationObjects();
+            activateLeftCollaborationObjectBy(leftIndex);
+            activateRightCollaborationObjectBy(leftIndex + 1);
             self.loading(false);
-            self.ui.updateConversationUi();
-            setTimeout(function(){ self.leftConversation().hasFocus(true); }, 400);
+            self.ui.updateCollaborationObjectUi();
+            setTimeout(function(){ self.leftCollaborationObject().hasFocus(true); }, 400);
         };
 
-        function deactivateConversations(){
-            ko.utils.arrayForEach(self.conversations(), function(conversation){
-                conversation.deactivate();
-                conversation.hasFocus(false);
+        function deactivateCollaborationObjects(){
+            ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
+                collaborationObject.deactivate();
+                collaborationObject.hasFocus(false);
             });
         }
 
-        activateLeftConversationBy(0);
-        activateRightConversationBy(1);
+        activateLeftCollaborationObjectBy(0);
+        activateRightCollaborationObjectBy(1);
 
         return self;
     };

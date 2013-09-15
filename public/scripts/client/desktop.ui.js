@@ -2,23 +2,26 @@ define(['jquery', 'jquery-ui'], function($){
     'use strict';
     
     return function (desktop){
-        var self = {};
+        var self = {},
+            $tiles = $('#tiles'),
+            $strip = $('#strip');
 
         self.resize = (function () {
             var res = {};
 
-            res.stripAndLists = function() {
+            res.stripAndCollaborationObjects = function() {
                 var includeMargin = true;
                 var bodyHeight = $('body').outerHeight(includeMargin);
                 var headerHeight = $('#header').outerHeight(includeMargin);
-                var listsMargin = $('#lists').outerHeight(includeMargin) - $('#lists').innerHeight();
+                var $objects = $('#collaboration-objects');
+                var objectsMargin = $objects.outerHeight(includeMargin) - $objects.innerHeight();
 
-                var height = bodyHeight - headerHeight - listsMargin;
-                $('#lists').height(height);
-                $('#strip').height(height);
+                var height = bodyHeight - headerHeight - objectsMargin;
+                $objects.height(height);
+                $strip.height(height);
             };
 
-            res.listBodies = function() {
+            res.collaborationObjectBodies = function() {
                 if (desktop.hasLeftCollaborationObject()) {
                     desktop.leftCollaborationObject().ui.resizeBody();
                 }
@@ -29,15 +32,15 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             function tiles() {    
-                var stripHeight = $('#strip').outerHeight();
-                var newTileHeight = $('#new-list-tile').outerHeight();
+                var stripHeight = $strip.outerHeight();
+                var newTileHeight = $('#new-tile').outerHeight();
                 var newMesageBar = $('#new-message-bar').outerHeight();
 
-                $('#tiles').height(stripHeight - newTileHeight - newMesageBar);
+                $tiles.height(stripHeight - newTileHeight - newMesageBar);
             }
 
-            res.tilesAndListBodies = function() {
-                res.listBodies();
+            res.tilesAndCollaborationObjectBodies = function() {
+                res.collaborationObjectBodies();
                 tiles();
             };
 
@@ -48,11 +51,11 @@ define(['jquery', 'jquery-ui'], function($){
             var scr = {};
 
             scr.setup = function() {
-                scr.setupLists();
+                scr.setupCollaborationObjects();
                 scr.tiles();
             };
 
-            scr.setupLists = function(){
+            scr.setupCollaborationObjects = function(){
                 if (desktop.hasLeftCollaborationObject()) {
                     desktop.leftCollaborationObject().ui.scroll.setup();
                 }
@@ -63,11 +66,11 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             scr.tiles = function() {
-                $('#tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
+                $tiles.nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
             };
 
             scr.bottomTile = function() {
-                $('#tiles').nanoScroller({ scroll: 'bottom' });
+                $tiles.nanoScroller({ scroll: 'bottom' });
             };
 
             return scr;
@@ -91,7 +94,7 @@ define(['jquery', 'jquery-ui'], function($){
         self.setupStripDragAndDrop = function (){
             var currentSort;
 
-            $('#tiles .content').sortable({      
+            $tiles.find('.content').sortable({      
                 handle: ".icon-move-handle",
                 start: function(event, ui){
                     currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
@@ -130,22 +133,22 @@ define(['jquery', 'jquery-ui'], function($){
                 }
             }
 
-            $('#tiles').disableSelection();
+            $tiles.disableSelection();
         };
 
         self.setup = function(){
-            self.resize.stripAndLists();
+            self.resize.stripAndCollaborationObjects();
             self.setupStripDragAndDrop();
         };
 
         self.updateCollaborationObjectUi = function(){
-            self.resize.listBodies();
-            self.scroll.setupLists();
+            self.resize.collaborationObjectBodies();
+            self.scroll.setupCollaborationObjects();
             self.highlight();
         };
 
         self.show = function(){
-            self.resize.tilesAndListBodies();
+            self.resize.tilesAndCollaborationObjectBodies();
             self.scroll.setup();
             self.setupStripDragAndDrop();
         };

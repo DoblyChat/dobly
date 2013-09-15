@@ -19,8 +19,8 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
                 global.app.inFocus = false;
             })
             .resize(function() {
-                global.app.desktop.ui.resize.stripAndLists();
-                global.app.desktop.ui.resize.tilesAndListBodies();
+                global.app.desktop.ui.resize.stripAndCollaborationObjects();
+                global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();
             });
 
         function start(){
@@ -56,7 +56,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
         function initUi(){
             global.app.desktop.ui.setup();
             showRenderedElements();
-            global.app.desktop.ui.resize.tilesAndListBodies();
+            global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();
             global.app.desktop.ui.scroll.setup();
         }
 

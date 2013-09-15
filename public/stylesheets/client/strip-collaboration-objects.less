@@ -1,0 +1,25 @@
+@strip-width: @tile-width;
+@dual-collaboration-object-width: @collaboration-object-width + @standard-margin + @collaboration-object-width;
+@strip-dual-collaboration-object-width: @strip-width + @standard-margin + @dual-collaboration-object-width;
+
+#strip-collaboration-objects {
+	width: @strip-dual-collaboration-object-width;
+	.centered;
+	display: table;
+}
+
+#strip {
+	width: 	@strip-width;
+	float: left;
+	.margin-bottom;
+	background: lighten(@light-gray,5%);
+	.box-shadow;
+	.text-color;
+}
+
+#collaboration-objects {
+	width: @dual-collaboration-object-width;
+	float: right;
+	.margin-bottom;
+}
+

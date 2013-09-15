@@ -47,13 +47,13 @@ define(['knockout', 'client/common', 'client/message', 'client/conversation.sear
         self.activateOnTheLeft = function() {
             self.isLeft(true);
             self.isRight(false);
-            activate(".list-left");
+            activate(".collaboration-object-left");
         };
 
         self.activateOnTheRight = function() {
             self.isRight(true);
             self.isLeft(false);
-            activate(".list-right");
+            activate(".collaboration-object-right");
         };
 
         function activate(convoSelector) {

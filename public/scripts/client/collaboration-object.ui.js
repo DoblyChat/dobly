@@ -9,18 +9,18 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
         };
 
         self.resizeBody = function() {
-            var listHeight = $('#lists').innerHeight();
+            var collaborationObjectHeight = $('#collaboration-objects').innerHeight();
             var headerHeight = headerOuterHeight();
-            var footerHeight = $(self.getSelector('.list-footer')).outerHeight();  
-            $(self.getSelector('.list-body')).height(listHeight - headerHeight - footerHeight);
+            var footerHeight = $(self.getSelector('.collaboration-object-footer')).outerHeight();  
+            $(self.getSelector('.collaboration-object-body')).height(collaborationObjectHeight - headerHeight - footerHeight);
         };
 
         function headerOuterHeight() {
-            return $(self.getSelector('.list-header')).outerHeight();
+            return $(self.getSelector('.collaboration-object-header')).outerHeight();
         }
 
         self.bodyHeight = function() {
-            return $(self.getSelector('.list-body')).height();
+            return $(self.getSelector('.collaboration-object-body')).height();
         };
 
         self.scroll = (function(){
@@ -78,15 +78,15 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
             changeHeaderHeight();
             var newHeaderHeight = headerOuterHeight();
 
-            var scrollOffset = $(self.getSelector('.list-body > .content')).scrollTop();
+            var scrollOffset = $(self.getSelector('.collaboration-object-body > .content')).scrollTop();
             self.resizeBody();
             self.scroll.adjustToOffset(scrollOffset + (newHeaderHeight - origHeaderHeight));
         };
 
         self.toggleInfo = function(){
             self.resizeBodyFromHeaderChange(function() {
-                $(self.getSelector('.list-header > .info')).toggle();
-                $(self.getSelector('.list-header > .search')).hide();
+                $(self.getSelector('.collaboration-object-header > .info')).toggle();
+                $(self.getSelector('.collaboration-object-header > .search')).hide();
             });
         };
 

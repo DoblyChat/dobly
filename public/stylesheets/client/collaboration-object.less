@@ -3,7 +3,7 @@
 @item-bottom-padding: 10px;
 @item-left-padding: 25px;
 @item-right-padding: 25px;
-@list-header-actions-width: 45px;
+@collaboration-object-header-actions-width: 45px;
 
 @new-item-top-padding: 7px;
 @new-item-bottom-padding: 10px;
@@ -18,11 +18,11 @@
 	.title-color;
 }
 
-.list-left {
+.collaboration-object-left {
 	float: left;
 }
 
-.list-right {
+.collaboration-object-right {
 	float: right;
 }
 
@@ -32,16 +32,16 @@
 
 .action-box{
 	float: left;
-	width: @list-width - @item-left-padding - @item-right-padding;
+	width: @collaboration-object-width - @item-left-padding - @item-right-padding;
 }
 		
-.list{
-	width: @list-width;
+.collaboration-object{
+	width: @collaboration-object-width;
 	height: 100%;
 	background: @white;
 	.box-shadow;
 
-	.list-header{
+	.collaboration-object-header{
 		border-bottom: @thick-gray-border;
 		display: table;
 		.item-padding;
@@ -49,12 +49,12 @@
 		.topic{
 			float: left;
 			.title-font;
-			width: @list-width - @item-left-padding - @list-header-actions-width - @item-right-padding;
+			width: @collaboration-object-width - @item-left-padding - @collaboration-object-header-actions-width - @item-right-padding;
 		}
 
 		.actions{
 			float: right;
-			width: @list-header-actions-width;
+			width: @collaboration-object-header-actions-width;
 			margin-top: 5px;
 
 			.action-icon {
@@ -83,7 +83,7 @@
 			}
 
 			ul{
-				list-style-type: none;
+				collaboration-object-style-type: none;
 				margin: 0;
 				padding: 0;
 
@@ -127,7 +127,7 @@
 		}
 	}
 
-	.list-footer {
+	.collaboration-object-footer {
 		padding: @new-item-top-padding @new-item-right-padding @new-item-bottom-padding @new-item-left-padding;
 		border-top: @thick-gray-border;
 

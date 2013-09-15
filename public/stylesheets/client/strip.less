@@ -95,15 +95,15 @@
 	border-top: @tile-bottom-border-size solid @light-gray;
 }
 
-@new-list-tile-height: 67px;
-@new-list-tile-top-padding: 8px;
+@new-tile-height: 67px;
+@new-tile-top-padding: 8px;
 @new-message-bar-height: 4px;
 
-#new-list-tile {
+#new-tile {
 	.tile-common;
-	height: @new-list-tile-height - @new-list-tile-top-padding - @new-message-bar-height;
+	height: @new-tile-height - @new-tile-top-padding - @new-message-bar-height;
 	width: @tile-width;
-	padding-top: @new-list-tile-top-padding;
+	padding-top: @new-tile-top-padding;
 	text-align: center;
 	color: lighten(@gray, 40%);
 
@@ -112,7 +112,7 @@
 	}
 }
 
-#new-list-tile .icon-plus {
+#new-tile .icon-plus {
 	font-size: 20px;
 }
 

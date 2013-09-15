@@ -343,7 +343,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(conversation.isLeft()).toBe(true);
                 expect(conversation.isRight()).toBe(false);
                 expect(conversation.active()).toBe(true);
-                expect(conversation.ui.getSelector('xyz')).toEqual('.list-left > xyz');
+                expect(conversation.ui.getSelector('xyz')).toEqual('.collaboration-object-left > xyz');
             });
 
             it("on the right", function() {
@@ -352,7 +352,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(conversation.isLeft()).toBe(false);
                 expect(conversation.isRight()).toBe(true);
                 expect(conversation.active()).toBe(true);
-                expect(conversation.ui.getSelector('xyz')).toEqual('.list-right > xyz');
+                expect(conversation.ui.getSelector('xyz')).toEqual('.collaboration-object-right > xyz');
             });
 
             it("deactivate", function() {

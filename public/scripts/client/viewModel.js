@@ -20,7 +20,7 @@ define([
                                     createMessage){
     'use strict';
     
-    return function createViewModel(conversationsData, desktopData, groupData) {
+    return function createViewModel(collaborationObjectsData, desktopData, groupData) {
         var self = {};
 
         app.topicSearch = ko.observable('');
@@ -31,9 +31,9 @@ define([
 
         var toSubscribe = [];
 
-        for(var i = 0; i < conversationsData.length; i++){
-            self.conversations.push(createConversation(conversationsData[i]));
-            toSubscribe.push(conversationsData[i]._id);
+        for(var i = 0; i < collaborationObjectsData.length; i++){
+            self.conversations.push(createConversation(collaborationObjectsData[i]));
+            toSubscribe.push(collaborationObjectsData[i]._id);
         }
 
         app.socket.emit('subscribe_to_collaboration_objects', toSubscribe);
@@ -47,7 +47,7 @@ define([
 
         app.socket.on('receive_message', function(message) {
             ko.utils.arrayForEach(self.conversations(), function(conversation){
-                if(message.conversationId === conversation.id){
+                if(message.collaborationObjectId === conversation.id){
                     receiveMessage(conversation, message);
                 }
             });

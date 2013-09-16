@@ -23,15 +23,15 @@ describe('Sockets', function(){
 						}
 					}
 				},
-				offlineNotifications = { offline: 'notifications' },
+				sockets = { 'sock': 'ets' },
 				data = { da: 'ta' },
 				confirm = jasmine.createSpy();
 
-			taskIo.addTask(socket, offlineNotifications, data, confirm);
+			taskIo.addTask(socket, sockets, data, confirm);
 			expect(collaborationObjectIo.sendItem).toHaveBeenCalled();
 			var addArgs = collaborationObjectIo.sendItem.mostRecentCall.args;
 			expect(addArgs[0]).toBe(socket);
-			expect(addArgs[1]).toBe(offlineNotifications);
+			expect(addArgs[1]).toBe(sockets);
 			expect(addArgs[2]).toBe(data);
 			expect(addArgs[4]).toBe(confirm);
 

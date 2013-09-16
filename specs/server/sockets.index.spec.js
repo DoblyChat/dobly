@@ -55,7 +55,7 @@ describe('Socket', function(){
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
-			taskIoMock = buildMock('./task_io', 'readTaskLists', 'createTaskList', 'addTask');
+			taskIoMock = buildMock('./task_io', 'addTask');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -249,6 +249,12 @@ describe('Socket', function(){
 					fire('send_message');
 					expectSessionTouchCalled();
 					expect(conversationIoMock.sendMessage).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
+				});
+
+				it('adds task', function(){
+					fire('add_task');
+					expectSessionTouchCalled();
+					expect(taskIoMock.addTask).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
 				});
 
 				it('creates a conversation', function(){

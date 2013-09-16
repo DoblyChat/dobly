@@ -80,9 +80,9 @@ describe('Sockets', function(){
                     collaborationObjectId: collaborationObjectId,
                 };
 
-                var offlineNotification = jasmine.createSpyObj('offlineNotification', ['notify']);
+                var sockets = { sock: 'ets' };
 
-                conversationIo.sendMessage(socketMock, offlineNotification, data, function(message){
+                conversationIo.sendMessage(socketMock, sockets, data, function(message){
                     expect(message.content).toBe(content);
                     expect(message.createdById).toBe(socketMock.handshake.user._id);
                     expect(message.collaborationObjectId).toEqual(data.collaborationObjectId);

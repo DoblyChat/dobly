@@ -10,7 +10,6 @@ define(['knockout', 'client/common'], function(ko, common){
         self.showingNotificationSetup = ko.observable(false);
         self.showingGroup = ko.observable(false);
         self.changingTopic = ko.observable(false);
-        self.showingTasks = ko.observable(false);
 
         var flags = [ 
             self.showingDesktop, 
@@ -18,8 +17,7 @@ define(['knockout', 'client/common'], function(ko, common){
             self.showingNewCollaborationObject, 
             self.showingNotificationSetup, 
             self.showingGroup, 
-            self.changingTopic,
-            self.showingTasks
+            self.changingTopic
         ];
 
         function onlyShow(flagToShow, callback) {
@@ -62,11 +60,6 @@ define(['knockout', 'client/common'], function(ko, common){
 
         self.changeTopic = function(){
             onlyShow(self.changingTopic);
-        };
-
-        self.tasks = function(){
-            viewModel.tasks.load();
-            onlyShow(self.showingTasks);
         };
 
         return self;

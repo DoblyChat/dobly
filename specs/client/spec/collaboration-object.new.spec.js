@@ -1,4 +1,4 @@
-define(['client/collaborationObject.new', 'client/common'], function(createNewCollaborationObject, common){
+define(['client/collaboration-object.new', 'client/common'], function(createNewCollaborationObject, common){
 	'use strict';
 
 	describe('new collaboration object', function(){

@@ -25,10 +25,10 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(conversation.topic()).toEqual("some topic");
                 expect(conversation.createdBy).toEqual("Freddy Teddy");
                 expect(conversation.unreadCounter()).toBe(1);
-                expect(conversation.newMessage()).toEqual("");
+                expect(conversation.newItem()).toEqual("");
                 expect(conversation.isLeft()).toBe(false);
                 expect(conversation.isRight()).toBe(false);
-                expect(conversation.messages().length).toBe(2);
+                expect(conversation.items().length).toBe(2);
                 expect(conversation.active()).toBe(false);
                 expect(conversation.hasFocus()).toBe(false);
                 expect(conversation.ui).toBeDefined();
@@ -72,9 +72,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             it("pushes messages", function() {
                 conversation = createConversation(testData);
 
-                expect(conversation.messages().length).toBe(2);
-                expect(conversation.messages()[0].content).toEqual("alpha");
-                expect(conversation.messages()[1].content).toEqual("beta");
+                expect(conversation.items().length).toBe(2);
+                expect(conversation.items()[0].content).toEqual("alpha");
+                expect(conversation.items()[1].content).toEqual("beta");
             });
         });
 
@@ -84,7 +84,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     app.inFocus = true;
                     conversation = createConversation(testData);                
                     expect(conversation.unreadCounter()).toBe(1);                                
-                    expect(conversation.messages().length).toBe(2);
+                    expect(conversation.items().length).toBe(2);
                     spyOn(conversation.ui.scroll, 'adjust');
                 });
 
@@ -94,9 +94,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     expect(conversation.unreadCounter()).toBe(0);                
 
                     var testMessage = createMessage(testDataMessageDelta(), false);
-                    conversation.addMessage(testMessage);
+                    conversation.addItem(testMessage);
 
-                    expect(conversation.messages().length).toBe(3);
+                    expect(conversation.items().length).toBe(3);
                     expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
                     expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
                     expect(conversation.unreadCounter()).toBe(0);
@@ -107,9 +107,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     expect(conversation.hasFocus()).toBe(false);
 
                     var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addMessage(testMessage);
+                    conversation.addItem(testMessage);
 
-                    expect(conversation.messages().length).toBe(3);
+                    expect(conversation.items().length).toBe(3);
                     expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
                     expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
                     expect(conversation.unreadCounter()).toBe(2);
@@ -120,9 +120,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     expect(conversation.hasFocus()).toBe(false);
 
                     var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addMessage(testMessage);
+                    conversation.addItem(testMessage);
 
-                    expect(conversation.messages().length).toBe(3);
+                    expect(conversation.items().length).toBe(3);
                     expect(conversation.ui.scroll.adjust).not.toHaveBeenCalled();
                     expect(app.socket.emit).not.toHaveBeenCalled();
                     expect(conversation.unreadCounter()).toBe(2);
@@ -134,7 +134,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     app.inFocus = false;
                     conversation = createConversation(testData);                
                     expect(conversation.unreadCounter()).toBe(1);                                
-                    expect(conversation.messages().length).toBe(2);
+                    expect(conversation.items().length).toBe(2);
                     spyOn(conversation.ui.scroll, 'adjust');
                 });
 
@@ -142,9 +142,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     conversation.activateOnTheLeft();
 
                     var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addMessage(testMessage);
+                    conversation.addItem(testMessage);
 
-                    expect(conversation.messages().length).toBe(3);
+                    expect(conversation.items().length).toBe(3);
                     expect(conversation.unreadCounter()).toBe(2);
                 });
 
@@ -152,9 +152,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     expect(conversation.active()).toBe(false);
 
                     var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addMessage(testMessage);
+                    conversation.addItem(testMessage);
 
-                    expect(conversation.messages().length).toBe(3);
+                    expect(conversation.items().length).toBe(3);
                     expect(conversation.unreadCounter()).toBe(2);
                 });
             });
@@ -171,17 +171,17 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("sends message", function() {
-                conversation.newMessage('abc');
+                conversation.newItem('abc');
                 spyOn(common, 'enterKeyPressed').andReturn(true);
                 var testEvent = { shiftKey: false };
-                spyOn(conversation, 'addMessage');
+                spyOn(conversation, 'addItem');
                 app.user = { _id: 'CA' };
 
                 var returnValue = conversation.sendMessage(null, testEvent);
 
-                expect(conversation.addMessage).toHaveBeenCalled();   
+                expect(conversation.addItem).toHaveBeenCalled();   
 
-                var message = conversation.addMessage.mostRecentCall.args[0];
+                var message = conversation.addItem.mostRecentCall.args[0];
                 expect(message.content).toEqual('abc');
                 expect(message.createdBy).toEqual('Charlie App');
                 expect(message.confirmedSent()).toBe(false);
@@ -204,12 +204,12 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(message.confirmedSent()).toBe(true);
                 expect(message.id()).toBe('m-id');
 
-                expect(conversation.newMessage()).toEqual('');
+                expect(conversation.newItem()).toEqual('');
                 expect(returnValue).toBe(false);
             });
 
             it("no new message", function() {
-                conversation.newMessage('');
+                conversation.newItem('');
                 spyOn(common, 'enterKeyPressed').andReturn(true);
                 var testEvent = { shiftKey: false };
 
@@ -219,7 +219,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("enter key not pressed", function() {
-                conversation.newMessage('abc');
+                conversation.newItem('abc');
                 spyOn(common, 'enterKeyPressed').andReturn(false);
                 var testEvent = { shiftKey: false };
 
@@ -229,7 +229,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("shift key pressed", function() {
-                conversation.newMessage('abc');
+                conversation.newItem('abc');
                 spyOn(common, 'enterKeyPressed').andReturn(true);
                 var testEvent = { shiftKey: true };
 
@@ -402,7 +402,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 expect(app.socket.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
 
-                conversation.messages.push({});
+                conversation.items.push({});
                 conversation.scrolled(null, event);
                 expect(app.socket.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
@@ -432,11 +432,11 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     var messages = [ testDataMessageCharlie(), testDataMessageDelta() ];
                     readMessages(messages);
 
-                    expect(conversation.messages().length).toBe(4);
-                    expect(conversation.messages()[0].content).toBe('delta');
-                    expect(conversation.messages()[1].content).toBe('charlie');
-                    expect(conversation.messages()[2].content).toBe('alpha');
-                    expect(conversation.messages()[3].content).toBe('beta');
+                    expect(conversation.items().length).toBe(4);
+                    expect(conversation.items()[0].content).toBe('delta');
+                    expect(conversation.items()[1].content).toBe('charlie');
+                    expect(conversation.items()[2].content).toBe('alpha');
+                    expect(conversation.items()[3].content).toBe('beta');
                 });
 
                 it('adjust the scrollbar to about location where user left of', function(){

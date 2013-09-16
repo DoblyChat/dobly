@@ -29,7 +29,7 @@ define(['client/allConversations'], function(createAllConversations){
         it("toggle messages", function() {
             spyOn(all, "toggle");
             var testConversation = {
-                messages: function() {
+                items: function() {
                     return [ 'a message', 'another message' ];
                 }
             };
@@ -44,7 +44,7 @@ define(['client/allConversations'], function(createAllConversations){
         it("toggle no messages", function() {
             spyOn(all, "toggle");
             var testConversation = {
-                messages: function() {
+                items: function() {
                     return [ ];
                 }
             };

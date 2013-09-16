@@ -3,7 +3,7 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
     
     return function (conversation) {
         var self = {};
-        var messages = conversation.messages();
+        var messages = conversation.items();
         self.foundMessage = {
             id: '',
             offset: -1,

@@ -6,7 +6,7 @@ define([
         'client/navigation', 
         'client/allConversations', 
         'client/conversation', 
-        'client/collaborationObject.new', 
+        'client/collaboration-object.new', 
         'client/changeTopic',
         'client/message'], function(ko, 
                                     createGroup, 
@@ -25,28 +25,28 @@ define([
 
         app.topicSearch = ko.observable('');
   
-        self.conversations = ko.observableArray([]);
+        self.collaborationObjects = ko.observableArray([]);
 
         self.group = createGroup(groupData);
 
         var toSubscribe = [];
 
         for(var i = 0; i < collaborationObjectsData.length; i++){
-            self.conversations.push(createConversation(collaborationObjectsData[i]));
+            self.collaborationObjects.push(createConversation(collaborationObjectsData[i]));
             toSubscribe.push(collaborationObjectsData[i]._id);
         }
 
         app.socket.emit('subscribe_to_collaboration_objects', toSubscribe);
 
-        self.desktop = createDesktop(desktopData, self.conversations());
+        self.desktop = createDesktop(desktopData, self.collaborationObjects());
         self.notifier = createNotifier(self.desktop);
         self.navigation = createNavigationModule(self);
-        self.allConversations = createAllConversations(self.desktop, self.navigation, self.conversations);
+        self.allConversations = createAllConversations(self.desktop, self.navigation, self.collaborationObjects);
         self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
         self.changeTopic = createChangeTopic(self.navigation);
 
         app.socket.on('receive_message', function(message) {
-            ko.utils.arrayForEach(self.conversations(), function(conversation){
+            ko.utils.arrayForEach(self.collaborationObjects(), function(conversation){
                 if(message.collaborationObjectId === conversation.id){
                     receiveMessage(conversation, message);
                 }
@@ -55,14 +55,14 @@ define([
 
         function receiveMessage(conversation, message){
             var messageObj = createMessage(message, true);
-            conversation.addMessage(messageObj);
+            conversation.addItem(messageObj);
             self.notifier.showDeskopNotification(conversation, message.createdBy + ': ' + message.content);
             self.desktop.add(conversation);
         }
 
         self.unreadCounter = ko.computed(function(){
             var unread = 0;
-            ko.utils.arrayForEach(self.conversations(), function(conversation){
+            ko.utils.arrayForEach(self.collaborationObjects(), function(conversation){
                 unread += conversation.unreadCounter();
             });
 
@@ -79,7 +79,7 @@ define([
 
         app.socket.on('my_new_collaboration_object', function(data) {
             var conversation = createConversation(data, self.group);
-            self.conversations.push(conversation);
+            self.collaborationObjects.push(conversation);
             self.desktop.addAndActivate(conversation);
             self.desktop.ui.scroll.bottomTile();
             conversation.hasFocus(true);
@@ -87,7 +87,7 @@ define([
 
         app.socket.on('new_collaboration_object', function(data){
             var conversation = createConversation(data, self.group);
-            self.conversations.push(conversation);
+            self.collaborationObjects.push(conversation);
             self.desktop.add(conversation); 
         });
 

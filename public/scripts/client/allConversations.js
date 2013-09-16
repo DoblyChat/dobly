@@ -22,7 +22,7 @@ define(['jquery'], function($){
         };
 
         self.toggleMessages = function(conversation, event){
-            if(conversation.messages().length > 0){
+            if(conversation.items().length > 0){
                 self.toggle('.messages', event);
             }else{
                 self.toggle('.no-messages', event);

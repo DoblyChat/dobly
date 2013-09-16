@@ -6,7 +6,7 @@ describe('Socket', function(){
 			conversationIoMock, userIoMock,
 			desktopIoMock, authorizeMock,
 			sessionStoreMock, taskIoMock,
-			config, notificationMock;
+			config, collaborationObjectIoMock;
 
 		beforeEach(function(){
 			ioMock = {
@@ -51,14 +51,14 @@ describe('Socket', function(){
 			mockery.registerAllowable('../../lib/sockets');
 			mockery.registerAllowable('../../lib/notifications');
 
-			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'createCollaborationObject', 'markAsRead', 'updateTopic', 'readMessages');
+			collaborationObjectIoMock = buildMock('./collaboration_object_io', 'createCollaborationObject', 'markAsRead', 'updateTopic');
+			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
 			taskIoMock = buildMock('./task_io', 'readTaskLists', 'createTaskList', 'addTask');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
-			notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
 
 			config = require('../../lib/sockets').config;
 		});
@@ -92,8 +92,6 @@ describe('Socket', function(){
 				expect(ioMock.set).toHaveBeenCalledWith('log level', 1);
 			}
 		});
-
-
 
 		it('binds authorization', function(){
 			config(ioMock, sessionStoreMock);
@@ -250,26 +248,25 @@ describe('Socket', function(){
 				it('sends message', function(){
 					fire('send_message');
 					expectSessionTouchCalled();
-					expect(notificationMock.init).toHaveBeenCalledWith(socketMock, ioMock.sockets);
-					expect(conversationIoMock.sendMessage).toHaveBeenCalledWith(socketMock, notificationMock, data, confirm);
+					expect(conversationIoMock.sendMessage).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
 				});
 
 				it('creates a conversation', function(){
 					fire('create_collaboration_object');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.createCollaborationObject).toHaveBeenCalledWith(socketMock, ioMock.sockets, data);
+					expect(collaborationObjectIoMock.createCollaborationObject).toHaveBeenCalledWith(socketMock, ioMock.sockets, data);
 				});
 
 				it('marks conversation as read', function(){
 					fire('mark_as_read');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.markAsRead).toHaveBeenCalledWith(socketMock, data);
+					expect(collaborationObjectIoMock.markAsRead).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('updates topic', function(){
 					fire('update_topic');
 					expectSessionTouchCalled();
-					expect(conversationIoMock.updateTopic).toHaveBeenCalledWith(data);
+					expect(collaborationObjectIoMock.updateTopic).toHaveBeenCalledWith(data);
 				});
 
 				function expectSessionTouchCalled(){

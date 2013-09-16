@@ -1,228 +1,107 @@
 describe('Sockets', function(){
 	'use strict';
 
-    describe('Base Collaboration Object', function(){
-		var collaborationObjectIo, socketMock, 
-			collaborationObjectMock, asyncMock,
-			unreadMock, userMock,
-			sockets, clients;
+    describe('Base Collaboration Object - integration', function(){
+		var collaborationObjectIo, socketMock,
+            CollaborationObject, notificationMock,
+            Unread, User;
 
-		beforeEach(function(){
-			socketMock = {
-				handshake: {
-					user: {
-						groupId: 'gru-id',
-						firstName: 'usr',
-						_id: 'usr-id',
-					},
-				},
-				broadcastToCollaborationObjectMembers: jasmine.createSpy()
-			};
+        beforeEach(function(){
+        	CollaborationObject = require('../../lib/models/collaboration_object');
+            Unread = require('../../lib/models/unread_marker');
+            User = require('../../lib/models/user');
+            
+            mockery.enable({ warnOnUnregistered: false });
+			
+			notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
+            collaborationObjectIo = require('../../lib/sockets/base_collaboration_object_io');
 
-			sockets = {};
-			clients = 
-			[
-				{ 
-					handshake: {
-						user: {
-							_id: 'usr-id'
-						}
-					}
-				},
-				{ 
-					handshake: {
-						user: {
-							_id: 'usr-id-2'
-						}
-					}
-				},
-				{ 
-					handshake: {
-						user: {
-							_id: 'usr-id-3'
-						}
-					}
-				},
-			];
-
-			sockets.groupClients = jasmine.createSpy().andReturn(clients);
-
-			mockery.enable({ useCleanCache: true });
-			mockery.registerAllowable('../../lib/sockets/base_collaboration_object_io');
-
-			collaborationObjectMock = buildMock('../models/collaboration_object', 'create', 'updateTopic', 'findById');
-			asyncMock = buildMock('async', 'parallel', 'each');
-			unreadMock = buildMock('../models/unread_marker', 'increaseCounter', 'removeMarkers');
-			userMock = buildMock('../models/user', 'find', 'findExcept');
-
-			collaborationObjectIo = require('../../lib/sockets/base_collaboration_object_io');
-		});
+            socketMock = {
+                emit: jasmine.createSpy(),
+                broadcastToGroup: jasmine.createSpy(),
+                broadcastToCollaborationObjectMembers: jasmine.createSpy(),
+                handshake: {
+                    user: {
+                        firstName: 'socket-collaboration-object-test',
+                        groupId: new mongo.Types.ObjectId(),
+                        _id: new mongo.Types.ObjectId(),
+                    },
+                },
+            };
+        });
 
 		describe('#sendItem', function(){
-			var confirm, data, 
-				callback, offlineNotification,
-				save;
+	        var content = 'socket-send-item-test',
+	            firstName = 'user-send',
+	            lastName = 'item-test',
+	            email = 'send.item@test.com';
 
-			beforeEach(function(){
-				confirm = jasmine.createSpy('confirm');
-				callback = jasmine.createSpy('callback');
-				save = jasmine.createSpy('save');
+	        var userId, collaborationObjectId;
 
-				data = { 
-					content: 'my text',
-					timestamp: new Date(),
-					collaborationObjectId: 'convo-id'
-				};
-				offlineNotification = jasmine.createSpyObj('offlineNotification', ['notify']);
+	        beforeEach(function(done){
+	            CollaborationObject.create({
+	                type: 'C',
+	                topic: 'sendItem test',
+	                groupId: socketMock.handshake.user.groupId,
+	                createdById: socketMock.handshake.user._id,
+	                members: {
+	                    entireGroup: true
+	                }
+	            }, function(err, collaborationObject){
+	                if (err) { console.log(err) };
 
-				collaborationObjectIo.sendItem(socketMock, offlineNotification, data, save, confirm);
-			});
+	                collaborationObjectId = collaborationObject._id;
 
-			describe('process', function(){
-				var saveItem, saveUnread;
+	                User.create({ 
+	                    firstName: firstName,
+	                    lastName: lastName,
+	                    email: email,
+	                    groupId: socketMock.handshake.user.groupId,
+	                    password: 'pass'
+	                }, function(err, user){
+	                    if (err) { console.log(err) };
+	                    userId = user._id;
+	                    done(err);
+	                });
+	            });
+	        });
 
-				beforeEach(function(){
-					var process = asyncMock.parallel.mostRecentCall.args[0];
-					saveItem = process[0];
-					saveUnread = process[1];
-				});
+	        afterEach(function(done){
+	            CollaborationObject.findByIdAndRemove(collaborationObjectId, function(){
+	                User.remove({ email: email }, function(){
+	                    Unread.remove({ userId: userId }, done);
+	                });
+	            });
+	        });
 
-				it('saves item', function(){
-					expect(saveItem).toBe(save);
-				});
+	        it('saves item and stores unread marker', function(done){
+	            var data = {
+	                collaborationObjectId: collaborationObjectId,
+	            };
 
-				describe('unread', function(){
-					var convoCallback;
+	            var item = { my: 'item' };
 
-					beforeEach(function(){
-						saveUnread(callback);
-						convoCallback = collaborationObjectMock.findById.getCallback();
-					});
+	            function save(callback){
+	                callback(null, item);
+	            }
 
-					it('finds collaboration object by id', function(){
-						expect(collaborationObjectMock.findById).toHaveBeenCalled();
-						var args = collaborationObjectMock.findById.mostRecentCall.args;
+	            var sockets = {};
 
-						expect(args[0]).toBe(data.collaborationObjectId);
-					});
+	            collaborationObjectIo.sendItem(socketMock, sockets, data, save, function(savedItem){
+	                expect(savedItem).toBe(item);
 
-					it('logs an error if there is an error reading the collaboration object', function(){
-						spyOn(console, 'error');
-						convoCallback('reading convo error', null);
-						expect(console.error).toHaveBeenCalledWith('Error reading collaboration object for saving unread', 'reading convo error');
-						expect(callback).toHaveBeenCalledWith('reading convo error');
-					});
+	                Unread.find({ userId: userId }, function(err, markers){
+	                    expect(err).toBeNull();
+	                    expect(markers.length).toBe(1);
+	                    expect(markers[0].collaborationObjectId).toEqual(data.collaborationObjectId);
+	                    expect(markers[0].count).toBe(1);
 
-					describe('users', function(){
-						var collaborationObject;
-
-						describe('for entire group', function(){
-							var findCallback;
-
-							beforeEach(function(){
-								collaborationObject = {
-									members: {
-										entireGroup: true,
-										users: [ ]
-									}
-								};
-
-								convoCallback(null, collaborationObject);
-								expect(userMock.findExcept).toHaveBeenCalled();
-								findCallback = userMock.findExcept.getCallback();
-							});
-
-							it('saves for each user in group', function(){
-								var args = userMock.findExcept.mostRecentCall.args;
-
-								expect(args[0][0]).toBe('usr-id');
-								expect(args[1]).toBe('gru-id');					
-
-								var users = [ 
-									{
-										_id: 'first'
-									},
-									{
-										_id: 'second'
-									}
-								];
-
-								findCallback(null, users);
-
-								expect(asyncMock.each).toHaveBeenCalled();
-								expect(asyncMock.each.mostRecentCall.args[0]).toBe(users);
-
-								var save = asyncMock.each.mostRecentCall.args[1];
-								var saveCallback = jasmine.createSpy('save callback');
-								save(users[0], saveCallback);
-
-								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'convo-id', saveCallback);
-
-								var eachCallback = asyncMock.each.getCallback();
-								eachCallback('each error');
-								expect(callback).toHaveBeenCalledWith('each error');
-							});
-						});
-
-						describe('for select users', function(){
-							beforeEach(function(){
-								collaborationObject = {
-									members: {
-										entireGroup: false,
-										users: [ 'usr-1', 'usr-2' ]
-									}
-								};
-
-								convoCallback(null, collaborationObject);
-								expect(asyncMock.each).toHaveBeenCalled();
-							});
-
-							it('saves unread for only selected users', function(){
-								expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObject.members.users);
-
-								var save = asyncMock.each.mostRecentCall.args[1];
-								var saveCallback = jasmine.createSpy();
-
-								save('userid', saveCallback);
-
-								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('userid', 'convo-id', saveCallback);
-
-								var eachCallback = asyncMock.each.getCallback();
-								eachCallback('each error');
-								expect(callback).toHaveBeenCalledWith('each error');
-							});
-						});
-					});
-				});
-			});
-
-			describe('broadcast', function(){
-				var broadcast;
-
-				beforeEach(function(){
-					broadcast = asyncMock.parallel.mostRecentCall.args[1];
-				});
-
-				it('logs error if passed from async processing', function(){
-					spyOn(console, 'error');
-					broadcast('processing error', null);
-					expect(console.error).toHaveBeenCalledWith('Error sending collaboration item', 'processing error');
-				});
-
-				it('broadcasts and confirms', function(){
-					var item = {};
-					broadcast(null, [ item ]);
-
-					expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalled();
-					var args = socketMock.broadcastToCollaborationObjectMembers.mostRecentCall.args;
-
-					expect(args[0]).toBe('receive_message');
-					expect(args[1]).toBe('convo-id');
-					expect(args[2]).toBe(item);
-
-					expect(confirm).toHaveBeenCalledWith(item);
-				});
-			});
-		});
+	                   	expect(notificationMock.init).toHaveBeenCalledWith(socketMock, sockets);
+	                	expect(notificationMock.notify).toHaveBeenCalledWith(item);
+	                    done();
+	                });
+	            });
+	        });
+	    });
 	});
 });

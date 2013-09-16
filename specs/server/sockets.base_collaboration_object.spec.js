@@ -4,7 +4,7 @@ describe('Sockets', function(){
     describe('Base Collaboration Object', function(){
 		var collaborationObjectIo, socketMock, 
 			collaborationObjectMock, asyncMock,
-			unreadMock, userMock,
+			unreadMock, userMock, notificationMock,
 			sockets, clients;
 
 		beforeEach(function(){
@@ -44,8 +44,6 @@ describe('Sockets', function(){
 				},
 			];
 
-			sockets.groupClients = jasmine.createSpy().andReturn(clients);
-
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../lib/sockets/base_collaboration_object_io');
 
@@ -53,14 +51,14 @@ describe('Sockets', function(){
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter');
 			userMock = buildMock('../models/user', 'find', 'findExcept');
+			notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
 
 			collaborationObjectIo = require('../../lib/sockets/base_collaboration_object_io');
 		});
 
 		describe('#sendItem', function(){
 			var confirm, data, 
-				callback, offlineNotification,
-				save;
+				callback, save;
 
 			beforeEach(function(){
 				confirm = jasmine.createSpy('confirm');
@@ -72,9 +70,8 @@ describe('Sockets', function(){
 					timestamp: new Date(),
 					collaborationObjectId: 'convo-id'
 				};
-				offlineNotification = jasmine.createSpyObj('offlineNotification', ['notify']);
 
-				collaborationObjectIo.sendItem(socketMock, offlineNotification, data, save, confirm);
+				collaborationObjectIo.sendItem(socketMock, sockets, data, save, confirm);
 			});
 
 			describe('process', function(){
@@ -218,6 +215,13 @@ describe('Sockets', function(){
 					expect(args[2]).toBe(item);
 
 					expect(confirm).toHaveBeenCalledWith(item);
+				});
+
+				it('inits and notifies', function(){
+					var item = {};
+					broadcast(null, [item]);
+					expect(notificationMock.init).toHaveBeenCalledWith(socketMock, sockets);
+					expect(notificationMock.notify).toHaveBeenCalledWith(item);
 				});
 			});
 		});

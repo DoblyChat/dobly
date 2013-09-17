@@ -1,10 +1,24 @@
-define(['knockout', 'client/common', 'client/collaboration-object', 'client/message', 'client/conversation.search', 'client/conversation.ui'], function(ko, common, createCollaborationObject, createMessage, createConversationSearch, createConversationUi){
+define([
+        'knockout', 
+        'client/common', 
+        'client/collaboration-object', 
+        'client/message', 
+        'client/conversation.search', 
+        'client/conversation.ui'
+    ], 
+        function(ko, 
+                common, 
+                createCollaborationObject, 
+                createMessage, 
+                createConversationSearch, 
+                createConversationUi){
+
     'use strict';
     
     return function (data) {
         var self = createCollaborationObject(data, 'convo-template');
 
-        self.ui = createConversationUi();
+        self.ui = createConversationUi(self.ui);
         
         self.init(function(itemData){
             return createMessage(itemData, true);
@@ -21,7 +35,6 @@ define(['knockout', 'client/common', 'client/collaboration-object', 'client/mess
         });
 
         function sendMessageToServer(messageData, messageObj){
-            self.newItem('');
             app.socket.emit('send_message', messageData, function(message){
                 messageObj.confirmedSent(true);
                 messageObj.id(message._id);

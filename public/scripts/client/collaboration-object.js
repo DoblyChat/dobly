@@ -1,4 +1,4 @@
-define(['knockout', 'client/common'], function(ko, common){
+define(['knockout', 'client/common', 'client/collaboration-object.ui'], function(ko, common, createConversationObjectUi){
     'use strict';
     
     return function (data, template) {
@@ -17,6 +17,7 @@ define(['knockout', 'client/common'], function(ko, common){
         self.hasFocus = ko.observable(false);
         self.timestamp = common.formatTimestamp(data.timestamp);
         self.forEntireGroup = data.members.entireGroup;
+        self.ui = createConversationObjectUi();
 
         self.init = function(createItem){
             if(data.items) {
@@ -105,6 +106,7 @@ define(['knockout', 'client/common'], function(ko, common){
                     var obj = createObject(itemData);
                     self.addItem(obj);
                     sendToServer(itemData, obj);
+                    self.newItem('');
                     return false;
                 } else {
                     return true;

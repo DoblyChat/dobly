@@ -18,45 +18,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
         });
 
         describe("creation", function() {
-
             it("load properties", function() {
                 conversation = createConversation(testData);
-                expect(conversation.id).toEqual('8');
-                expect(conversation.topic()).toEqual("some topic");
-                expect(conversation.createdBy).toEqual("Freddy Teddy");
-                expect(conversation.unreadCounter()).toBe(1);
-                expect(conversation.newItem()).toEqual("");
-                expect(conversation.isLeft()).toBe(false);
-                expect(conversation.isRight()).toBe(false);
-                expect(conversation.items().length).toBe(2);
-                expect(conversation.active()).toBe(false);
-                expect(conversation.hasFocus()).toBe(false);
-                expect(conversation.ui).toBeDefined();
-                expect(conversation.timestamp).toBe(common.formatTimestamp(testData.timestamp));
-                expect(conversation.forEntireGroup).toBe(true);
-                expect(conversation.users).toEqual('');
                 expect(conversation.template).toBe('convo-template');
-            });
-
-            it("loads users", function() {
-                conversation = createConversation(testDataSomeOtherConversation());
-
-                expect(conversation.forEntireGroup).toBe(false);
-                expect(conversation.users).toEqual('Freddy Teddy, Charlie App');
-            });
-
-            it("undefined id", function() {
-                testData._id = undefined;
-                conversation = createConversation(testData);
-
-                expect(conversation.id).toBe(0);
-            });
-
-            it("undefined unread", function() {
-                testData.unread = undefined;
-                conversation = createConversation(testData);
-
-                expect(conversation.unreadCounter()).toBe(0);
             });
 
             it("undefined totalMessages", function() {
@@ -68,175 +32,47 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
                 expect(conversation.allMessagesLoaded()).toBe(true);
             });
-
-            it("pushes messages", function() {
-                conversation = createConversation(testData);
-
-                expect(conversation.items().length).toBe(2);
-                expect(conversation.items()[0].content).toEqual("alpha");
-                expect(conversation.items()[1].content).toEqual("beta");
-            });
         });
 
-        describe("add message", function() {
-            describe("when app in focus", function() {
-                beforeEach(function() {
-                    app.inFocus = true;
-                    conversation = createConversation(testData);                
-                    expect(conversation.unreadCounter()).toBe(1);                                
-                    expect(conversation.items().length).toBe(2);
-                    spyOn(conversation.ui.scroll, 'adjust');
-                });
+        it("sends message", function() {
+            conversation = createConversation(testData);
+            spyOn(conversation, 'markAsRead');
+            conversation.newItem('abc');
+            spyOn(common, 'enterKeyPressed').andReturn(true);
+            var testEvent = { shiftKey: false };
+            spyOn(conversation, 'addItem');
+            app.user = { _id: 'CA' };
 
-                it("active and focused conversation", function() {
-                    conversation.activateOnTheLeft();
-                    conversation.hasFocus(true);
-                    expect(conversation.unreadCounter()).toBe(0);                
+            var returnValue = conversation.sendMessage(null, testEvent);
 
-                    var testMessage = createMessage(testDataMessageDelta(), false);
-                    conversation.addItem(testMessage);
+            expect(conversation.markAsRead).toHaveBeenCalled();
+            expect(conversation.addItem).toHaveBeenCalled();   
 
-                    expect(conversation.items().length).toBe(3);
-                    expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
-                    expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
-                    expect(conversation.unreadCounter()).toBe(0);
-                });
+            var message = conversation.addItem.mostRecentCall.args[0];
+            expect(message.content).toEqual('abc');
+            expect(message.createdBy).toEqual('Charlie App');
+            expect(message.confirmedSent()).toBe(false);
+            
+            expect(app.socket.emit).toHaveBeenCalled();
 
-                it("active and unfocused conversation", function() {
-                    conversation.activateOnTheLeft();
-                    expect(conversation.hasFocus()).toBe(false);
+            var operation = app.socket.emit.mostRecentCall.args[0];
+            expect(operation).toEqual('send_message');
 
-                    var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addItem(testMessage);
+            var messageData = app.socket.emit.mostRecentCall.args[1];
+            expect(messageData.content).toEqual('abc');
+            expect(messageData.collaborationObjectId).toEqual('8');
+            expect(messageData.timestamp.clearTime()).toEqual(Date.today());
+            expect(messageData.createdById).toEqual('CA');
 
-                    expect(conversation.items().length).toBe(3);
-                    expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
-                    expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
-                    expect(conversation.unreadCounter()).toBe(2);
-                });
+            var confirmation = app.socket.emit.mostRecentCall.args[2];
+            expect(message.confirmedSent()).toBe(false);
+            expect(message.id()).toBeUndefined();
+            confirmation({ _id: 'm-id' });
+            expect(message.confirmedSent()).toBe(true);
+            expect(message.id()).toBe('m-id');
 
-                it("inactive conversation", function() {
-                    expect(conversation.active()).toBe(false);
-                    expect(conversation.hasFocus()).toBe(false);
-
-                    var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addItem(testMessage);
-
-                    expect(conversation.items().length).toBe(3);
-                    expect(conversation.ui.scroll.adjust).not.toHaveBeenCalled();
-                    expect(app.socket.emit).not.toHaveBeenCalled();
-                    expect(conversation.unreadCounter()).toBe(2);
-                });
-            });
-
-            describe("when app not in focus", function() {
-                beforeEach(function() {
-                    app.inFocus = false;
-                    conversation = createConversation(testData);                
-                    expect(conversation.unreadCounter()).toBe(1);                                
-                    expect(conversation.items().length).toBe(2);
-                    spyOn(conversation.ui.scroll, 'adjust');
-                });
-
-                it("active conversation", function() {
-                    conversation.activateOnTheLeft();
-
-                    var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addItem(testMessage);
-
-                    expect(conversation.items().length).toBe(3);
-                    expect(conversation.unreadCounter()).toBe(2);
-                });
-
-                it("inactive conversation", function() {
-                    expect(conversation.active()).toBe(false);
-
-                    var testMessage = createMessage(testDataMessageDelta(), true);
-                    conversation.addItem(testMessage);
-
-                    expect(conversation.items().length).toBe(3);
-                    expect(conversation.unreadCounter()).toBe(2);
-                });
-            });
-        });
-
-        describe("send message", function() {
-            beforeEach(function() {
-                conversation = createConversation(testData);
-                spyOn(conversation, 'markAsRead');
-            });
-
-            afterEach(function() {
-                expect(conversation.markAsRead).toHaveBeenCalled();
-            });
-
-            it("sends message", function() {
-                conversation.newItem('abc');
-                spyOn(common, 'enterKeyPressed').andReturn(true);
-                var testEvent = { shiftKey: false };
-                spyOn(conversation, 'addItem');
-                app.user = { _id: 'CA' };
-
-                var returnValue = conversation.sendMessage(null, testEvent);
-
-                expect(conversation.addItem).toHaveBeenCalled();   
-
-                var message = conversation.addItem.mostRecentCall.args[0];
-                expect(message.content).toEqual('abc');
-                expect(message.createdBy).toEqual('Charlie App');
-                expect(message.confirmedSent()).toBe(false);
-                
-                expect(app.socket.emit).toHaveBeenCalled();
-
-                var operation = app.socket.emit.mostRecentCall.args[0];
-                expect(operation).toEqual('send_message');
-
-                var messageData = app.socket.emit.mostRecentCall.args[1];
-                expect(messageData.content).toEqual('abc');
-                expect(messageData.collaborationObjectId).toEqual('8');
-                expect(messageData.timestamp.clearTime()).toEqual(Date.today());
-                expect(messageData.createdById).toEqual('CA');
-
-                var confirmation = app.socket.emit.mostRecentCall.args[2];
-                expect(message.confirmedSent()).toBe(false);
-                expect(message.id()).toBeUndefined();
-                confirmation({ _id: 'm-id' });
-                expect(message.confirmedSent()).toBe(true);
-                expect(message.id()).toBe('m-id');
-
-                expect(conversation.newItem()).toEqual('');
-                expect(returnValue).toBe(false);
-            });
-
-            it("no new message", function() {
-                conversation.newItem('');
-                spyOn(common, 'enterKeyPressed').andReturn(true);
-                var testEvent = { shiftKey: false };
-
-                var returnValue = conversation.sendMessage(null, testEvent);
-
-                expect(returnValue).toBe(true);
-            });
-
-            it("enter key not pressed", function() {
-                conversation.newItem('abc');
-                spyOn(common, 'enterKeyPressed').andReturn(false);
-                var testEvent = { shiftKey: false };
-
-                var returnValue = conversation.sendMessage(null, testEvent);
-
-                expect(returnValue).toBe(true);
-            });
-
-            it("shift key pressed", function() {
-                conversation.newItem('abc');
-                spyOn(common, 'enterKeyPressed').andReturn(true);
-                var testEvent = { shiftKey: true };
-
-                var returnValue = conversation.sendMessage(null, testEvent);
-
-                expect(returnValue).toBe(true);
-            });
+            expect(conversation.newItem()).toEqual('');
+            expect(returnValue).toBe(false);
         });
 
         describe("last messages", function() {
@@ -264,107 +100,6 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
                 expect(conversation.lastMessages().length).toBe(1);
                 expect(conversation.lastMessages()[0].content).toBe("alpha");
-            });
-        });
-
-        describe("unread counter", function() {
-            it("0 messages", function() {
-                testData.unread = 0;
-                conversation = createConversation(testData);
-                expect(conversation.showUnreadCounter()).toBe(false);
-            });
-
-            it("1 message", function() {
-                testData.unread = 1;
-                conversation = createConversation(testData);
-                expect(conversation.showUnreadCounter()).toBe(true);
-            });
-
-            it("2 messages", function() {
-                testData.unread = 2;
-                conversation = createConversation(testData);
-                expect(conversation.showUnreadCounter()).toBe(true);
-            });
-        });
-
-        describe("mark as read", function() {
-            it("when unread counter is 1", function() {
-                testData.unread = 1;
-                conversation = createConversation(testData);
-                expect(conversation.unreadCounter()).toBe(1);
-
-                conversation.markAsRead();
-
-                expect(conversation.unreadCounter()).toBe(0);
-                expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
-            });
-
-            it("when unread counter is 0", function() {
-                testData.unread = 0;
-                conversation = createConversation(testData);
-                expect(conversation.unreadCounter()).toBe(0);
-
-                conversation.markAsRead();
-
-                expect(conversation.unreadCounter()).toBe(0);            
-                expect(app.socket.emit).not.toHaveBeenCalled();
-            });
-        });
-
-        describe("has focus", function() {
-            it("true", function() {
-                conversation = createConversation(testData);
-                spyOn(conversation, 'markAsRead');
-
-                conversation.hasFocus(true);
-
-                expect(conversation.markAsRead).toHaveBeenCalled();
-            });
-
-            it("false", function() {
-                conversation = createConversation(testData);
-                spyOn(conversation, 'markAsRead');
-
-                conversation.hasFocus(false);
-
-                expect(conversation.markAsRead).not.toHaveBeenCalled();
-            });
-        });
-
-        describe("activate", function() {
-
-            beforeEach(function() {
-                conversation = createConversation(testData);
-            });
-
-            it("on the left", function() {
-                conversation.activateOnTheLeft();
-
-                expect(conversation.isLeft()).toBe(true);
-                expect(conversation.isRight()).toBe(false);
-                expect(conversation.active()).toBe(true);
-                expect(conversation.ui.getSelector('xyz')).toEqual('.collaboration-object-left > xyz');
-            });
-
-            it("on the right", function() {
-                conversation.activateOnTheRight();
-
-                expect(conversation.isLeft()).toBe(false);
-                expect(conversation.isRight()).toBe(true);
-                expect(conversation.active()).toBe(true);
-                expect(conversation.ui.getSelector('xyz')).toEqual('.collaboration-object-right > xyz');
-            });
-
-            it("deactivate", function() {
-                spyOn(conversation.ui.scroll, "stop");
-                conversation.activateOnTheRight();
-
-                conversation.deactivate();
-
-                expect(conversation.ui.scroll.stop).toHaveBeenCalled();
-                expect(conversation.active()).toBe(false);
-                expect(conversation.isRight()).toBe(false);
-                expect(conversation.isLeft()).toBe(false);
             });
         });
 

@@ -1,8 +1,8 @@
-define(['jquery', 'client/collaboration-object.ui'], function($, createConversationObjectUi){
+define(['jquery'], function($){
     'use strict';
     
-    return function () {
-        var self = createConversationObjectUi();
+    return function (collaborationObjectUi) {
+        var self = collaborationObjectUi || {};
 
         self.highlight = function(messageCount) {
             $(self.getSelector('.collaboration-object-body .content .item'))

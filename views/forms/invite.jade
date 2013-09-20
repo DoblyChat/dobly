@@ -11,10 +11,14 @@
 			else
 				span Send Invitations
 
+		if invalidEmails
+			#invalidEmails An email you entered is not valid.
+
 		.prompt2 Invite other people to your group. Enter their email addresses below.
 		.row
-			input.field(type="email", name="emails", placeholder="Email addresses", required, multiple, autofocus)
+			input.field(type="email", name="emails", placeholder="Email addresses", value=emails, required, multiple, autofocus)
 		.button
 			input(type="submit", value="Invite")
 		.button
-			button(type="button") Done
+			a(href="/conversations")
+				button(type="button") Done

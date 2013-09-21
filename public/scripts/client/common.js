@@ -60,6 +60,28 @@
             //then grab the encoded contents back out.  The div never exists on the page.
             return $('<div/>').text(value).html();
         };
+
+        self.formatUserInput = function(input){
+            var lines = input.split('\n');
+      
+            for(var i = 0; i < lines.length; i++){
+                lines[i] = self.htmlEncode(lines[i]);
+            }
+
+            return parseLinks(lines.join('<br />'));
+        };
+
+        function parseLinks(input){
+            //URLs starting with http://, https://, or ftp://
+            var replacePattern1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+            var replacedText = input.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+            //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+            var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+            replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+            return replacedText;
+        }
         
         return self;
     }

@@ -11,6 +11,7 @@ requirejs.config({
         "chosen": "lib/chosen.jquery.min",
         "knockout": "lib/knockout-2.3.0.min",
         'date': 'lib/date',
+        'squire': '/specs/client/lib/squire'
     },
 
     shim: {

@@ -1,20 +1,18 @@
 define([
-        'knockout', 
-        'client/common', 
+        'knockout',
         'client/collaboration-object', 
         'client/message', 
         'client/conversation.search', 
         'client/conversation.ui'
     ], 
-        function(ko, 
-                common, 
+        function(ko,
                 createCollaborationObject, 
                 createMessage, 
                 createConversationSearch, 
                 createConversationUi){
 
     'use strict';
-    
+
     return function (data) {
         var self = createCollaborationObject(data, 'convo-template');
 
@@ -26,13 +24,13 @@ define([
 
         self.search = createConversationSearch(self);
 
-        self.lastMessages = ko.computed(function () {
+        self.lastMessages = function () {
             if(self.items().length - 2 >= 0) {
                 return self.items.slice(self.items().length - 2);  
             } else {
                 return self.items();
             }
-        });
+        };
 
         function sendMessageToServer(messageData, messageObj){
             app.socket.emit('send_message', messageData, function(message){

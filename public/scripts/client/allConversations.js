@@ -5,8 +5,8 @@ define(['jquery'], function($){
         var self = {};
 
         self.open = function(conversation){
-            navigation.desktop();
             desktop.addAndActivate(conversation);
+            navigation.desktop();
         };
 
         self.sortedConversations = [];

@@ -54,8 +54,7 @@ define(['client/common'], function(common){
         });
 
         describe("delayed focus", function() {
-
-             it("short delay", function() {
+            it("short delay", function() {
                  var flag = false;
 
                  runs(function() {
@@ -72,7 +71,7 @@ define(['client/common'], function(common){
                  runs(function() {
                      expect(common.focus).toHaveBeenCalledWith('.some-selector');
                  });
-             });
+            });
 
             it("default delay", function() {
                 spyOn(window, 'setTimeout');
@@ -81,15 +80,14 @@ define(['client/common'], function(common){
                 expect(window.setTimeout.mostRecentCall.args[1]).toBe(400);
             });
 
-
-             it("long delay", function() {
+            it("long delay", function() {
                  spyOn(window, 'setTimeout');
                  common.delayedFocus('.some-selector', 1000);
                  expect(window.setTimeout).toHaveBeenCalled();
                  expect(window.setTimeout.mostRecentCall.args[1]).toBe(1000);
-             });
+            });
 
-             it("hook", function() {
+            it("hook", function() {
                  var flag = false;
 
                  runs(function() {
@@ -107,7 +105,7 @@ define(['client/common'], function(common){
                  runs(function() {
                      expect(common.focus).toHaveBeenCalledWith('.a-selector');
                  });
-             });
+            });
         });
 
         describe("focus", function() {
@@ -141,6 +139,33 @@ define(['client/common'], function(common){
                 common.focus('textarea');
 
                 expect($('textarea')).not.toBeFocused();
+            });
+        });
+
+        describe('format user input', function(){
+            it("creates an encoded multi line message", function() {
+                var input = "<div>line 1</div>\nline 2\nline 3";
+                var formattedInput = common.formatUserInput(input);
+                expect(formattedInput).toBe('&lt;div&gt;line 1&lt;/div&gt;<br />line 2<br />line 3');
+            });
+
+            it('parses links within message', function(){
+                var input = 'http://www.doblychat.com\n' +
+                                'see: http://www.google.com?query=string\n' +
+                                'hello world\n' + 
+                                'test https://myurl.com\n' +
+                                'another test www.yahoo.com';
+                var formattedInput = common.formatUserInput(input);
+                var expectedHtml = '<a href="http://www.doblychat.com" target="_blank">http://www.doblychat.com</a>' +
+                                    '<br />' +
+                                    'see: <a href="http://www.google.com?query=string" target="_blank">http://www.google.com?query=string</a>' + 
+                                    '<br />' +
+                                    'hello world' +
+                                    '<br />' +
+                                    'test <a href="https://myurl.com" target="_blank">https://myurl.com</a>' +
+                                    '<br />' +
+                                    'another test <a href="http://www.yahoo.com" target="_blank">www.yahoo.com</a>';
+                expect(formattedInput).toBe(expectedHtml);
             });
         });
     });

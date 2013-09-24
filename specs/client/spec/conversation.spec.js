@@ -1,26 +1,92 @@
-define(['knockout', 'client/conversation', 'client/common', 'client/message'], function(ko, createConversation, common, createMessage){
+define(['knockout', 'squire'], function(ko, Squire){
     'use strict';
 
     describe("conversation", function() {
 
-        var conversation, testData;
+        var conversation, testData, 
+            createConversation, createCollaborationObjectMock,
+            createMessageMock, common,
+            createConversationSearchMock;
 
         beforeEach(function() {
+            var squire = new Squire(),
+                done = false;
+
             app.groupUsers['FT'] = 'Freddy Teddy';
             app.groupUsers['CA'] = 'Charlie App';            
             testData = testDataConversation();
             app.socket = createMockSocket();
             app.topicSearch = ko.observable('');
+            
+            createCollaborationObjectMock = function(data, template){
+                return {
+                    ui: { 
+                        u: 'i',
+                        scroll: {
+                            adjustToOffset: jasmine.createSpy()
+                        }
+                    },
+                    init: jasmine.createSpy('init'),
+                    addNewItem: jasmine.createSpy('add'),
+                    topic: function() { return 'topic'; },
+                    items: ko.observableArray(),
+                    data: data,
+                    template: template
+                } 
+            };
+
+            createMessageMock = jasmine.createSpy('create-message');
+            createConversationSearchMock = jasmine.createSpy('create-search');
+
+            runs(function(){
+                var injector = new Squire();
+                
+                injector.mock('client/collaboration-object', function(){
+                    return createCollaborationObjectMock
+                });
+                
+                injector.mock('client/message', function(){
+                    return createMessageMock;
+                });
+
+                injector.mock('client/conversation.search', function(){
+                    return createConversationSearchMock;
+                });
+
+                injector.require(['client/common', 'client/conversation'], function(aCommon, createConversationFunction){
+                    common = aCommon;
+                    createConversation = createConversationFunction;
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
         });
 
         afterEach(function(){
+            createConversation = undefined;
             app.topicSearch = null;
         });
 
         describe("creation", function() {
-            it("load properties", function() {
+            beforeEach(function(){
                 conversation = createConversation(testData);
+            });
+
+            it("load properties", function() {
+                expect(conversation.data).toBe(testData);
                 expect(conversation.template).toBe('convo-template');
+            });
+
+            it('inits properties', function(){
+                expect(conversation.init).toHaveBeenCalled();
+                var callback = conversation.init.mostRecentCall.args[0];
+                createMessageMock.andReturn({ message: 'my-message'} );
+                var message = callback({ item: 'data' }, true);
+                expect(createMessageMock).toHaveBeenCalledWith({ item: 'data' }, true);
+                expect(message).toEqual({ message: 'my-message' });
             });
 
             it("undefined totalMessages", function() {
@@ -32,53 +98,55 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
 
                 expect(conversation.allMessagesLoaded()).toBe(true);
             });
+
+            it('creates a conversation search module', function(){
+                createConversationSearchMock.andReturn({ search: 'module' });
+                conversation = createConversation(testData);
+                
+                expect(createConversationSearchMock).toHaveBeenCalledWith(conversation);
+                expect(conversation.search).toEqual({ search: 'module' });
+            });
         });
 
         it("sends message", function() {
             conversation = createConversation(testData);
-            spyOn(conversation, 'markAsRead');
-            conversation.newItem('abc');
-            spyOn(common, 'enterKeyPressed').andReturn(true);
-            var testEvent = { shiftKey: false };
-            spyOn(conversation, 'addItem');
-            app.user = { _id: 'CA' };
+            expect(conversation.addNewItem).toHaveBeenCalled();
 
-            var returnValue = conversation.sendMessage(null, testEvent);
+            var createItem = conversation.addNewItem.mostRecentCall.args[0];
+            createMessageMock.andReturn({ _id: 'my-id' });
+            var message = createItem(testDataMessageAlpha());
+            expect(message._id).toBe('my-id');
+            expect(createMessageMock).toHaveBeenCalledWith(testDataMessageAlpha(), false);
 
-            expect(conversation.markAsRead).toHaveBeenCalled();
-            expect(conversation.addItem).toHaveBeenCalled();   
+            var sendMessageToServer = conversation.addNewItem.mostRecentCall.args[1];
+            var messageData = { message: 'data' };
+            var messageObj = { 
+                message: 'obj', 
+                confirmedSent: jasmine.createSpy(),
+                id: jasmine.createSpy()
+            };
 
-            var message = conversation.addItem.mostRecentCall.args[0];
-            expect(message.content).toEqual('abc');
-            expect(message.createdBy).toEqual('Charlie App');
-            expect(message.confirmedSent()).toBe(false);
-            
+            sendMessageToServer(messageData, messageObj);
             expect(app.socket.emit).toHaveBeenCalled();
-
-            var operation = app.socket.emit.mostRecentCall.args[0];
-            expect(operation).toEqual('send_message');
-
-            var messageData = app.socket.emit.mostRecentCall.args[1];
-            expect(messageData.content).toEqual('abc');
-            expect(messageData.collaborationObjectId).toEqual('8');
-            expect(messageData.timestamp.clearTime()).toEqual(Date.today());
-            expect(messageData.createdById).toEqual('CA');
-
-            var confirmation = app.socket.emit.mostRecentCall.args[2];
-            expect(message.confirmedSent()).toBe(false);
-            expect(message.id()).toBeUndefined();
-            confirmation({ _id: 'm-id' });
-            expect(message.confirmedSent()).toBe(true);
-            expect(message.id()).toBe('m-id');
-
-            expect(conversation.newItem()).toEqual('');
-            expect(returnValue).toBe(false);
+            var args = app.socket.emit.mostRecentCall.args;
+            expect(args[0]).toBe('send_message');
+            expect(args[1]).toBe(messageData);
+            var callback = args[2];
+            message._id = 'my-id';
+            callback(message);
+            expect(messageObj.confirmedSent).toHaveBeenCalledWith(true);
+            expect(messageObj.id).toHaveBeenCalledWith('my-id');
         });
 
         describe("last messages", function() {
-            it("3 messages", function() {
-                testData.items = [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie() ];
+            beforeEach(function(){
                 conversation = createConversation(testData);
+            });
+
+            it("3 messages", function() {
+                conversation.items.push({ content: 'alpha' });
+                conversation.items.push({ content: 'beta' });
+                conversation.items.push({ content: 'charlie' });
 
                 expect(conversation.lastMessages().length).toBe(2);
                 expect(conversation.lastMessages()[0].content).toBe("beta");
@@ -86,8 +154,8 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("2 messages", function() {
-                testData.items = [ testDataMessageAlpha(), testDataMessageBeta() ];
-                conversation = createConversation(testData);
+                conversation.items.push({ content: 'alpha' });
+                conversation.items.push({ content: 'beta' });
 
                 expect(conversation.lastMessages().length).toBe(2);
                 expect(conversation.lastMessages()[0].content).toBe("alpha");
@@ -95,8 +163,7 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
             });
 
             it("1 messages", function() {
-                testData.items = [ testDataMessageAlpha() ];
-                conversation = createConversation(testData);
+                conversation.items.push({ content: 'alpha' });
 
                 expect(conversation.lastMessages().length).toBe(1);
                 expect(conversation.lastMessages()[0].content).toBe("alpha");
@@ -133,6 +200,9 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 var testData = testDataConversation();
                 testData.totalMessages = 2;
                 conversation = createConversation(testData);
+                conversation.items.push({});
+                conversation.items.push({});
+
                 conversation.scrolled(null, event);
                 expect(app.socket.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
@@ -159,19 +229,29 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                 beforeEach(function(){
                     conversation.scrolled(null, event);
                     readMessages = app.socket.emit.mostRecentCall.args[2];
-                    spyOn(conversation.ui.scroll, 'adjustToOffset');
                     spyOn(conversation.ui, 'highlightTopMessages');
                 });
 
                 it('adds messages to the beginning of the messages list', function(){
-                    var messages = [ testDataMessageCharlie(), testDataMessageDelta() ];
+                    conversation.items.push({ data: { content: 'alpha' } });
+                    conversation.items.push({ data: { content: 'beta' } });
+
+                    createMessageMock.andCallFake(function(data){
+                        return { data: data };
+                    });
+
+                    var messages = [ 
+                        { content: 'charlie' }, 
+                        { content: 'delta' }
+                    ];
+
                     readMessages(messages);
 
                     expect(conversation.items().length).toBe(4);
-                    expect(conversation.items()[0].content).toBe('delta');
-                    expect(conversation.items()[1].content).toBe('charlie');
-                    expect(conversation.items()[2].content).toBe('alpha');
-                    expect(conversation.items()[3].content).toBe('beta');
+                    expect(conversation.items()[0].data.content).toBe('delta');
+                    expect(conversation.items()[1].data.content).toBe('charlie');
+                    expect(conversation.items()[2].data.content).toBe('alpha');
+                    expect(conversation.items()[3].data.content).toBe('beta');
                 });
 
                 it('adjust the scrollbar to about location where user left of', function(){
@@ -209,47 +289,6 @@ define(['knockout', 'client/conversation', 'client/common', 'client/message'], f
                     expect(conversation.ui.highlightTopMessages).toHaveBeenCalledWith(2);
                 });
             });
-        });
-
-        describe("topic search", function() {
-
-            var someTopic, someOtherTopic;
-
-            beforeEach(function() {
-                someTopic = createConversation(testDataConversation());
-                someOtherTopic = createConversation(testDataSomeOtherConversation());
-            });
-
-            it("blank", function() {
-                app.topicSearch('');
-                expect(someTopic.search.topicMatched()).toBe(true);
-                expect(someOtherTopic.search.topicMatched()).toBe(true);
-            });
-
-            it("some", function() {
-                app.topicSearch('some');
-                expect(someTopic.search.topicMatched()).toBe(true);
-                expect(someOtherTopic.search.topicMatched()).toBe(true); 
-            });
-
-            it("some topic", function() {
-                app.topicSearch('some topic');
-                expect(app.topicSearch()).toEqual('some topic');
-                expect(someTopic.search.topicMatched()).toBe(true);
-                expect(someOtherTopic.search.topicMatched()).toBe(false); 
-            });
-
-            it("some other", function() {
-                app.topicSearch('some other');
-                expect(someTopic.search.topicMatched()).toBe(false);
-                expect(someOtherTopic.search.topicMatched()).toBe(true); 
-            });
-
-            it("no matches", function() {
-                app.topicSearch('xyz');
-                expect(someTopic.search.topicMatched()).toBe(false);
-                expect(someOtherTopic.search.topicMatched()).toBe(false); 
-            });        
         });
 
         function testDataConversation() {

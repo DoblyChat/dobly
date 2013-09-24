@@ -2,9 +2,7 @@ define(['jquery', 'jquery-ui'], function($){
     'use strict';
     
     return function (desktop){
-        var self = {},
-            $tiles = $('#tiles'),
-            $strip = $('#strip');
+        var self = {};
 
         self.resize = (function () {
             var res = {};
@@ -18,7 +16,7 @@ define(['jquery', 'jquery-ui'], function($){
 
                 var height = bodyHeight - headerHeight - objectsMargin;
                 $objects.height(height);
-                $strip.height(height);
+                $('#strip').height(height);
             };
 
             res.collaborationObjectBodies = function() {
@@ -32,11 +30,11 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             function tiles() {    
-                var stripHeight = $strip.outerHeight();
+                var stripHeight = $('#strip').outerHeight();
                 var newTileHeight = $('#new-tile').outerHeight();
                 var newMesageBar = $('#new-message-bar').outerHeight();
 
-                $tiles.height(stripHeight - newTileHeight - newMesageBar);
+                $('#tiles').height(stripHeight - newTileHeight - newMesageBar);
             }
 
             res.tilesAndCollaborationObjectBodies = function() {
@@ -66,11 +64,11 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             scr.tiles = function() {
-                $tiles.nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
+                $('#tiles').nanoScroller({ sliderMaxHeight: 300, alwaysVisible: true });
             };
 
             scr.bottomTile = function() {
-                $tiles.nanoScroller({ scroll: 'bottom' });
+                $('#tiles').nanoScroller({ scroll: 'bottom' });
             };
 
             return scr;
@@ -94,7 +92,7 @@ define(['jquery', 'jquery-ui'], function($){
         self.setupStripDragAndDrop = function (){
             var currentSort;
 
-            $tiles.find('.content').sortable({      
+            $('#tiles').find('.content').sortable({      
                 handle: ".icon-move-handle",
                 start: function(event, ui){
                     currentSort = { startIndex: ui.item.index(), stopIndex: -1 };
@@ -133,7 +131,7 @@ define(['jquery', 'jquery-ui'], function($){
                 }
             }
 
-            $tiles.disableSelection();
+            $('#tiles').disableSelection();
         };
 
         self.setup = function(){

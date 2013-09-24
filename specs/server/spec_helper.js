@@ -4,6 +4,8 @@ global.mongo = require('mongoose');
 global.mongo.connect('mongodb://localhost/proto-test');
 global.mockery = require('mockery');
 
+global.APP_TITLE = 'Dobly';
+
 global.checkRequiredFieldError = function(err, field){
 	expect(err).not.toBe(null);
 	expect(err.errors[field].type).toBe('required');

@@ -34,7 +34,7 @@ script(id="convo-template", type="text/html")
 			.content(data-bind="event: { scroll: scrolled }")
 				.load-more(data-bind="visible: loadingMore")
 					img(src="/images/spinner.gif", alt="loading...")
-				.messages(data-bind="foreach: items")
+				div(data-bind="foreach: items")
 					.item(data-bind="attr: { id: id }")
 						.author(data-bind="text: createdBy")
 						.time

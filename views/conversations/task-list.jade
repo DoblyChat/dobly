@@ -1,0 +1,28 @@
+script(id="task-template", type="text/html")
+	.collaboration-object(data-bind="visible: active, css : { 'collaboration-object-left': isLeft, 'collaboration-object-right': isRight } ")
+		.collaboration-object-header(data-bind="click: markAsRead")
+			.topic
+				span(data-bind="text: topic")
+				span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
+			.actions
+				span.action-icon.icon-info(data-bind="click: ui.toggleInfo")
+			.info.hidden
+				div
+					span.label by:
+					span.value(data-bind="text: createdBy")
+				div
+					span.label on:
+					span.value(data-bind="text: timestamp")
+
+				div
+					span.label with:
+					span(data-bind="visible: forEntireGroup") entire group
+					span(data-bind="visible: !forEntireGroup, text: users")
+
+		.nano.collaboration-object-body(data-bind="click: markAsRead")
+			.content
+				div(data-bind="foreach: items")
+					.item(data-bind="attr: { id: id }")
+						.text(data-bind="html: content")
+		.collaboration-object-footer(data-bind="click: markAsRead")
+			textarea(tabindex="2", placeholder="Write a new task", rows="2", maxlength=2000, data-bind="value: newItem, valueUpdate: 'input', event: { keypress: addTask }, hasfocus: hasFocus")

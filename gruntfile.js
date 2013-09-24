@@ -41,7 +41,8 @@ module.exports = function(grunt){
                     'public/scripts/client/notifications.js',
                     'public/scripts/client/timeout.js',
                     'public/scripts/client/viewModel.js',
-                    'public/scripts/client/task.js'
+                    'public/scripts/client/task.js',
+                    'public/scripts/client/task-list.js'
                 ],
                 options: {
                     specs: 'specs/client/spec/*.spec.js',

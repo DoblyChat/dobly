@@ -16,7 +16,6 @@ define(['knockout', 'squire'], function(ko, Squire){
             app.groupUsers['CA'] = 'Charlie App';            
             testData = testDataConversation();
             app.socket = createMockSocket();
-            app.topicSearch = ko.observable('');
             
             createCollaborationObjectMock = function(data, template){
                 return {

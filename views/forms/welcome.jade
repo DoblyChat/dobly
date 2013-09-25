@@ -1,0 +1,10 @@
+#invite
+	form(method='post', action='/welcome')
+		.prompt1
+			| Welcome to 
+			= title
+			| , 
+			= userFirstName
+			| .
+		
+		include invite-common

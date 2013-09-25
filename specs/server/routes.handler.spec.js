@@ -5,8 +5,6 @@ describe('Routes handler', function(){
 		passportMock, groupMock, userMock, asyncMock,
 		logMock;
 
-	var APP_TITLE = 'Dobly';
-
 	beforeEach(function(){
 		req = {};
 		res = { 

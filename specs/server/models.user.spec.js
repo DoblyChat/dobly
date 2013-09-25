@@ -175,6 +175,20 @@ describe('User', function() {
 		});
 	});
 
+	describe('#getFullName', function() {
+		it("gets full name", function() {
+			var user = new User({ 
+				email: 'a@b.com',
+				firstName: 'John',
+				lastName: 'Doe',
+				password: 'pass',
+				groupId: group._id
+			});
+
+			expect(user.getFullName()).toBe('John Doe');
+		});
+	});
+
 	afterEach(function(done){
 		group.remove(done);
 	});

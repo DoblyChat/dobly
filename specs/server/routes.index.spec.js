@@ -26,7 +26,7 @@ describe('Routes configuration', function(){
 		};
 
 		signUpMock = buildMock('./group_sign_up', 'get', 'post');
-		inviteMock = buildMock('./invite', 'get', 'post', 'getWelcome');
+		inviteMock = buildMock('./invite', 'get', 'post', 'getWelcome', 'postWelcome');
 		desktopMock = buildMock('./desktop', 'get');
 		mockery.registerMock('./handler', handlerMock);
 
@@ -44,6 +44,7 @@ describe('Routes configuration', function(){
 		verifyGet('/invite', handlerMock.checkUserIsLoggedIn, inviteMock.get);
 		verifyPost('/invite', handlerMock.checkUserIsLoggedIn, inviteMock.post);
 		verifyGet('/welcome', handlerMock.checkUserIsLoggedIn, inviteMock.getWelcome);
+		verifyPost('/welcome', handlerMock.checkUserIsLoggedIn, inviteMock.postWelcome);
 		verifyPost('/create-user', handlerMock.createUser);
 		verifyGet('/conversations', handlerMock.checkUserIsLoggedIn, desktopMock.get);
 		verifyGet('/admin/groups', handlerMock.checkUserIsLoggedIn, handlerMock.getGroups);

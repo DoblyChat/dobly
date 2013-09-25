@@ -1,0 +1,16 @@
+if invalidEmails
+	.error An email you entered is not valid.
+if inviteError
+	.error There was an error sending your invitation, please try again.
+if invitationsSent
+	.success Invitations sent out. Click 'Done' to continue.
+	
+.prompt2 Invite other people to your group. Enter their email addresses below.
+.row
+	input.field(type="email", name="emails", placeholder="Email addresses", value=emails, required, multiple, autofocus)
+div
+	.button
+		input(type="submit", value="Invite")
+	.button
+		a(href="/conversations")
+			button(type="button") Done

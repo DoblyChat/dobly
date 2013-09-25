@@ -1,20 +1,6 @@
 #invite
 	form(method='post', action='/invite')
 		.prompt1
-			if welcome
-				span
-					| Welcome to 
-					= title
-					| , 
-					= userFirstName
-					| .
-			else
-				span Send Invitations
+			span Send Invitations
 
-		.prompt2 Invite other people to your group. Enter their email addresses below.
-		.row
-			input.field(type="email", name="emails", placeholder="Email addresses", required, multiple, autofocus)
-		.button
-			input(type="submit", value="Invite")
-		.button
-			button(type="button") Done
+		include invite-common

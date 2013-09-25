@@ -44,4 +44,5 @@ global.buildMock = function(path){
 afterEach(function(){
 	global.mockery.disable();
 	global.mockery.deregisterAll();
+	global.mockery.warnOnUnregistered(true);
 });

@@ -1,16 +1,15 @@
 describe("Invitation", function() {
 	'use strict';
 
-	var Invitation = require('../../lib/models/invitation'),
-		Mongoose = require('mongoose');
+	var Invitation = require('../../lib/models/invitation');
 
 	var invitation;
 
 	beforeEach(function(done) {
 		Invitation.create({ 
 			email: 'z@x.com', 
-			groupId: new Mongoose.Types.ObjectId, 
-			invitedByUserId: new Mongoose.Types.ObjectId
+			groupId: new mongo.Types.ObjectId, 
+			invitedByUserId: new mongo.Types.ObjectId
 		}, function(err, testInvitation) {
 			invitation = testInvitation;
 			expect(invitation._id).not.toBeNull();
@@ -50,8 +49,8 @@ describe("Invitation", function() {
 			var testEmail = 'ABCdef@CIA.com';
 		  	Invitation.create({ 
 		  		email: testEmail, 
-		  		groupId: new Mongoose.Types.ObjectId, 
-		  		invitedByUserId: new Mongoose.Types.ObjectId
+		  		groupId: new mongo.Types.ObjectId, 
+		  		invitedByUserId: new mongo.Types.ObjectId
 		  	}, function(err, testInvitation) {
 		  		expect(testInvitation.email).toEqual(testEmail.toLowerCase());
 		  		done(err);

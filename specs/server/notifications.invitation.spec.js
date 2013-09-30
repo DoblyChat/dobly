@@ -43,7 +43,7 @@ describe("Notifications", function() {
 				var message = 
 					newLine('Hi there!') + 
 					newLine() + 
-					newLine('Jacob Smith invited you to join his group in Dobly. Use the link below to join:') +
+					newLine('Jacob Smith invited you to use Dobly. Use the link below to join:') +
 					newLine() +
 					newLine('http://www.dobly.com/invitation/ABC456FEG789') +
 					newLine() +

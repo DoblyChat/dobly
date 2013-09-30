@@ -4,7 +4,7 @@
 		span= title
 	.form-container
 		form(method='post', action="/login")					
-			input#email.field(type="email", name="email", placeholder="Email", required, autofocus)
+			input#email.field(type="email", name="email", placeholder="Email", required)
 			input#password.field(type="password", name="password", placeholder="Password", required)
 			input.button(type="submit", value="Sign In")
 	if showFlashError

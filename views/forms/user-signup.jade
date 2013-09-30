@@ -1,21 +1,15 @@
-#group-signup
-	form(method='post', action="/signup")
-		.prompt1 
+#user-signup
+	form(method='post', action=formAction)
+		.prompt1
 			span Sign up to use 
 			span= title
-		
+
 		include validation-errors
 
-		.prompt2 The name of your group
-		.row
-			input.field(type="text", name="groupname", placeholder="Name of your group", value=groupname, required)
-		.prompt2 Your information
 		.row 
 			input.field(type="text", name="firstname", placeholder="First name", value=firstname, required)
 		.row 
 			input.field(type="text", name="lastname", placeholder="Last name", value=lastname, required)
-		.row 
-			input.field(type="email", name="email", placeholder="Email", value=email, required)
 		.row 
 			input.field(type="password", name="password", placeholder="Password", required)
 		.row 

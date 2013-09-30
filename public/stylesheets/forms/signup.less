@@ -1,9 +1,8 @@
-@group-signup-width: 400px;
+@signup-width: 400px;
 
-#group-signup {
+.signup {
 	.centered;
 	display: table;
-	margin-top: 40px;
 	margin-bottom: 50px;
 	padding: 50px 70px 30px;
 	.white-box-shadow;
@@ -14,7 +13,7 @@
 
 		.field {
 			height: 60px;
-			width: @group-signup-width;
+			width: @signup-width;
 			padding: 0 20px;
 		}
 	}
@@ -38,7 +37,17 @@
 		p {
 			margin-top: 5px;
 			margin-bottom: 0px;
-			width: @group-signup-width;
+			width: @signup-width;
 		}
 	}
+}
+
+#group-signup {
+	.signup;
+	margin-top: 40px;
+}
+
+#user-signup {
+	.signup;
+	margin-top: 60px;
 }

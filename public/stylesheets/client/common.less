@@ -7,6 +7,9 @@
 @thick-gray-border: @thick-border-size solid @light-gray;
 @thick-blue-border: @thick-border-size solid @blue;
 
+@header-height: 50px;
+@standard-margin: 10px;
+
 .blue-button {
 	background: @blue;
 	color: @white;
@@ -56,4 +59,32 @@
 	line-height: 0;
 	content: "";
 	clear: both;
+}
+
+.margin-bottom {
+	margin-bottom: @standard-margin;
+}
+
+.margin-top {
+	margin-top: @standard-margin;
+}
+
+.margin-left {
+	margin-left: @standard-margin;
+}
+
+.margin-right {
+	margin-right: @standard-margin;
+}
+
+#header {
+	height: @header-height;
+	.centered;
+	.margin-bottom;
+	padding: 0 (@standard-margin*2) 0 (@standard-margin*2);
+
+	#logo {
+		float: left;
+		margin-top: 10px;
+	}
 }

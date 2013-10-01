@@ -9,6 +9,10 @@ html
 			link(rel="stylesheet", type="text/css", href="/stylesheets/lib/fonts.css")
 			link(rel="stylesheet", type="text/css", href="/stylesheets/form.css")
 		title= title
-	body!=body
+	body
+		#header
+			#logo
+				img(src="/images/logo.png", alt="Dobly")
+		!=body
 
 	script(data-main="/scripts/client/index", src="/scripts/lib/require.js")

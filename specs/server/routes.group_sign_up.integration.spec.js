@@ -7,14 +7,14 @@ describe("Routes group sign up - integration", function() {
   		Group = require('../../lib/models/group'),
   		User = require('../../lib/models/user');
 
-  	beforeEach(function(){
-  		req = {};
-  		res = {
-  			locals: {},
-  			local: function(field, value) {
-  				res.locals[field] = value;
-  			}
-  		}
+	beforeEach(function(){
+		req = {};
+		res = {
+			locals: {},
+			local: function(field, value) {
+				res.locals[field] = value;
+			}
+		}
 	});
 
 	describe("post", function() {

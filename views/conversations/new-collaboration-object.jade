@@ -1,20 +1,23 @@
 #new-collaboration-object(data-bind="with: newCollaborationObject, visible: navigation.showingNewCollaborationObject")
-	p
-		span What would you like to start?
-	.types
-		input#conversation-radio(type="radio", name="type", value="C", data-bind="checked: type") 
-		label(for="conversation-radio") Conversation
-		input#task-collaboration-object-radio(type="radio", name="type", value="T", data-bind="checked: type") 
-		label(for="task-collaboration-object-radio") Task List
-	p 
-		span Who would you like to share this with?
+	
+	.types-row
+		.prompt Create a new:
+		.types
+			.type
+				input#conversation-radio(type="radio", name="type", value="C", data-bind="checked: type") 
+				label(for="conversation-radio") conversation, or
+			.type
+				input#task-collaboration-object-radio(type="radio", name="type", value="T", data-bind="checked: type") 
+				label(for="task-collaboration-object-radio") task list.
+	
+	.prompt Who would you like to share it with?
 	div
 		select#members-select(multiple="true", data-bind="options: options, optionsText: 'text', optionsValue: 'value', selectedOptions: selectedOptions")
-	p
-		span Write a topic	
+	
+	.prompt Give it a topic (required):
 	div
 		textarea(maxlength=500, data-bind="value: topic, valueUpdate: 'input', event: { keypress: createOnEnter }")
 
-	.buttons				
-		button.button-left(type="button", data-bind="click: cancel") Cancel
+	.buttons-row
 		button.button-right(type="button", data-bind="click: createOnClick") Create
+		button.button-left(type="button", data-bind="click: cancel") Cancel

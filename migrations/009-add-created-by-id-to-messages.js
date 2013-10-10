@@ -24,11 +24,13 @@ exports.up = function(next){
 				if (message._doc.createdBy) {
 					CollaborationObject.findById(message.collaborationObjectId, function(err, collaborationObject) {
 						helper.logError(err);
-						User.findOne({ groupId: collaborationObject.groupId, firstName: message._doc.createdBy }, function(err, user) {
-							helper.logError(err);
-							message.createdById = user._id;
-							message.save(callback);
-						})
+						if(collaborationObject){
+							User.findOne({ groupId: collaborationObject.groupId, firstName: message._doc.createdBy }, function(err, user) {
+								helper.logError(err);
+								message.createdById = user._id;
+								message.save(callback);
+							});
+						}
 					});
 				} else {
 					callback();

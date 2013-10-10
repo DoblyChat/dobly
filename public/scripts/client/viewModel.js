@@ -56,7 +56,7 @@ define([
         function receiveMessage(conversation, message){
             var messageObj = createMessage(message, true);
             conversation.addItem(messageObj);
-            self.notifier.showDeskopNotification(conversation, message.createdBy + ': ' + message.content);
+            self.notifier.showDeskopNotification(conversation, messageObj.createdBy + ': ' + messageObj.content);
             self.desktop.add(conversation);
         }
 

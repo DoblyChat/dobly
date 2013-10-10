@@ -7,11 +7,7 @@ describe("Notifications", function() {
 		var modulePath = '../../lib/notifications/invitation';
 
 		beforeEach(function() {
-			mockery.enable({
-				useCleanCache: true,
-			    warnOnReplace: false,
-			    warnOnUnregistered: false
-			});
+			enableMockery();
 
 			mandrillMock = buildMock('./mandrill_wrapper', 'send');
 			userMock = buildMock('../models/user', 'findById');

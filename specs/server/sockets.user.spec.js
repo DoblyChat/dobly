@@ -2,9 +2,10 @@ describe('Sockets', function(){
 	'use strict';
 
     describe('User', function(){
-		var userIo, socketMock;
+		var userIo, socketMock, testUserId, userMock;
 
 		beforeEach(function(){
+			testUserId = new mongo.Types.ObjectId;
 			socketMock = {
 				joinCollaborationObjectRoom: jasmine.createSpy(),
 				joinGroupRoom: jasmine.createSpy(),
@@ -15,10 +16,13 @@ describe('Sockets', function(){
 				handshake:{
 					user: {
 						groupId: 'my group',
-						_id: 'my id',
+						_id: testUserId,
 					},
 				},
 			};
+
+			enableMockery();
+			userMock = buildMock('../models/user','findById');
 
 			userIo = require('../../lib/sockets/user_io');
 		});
@@ -26,13 +30,18 @@ describe('Sockets', function(){
 		it('handles "user connected" event', function(){
 			userIo.userConnected(socketMock);
 			expect(socketMock.joinGroupRoom).toHaveBeenCalledWith('my group');
-			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_connected', 'my id');
+			expect(userMock.findById).toHaveBeenCalled();
+			var args = userMock.findById.mostRecentCall.args;
+			expect(args[0]).toEqual(testUserId);
+			var callback = args[1];
+			callback(null, { id: '123', firsName: 'New', lastName: 'User' });
+			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_connected', { id: '123', firsName: 'New', lastName: 'User' });
 		});
 
 		it('handles "user disconnected" event', function(){
 			userIo.userDisconnected(socketMock);
 			expect(socketMock.leaveGroupRoom).toHaveBeenCalledWith('my group');
-			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_disconnected', 'my id');
+			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_disconnected', testUserId);
 		});
 
 		it('handles a request for online users', function(){

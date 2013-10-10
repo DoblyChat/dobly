@@ -10,7 +10,6 @@ if invitationsSent
 	input.field(type="email", name="emails", placeholder="Email addresses", value=emails, required, multiple, autofocus)
 div
 	.button
-		input(type="submit", value="Invite")
+		input.blue-button(type="submit", value="Invite")
 	.button
-		a(href="/conversations")
-			button(type="button") Done
+		input.white-button(type="button", value="Done", onclick="location.href='/conversations'")

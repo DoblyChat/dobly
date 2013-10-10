@@ -41,6 +41,14 @@ global.buildMock = function(path){
     return mock;
 };
 
+global.enableMockery = function() {
+	mockery.enable({
+		useCleanCache: true,
+	    warnOnReplace: false,
+	    warnOnUnregistered: false
+	});
+}
+
 afterEach(function(){
 	global.mockery.disable();
 	global.mockery.deregisterAll();

@@ -6,6 +6,7 @@ define([
         'client/navigation', 
         'client/allConversations', 
         'client/conversation', 
+        'client/task-list',
         'client/collaboration-object.new', 
         'client/changeTopic',
         'client/message'], function(ko, 
@@ -15,6 +16,7 @@ define([
                                     createNavigationModule, 
                                     createAllConversations,
                                     createConversation,
+                                    createTaskList,
                                     createNewCollaborationObject,
                                     createChangeTopic,
                                     createMessage){
@@ -77,16 +79,20 @@ define([
             return self.unreadCounter() > 0;
         });
 
+        function buildCollaborationObject(data){
+            return data.type === 'C' ? createConversation(data, self.group) : createTaskList(data);
+        }
+
         app.socket.on('my_new_collaboration_object', function(data) {
-            var conversation = createConversation(data, self.group);
-            self.collaborationObjects.push(conversation);
-            self.desktop.addAndActivate(conversation);
+            var collaborationObject = buildCollaborationObject(data);
+            self.collaborationObjects.push(collaborationObject);
+            self.desktop.addAndActivate(collaborationObject);
             self.desktop.ui.scroll.bottomTile();
-            conversation.hasFocus(true);
+            collaborationObject.hasFocus(true);
         });
 
         app.socket.on('new_collaboration_object', function(data){
-            var conversation = createConversation(data, self.group);
+            var collaborationObject = buildCollaborationObject(data);
             self.collaborationObjects.push(conversation);
             self.desktop.add(conversation); 
         });

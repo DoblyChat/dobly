@@ -60,7 +60,7 @@ define(['client/group'], function(createGroup){
 		});
 
 		it("user connected", function() {
-			app.socket.mockEmit('user_connected', '456');
+			app.socket.mockEmit('user_connected', { _id: '456' });
 
 			expect(fernando.online()).toBe(false);
 			expect(carlos.online()).toBe(true);
@@ -68,7 +68,7 @@ define(['client/group'], function(createGroup){
 		});
 
 		it("user disconnected", function() {		
-			app.socket.mockEmit('user_connected', '123');
+			app.socket.mockEmit('user_connected', { _id: '123' });
 			expect(fernando.online()).toBe(true);
 
 			app.socket.mockEmit('user_disconnected', '123');
@@ -82,6 +82,19 @@ define(['client/group'], function(createGroup){
 			expect(otherUsers).toContain(fernando);
 			expect(otherUsers).toContain(carlos);
 			expect(otherUsers).toContain(fido);
+		});
+
+		it("adds user if not existing user", function() {
+			expect(app.groupUsers['999']).toBeUndefined();
+			app.socket.mockEmit('user_connected', { _id: '999', firstName: 'New', lastName: 'User'});
+			expect(app.groupUsers['999']).toEqual('New User');
+			var newUser = group.users[4];
+			expect(newUser.online()).toBe(true);
+			expect(group.otherUsers).toContain(newUser);
+		});
+
+		afterEach(function() {
+			app.groupUsers['999'] = undefined;
 		});
 	});
 });

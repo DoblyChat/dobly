@@ -36,7 +36,7 @@ define(function(){
 				if(canUseNotifications){
 					if(notifications.checkPermission() === ALLOWED){
 						var notif = notifications.createNotification(
-							'http://files.softicons.com/download/system-icons/onceagain-icons-by-delacro/png/48/Message.png', 
+							'/images/logo.transparent.png', 
 							conversation.topic(), content);
 
 						notif.onclick = function(){

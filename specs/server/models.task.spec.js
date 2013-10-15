@@ -18,7 +18,7 @@ describe('Task', function() {
 			taskData = {
 				createdById: new mongo.Types.ObjectId(),
 				collaboratiobObjectId: new mongo.Types.ObjectId(),
-				description: 'test'
+				content: 'test'
 			};
 		});
 
@@ -30,8 +30,12 @@ describe('Task', function() {
 			requiredFieldTest('collaborationObjectId', done);
 		});
 
-		it('description', function(done) {
-			requiredFieldTest('description', done);
+		it('content', function(done) {
+			requiredFieldTest('content', done);
+		});
+
+		it('timestamp', function(done) {
+			requiredFieldTest('timestamp', done);
 		});
 	});
 
@@ -48,6 +52,57 @@ describe('Task', function() {
 
 		it('defaults completedOn to nothing', function(){
 			expect(task.completedOn).not.toBeDefined();
+		});
+	});
+
+	describe('reads tasks', function(done){
+		var collaborationObjectId, tasksData;
+
+		beforeEach(function(done){
+			collaborationObjectId = new mongo.Types.ObjectId();
+			tasksData = [
+				{ 
+					createdById: new mongo.Types.ObjectId(),
+					collaborationObjectId: collaborationObjectId,
+					content: 'test-1',
+					timestamp: Date.now()
+				},
+				{ 
+					createdById: new mongo.Types.ObjectId(),
+					collaborationObjectId: collaborationObjectId,
+					content: 'test-2',
+					timestamp: Date.now()
+				}
+			];
+
+			Task.create(tasksData, done);
+		});
+
+		afterEach(function(done){
+			Task.remove({ collaborationObjectId: collaborationObjectId }, done);
+		});
+
+		it('reads', function(done){
+			Task.readTasks(collaborationObjectId, function(err, tasks){
+				expect(err).toBeNull();
+				expect(tasks.length).toBe(2);
+
+				var firstTask = tasks[0];
+				expect(firstTask.createdById).toEqual(tasksData[0].createdById);
+				expect(firstTask.collaborationObjectId).toEqual(collaborationObjectId);
+				expect(firstTask.content).toBe(tasksData[0].content);
+				expect(firstTask.timestamp.getTime()).toBe(tasksData[0].timestamp);
+				expect(firstTask._id).not.toBeNull();
+
+				var secondTask = tasks[1];
+				expect(secondTask.createdById).toEqual(tasksData[1].createdById);
+				expect(secondTask.collaborationObjectId).toEqual(collaborationObjectId);
+				expect(secondTask.content).toBe(tasksData[1].content);
+				expect(secondTask.timestamp.getTime()).toBe(tasksData[1].timestamp);
+				expect(secondTask._id).not.toBeNull();
+
+				done(err);
+			});
 		});
 	});
 });

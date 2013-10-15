@@ -3,7 +3,7 @@ define(['knockout', 'client/common'], function(ko, common){
 		var self = {};
 
 		self.id = ko.observable(data._id);
-		self.description = common.formatUserInput(data.description);
+		self.content = common.formatUserInput(data.content);
 		self.complete = data.complete;
 
 		return self;

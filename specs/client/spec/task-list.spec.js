@@ -78,7 +78,7 @@ define(['squire'], function(Squire){
 				sendToServer(taskData, taskObj);
 				expect(app.socket.emit).toHaveBeenCalled();
 				var args = app.socket.emit.mostRecentCall.args;
-				expect(args[0]).toBe('send_task');
+				expect(args[0]).toBe('add_task');
 				expect(args[1]).toBe(taskData);
 
 				var callback = args[2];

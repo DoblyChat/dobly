@@ -33,8 +33,12 @@ define([
 
         var toSubscribe = [];
 
+        function buildCollaborationObject(data){
+            return data.type === 'C' ? createConversation(data, self.group) : createTaskList(data);
+        }
+
         for(var i = 0; i < collaborationObjectsData.length; i++){
-            self.collaborationObjects.push(createConversation(collaborationObjectsData[i]));
+            self.collaborationObjects.push(buildCollaborationObject(collaborationObjectsData[i]));
             toSubscribe.push(collaborationObjectsData[i]._id);
         }
 
@@ -78,10 +82,6 @@ define([
         self.hasUnread = ko.computed(function(){
             return self.unreadCounter() > 0;
         });
-
-        function buildCollaborationObject(data){
-            return data.type === 'C' ? createConversation(data, self.group) : createTaskList(data);
-        }
 
         app.socket.on('my_new_collaboration_object', function(data) {
             var collaborationObject = buildCollaborationObject(data);

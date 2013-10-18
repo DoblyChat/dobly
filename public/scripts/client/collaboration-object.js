@@ -18,6 +18,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
         self.timestamp = common.formatTimestamp(data.timestamp);
         self.forEntireGroup = data.members.entireGroup;
         self.ui = createConversationObjectUi();
+        self.type = data.type;
 
         self.init = function(createItem){
             if(data.items) {

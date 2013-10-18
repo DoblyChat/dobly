@@ -9,7 +9,8 @@ define([
         'client/task-list',
         'client/collaboration-object.new', 
         'client/changeTopic',
-        'client/message'], function(ko, 
+        'client/message',
+        'client/task'], function(ko, 
                                     createGroup, 
                                     createDesktop, 
                                     createNotifier, 
@@ -19,7 +20,8 @@ define([
                                     createTaskList,
                                     createNewCollaborationObject,
                                     createChangeTopic,
-                                    createMessage){
+                                    createMessage,
+                                    createTask){
     'use strict';
     
     return function createViewModel(collaborationObjectsData, desktopData, groupData) {
@@ -34,7 +36,7 @@ define([
         var toSubscribe = [];
 
         function buildCollaborationObject(data){
-            return data.type === 'C' ? createConversation(data, self.group) : createTaskList(data);
+            return data.type === 'C' ? createConversation(data) : createTaskList(data);
         }
 
         for(var i = 0; i < collaborationObjectsData.length; i++){
@@ -51,20 +53,20 @@ define([
         self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
         self.changeTopic = createChangeTopic(self.navigation);
 
-        app.socket.on('receive_message', function(message) {
-            ko.utils.arrayForEach(self.collaborationObjects(), function(conversation){
-                if(message.collaborationObjectId === conversation.id){
-                    receiveMessage(conversation, message);
+        function buildItemObject(collaborationObjectType, data){
+            return collaborationObjectType === 'C' ? createMessage(data, true) : createTask(data);
+        }
+        
+        app.socket.on('receive_item', function(item) {
+            ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
+                if(item.collaborationObjectId === collaborationObject.id){
+                    var itemObj = buildItemObject(collaborationObject.type, item);
+                    collaborationObject.addItem(itemObj);
+                    self.notifier.showDeskopNotification(collaborationObject, itemObj.createdBy + ': ' + itemObj.content);
+                    self.desktop.add(collaborationObject);
                 }
             });
         });
-
-        function receiveMessage(conversation, message){
-            var messageObj = createMessage(message, true);
-            conversation.addItem(messageObj);
-            self.notifier.showDeskopNotification(conversation, messageObj.createdBy + ': ' + messageObj.content);
-            self.desktop.add(conversation);
-        }
 
         self.unreadCounter = ko.computed(function(){
             var unread = 0;
@@ -93,8 +95,8 @@ define([
 
         app.socket.on('new_collaboration_object', function(data){
             var collaborationObject = buildCollaborationObject(data);
-            self.collaborationObjects.push(conversation);
-            self.desktop.add(conversation); 
+            self.collaborationObjects.push(collaborationObject);
+            self.desktop.add(collaborationObject); 
         });
 
         self.addNewConversation = function(){

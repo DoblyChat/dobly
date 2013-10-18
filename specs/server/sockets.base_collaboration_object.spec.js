@@ -68,7 +68,7 @@ describe('Sockets', function(){
 				data = { 
 					content: 'my text',
 					timestamp: new Date(),
-					collaborationObjectId: 'convo-id'
+					collaborationObjectId: 'object-id'
 				};
 
 				collaborationObjectIo.sendItem(socketMock, sockets, data, save, confirm);
@@ -104,9 +104,9 @@ describe('Sockets', function(){
 
 					it('logs an error if there is an error reading the collaboration object', function(){
 						spyOn(console, 'error');
-						findCallback('reading convo error', null);
-						expect(console.error).toHaveBeenCalledWith('Error reading collaboration object for saving unread', 'reading convo error');
-						expect(callback).toHaveBeenCalledWith('reading convo error');
+						findCallback('reading object error', null);
+						expect(console.error).toHaveBeenCalledWith('Error reading collaboration object for saving unread', 'reading object error');
+						expect(callback).toHaveBeenCalledWith('reading object error');
 					});
 
 					describe('users', function(){
@@ -150,7 +150,7 @@ describe('Sockets', function(){
 								var saveCallback = jasmine.createSpy('save callback');
 								save(users[0], saveCallback);
 
-								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'convo-id', saveCallback);
+								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'object-id', saveCallback);
 
 								var eachCallback = asyncMock.each.getCallback();
 								eachCallback('each error');
@@ -179,7 +179,7 @@ describe('Sockets', function(){
 
 								save('userid', saveCallback);
 
-								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('userid', 'convo-id', saveCallback);
+								expect(unreadMock.increaseCounter).toHaveBeenCalledWith('userid', 'object-id', saveCallback);
 
 								var eachCallback = asyncMock.each.getCallback();
 								eachCallback('each error');
@@ -210,8 +210,8 @@ describe('Sockets', function(){
 					expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalled();
 					var args = socketMock.broadcastToCollaborationObjectMembers.mostRecentCall.args;
 
-					expect(args[0]).toBe('receive_message');
-					expect(args[1]).toBe('convo-id');
+					expect(args[0]).toBe('receive_item');
+					expect(args[1]).toBe('object-id');
 					expect(args[2]).toBe(item);
 
 					expect(confirm).toHaveBeenCalledWith(item);

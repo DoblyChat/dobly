@@ -37,6 +37,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 expect(collaborationObject.forEntireGroup).toBe(true);
                 expect(collaborationObject.users).toEqual('');
                 expect(collaborationObject.template).toBe('template');
+                expect(collaborationObject.type).toBe('V');
             });
 
             it("loads users", function() {
@@ -347,7 +348,8 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 members: {
                     entireGroup: true,
                     users: []
-                }
+                },
+                type: 'V'
             };
         }
 

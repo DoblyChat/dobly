@@ -56,7 +56,10 @@ describe('Task', function() {
 	});
 
 	describe('reads tasks', function(done){
-		var collaborationObjectId, tasksData;
+		var collaborationObjectId, tasksData; 
+		var today = new Date();
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
 
 		beforeEach(function(done){
 			collaborationObjectId = new mongo.Types.ObjectId();
@@ -65,13 +68,13 @@ describe('Task', function() {
 					createdById: new mongo.Types.ObjectId(),
 					collaborationObjectId: collaborationObjectId,
 					content: 'test-1',
-					timestamp: Date.now()
+					timestamp: today
 				},
 				{ 
 					createdById: new mongo.Types.ObjectId(),
 					collaborationObjectId: collaborationObjectId,
 					content: 'test-2',
-					timestamp: Date.now()
+					timestamp: yesterday
 				}
 			];
 
@@ -87,19 +90,19 @@ describe('Task', function() {
 				expect(err).toBeNull();
 				expect(tasks.length).toBe(2);
 
-				var firstTask = tasks[0];
-				expect(firstTask.createdById).toEqual(tasksData[0].createdById);
-				expect(firstTask.collaborationObjectId).toEqual(collaborationObjectId);
-				expect(firstTask.content).toBe(tasksData[0].content);
-				expect(firstTask.timestamp.getTime()).toBe(tasksData[0].timestamp);
-				expect(firstTask._id).not.toBeNull();
-
-				var secondTask = tasks[1];
+				var secondTask = tasks[0];
 				expect(secondTask.createdById).toEqual(tasksData[1].createdById);
 				expect(secondTask.collaborationObjectId).toEqual(collaborationObjectId);
 				expect(secondTask.content).toBe(tasksData[1].content);
-				expect(secondTask.timestamp.getTime()).toBe(tasksData[1].timestamp);
+				expect(secondTask.timestamp).toEqual(tasksData[1].timestamp);
 				expect(secondTask._id).not.toBeNull();
+
+				var firstTask = tasks[1];
+				expect(firstTask.createdById).toEqual(tasksData[0].createdById);
+				expect(firstTask.collaborationObjectId).toEqual(collaborationObjectId);
+				expect(firstTask.content).toBe(tasksData[0].content);
+				expect(firstTask.timestamp).toEqual(tasksData[0].timestamp);
+				expect(firstTask._id).not.toBeNull();	
 
 				done(err);
 			});

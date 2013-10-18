@@ -90,6 +90,12 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
             });
         };
 
+        self.highlight = function(messageCount) {
+            $(self.getSelector('.collaboration-object-body .content .item'))
+                .slice(-messageCount)
+                .effect("highlight", { color: '#E5FBFF' }, 2000);
+        };
+
         return self;
     };
 });

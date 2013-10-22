@@ -50,34 +50,52 @@ describe('Sockets', function(){
 			expect(taskMock.create.getCallback()).toBe(callback);
 		});		
 
-		it('completes a task', function(){
-			var socketMock = { 
-				broadcastToCollaborationObjectMembers: jasmine.createSpy()
-			};
+		describe('toggle whether a task is complete or not', function(){
+			var socketMock;
 
-			var data = { id: 't-id', collaborationObjectId: 'c-id' };
+			beforeEach(function(){
+				socketMock = { 
+					broadcastToCollaborationObjectMembers: jasmine.createSpy()
+				};
+			});
 
-			taskIo.complete(socketMock, data);
+			it('marks a task as complete', function(){
+				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: true };
 
-			expect(taskMock.update).toHaveBeenCalled();
-			var args = taskMock.update.mostRecentCall.args;
+				taskIo.toggleComplete(socketMock, data);
 
-			expect(args[0]).toEqual({ _id: 't-id' });
-			expect(args[1].isComplete).toBe(true);
-			
-			var completedOn = new Date(args[1].completedOn),
-				expected = new Date();
+				expect(taskMock.update).toHaveBeenCalled();
+				var args = taskMock.update.mostRecentCall.args;
 
-			expect(completedOn.getDate()).toBe(expected.getDate());
-			expect(completedOn.getMonth()).toBe(expected.getMonth());
-			expect(completedOn.getFullYear()).toBe(expected.getFullYear());
+				expect(args[0]).toEqual({ _id: 't-id' });
+				expect(args[1].isComplete).toBe(true);
+				
+				var completedOn = new Date(args[1].completedOn),
+					expected = new Date();
 
-			args[2](null);
-			expect(logMock.error).not.toHaveBeenCalled();
-			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_completed', data);
+				expect(completedOn.getDate()).toBe(expected.getDate());
+				expect(completedOn.getMonth()).toBe(expected.getMonth());
+				expect(completedOn.getFullYear()).toBe(expected.getFullYear());
 
-			args[2]('my error');
-			expect(logMock.error).toHaveBeenCalledWith('my error', 'Error completing a task.');
+				args[2](null);
+				expect(logMock.error).not.toHaveBeenCalled();
+				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_completed', data);
+
+				args[2]('my error');
+				expect(logMock.error).toHaveBeenCalledWith('my error', 'Error completing a task.');
+			});	
+
+			it('marks a task as complete', function(){
+				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: false };
+
+				taskIo.toggleComplete(socketMock, data);
+
+				expect(taskMock.update).toHaveBeenCalled();
+				var args = taskMock.update.mostRecentCall.args;
+
+				expect(args[0]).toEqual({ _id: 't-id' });
+				expect(args[1].isComplete).toBe(false);
+			});	
 		});	
 	});
 });

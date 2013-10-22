@@ -23,7 +23,7 @@ script(id="task-list-template", type="text/html")
 			.content
 				div(data-bind="foreach: items")
 					.task(data-bind="attr: { id: id }")
-						input(type='checkbox', data-bind="click: complete, checked: isComplete")
+						input(type='checkbox', data-bind="click: toggleComplete, checked: isComplete")
 						span.text(data-bind="html: content")
 		.collaboration-object-footer(data-bind="click: markAsRead")
 			textarea(tabindex="2", placeholder="Write a new task", rows="2", maxlength=2000, data-bind="value: newItem, valueUpdate: 'input', event: { keypress: addTask }, hasfocus: hasFocus")

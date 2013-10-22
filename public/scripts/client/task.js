@@ -6,10 +6,11 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.content = common.formatUserInput(data.content);
 		self.isComplete = ko.observable(data.isComplete);
 
-		self.complete = function(){
-			app.socket.emit('complete_task', {
+		self.toggleComplete = function(model, event){
+			app.socket.emit('toggle_complete_task', {
 				collaborationObjectId: data.collaborationObjectId,
-				id: self.id()
+				id: self.id(),
+				isComplete: event.target.checked
 			});
 
 			return true;

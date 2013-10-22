@@ -23,19 +23,49 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.id()).toBe('m-id');
         });
 
-        it('can be completed', function(){
-            var task = createTask({
-                _id: 't-id',
-                content: 'to be completed',
-                isComplete: true,
-                collaborationObjectId: 'c-id'
+        describe('toggle task completion', function(){
+            var event, checked;
+
+            beforeEach(function(){
+                event = {
+                    target: {}
+                }
             });
 
-            expect(task.complete()).toBe(true);
-            expect(app.socket.emit).toHaveBeenCalledWith('complete_task', { 
-                id: 't-id',
-                collaborationObjectId: 'c-id'
+            it('completes a task', function(){
+                var task = createTask({
+                    _id: 't-id',
+                    collaborationObjectId: 'c-id',
+                    content: 'hello world'
+                });
+
+                event.target.checked = true;
+
+                expect(task.toggleComplete(null, event)).toBe(true);
+                expect(app.socket.emit).toHaveBeenCalledWith('toggle_complete_task', { 
+                    id: 't-id',
+                    collaborationObjectId: 'c-id',
+                    isComplete: true
+                });
             });
+
+            it('marks a task as not complete', function(){
+                var task = createTask({
+                    _id: 't-id',
+                    collaborationObjectId: 'c-id',
+                    content: 'hello world'
+                });
+
+                event.target.checked = false;
+
+                expect(task.toggleComplete(null, event)).toBe(true);
+                expect(app.socket.emit).toHaveBeenCalledWith('toggle_complete_task', { 
+                    id: 't-id',
+                    collaborationObjectId: 'c-id',
+                    isComplete: false
+                });
+            });
+            
         });
     });
 });

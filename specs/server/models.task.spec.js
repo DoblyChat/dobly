@@ -46,8 +46,8 @@ describe('Task', function() {
 			task = new Task();
 		});
 
-		it('defaults complete to false', function(){
-			expect(task.complete).toBe(false);
+		it('defaults is complete to false', function(){
+			expect(task.isComplete).toBe(false);
 		});
 
 		it('defaults completedOn to nothing', function(){

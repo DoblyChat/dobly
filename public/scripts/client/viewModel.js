@@ -68,6 +68,18 @@ define([
             });
         });
 
+        app.socket.on('task_completed', function(data){
+            ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
+                if(data.collaborationObjectId === collaborationObject.id){
+                    ko.utils.arrayForEach(collaborationObject.items(), function(task){
+                        if(task.id === data.id){
+                            task.isComplete(true);
+                        }
+                    });
+                }
+            });
+        });
+
         self.unreadCounter = ko.computed(function(){
             var unread = 0;
             ko.utils.arrayForEach(self.collaborationObjects(), function(conversation){

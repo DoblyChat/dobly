@@ -55,7 +55,7 @@ describe('Socket', function(){
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
-			taskIoMock = buildMock('./task_io', 'addTask');
+			taskIoMock = buildMock('./task_io', 'add', 'complete');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -84,8 +84,6 @@ describe('Socket', function(){
 				var callback = ioMock.configure.getCallback();
 				callback();
 
-				expect(ioMock.set).toHaveBeenCalledWith('transports', ['xhr-polling']);
-				expect(ioMock.set).toHaveBeenCalledWith('polling duration', 10);
 				expect(ioMock.enable).toHaveBeenCalledWith('browser client minification');
 				expect(ioMock.enable).toHaveBeenCalledWith('browser client etag');
 				expect(ioMock.enable).toHaveBeenCalledWith('browser client gzip');
@@ -254,7 +252,13 @@ describe('Socket', function(){
 				it('adds task', function(){
 					fire('add_task');
 					expectSessionTouchCalled();
-					expect(taskIoMock.addTask).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
+					expect(taskIoMock.add).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
+				});
+
+				it('adds task', function(){
+					fire('complete_task');
+					expectSessionTouchCalled();
+					expect(taskIoMock.complete).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('creates a conversation', function(){

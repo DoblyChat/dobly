@@ -12,7 +12,8 @@ describe('CollaborationObject', function(){
 					createdById: new mongo.Types.ObjectId(),
 					timestamp: Date.now(),
 					groupId: new mongo.Types.ObjectId(),
-					type: 'C'
+					type: 'C',
+					lastActivity: Date.now()
 				};
 		});
 
@@ -42,6 +43,10 @@ describe('CollaborationObject', function(){
 
 		it('type', function(done){
 			requiredFieldTest('type', done);
+		});
+
+		it('lastActivity', function(done){
+			requiredFieldTest('lastActivity', done);
 		});
 	});
 

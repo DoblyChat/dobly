@@ -21,7 +21,7 @@
 			.messages.hidden(data-bind="foreach: lastMessages")
 				.message
 					.author(data-bind="text: createdBy")
-					.time(data-bind="text: simpleTimestamp")
+					.time(data-bind="text: formattedTimestamp")
 					.text(data-bind="html: content")
 			.no-messages.hidden
 				.message There aren't any messages in this conversation.

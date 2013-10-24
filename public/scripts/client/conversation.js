@@ -34,6 +34,7 @@ define([
 
         function sendMessageToServer(messageData, messageObj){
             app.socket.emit('send_message', messageData, function(message){
+                messageObj.timestamp(message.timestamp);
                 messageObj.confirmedSent(true);
                 messageObj.id(message._id);
             });

@@ -38,7 +38,7 @@ script(id="convo-template", type="text/html")
 					.item(data-bind="attr: { id: id }")
 						.author(data-bind="text: createdBy")
 						.time
-							span(data-bind="text: timestamp, visible: confirmedSent")
+							span(data-bind="text: formattedTimestamp, visible: confirmedSent")
 							img.pending-timer(src="/images/spinner.gif", alt="waiting for confirmation...", width="14", height="14", data-bind="visible: !confirmedSent()")
 						.text(data-bind="html: content")
 		.collaboration-object-footer(data-bind="click: markAsRead")

@@ -9,7 +9,6 @@ define(['knockout', 'client/common'], function(ko, common){
         self.rawContent = data.content;
         self.timestamp = common.formatTimestamp(data.timestamp);
         self.createdBy = app.groupUsers[data.createdById];
-        self.simpleTimestamp = common.formatTimestamp(data.timestamp);
         self.confirmedSent = ko.observable(confirmed);
 
         return self;

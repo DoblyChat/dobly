@@ -3,9 +3,10 @@ describe('Sockets', function(){
 
     describe('Tasks', function(){
 		var taskIo, taskMock, logMock,
-			collaborationObjectIo;
+			collaborationObjectIo, confirm;
 
 		beforeEach(function(){
+			confirm = jasmine.createSpy();
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../lib/sockets/task_io');
 
@@ -25,8 +26,7 @@ describe('Sockets', function(){
 					}
 				},
 				sockets = { 'sock': 'ets' },
-				data = { da: 'ta' },
-				confirm = jasmine.createSpy();
+				data = { da: 'ta' };
 
 			taskIo.add(socket, sockets, data, confirm);
 			expect(collaborationObjectIo.sendItem).toHaveBeenCalled();
@@ -62,7 +62,7 @@ describe('Sockets', function(){
 			it('marks a task as complete', function(){
 				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: true };
 
-				taskIo.toggleComplete(socketMock, data);
+				taskIo.toggleComplete(socketMock, data, confirm);
 
 				expect(taskMock.update).toHaveBeenCalled();
 				var args = taskMock.update.mostRecentCall.args;
@@ -79,22 +79,28 @@ describe('Sockets', function(){
 
 				args[2](null);
 				expect(logMock.error).not.toHaveBeenCalled();
-				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_completed', data);
+				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_complete_toggled', 'c-id', data);
 
 				args[2]('my error');
-				expect(logMock.error).toHaveBeenCalledWith('my error', 'Error completing a task.');
+				expect(logMock.error).toHaveBeenCalledWith('my error', 'Error completing or incompleting a task.');
+
+				expect(confirm).toHaveBeenCalledWith(args[1].completedOn);
 			});	
 
-			it('marks a task as complete', function(){
+			it('marks a task as incomplete', function(){
 				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: false };
 
-				taskIo.toggleComplete(socketMock, data);
+				taskIo.toggleComplete(socketMock, data, confirm);
 
 				expect(taskMock.update).toHaveBeenCalled();
 				var args = taskMock.update.mostRecentCall.args;
 
 				expect(args[0]).toEqual({ _id: 't-id' });
 				expect(args[1].isComplete).toBe(false);
+				expect(args[1].completedOn).toBe(null);
+
+				args[2](null);
+				expect(confirm).toHaveBeenCalledWith(null);
 			});	
 		});	
 	});

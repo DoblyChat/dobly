@@ -23,7 +23,6 @@ define(['client/message', 'client/common'], function(createMessage, common){
             expect(message.rawContent).toBe('line 1\nline 2\nline 3');
             expect(message.timestamp).toBe(common.formatTimestamp(data.timestamp));
             expect(message.createdBy).toBe('Someone Else');
-            expect(message.simpleTimestamp).toBe(common.formatTimestamp(data.timestamp));
             expect(message.confirmedSent()).toBe(true);
             expect(message.id()).toBe('m-id');
         });

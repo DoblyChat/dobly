@@ -68,12 +68,12 @@ define([
             });
         });
 
-        app.socket.on('task_completed', function(data){
+        app.socket.on('task_complete_toggled', function(data){
             ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
                 if(data.collaborationObjectId === collaborationObject.id){
                     ko.utils.arrayForEach(collaborationObject.items(), function(task){
-                        if(task.id === data.id){
-                            task.isComplete(true);
+                        if(task.id() === data.id){
+                            task.isComplete(data.isComplete);
                         }
                     });
                 }

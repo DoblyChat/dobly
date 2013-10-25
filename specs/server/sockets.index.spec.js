@@ -258,7 +258,7 @@ describe('Socket', function(){
 				it('toggles a completion of task', function(){
 					fire('toggle_complete_task');
 					expectSessionTouchCalled();
-					expect(taskIoMock.toggleComplete).toHaveBeenCalledWith(socketMock, data);
+					expect(taskIoMock.toggleComplete).toHaveBeenCalledWith(socketMock, data, confirm);
 				});
 
 				it('creates a conversation', function(){

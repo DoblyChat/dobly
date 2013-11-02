@@ -55,7 +55,12 @@ describe('Sockets', function(){
 
 			beforeEach(function(){
 				socketMock = { 
-					broadcastToCollaborationObjectMembers: jasmine.createSpy()
+					broadcastToCollaborationObjectMembers: jasmine.createSpy(),
+					handshake: {
+						user: {
+							_id: 'u-id'
+						}
+					}
 				};
 			});
 
@@ -69,6 +74,7 @@ describe('Sockets', function(){
 
 				expect(args[0]).toEqual({ _id: 't-id' });
 				expect(args[1].isComplete).toBe(true);
+				expect(args[1].completedById).toBe('u-id');
 				
 				var completedOn = new Date(args[1].completedOn),
 					expected = new Date();
@@ -77,14 +83,22 @@ describe('Sockets', function(){
 				expect(completedOn.getMonth()).toBe(expected.getMonth());
 				expect(completedOn.getFullYear()).toBe(expected.getFullYear());
 
+				var expectedData = {
+					id: 't-id',
+					completedOn: args[1].completedOn,
+					completedById: 'u-id',
+					collaborationObjectId: 'c-id',
+					isComplete: true
+				};
+
 				args[2](null);
 				expect(logMock.error).not.toHaveBeenCalled();
-				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_complete_toggled', 'c-id', data);
+				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_complete_toggled', 'c-id', expectedData);
 
 				args[2]('my error');
 				expect(logMock.error).toHaveBeenCalledWith('my error', 'Error completing or incompleting a task.');
 
-				expect(confirm).toHaveBeenCalledWith(args[1].completedOn);
+				expect(confirm).toHaveBeenCalledWith(expectedData);
 			});	
 
 			it('marks a task as incomplete', function(){
@@ -98,9 +112,19 @@ describe('Sockets', function(){
 				expect(args[0]).toEqual({ _id: 't-id' });
 				expect(args[1].isComplete).toBe(false);
 				expect(args[1].completedOn).toBe(null);
+				expect(args[1].completedById).toBe(null);
+
+				var expectedData = {
+					id: 't-id',
+					completedOn: null,
+					completedById: null,
+					collaborationObjectId: 'c-id',
+					isComplete: false
+				};
 
 				args[2](null);
-				expect(confirm).toHaveBeenCalledWith(null);
+				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_complete_toggled', 'c-id', expectedData);
+				expect(confirm).toHaveBeenCalledWith(expectedData);
 			});	
 		});	
 	});

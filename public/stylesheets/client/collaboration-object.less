@@ -129,19 +129,42 @@
 
 	.task{
 		.item;
+		position: relative;
 
 		input{
-			margin-left: 10px;
+			margin-right: 8px;
 		}
 
-		a{
+    	.details{
+    		left: 20px;
+    		position: relative;
+
+    		& > div{
+    			padding-bottom: 5px;
+    		}
+
+    		.label{
+    			font-weight: bold;
+    			margin-right: 5px;
+    		}
+    	}
+
+		.icon-info{
 			display: none;
+			position: absolute;
+			right: 20px;
+			color: @blue;
 		}
 
 		&:hover{
-			a{
+			.icon-info{
 				display: inline;
+				cursor: pointer;
 			}
+		}
+
+		&.complete{
+			text-decoration: line-through;
 		}
 	}
 

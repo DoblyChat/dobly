@@ -19,8 +19,9 @@ define(['client/task', 'client/common'], function(createTask, common){
                 isComplete: true,
                 _id: 'm-id',
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
-                completedOn: Date.parse('2013.04.09 22:13:34'), 
-                createdById: 'u-id'
+                completedOn: Date.parse('2013.05.09 22:13:34'), 
+                createdById: 'u-id',
+                completedById: 'u-idx'
             };
 
             var task = createTask(data);
@@ -28,10 +29,12 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.isComplete()).toBe(true);
             expect(task.id()).toBe('m-id');
             expect(task.createdBy).toBe('Me');
-            expect(task.completedOn).toBeDefined();
-            expect(task.completedOn).toBe(common.formatTimestamp(data.completedOn));
+            expect(task.completedBy()).toBe('Her');
+            expect(task.completedOn()).toBeDefined();
+            expect(task.completedOn()).toBe(common.formatTimestamp(data.completedOn));
             expect(task.timestamp).toBeDefined();
             expect(task.timestamp).toBe(common.formatTimestamp(data.timestamp));
+            expect(task.showDetails()).toBe(false);
         });
 
         describe('toggle task completion', function(){
@@ -63,9 +66,10 @@ define(['client/task', 'client/common'], function(createTask, common){
                     isComplete: true
                 });
 
-                var completedOn = new Date();
-                args[2](completedOn);
-                expect(task.completedOn).toBe(common.formatTimestamp(completedOn));
+                var data = {};
+                spyOn(task, 'updateCompleteValues')
+                args[2](data);
+                expect(task.updateCompleteValues).toHaveBeenCalledWith(data);
             });
 
             it('marks a task as not complete', function(){
@@ -85,11 +89,53 @@ define(['client/task', 'client/common'], function(createTask, common){
                     collaborationObjectId: 'c-id',
                     isComplete: false
                 });
+            }); 
+        });
 
-                args[2](null);
-                expect(task.completedOn).toBe(null);
+        it('updates complete values', function(){
+            var task = createTask({
+                _id: 't-id',
+                collaborationObjectId: 'c-id',
+                content: 'hello world',
+                timestamp: Date.parse('2013.05.09 22:13:34'),
+                isComplete: false
             });
+
+            expect(task.isComplete()).toBe(false);
+            expect(task.completedBy()).toBe(null);
+            expect(task.completedOn()).toBe(null);
+
+            var data = { 
+                isComplete: true,
+                completedById: 'u-id',
+                completedOn: Date.parse('2013.04.09 22:13:34')
+            };
+
+            task.updateCompleteValues(data);
+
+            expect(task.isComplete()).toBe(true);
+            expect(task.completedBy()).toBe('Me');
+            expect(task.completedOn()).toBe(common.formatTimestamp(data.completedOn));
+        });
+
+        it('toggles show details', function(){
+            spyOn(common, 'formatTimestamp');
             
+            var task = createTask({
+                _id: 't-id',
+                collaborationObjectId: 'c-id',
+                content: 'hello world'
+            });
+
+            expect(task.showDetails()).toBe(false);
+
+            task.toggleDetails();
+
+            expect(task.showDetails()).toBe(true);
+
+            task.toggleDetails();
+
+            expect(task.showDetails()).toBe(false);
         });
     });
 });

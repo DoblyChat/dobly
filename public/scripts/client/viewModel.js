@@ -73,7 +73,7 @@ define([
                 if(data.collaborationObjectId === collaborationObject.id){
                     ko.utils.arrayForEach(collaborationObject.items(), function(task){
                         if(task.id() === data.id){
-                            task.isComplete(data.isComplete);
+                            task.updateCompleteValues(data);
                         }
                     });
                 }

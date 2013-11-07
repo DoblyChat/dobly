@@ -7,7 +7,7 @@ define(['knockout', 'client/common'], function(ko, common){
         self.id = ko.observable(data._id);
         self.content = common.formatUserInput(data.content);
         self.rawContent = data.content;
-        self.timestamp = ko.observable(data.timestamp);
+        self.timestamp = ko.observable(null);
         self.formattedTimestamp = ko.computed(function() {
             return common.formatTimestamp(self.timestamp());
         });

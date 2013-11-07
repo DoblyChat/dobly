@@ -38,6 +38,15 @@ define(['client/common'], function(common){
                 var now = Date.now();
                 expect(common.formatSimpleTimestamp(now)).toBe(now.toString('h:mm tt'));
             });
+
+            it("handles null", function() {
+                expect(common.formatTimestamp(null)).toBe('');
+            })
+
+            it("shows year if not this year", function() {
+                var april92012 = Date.parse('2012.04.09 19:10:25');
+                expect(common.formatTimestamp(april92012)).toBe('4/9/2012 7:10 PM');
+            });
         });
 
         describe("enter key", function() {

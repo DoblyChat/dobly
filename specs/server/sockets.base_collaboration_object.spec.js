@@ -44,10 +44,10 @@ describe('Sockets', function(){
 				},
 			];
 
-			mockery.enable({ useCleanCache: true });
+			mockery.enable({ useCleanCache: true, warnOnUnregistered: false });
 			mockery.registerAllowable('../../lib/sockets/base_collaboration_object_io');
 
-			collaborationObjectMock = buildMock('../models/collaboration_object', 'findById');
+			collaborationObjectMock = buildMock('../models/collaboration_object', 'updateLastActivity', 'findById');
 			asyncMock = buildMock('async', 'parallel', 'each');
 			unreadMock = buildMock('../models/unread_marker', 'increaseCounter');
 			userMock = buildMock('../models/user', 'find', 'findExcept');

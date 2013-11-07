@@ -163,4 +163,41 @@ describe('CollaborationObject', function(){
 			expect(found).toBe(true);
 		}
 	});
+
+	describe('#update last activity', function() {
+		var collaborationObjectId;
+		var yesterday, today;
+
+		beforeEach(function(done){
+			yesterday = new Date();
+			today = new Date();
+
+			yesterday.setDate(today.getDate()-1);
+
+			CollaborationObject.create({
+				topic: 'some topic',
+				createdById: new mongo.Types.ObjectId(),
+				groupId: new mongo.Types.ObjectId(),
+				type: 'T',
+				timestamp: yesterday,
+				lastActivity: yesterday
+			}, function(err, collaborationObject){
+				collaborationObjectId = collaborationObject._id;
+				done(err);
+			});
+		});
+
+		afterEach(function(done){
+			CollaborationObject.findByIdAndRemove(collaborationObjectId, done);
+		});
+
+		it('updates last activity time', function(done){
+			CollaborationObject.updateLastActivity(collaborationObjectId, function(err){
+				CollaborationObject.findById(collaborationObjectId, function(err, collaborationObject){
+					expect(aproximateDate(collaborationObject.lastActivity)).toBe(aproximateDate(today));
+					done(err);
+				});
+			});
+		});
+	});
 });

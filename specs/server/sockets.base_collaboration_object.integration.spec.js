@@ -67,6 +67,7 @@ describe('Sockets', function(){
 	        });
 
 	        afterEach(function(done){
+	        	User = require('../../lib/models/user');
 	            CollaborationObject.findByIdAndRemove(collaborationObjectId, function(){
 	                User.remove({ email: email }, function(){
 	                    Unread.remove({ userId: userId }, done);

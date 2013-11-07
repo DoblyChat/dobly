@@ -3,7 +3,9 @@ describe("Routes user sign up - integration", function() {
 
   	var route, req, res;
   	var Invitation = require('../../lib/models/invitation'),
-  		User = require('../../lib/models/user');
+  		User = require('../../lib/models/user'),
+  		CollaborationObject = require('../../lib/models/collaboration_object'),
+  		Desktop = require('../../lib/models/desktop');
 
 	beforeEach(function(){
 		req = {
@@ -19,7 +21,7 @@ describe("Routes user sign up - integration", function() {
 
 	describe("post", function() {
 
-		var testInvitation, testUser;
+		var testInvitation, testUser, testCollaborationObject;
 
 		beforeEach(function(done) {
 			Invitation.create({ 
@@ -30,17 +32,23 @@ describe("Routes user sign up - integration", function() {
 			}, function(err, someInvitation) {
 				testInvitation = someInvitation;
 				expect(testInvitation._id).not.toBeNull();
-				done(err);
+
+				CollaborationObject.create({
+					topic: 'a recent conversation', 
+					createdById: new mongo.Types.ObjectId, 
+					members: { entireGroup: true, users: [] }, 
+					groupId: testInvitation.groupId, 
+					type: 'C'
+				}, function(err, collaborationObject) {
+					testCollaborationObject = collaborationObject;
+					done(err);
+				})
 			});
 		});
 
-		afterEach(function(done) {
-			testInvitation.remove(function(err) {
-				if (testUser) {
-					testUser.remove(done);
-				} else {
-					done();
-				}
+		afterEach(function(done) {			
+			CollaborationObject.remove({ groupId: testInvitation.groupId }, function(err) {
+				testInvitation.remove(done);
 			});
 		});
 	  	
@@ -72,10 +80,19 @@ describe("Routes user sign up - integration", function() {
 
 	  	  				testUser.comparePassword('pass', function(err, isMatch) {
 	  	  					expect(isMatch).toBe(true);
-	  	  					done(err);
-	  	  				})
-	  	  			})
-	  	  		})
+
+	  	  					Desktop.findOne({ userId: testUser._id }, function(err, desktop) {
+	  	  						expect(desktop._id).not.toBeNull();
+	  	  						expect(desktop.collaborationObjects.length).toBe(1);
+	  	  						expect(desktop.collaborationObjects[0]).toEqual(testCollaborationObject._id);
+
+	  	  						Desktop.remove({ userId: testUser._id }, function(err) {
+	  	  							testUser.remove(done);
+	  	  						});
+	  	  					});	  	  					
+	  	  				});
+	  	  			});
+	  	  		});
 	  	  	});
 
 	  	  	route.post(req, res);

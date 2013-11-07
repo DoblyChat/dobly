@@ -49,6 +49,10 @@ global.enableMockery = function() {
 	});
 }
 
+global.aproximateDate = function(date) {
+	return Math.ceil(date.valueOf() / 1000);
+}
+
 afterEach(function(){
 	global.mockery.disable();
 	global.mockery.deregisterAll();

@@ -92,7 +92,6 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
             return { 
                 content: self.newItem(), 
                 collaborationObjectId: self.id, 
-                timestamp: new Date(),
                 createdById: app.user._id
             };
         }

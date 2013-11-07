@@ -122,7 +122,8 @@ define(['knockout', 'squire'], function(ko, Squire){
             var messageObj = { 
                 message: 'obj', 
                 confirmedSent: jasmine.createSpy(),
-                id: jasmine.createSpy()
+                id: jasmine.createSpy(),
+                timestamp: jasmine.createSpy()
             };
 
             sendMessageToServer(messageData, messageObj);
@@ -132,9 +133,12 @@ define(['knockout', 'squire'], function(ko, Squire){
             expect(args[1]).toBe(messageData);
             var callback = args[2];
             message._id = 'my-id';
+            var now = new Date();
+            message.timestamp = now;
             callback(message);
             expect(messageObj.confirmedSent).toHaveBeenCalledWith(true);
             expect(messageObj.id).toHaveBeenCalledWith('my-id');
+            expect(messageObj.timestamp).toHaveBeenCalledWith(now);
         });
 
         describe("last messages", function() {

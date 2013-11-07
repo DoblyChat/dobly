@@ -198,7 +198,6 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 function verifyItemData(itemData){
                     expect(itemData.content).toEqual('abc');
                     expect(itemData.collaborationObjectId).toEqual('8');
-                    expect(itemData.timestamp.clearTime()).toEqual(Date.today());
                     expect(itemData.createdById).toEqual('CA');
                 }
             });

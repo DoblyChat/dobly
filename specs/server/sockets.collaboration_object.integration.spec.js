@@ -51,6 +51,8 @@ describe('Sockets', function(){
                     expect(collaborationObject.members.users.length).toBe(2);
                     expect(collaborationObject.members.users).toContain(data.selectedMembers[0]);
                     expect(collaborationObject.members.users).toContain(data.selectedMembers[1]);
+                    expect(aproximateDate(collaborationObject.timestamp)).toBe(aproximateDate(new Date()));
+                    expect(aproximateDate(collaborationObject.lastActivity)).toBe(aproximateDate(new Date()));
 
                     done();
                 };

@@ -37,21 +37,29 @@
         };
 
         self.formatTimestamp = function(timestamp){
-            return formatTimestamp(timestamp, "h:mm tt", "M/d h:mm tt");
+            return formatTimestamp(timestamp, "h:mm tt", "M/d h:mm tt", "M/d/yyyy h:mm tt");
         };
 
         self.formatSimpleTimestamp = function(timestamp){
-            return formatTimestamp(timestamp, "h:mm tt", "M/d");
+            return formatTimestamp(timestamp, "h:mm tt", "M/d", "M/d/yyyy");
         };
 
-        function formatTimestamp(timestampString, todayFormat, otherFormat) {
+        function formatTimestamp(timestampString, todayFormat, otherFormat, yearFormat) {
+            if (timestampString === null) {
+                return '';
+            }
+
             var timestamp = new Date(timestampString);
             var datestamp = new Date(timestampString).clearTime();
 
             if (datestamp.equals(Date.today())) {
                 return timestamp.toString(todayFormat);
             } else {
-                return timestamp.toString(otherFormat);
+                if (timestamp.getYear() < Date.today().getYear()) {
+                    return timestamp.toString(yearFormat);
+                } else {
+                    return timestamp.toString(otherFormat);
+                }
             }
         }
 

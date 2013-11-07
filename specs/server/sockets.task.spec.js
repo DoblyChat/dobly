@@ -127,5 +127,31 @@ describe('Sockets', function(){
 				expect(confirm).toHaveBeenCalledWith(expectedData);
 			});	
 		});	
+
+		it('updates a tasks content', function(){
+			var socketMock = {
+					broadcastToCollaborationObjectMembers: jasmine.createSpy()
+				},
+				data = {
+					id: 't-id',
+					collaborationObjectId: 'c-id',
+					content: 'new content'
+				};
+
+			taskIo.updateContent(socketMock, data);
+
+			expect(taskMock.update).toHaveBeenCalled();
+			var args = taskMock.update.mostRecentCall.args;
+
+			expect(args[0]).toEqual({ _id: 't-id' });
+			expect(args[1]).toEqual({ content: 'new content' });
+			var callback = args[2];
+
+			callback('err');
+			expect(logMock.error).toHaveBeenCalledWith('err', 'Error updating task content.');
+
+			callback(null);
+			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_content_updated', 'c-id', data);
+		});
 	});
 });

@@ -6,13 +6,21 @@ define(['client/collaboration-object', 'client/task'], function(createCollaborat
 
 		self.init(createTask);
 
+		function createNewTask(data){
+			var taskObj = createTask(data);
+			taskObj.processing(true);
+
+			return taskObj;
+		}
+
 		function sendTaskToServer(taskData, taskObj){
 			app.socket.emit('add_task', taskData, function(task){
                 taskObj.id(task._id);
+                taskObj.processing(false);
             });
 		}
 
-		self.addTask = self.addNewItem(createTask, sendTaskToServer);
+		self.addTask = self.addNewItem(createNewTask, sendTaskToServer);
 
 		return self;
 	}

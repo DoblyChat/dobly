@@ -131,8 +131,10 @@
 		.item;
 		position: relative;
 
-		input{
+		.checkbox, .pending-timer{
 			margin-right: 8px;
+			width: 14px;
+			height: 14px;
 		}
 
     	.details{
@@ -164,7 +166,15 @@
 		}
 
 		&.complete{
-			text-decoration: line-through;
+			background-color: #eee;
+
+			.text{
+				text-decoration: line-through;
+			}
+		}
+
+		textarea.text{
+			width: 85%;
 		}
 	}
 

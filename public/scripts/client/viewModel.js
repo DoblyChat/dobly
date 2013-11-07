@@ -57,26 +57,42 @@ define([
             return collaborationObjectType === 'C' ? createMessage(data, true) : createTask(data);
         }
         
-        app.socket.on('receive_item', function(item) {
+        function findCollaborationObject(data, callback){
             ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
-                if(item.collaborationObjectId === collaborationObject.id){
-                    var itemObj = buildItemObject(collaborationObject.type, item);
-                    collaborationObject.addItem(itemObj);
-                    self.notifier.showDeskopNotification(collaborationObject, itemObj.createdBy + ': ' + itemObj.content);
-                    self.desktop.add(collaborationObject);
+                if(data.collaborationObjectId === collaborationObject.id){
+                    callback(collaborationObject);
                 }
+            });
+        }
+
+        function findItem(data, callback){
+            findCollaborationObject(data, function(collaborationObject){
+                ko.utils.arrayForEach(collaborationObject.items(), function(item){
+                    if(item.id() === data.id){
+                        callback(item);
+                    }
+                });
+            });
+        }
+
+        app.socket.on('receive_item', function(data) {
+            findCollaborationObject(data, function(collaborationObject){
+                var itemObj = buildItemObject(collaborationObject.type, data);
+                collaborationObject.addItem(itemObj);
+                self.notifier.showDeskopNotification(collaborationObject, itemObj.createdBy + ': ' + itemObj.content);
+                self.desktop.add(collaborationObject);
             });
         });
 
         app.socket.on('task_complete_toggled', function(data){
-            ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
-                if(data.collaborationObjectId === collaborationObject.id){
-                    ko.utils.arrayForEach(collaborationObject.items(), function(task){
-                        if(task.id() === data.id){
-                            task.updateCompleteValues(data);
-                        }
-                    });
-                }
+            findItem(data, function(task){
+                task.updateCompleteValues(data);
+            });
+        });
+
+        app.socket.on('task_content_updated', function(data){
+            findItem(data, function(task){
+                task.setContent(data.content);
             });
         });
 

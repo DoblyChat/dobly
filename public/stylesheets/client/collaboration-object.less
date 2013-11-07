@@ -127,6 +127,57 @@
 		}
 	}
 
+	.task{
+		.item;
+		position: relative;
+
+		.checkbox, .pending-timer{
+			margin-right: 8px;
+			width: 14px;
+			height: 14px;
+		}
+
+    	.details{
+    		left: 20px;
+    		position: relative;
+
+    		& > div{
+    			padding-bottom: 5px;
+    		}
+
+    		.label{
+    			font-weight: bold;
+    			margin-right: 5px;
+    		}
+    	}
+
+		.icon-info{
+			display: none;
+			position: absolute;
+			right: 20px;
+			color: @blue;
+		}
+
+		&:hover{
+			.icon-info{
+				display: inline;
+				cursor: pointer;
+			}
+		}
+
+		&.complete{
+			background-color: #eee;
+
+			.text{
+				text-decoration: line-through;
+			}
+		}
+
+		textarea.text{
+			width: 85%;
+		}
+	}
+
 	.collaboration-object-footer {
 		padding: @new-item-top-padding @new-item-right-padding @new-item-bottom-padding @new-item-left-padding;
 		border-top: @thick-gray-border;

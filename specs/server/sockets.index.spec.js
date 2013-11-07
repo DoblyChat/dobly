@@ -55,7 +55,7 @@ describe('Socket', function(){
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
-			taskIoMock = buildMock('./task_io', 'addTask');
+			taskIoMock = buildMock('./task_io', 'add', 'toggleComplete', 'updateContent');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -84,8 +84,6 @@ describe('Socket', function(){
 				var callback = ioMock.configure.getCallback();
 				callback();
 
-				expect(ioMock.set).toHaveBeenCalledWith('transports', ['xhr-polling']);
-				expect(ioMock.set).toHaveBeenCalledWith('polling duration', 10);
 				expect(ioMock.enable).toHaveBeenCalledWith('browser client minification');
 				expect(ioMock.enable).toHaveBeenCalledWith('browser client etag');
 				expect(ioMock.enable).toHaveBeenCalledWith('browser client gzip');
@@ -254,7 +252,13 @@ describe('Socket', function(){
 				it('adds task', function(){
 					fire('add_task');
 					expectSessionTouchCalled();
-					expect(taskIoMock.addTask).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
+					expect(taskIoMock.add).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
+				});
+
+				it('toggles a completion of task', function(){
+					fire('toggle_complete_task');
+					expectSessionTouchCalled();
+					expect(taskIoMock.toggleComplete).toHaveBeenCalledWith(socketMock, data, confirm);
 				});
 
 				it('creates a conversation', function(){
@@ -273,6 +277,12 @@ describe('Socket', function(){
 					fire('update_topic');
 					expectSessionTouchCalled();
 					expect(collaborationObjectIoMock.updateTopic).toHaveBeenCalledWith(data);
+				});
+
+				it('updates task content', function(){
+					fire('update_task_content');
+					expectSessionTouchCalled();
+					expect(taskIoMock.updateContent).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				function expectSessionTouchCalled(){

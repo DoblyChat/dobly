@@ -2,15 +2,17 @@ describe('Sockets', function(){
 	'use strict';
 
     describe('Tasks', function(){
-		var taskIo, taskMock,
-			collaborationObjectIo;
+		var taskIo, taskMock, logMock,
+			collaborationObjectIo, confirm;
 
 		beforeEach(function(){
+			confirm = jasmine.createSpy();
 			mockery.enable({ useCleanCache: true });
 			mockery.registerAllowable('../../lib/sockets/task_io');
 
-			collaborationObjectIo = buildMock('./collaboration_object_io', 'sendItem');
-			taskMock = buildMock('../models/task', 'create');
+			collaborationObjectIo = buildMock('./base_collaboration_object_io', 'sendItem');
+			taskMock = buildMock('../models/task', 'create', 'update');
+			logMock = buildMock('../common/log', 'error');
 
 			taskIo = require('../../lib/sockets/task_io');
 		});
@@ -24,10 +26,9 @@ describe('Sockets', function(){
 					}
 				},
 				sockets = { 'sock': 'ets' },
-				data = { da: 'ta' },
-				confirm = jasmine.createSpy();
+				data = { da: 'ta' };
 
-			taskIo.addTask(socket, sockets, data, confirm);
+			taskIo.add(socket, sockets, data, confirm);
 			expect(collaborationObjectIo.sendItem).toHaveBeenCalled();
 			var addArgs = collaborationObjectIo.sendItem.mostRecentCall.args;
 			expect(addArgs[0]).toBe(socket);
@@ -47,6 +48,110 @@ describe('Sockets', function(){
 			expect(taskData.collaborationObjectId).toBe(data.collaborationObjectId);
 
 			expect(taskMock.create.getCallback()).toBe(callback);
-		});				
+		});		
+
+		describe('toggle whether a task is complete or not', function(){
+			var socketMock;
+
+			beforeEach(function(){
+				socketMock = { 
+					broadcastToCollaborationObjectMembers: jasmine.createSpy(),
+					handshake: {
+						user: {
+							_id: 'u-id'
+						}
+					}
+				};
+			});
+
+			it('marks a task as complete', function(){
+				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: true };
+
+				taskIo.toggleComplete(socketMock, data, confirm);
+
+				expect(taskMock.update).toHaveBeenCalled();
+				var args = taskMock.update.mostRecentCall.args;
+
+				expect(args[0]).toEqual({ _id: 't-id' });
+				expect(args[1].isComplete).toBe(true);
+				expect(args[1].completedById).toBe('u-id');
+				
+				var completedOn = new Date(args[1].completedOn),
+					expected = new Date();
+
+				expect(completedOn.getDate()).toBe(expected.getDate());
+				expect(completedOn.getMonth()).toBe(expected.getMonth());
+				expect(completedOn.getFullYear()).toBe(expected.getFullYear());
+
+				var expectedData = {
+					id: 't-id',
+					completedOn: args[1].completedOn,
+					completedById: 'u-id',
+					collaborationObjectId: 'c-id',
+					isComplete: true
+				};
+
+				args[2](null);
+				expect(logMock.error).not.toHaveBeenCalled();
+				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_complete_toggled', 'c-id', expectedData);
+
+				args[2]('my error');
+				expect(logMock.error).toHaveBeenCalledWith('my error', 'Error completing or incompleting a task.');
+
+				expect(confirm).toHaveBeenCalledWith(expectedData);
+			});	
+
+			it('marks a task as incomplete', function(){
+				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: false };
+
+				taskIo.toggleComplete(socketMock, data, confirm);
+
+				expect(taskMock.update).toHaveBeenCalled();
+				var args = taskMock.update.mostRecentCall.args;
+
+				expect(args[0]).toEqual({ _id: 't-id' });
+				expect(args[1].isComplete).toBe(false);
+				expect(args[1].completedOn).toBe(null);
+				expect(args[1].completedById).toBe(null);
+
+				var expectedData = {
+					id: 't-id',
+					completedOn: null,
+					completedById: null,
+					collaborationObjectId: 'c-id',
+					isComplete: false
+				};
+
+				args[2](null);
+				expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_complete_toggled', 'c-id', expectedData);
+				expect(confirm).toHaveBeenCalledWith(expectedData);
+			});	
+		});	
+
+		it('updates a tasks content', function(){
+			var socketMock = {
+					broadcastToCollaborationObjectMembers: jasmine.createSpy()
+				},
+				data = {
+					id: 't-id',
+					collaborationObjectId: 'c-id',
+					content: 'new content'
+				};
+
+			taskIo.updateContent(socketMock, data);
+
+			expect(taskMock.update).toHaveBeenCalled();
+			var args = taskMock.update.mostRecentCall.args;
+
+			expect(args[0]).toEqual({ _id: 't-id' });
+			expect(args[1]).toEqual({ content: 'new content' });
+			var callback = args[2];
+
+			callback('err');
+			expect(logMock.error).toHaveBeenCalledWith('err', 'Error updating task content.');
+
+			callback(null);
+			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_content_updated', 'c-id', data);
+		});
 	});
 });

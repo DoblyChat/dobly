@@ -69,6 +69,7 @@ describe('Sockets', function(){
 
 			beforeEach(function(){
 				data = { 
+					type: 'type',
 					topic: 'my new topic',
 					forEntireGroup: true,
 					selectedMembers: [ 'pepe', 'juan' ]
@@ -81,6 +82,7 @@ describe('Sockets', function(){
 			it('creates a collaboration object with the correct data', function(){
 				var createData = collaborationObjectMock.create.mostRecentCall.args[0];
 
+				expect(createData.type).toBe('type');
 				expect(createData.topic).toBe('my new topic');
 				expect(createData.createdById).toBe(socketMock.handshake.user._id);
 				expect(createData.groupId).toBe(socketMock.handshake.user.groupId);

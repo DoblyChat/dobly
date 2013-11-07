@@ -4,12 +4,6 @@ define(['jquery'], function($){
     return function (collaborationObjectUi) {
         var self = collaborationObjectUi || {};
 
-        self.highlight = function(messageCount) {
-            $(self.getSelector('.collaboration-object-body .content .item'))
-                .slice(-messageCount)
-                .effect("highlight", { color: '#E5FBFF' }, 2000);
-        };
-
         self.highlightTopMessages = function(messageCount) {
             $(self.getSelector('.collaboration-object-body .content .item'))
                 .slice(0, messageCount)

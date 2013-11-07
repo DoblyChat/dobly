@@ -62,28 +62,37 @@ define(['squire'], function(Squire){
 			});
 
 			it('defines a way to create the task', function(){
-				expect(taskList.addNewItem.mostRecentCall.args[0]).toBe(createTaskMock);
+				var createFunc = taskList.addNewItem.mostRecentCall.args[0],
+					data = {},
+					taskObj = {
+						processing: jasmine.createSpy('processing')
+					};
+
+				createTaskMock.andReturn(taskObj);
+				createFunc(data);
+
+				expect(createTaskMock).toHaveBeenCalledWith(data);
+				expect(taskObj.processing).toHaveBeenCalledWith(true);
 			});
 
 			it('defines a way to send to server', function(){
 				var sendToServer = taskList.addNewItem.mostRecentCall.args[1],
 					taskData = { task: 'data' },
-					taskObj = { 
-						_id: null,
-						id: function(newId){
-							this._id = newId;
-						}
+					taskObj = {
+						id: jasmine.createSpy('id'),
+						processing: jasmine.createSpy('processing')
 					};
 
 				sendToServer(taskData, taskObj);
 				expect(app.socket.emit).toHaveBeenCalled();
 				var args = app.socket.emit.mostRecentCall.args;
-				expect(args[0]).toBe('send_task');
+				expect(args[0]).toBe('add_task');
 				expect(args[1]).toBe(taskData);
 
 				var callback = args[2];
 				callback({ _id: 'task-id' });
-				expect(taskObj._id).toBe('task-id');
+				expect(taskObj.id).toHaveBeenCalledWith('task-id');
+				expect(taskObj.processing).toHaveBeenCalledWith(false);
 			});
 		});
 	});

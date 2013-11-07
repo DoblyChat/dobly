@@ -6,7 +6,7 @@ var databaseUri = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
 mongo.connect(databaseUri);
 
 function clean(create) {
-	Group.findOne({ name: 'Founders'}, function(err, group){
+	Group.findOne({ name: 'founders'}, function(err, group){
 		if (err) {
 			console.log(err);
 		}
@@ -26,14 +26,14 @@ function clean(create) {
 }
 
 function create() {
-	Group.create({ name: 'Founders' }, function(err, group) {
+	Group.create({ name: 'Founders', rawName: 'Founders' }, function(err, group) {
 		if(!err) {
 			console.log('Group created');
 		}
 
 		var users = [ 
-			{ name: 'Fernando', email: 'perudise@gmail.com', password: 'pass', groupId: group._id }, 
-			{ name: 'Carlos', email: 'atecarlos@gmail.com', password: 'pass', groupId: group._id } 
+			{ firstName: 'Fernando', lastName: 'Trigoso', email: 'perudise@gmail.com', password: 'pass', groupId: group._id }, 
+			{ firstName: 'Carlos', lastName: 'Atencio', email: 'atecarlos@gmail.com', password: 'pass', groupId: group._id } 
 		];
 
 		User.create(users, 

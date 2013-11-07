@@ -6,6 +6,7 @@ describe('Desktop route - integration', function(){
 		CollaborationObject = require('../../lib/models/collaboration_object'),
 		Desktop = require('../../lib/models/desktop'),
 		Message = require('../../lib/models/message'),
+		Task = require('../../lib/models/task'),
 		UnreadMarker = require('../../lib/models/unread_marker'),
 		async = require('async');
 
@@ -31,6 +32,78 @@ describe('Desktop route - integration', function(){
 		group.remove(done);
 	});
 
+	function setupConversations(user, savedConversations, callback){
+		async.parallel([
+			function(callback){
+				UnreadMarker.create([ 
+					{
+						collaborationObjectId: savedConversations[0]._id,
+						userId: user._id,
+						count: 1
+					},
+					{
+						collaborationObjectId: savedConversations[1]._id,
+						userId: user._id,
+						count: 23
+					}
+				], callback);
+			},
+			function(callback){
+				var data = [];
+
+				for(var i = 0; i< 51; i++ ){
+					data.push({ content: 'test message 2.' + i, createdById: user._id, collaborationObjectId: savedConversations[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
+				}
+
+				data.push({ content: 'test message 1', createdById: user._id, collaborationObjectId: savedConversations[0]._id, timestamp: new Date(2013, 9, 17) });
+				data.push({ content: 'test message 1.2', createdById: user._id, collaborationObjectId: savedConversations[0]._id, timestamp: new Date(2013, 9, 16) });
+
+				data.push({ content: 'test message 3', createdById: user._id, collaborationObjectId: savedConversations[2]._id });
+
+				Message.create(data, callback);
+			},
+		], function(err){
+			callback(err, savedConversations);
+		});
+	}
+
+	function setupTaskLists(user, savedTaskLists, callback){
+		async.parallel([
+			function(callback){
+				UnreadMarker.create([ 
+					{
+						collaborationObjectId: savedTaskLists[0]._id,
+						userId: user._id,
+						count: 12
+					},
+					{
+						collaborationObjectId: savedTaskLists[2]._id,
+						userId: user._id,
+						count: 2
+					}
+				], callback);
+			},
+			function(callback){
+				var data = [], date;
+
+				for(var i = 1; i<= 3; i++ ){
+					date = new Date();
+					date.setDate(date.getDate() + i);
+					data.push({ content: 'test task 1.' + i, createdById: user._id, collaborationObjectId: savedTaskLists[0]._id, timestamp: date });
+				}
+
+				data.push({ content: 'test task 2.1', createdById: user._id, collaborationObjectId: savedTaskLists[1]._id, timestamp: date });
+				data.push({ content: 'test task 2.2', createdById: user._id, collaborationObjectId: savedTaskLists[1]._id, timestamp: new Date() });
+
+				data.push({ content: 'test task 3', createdById: user._id, collaborationObjectId: savedTaskLists[2]._id });
+
+				Task.create(data, callback);
+			},
+		], function(err){
+			callback(err, savedTaskLists);
+		});
+	}
+
 	describe('#get', function(){
 		var testUser, collaborationObjects;
 
@@ -49,43 +122,26 @@ describe('Desktop route - integration', function(){
 						var collaborationObjects = [];
 
 						for(var i = 0; i < 3; i++ ){
-							collaborationObjects.push({ topic: 'test ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true }, type: 'C' });
+							collaborationObjects.push({ topic: 'test-convo ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true }, type: 'C' });
+						}
+
+						for(var i = 0; i < 3; i++ ){
+							collaborationObjects.push({ topic: 'test-task-list ' + i, createdById: user._id, groupId: group._id, timestamp: new Date(), members: { entireGroup: true }, type: 'T' });
 						}
 
 						CollaborationObject.create(collaborationObjects, function(err){
-							var savedCollaborationObjects = [ arguments[1], arguments[2], arguments[3] ];
+							var args = arguments;
+
 							async.parallel([
 								function(callback){
-									UnreadMarker.create([ 
-										{
-											collaborationObjectId: savedCollaborationObjects[0]._id,
-											userId: user._id,
-											count: 1
-										},
-										{
-											collaborationObjectId: savedCollaborationObjects[1]._id,
-											userId: user._id,
-											count: 23
-										}
-									], callback);
+									setupConversations(user, [ args[1], args[2], args[3] ], callback);
 								},
 								function(callback){
-									var data = [];
-
-									for(var i = 0; i< 51; i++ ){
-										data.push({ content: 'test message 2.' + i, createdById: user._id, collaborationObjectId: savedCollaborationObjects[1]._id, timestamp: new Date(2013, 1, 1, 1, i) });
-									}
-
-									data.push({ content: 'test message 1', createdById: user._id, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 17) });
-									data.push({ content: 'test message 1.2', createdById: user._id, collaborationObjectId: savedCollaborationObjects[0]._id, timestamp: new Date(2013, 9, 16) });
-
-									data.push({ content: 'test message 3', createdById: user._id, collaborationObjectId: savedCollaborationObjects[2]._id });
-
-									Message.create(data, callback);
-								},
-							], function(err){
-								callback(err, savedCollaborationObjects);
-							});
+									setupTaskLists(user, [ args[4], args[5], args[6] ], callback);		
+								}
+							], function(err, results){
+								callback(err, results[0].concat(results[1]));
+							})
 						});
 					}
 				}, function(err, results){
@@ -104,16 +160,21 @@ describe('Desktop route - integration', function(){
 					Desktop.remove({ userId: testUser._id }, callback);
 				},
 				function(callback){
-					async.each(collaborationObjects, removeMessages, callback);
+					async.each(collaborationObjects, removeItems, callback);
 
-					function removeMessages(conversation, callback){
-						Message.remove({ collaborationObjectId: conversation._id }, callback);
+					function removeItems(collaborationObject, callback){
+						if(collaborationObject.type === 'C'){
+							Message.remove({ collaborationObjectId: collaborationObject._id }, callback);
+						}
+
+						if(collaborationObject.type === 'T'){
+							Task.remove({ collaborationObjectId: collaborationObject._id }, callback);
+						}
 					}
 				},
 				function(callback){
 					UnreadMarker.remove({ userId: testUser._id }, callback);
 				}
-				
 			], function(err){
 				done(err);
 			});
@@ -135,31 +196,62 @@ describe('Desktop route - integration', function(){
 			desktopRoute.get(req, res);
 		});
 
+		function findCollaborationObject(topic, collaborationObjects){
+			return collaborationObjects.filter(function(obj){
+				return obj.topic === topic;
+			})[0];
+		}
+
+		function verifyCollaborationObjectBaseProperties(collaborationObject){
+			expect(collaborationObject.groupId).toBe(group._id.toString());
+			expect(collaborationObject.createdById).toBe(testUser._id.toString());
+		}
+
+		function verifyConversations(collaborationObjects){
+			var object = findCollaborationObject('test-convo 0', collaborationObjects);
+			verifyCollaborationObjectBaseProperties(object);
+			expect(object.items.length).toBe(2);
+			expect(object.items[1].content).toBe('test message 1');
+			expect(object.items[0].content).toBe('test message 1.2');
+			expect(object.unread).toBe(1);
+
+			object = findCollaborationObject('test-convo 1', collaborationObjects);
+			verifyCollaborationObjectBaseProperties(object);
+			expect(object.items.length).toBe(50);
+			expect(object.items[0].content).toBe('test message 2.1');
+			expect(object.items[49].content).toBe('test message 2.50');
+			expect(object.unread).toBe(23);
+
+			object = findCollaborationObject('test-convo 2', collaborationObjects);
+			verifyCollaborationObjectBaseProperties(object);
+			expect(object.items.length).toBe(1);
+			expect(object.items[0].content).toBe('test message 3');
+		} 
+
+		function verifyTasklists(collaborationObjects){
+			var object = findCollaborationObject('test-task-list 0', collaborationObjects);
+			verifyCollaborationObjectBaseProperties(object);
+			expect(object.items.length).toBe(3);
+			expect(object.items[0].content).toBe('test task 1.1');
+			expect(object.items[1].content).toBe('test task 1.2');
+			expect(object.items[2].content).toBe('test task 1.3');
+
+			object = findCollaborationObject('test-task-list 1', collaborationObjects);
+			verifyCollaborationObjectBaseProperties(object);
+			expect(object.items.length).toBe(2);
+			expect(object.items[0].content).toBe('test task 2.2');
+			expect(object.items[1].content).toBe('test task 2.1');
+
+			object = findCollaborationObject('test-task-list 2', collaborationObjects);
+			verifyCollaborationObjectBaseProperties(object);
+			expect(object.items.length).toBe(1);
+			expect(object.items[0].content).toBe('test task 3');
+		}
+
 		function verifyCollaborationObjects(collaborationObjects){
-			expect(collaborationObjects.length).toBe(3);
-
-			for(var i = 0; i < collaborationObjects.length; i++){
-				var collaborationObject = collaborationObjects[i];
-				expect(collaborationObject.groupId).toBe(group._id.toString());
-				expect(collaborationObject.createdById).toBe(testUser._id.toString());
-				expect(collaborationObject.topic).toContain('test');
-			}
-
-			expect(collaborationObjects[0].items.length).toBe(2);
-
-			// items are provided in reverse order
-			expect(collaborationObjects[0].items[1].content).toBe('test message 1');
-			expect(collaborationObjects[0].items[0].content).toBe('test message 1.2');
-
-			expect(collaborationObjects[1].items.length).toBe(50);
-			expect(collaborationObjects[1].items[0].content).toBe('test message 2.1');
-			expect(collaborationObjects[1].items[49].content).toBe('test message 2.50');
-
-			expect(collaborationObjects[2].items.length).toBe(1);
-			expect(collaborationObjects[2].items[0].content).toBe('test message 3');
-
-			expect(collaborationObjects[0].unread).toBe(1);
-			expect(collaborationObjects[1].unread).toBe(23);
+			expect(collaborationObjects.length).toBe(6);
+			verifyConversations(collaborationObjects);
+			verifyTasklists(collaborationObjects);
 		}
 
 		function verifyDesktop(desktop){

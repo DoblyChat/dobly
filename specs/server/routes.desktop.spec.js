@@ -6,7 +6,7 @@ describe('Desktop route', function(){
     var desktopRoute, req, res, 
 		groupMock, userMock, asyncMock,
 		collaborationObjectMock, desktopMock, unreadMock,
-		messageMock, logMock;
+		messageMock, logMock, taskMock;
 
 	beforeEach(function(){
 		req = {};
@@ -24,6 +24,7 @@ describe('Desktop route', function(){
 		asyncMock = buildMock('async', 'parallel', 'each');
 		collaborationObjectMock = buildMock('../models/collaboration_object', 'findAllowedCollaborationObjects');
 		messageMock = buildMock('../models/message', 'readMessagesByPage', 'count');
+		taskMock = buildMock('../models/task', 'readTasks');
 		logMock = buildMock('../common/log', 'error');
 
 		desktopRoute = require('../../lib/routes/desktop');
@@ -47,7 +48,7 @@ describe('Desktop route', function(){
 					setup.collaborationObjects(dummyCallback);
 				});
 
-				it('allowed conversation', function(){
+				it('allowed collaboration objects', function(){
 					expect(collaborationObjectMock.findAllowedCollaborationObjects).toHaveBeenCalled();
 					var args = collaborationObjectMock.findAllowedCollaborationObjects.mostRecentCall.args;
 
@@ -55,69 +56,114 @@ describe('Desktop route', function(){
 					expect(args[1]).toBe(req.user._id);
 				});
 
-				it('bubbles up error if there is an error finding collaborationObjects', function(){
+				it('bubbles up error if there is an error finding collaboration objects', function(){
 					var callback = collaborationObjectMock.findAllowedCollaborationObjects.getCallback();
 					callback('my-error');
 					expect(dummyCallback).toHaveBeenCalledWith('my-error');
 				});
 
-				describe('messages', function(){
-					var loadMessages, loadMessageCount, 
+				describe('items', function(){
+					var loadItems, loadMessageCount, 
 						collaborationObjects, collaborationObject;
 
 					beforeEach(function(){
 						collaborationObjects = [{dummy: 'object1'}, {dummy: 'object2'}];
-						collaborationObject = { _id: 'object-id', type: 'C' };
-
+						
 						var callback = collaborationObjectMock.findAllowedCollaborationObjects.getCallback();
 						callback(null, collaborationObjects);
 						var funcs = asyncMock.parallel.mostRecentCall.args[0];
-						loadMessages = funcs[0];
+						loadItems = funcs[0];
 						loadMessageCount = funcs[1];
 					});
 
-					it('loads first message page', function(){
-						loadMessages(dummyCallback);
-						expect(asyncMock.each).toHaveBeenCalled();
-						expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObjects);
-						expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
+					describe('messages', function(){
+						beforeEach(function(){
+							collaborationObject = { _id: 'object-id', type: 'C' };
+						});
 
-						var load = asyncMock.each.mostRecentCall.args[1];
-						load(collaborationObject, dummyCallback);
-						expect(messageMock.readMessagesByPage).toHaveBeenCalled();
-						var readArgs = messageMock.readMessagesByPage.mostRecentCall.args;
+						it('loads first message page', function(){
+							loadItems(dummyCallback);
+							expect(asyncMock.each).toHaveBeenCalled();
+							expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObjects);
+							expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
 
-						expect(readArgs[0]).toBe(collaborationObject._id);
-						expect(readArgs[1]).toBe(0);
+							var load = asyncMock.each.mostRecentCall.args[1];
+							load(collaborationObject, dummyCallback);
 
-						var callback = messageMock.readMessagesByPage.getCallback();
-						var messages = [{ dummyMsg: 'hello world'}];
-						callback('my-error', messages);
-						expect(collaborationObject.items).toBe(messages.reverse());
-						expect(dummyCallback).toHaveBeenCalledWith('my-error');
+							expect(messageMock.readMessagesByPage).toHaveBeenCalled();
+							var readArgs = messageMock.readMessagesByPage.mostRecentCall.args;
+
+							expect(readArgs[0]).toBe(collaborationObject._id);
+							expect(readArgs[1]).toBe(0);
+
+							var callback = messageMock.readMessagesByPage.getCallback();
+							var messages = [{ dummyMsg: 'hello world'}];
+							callback('my-error', messages);
+							expect(collaborationObject.items).toBe(messages.reverse());
+							expect(dummyCallback).toHaveBeenCalledWith('my-error');
+						});
+
+						it('loads message count', function(){
+							loadMessageCount(dummyCallback);
+							expect(asyncMock.each).toHaveBeenCalled();
+							expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObjects);
+							expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
+
+							var loadCount = asyncMock.each.mostRecentCall.args[1];
+							loadCount(collaborationObject, dummyCallback);
+							expect(messageMock.count).toHaveBeenCalled();
+
+							var countArgs = messageMock.count.mostRecentCall.args;
+
+							expect(countArgs[0].collaborationObjectId).toBe(collaborationObject._id);
+
+							var callback = messageMock.count.getCallback();
+							callback('my-error', 123);
+							expect(collaborationObject.totalMessages).toBe(123);
+							expect(dummyCallback).toHaveBeenCalledWith('my-error');
+						});
 					});
 
-					it('loads message count', function(){
-						loadMessageCount(dummyCallback);
-						expect(asyncMock.each).toHaveBeenCalled();
-						expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObjects);
-						expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
+					describe('tasks', function(){
+						beforeEach(function(){
+							collaborationObject = { _id: 'object-id', type: 'T' };
+							loadItems(dummyCallback);
+						});
 
-						var loadCount = asyncMock.each.mostRecentCall.args[1];
-						loadCount(collaborationObject, dummyCallback);
-						expect(messageMock.count).toHaveBeenCalled();
+						it('loads all tasks for task list', function(){
+							loadItems(dummyCallback);
+							expect(asyncMock.each).toHaveBeenCalled();
+							expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObjects);
+							expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
 
-						var countArgs = messageMock.count.mostRecentCall.args;
+							var load = asyncMock.each.mostRecentCall.args[1];
+							load(collaborationObject, dummyCallback);
 
-						expect(countArgs[0].collaborationObjectId).toBe(collaborationObject._id);
+							expect(taskMock.readTasks).toHaveBeenCalled();
 
-						var callback = messageMock.count.getCallback();
-						callback('my-error', 123);
-						expect(collaborationObject.totalMessages).toBe(123);
-						expect(dummyCallback).toHaveBeenCalledWith('my-error');
-					});
+							var readArgs = taskMock.readTasks.mostRecentCall.args;
+							expect(readArgs[0]).toBe(collaborationObject._id);
 
-					it('returns collaborationObjects after messages and message counts are loaded', function(){
+							var tasks = [{ task: '1' }, { task: '2' }];
+							var err = { 'an': 'error' };
+							readArgs[1](err, tasks);
+							expect(collaborationObject.items).toBe(tasks);
+							expect(dummyCallback).toHaveBeenCalledWith(err);
+						});
+
+						it('does not load any count', function(){
+							loadMessageCount(dummyCallback);
+							expect(asyncMock.each).toHaveBeenCalled();
+							expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObjects);
+							expect(asyncMock.each.mostRecentCall.args[2]).toBe(dummyCallback);
+
+							var loadCount = asyncMock.each.mostRecentCall.args[1];
+							loadCount(collaborationObject, dummyCallback);
+							expect(dummyCallback).toHaveBeenCalledWith(null);
+						});
+					});			
+
+					it('returns collaboration objects after items are loaded', function(){
 						var callback = asyncMock.parallel.getCallback();
 						callback('my-error', collaborationObjects);
 						expect(dummyCallback).toHaveBeenCalledWith('my-error', collaborationObjects);

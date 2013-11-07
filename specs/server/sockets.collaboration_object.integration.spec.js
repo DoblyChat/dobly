@@ -35,12 +35,14 @@ describe('Sockets', function(){
 
             it('creates a collaboration object', function(done){
                 var data = { 
+                    type: 'T',
                     topic: topic,
                     forEntireGroup: true,
                     selectedMembers: [ new mongo.Types.ObjectId(), new mongo.Types.ObjectId() ]
                 };
 
                 socketMock.broadcastToCollaborationObjectMembers = function(event, collaborationObjectId, collaborationObject){
+                    expect(collaborationObject.type).toBe('T');
                     expect(collaborationObject.topic).toBe(topic);
                     expect(collaborationObject.createdById).toBe(socketMock.handshake.user._id);
                     expect(collaborationObject._doc.createdBy).toBe(socketMock.handshake.user.firstName);

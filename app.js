@@ -13,6 +13,10 @@ var express = require('express')
   , less = require('less-middleware');
 
 
+// for dev debugging
+process.env.MONGOLAB_URI = process.env.MONGOLAB_URI || 'mongodb://localhost/proto';
+process.env.PORT = process.env.PORT || '3000';
+
 var databaseUri = process.env.MONGOLAB_URI;
 mongo.connect(databaseUri);
 

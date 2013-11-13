@@ -16,7 +16,6 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.processing = ko.observable(false);
 		self.showDetails = ko.observable(false);
 		self.isEditing = ko.observable(false);
-		self.editHasFocus = ko.observable(false);
 		self.updatedContent = ko.observable(data.content);
 
 		self.updateCompleteValues = function(data){
@@ -55,31 +54,34 @@ define(['knockout', 'client/common'], function(ko, common){
 
 		self.startEdit = function(){
 			self.isEditing(true);
-			self.editHasFocus(true);
 		};
 
-		self.editHasFocus.subscribe(function(hasFocus){
-			if(!hasFocus){
-				self.isEditing(false);
-				self.updatedContent(self.rawContent);
-			}
-		});
+		self.cancelEdit = function(){
+			self.isEditing(false);
+			self.updatedContent(self.rawContent);
+		};
 
 		function taskHasBeenUpdated(){
 			return self.rawContent !== self.updatedContent();
 		}
 
-		self.updateTaskContent = function(obj, event){
-			if (taskHasBeenUpdated() && common.enterKeyPressed(event) && !event.shiftKey) {
+		self.updateTaskContent = function(){
+			if(taskHasBeenUpdated()){
 				app.socket.emit('update_task_content', { 
 					id: self.id(), 
 					content: self.updatedContent(),
 					collaborationObjectId: data.collaborationObjectId
 				});
 
-				self.setContent(self.updatedContent());
-				self.editHasFocus(false);
+				self.setContent(self.updatedContent());	
+			}
 
+			self.isEditing(false);
+		};
+
+		self.updateTaskContentKeyPress = function(obj, event){
+			if (common.enterKeyPressed(event) && !event.shiftKey) {
+				self.updateTaskContent();
 				return false;
 			}else{
 				return true;

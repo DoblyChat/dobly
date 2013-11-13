@@ -105,6 +105,21 @@
 			border-bottom: 0;
 		}
 
+		.text {
+			.text-color;
+			line-height: 1.5;
+			word-wrap:break-word;
+		}
+	}
+
+	.message{
+		.item;
+
+		.author{
+			.caption-color;
+			float: left;
+		}
+
 		.time {
 			float: right;
 
@@ -119,11 +134,8 @@
 			}
 		}
 
-		.text {
-			.text-color;
+		.text{
 			clear: both;
-			line-height: 1.5;
-			word-wrap:break-word;
 		}
 	}
 
@@ -131,11 +143,64 @@
 		.item;
 		position: relative;
 
-		.checkbox, .pending-timer{
-			margin-right: 8px;
-			width: 14px;
-			height: 14px;
+		.input-container{
+			width: 5%;
+			float: left;
+
+			.checkbox, .pending-timer{
+				width: 14px;
+				height: 14px;
+			}
 		}
+
+		.text{
+			float: left;
+			width: 85%;
+		}
+
+		textarea{
+			float: left;
+			width: 93%%;
+			margin-bottom: 10px;
+		}
+
+		&.complete{
+			background-color: #eee;
+
+			.text{
+				span{
+					text-decoration: line-through;
+				}
+			}
+		}
+
+    	.icons{
+    		display: none;
+			float: right;
+			color: @blue;
+
+			.icon{
+				margin-right: 8px;
+			}
+
+			.icon:last-child{
+				margin-right: 0;
+			}
+    	}
+
+    	.buttons{
+    		button{
+    			padding: 8px;
+    			float: right;
+    			margin-right: 5px;
+    			height: 30px;
+    			width: 80px;
+    		}
+
+    		button:first-child{
+    			margin-right: 0;
+    		}
+    	}
 
     	.details{
     		left: 20px;
@@ -151,30 +216,11 @@
     		}
     	}
 
-		.icon-info{
-			display: none;
-			position: absolute;
-			right: 20px;
-			color: @blue;
-		}
-
 		&:hover{
-			.icon-info{
+			.icons{
 				display: inline;
 				cursor: pointer;
 			}
-		}
-
-		&.complete{
-			background-color: #eee;
-
-			.text{
-				text-decoration: line-through;
-			}
-		}
-
-		textarea.text{
-			width: 85%;
 		}
 	}
 

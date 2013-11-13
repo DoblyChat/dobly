@@ -39,7 +39,6 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.showDetails()).toBe(false);
             expect(task.processing()).toBe(false);
             expect(task.isEditing()).toBe(false);
-            expect(task.editHasFocus()).toBe(false);
             expect(task.updatedContent()).toBe(data.content);
         });
 
@@ -196,82 +195,74 @@ define(['client/task', 'client/common'], function(createTask, common){
             it('starts editing', function(){
                 task.startEdit();
                 expect(task.isEditing()).toBe(true);
-                expect(task.editHasFocus()).toBe(true);
             });
 
-            it('stops editing when text box loses focus', function(){
+            it('cancels edit', function(){
                 var content = 'new content';
 
                 task.isEditing(true);
                 task.updatedContent(content);
 
-                task.editHasFocus(true);
-                expect(task.isEditing()).toBe(true);
-                expect(task.updatedContent()).toBe(content)
-
-                task.editHasFocus(false);
+                task.cancelEdit();
                 expect(task.isEditing()).toBe(false);
                 expect(task.updatedContent()).toBe(INITIAL_CONTENT);
             });
 
             describe('submit', function(){
-                var event;
-
-                beforeEach(function(){
-                    event = {
-                        shiftKey: false
-                    };
-
-                    spyOn(common, 'enterKeyPressed');
-                    task.editHasFocus(true);
-                });
-
                 it('submits new content', function(){
-                    task.editHasFocus(true);
-
                     task.updatedContent('new content');
-                    common.enterKeyPressed.andReturn(true);
+                    
+                    task.updateTaskContent();
 
-                    var ret = task.updateTaskContent(null, event);
-
-                    expect(common.enterKeyPressed).toHaveBeenCalledWith(event);
                     expect(app.socket.emit).toHaveBeenCalledWith('update_task_content', { id: 't-id', content: 'new content' });
-                    expect(ret).toBe(false);
                     expect(task.content()).toBe('f-new content');
                     expect(task.rawContent).toBe('new content');
-                    expect(task.editHasFocus()).toBe(false);
-                });
-
-                it('does not submit if shift key pressed', function(){
-                    task.updatedContent('new content');
-                    common.enterKeyPressed.andReturn(true);
-                    event.shiftKey = true;
-
-                    verifyUpdateDidNotHappen();
-                });
-
-                it('does not submit if enter not pressed', function(){
-                    task.updatedContent('new content');
-                    common.enterKeyPressed.andReturn(false);
-
-                    verifyUpdateDidNotHappen();
                 });
 
                 it('does not submit if task content has not been updated', function(){
-                    common.enterKeyPressed.andReturn(true);
-
-                    verifyUpdateDidNotHappen();
-                });
-
-                function verifyUpdateDidNotHappen(){
-                    var ret = task.updateTaskContent(null, event);
+                    task.updateTaskContent();
+                    
                     expect(app.socket.emit).not.toHaveBeenCalled();
-                    expect(ret).toBe(true);
 
                     expect(task.content()).toBe('f-' + INITIAL_CONTENT);
                     expect(task.rawContent).toBe(INITIAL_CONTENT);
-                    expect(task.editHasFocus()).toBe(true);
-                }
+                });
+
+                describe('on key press', function(){
+                    var event;
+
+                    beforeEach(function(){
+                        spyOn(task, 'updateTaskContent');
+                        event = {
+                            shiftKey: false
+                        };
+                        spyOn(common, 'enterKeyPressed');
+                    });
+
+                    it('does not submit if shift key pressed', function(){
+                        common.enterKeyPressed.andReturn(true);
+                        event.shiftKey = true;
+                        var ret = task.updateTaskContentKeyPress(null, event);
+                        expect(task.updateTaskContent).not.toHaveBeenCalled();
+                        expect(ret).toBe(true);
+                    });
+
+                    it('does not submit if enter not pressed', function(){
+                        task.updatedContent('new content');
+                        common.enterKeyPressed.andReturn(false);
+                        var ret = task.updateTaskContentKeyPress(null, event);
+                        expect(task.updateTaskContent).not.toHaveBeenCalled();
+                        expect(ret).toBe(true);
+                    });
+
+                    it('does attempt submit when enter pressed', function(){
+                        common.enterKeyPressed.andReturn(true);
+
+                        var ret = task.updateTaskContentKeyPress(null, event);
+                        expect(task.updateTaskContent).toHaveBeenCalled();
+                        expect(ret).toBe(false);
+                    });
+                });
             });
         });
     });

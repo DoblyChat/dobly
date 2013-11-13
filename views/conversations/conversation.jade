@@ -35,7 +35,7 @@ script(id="convo-template", type="text/html")
 				.load-more(data-bind="visible: loadingMore")
 					img(src="/images/spinner.gif", alt="loading...")
 				div(data-bind="foreach: items")
-					.item(data-bind="attr: { id: id }")
+					.message(data-bind="attr: { id: id }")
 						.author(data-bind="text: createdBy")
 						.time
 							span(data-bind="text: formattedTimestamp, visible: confirmedSent")

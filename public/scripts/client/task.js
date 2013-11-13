@@ -4,7 +4,10 @@ define(['knockout', 'client/common'], function(ko, common){
 
 		self.id = ko.observable(data._id);	
 		self.createdBy = app.groupUsers[data.createdById];
-		self.timestamp = common.formatTimestamp(data.timestamp);
+		self.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
+		self.formattedTimestamp = ko.computed(function() {
+            return common.formatTimestamp(self.timestamp());
+        });
 		self.isComplete = ko.observable();
 		self.completedOn = ko.observable();
 		self.completedBy = ko.observable();

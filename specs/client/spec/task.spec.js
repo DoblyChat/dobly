@@ -18,8 +18,8 @@ define(['client/task', 'client/common'], function(createTask, common){
                 content: "line 1\nline 2\nline 3",
                 isComplete: true,
                 _id: 'm-id',
-                timestamp: Date.parse('2013.04.09 22:13:34'), 
-                completedOn: Date.parse('2013.05.09 22:13:34'), 
+                timestamp: Date.parse('2012.04.09 22:13:34'), 
+                completedOn: Date.parse('2012.05.09 22:13:34'), 
                 createdById: 'u-id',
                 completedById: 'u-idx'
             };
@@ -33,13 +33,46 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.completedBy()).toBe('Her');
             expect(task.completedOn()).toBeDefined();
             expect(task.completedOn()).toBe(common.formatTimestamp(data.completedOn));
-            expect(task.timestamp).toBeDefined();
-            expect(task.timestamp).toBe(common.formatTimestamp(data.timestamp));
+            expect(task.timestamp()).toBeDefined();
+            expect(task.timestamp()).toBe(data.timestamp);
+            expect(task.formattedTimestamp()).toBe('4/9/2012 10:13 PM');
             expect(task.showDetails()).toBe(false);
             expect(task.processing()).toBe(false);
             expect(task.isEditing()).toBe(false);
             expect(task.editHasFocus()).toBe(false);
             expect(task.updatedContent()).toBe(data.content);
+        });
+
+        it("creates task without timestamp", function() {
+            var data = {
+                content: "line 1",
+                isComplete: false,
+                _id: 'm-id',
+                createdById: 'u-id',
+            };
+
+            var task = createTask(data);
+            expect(task.content()).toBe(common.formatUserInput("line 1"));
+            expect(task.rawContent).toBe(data.content);
+            expect(task.isComplete()).toBe(false);
+            expect(task.id()).toBe('m-id');
+            expect(task.createdBy).toBe('Me');
+            expect(task.timestamp()).toBeNull();
+            expect(task.formattedTimestamp()).toBe('');
+        });
+
+        it("computed formatted timestamp", function() {
+            var data = {
+                content: "line 1",
+                isComplete: false,
+                _id: 'm-id',
+                createdById: 'u-id',
+            };
+
+            var task = createTask(data);
+
+            task.timestamp(Date.parse('2012.10.09 22:13:34'));
+            expect(task.formattedTimestamp()).toBe('10/9/2012 10:13 PM');
         });
 
         describe('complete', function(){

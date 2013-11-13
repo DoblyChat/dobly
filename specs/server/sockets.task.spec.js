@@ -44,7 +44,7 @@ describe('Sockets', function(){
 			var taskData = taskMock.create.mostRecentCall.args[0];
 			expect(taskData.description).toBe(data.description);
 			expect(taskData.createdById).toBe(socket.handshake.user._id);
-			expect(taskData.timestamp).toBe(data.timestamp);
+			expect(taskData.timestamp).toBe(Date.now());
 			expect(taskData.collaborationObjectId).toBe(data.collaborationObjectId);
 
 			expect(taskMock.create.getCallback()).toBe(callback);

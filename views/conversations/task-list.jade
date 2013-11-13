@@ -34,7 +34,7 @@ script(id="task-list-template", type="text/html")
 								span.value(data-bind="text: createdBy")
 							div
 								span.label on:
-								span.value(data-bind="text: timestamp")
+								span.value(data-bind="text: formattedTimestamp")
 							div(data-bind="visible: isComplete")
 								span.label completed by:
 								span.value(data-bind="text: completedBy") 

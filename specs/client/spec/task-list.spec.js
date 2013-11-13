@@ -80,7 +80,8 @@ define(['squire'], function(Squire){
 					taskData = { task: 'data' },
 					taskObj = {
 						id: jasmine.createSpy('id'),
-						processing: jasmine.createSpy('processing')
+						processing: jasmine.createSpy('processing'),
+						timestamp: jasmine.createSpy()
 					};
 
 				sendToServer(taskData, taskObj);
@@ -89,10 +90,12 @@ define(['squire'], function(Squire){
 				expect(args[0]).toBe('add_task');
 				expect(args[1]).toBe(taskData);
 
+				var now = new Date();
 				var callback = args[2];
-				callback({ _id: 'task-id' });
+				callback({ _id: 'task-id', timestamp: now });
 				expect(taskObj.id).toHaveBeenCalledWith('task-id');
 				expect(taskObj.processing).toHaveBeenCalledWith(false);
+				expect(taskObj.timestamp).toHaveBeenCalledWith(now);
 			});
 		});
 	});

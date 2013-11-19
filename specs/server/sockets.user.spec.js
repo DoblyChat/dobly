@@ -5,7 +5,7 @@ describe('Sockets', function(){
 		var userIo, socketMock, testUserId, userMock;
 
 		beforeEach(function(){
-			testUserId = new mongo.Types.ObjectId;
+			testUserId = new mongo.Types.ObjectId();
 			socketMock = {
 				joinCollaborationObjectRoom: jasmine.createSpy(),
 				joinGroupRoom: jasmine.createSpy(),

@@ -5,7 +5,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
         var self = {},
             otherUsers = group.otherUsers,
             groupKey = 'g',
-            CONVERSATION_TYPE = 'C'
+            CONVERSATION_TYPE = 'C';
 
         self.type = ko.observable(CONVERSATION_TYPE);
         self.topic = ko.observable('');

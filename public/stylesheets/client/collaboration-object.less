@@ -47,9 +47,23 @@
 		.item-padding;
 
 		.topic{
+			@icon-left: 5px;
 			float: left;
 			.title-font;
 			width: @collaboration-object-width - @item-left-padding - @collaboration-object-header-actions-width - @item-right-padding;
+
+			.icon-pencil {
+				display: none;
+				font-size: 18px;
+				cursor: pointer;
+				margin-left: 5px;
+			}
+
+			&:hover {
+				.icon-pencil {
+					display: inline;
+				}
+			}
 		}
 
 		.actions{
@@ -58,9 +72,14 @@
 			margin-top: 5px;
 
 			.action-icon {
+				float: right;
 				font-size: 16px;
 				.caption-color;
 				padding-left: 10px;
+
+				&:last-child{
+					padding-left: 0;
+				}
 
 				&:hover {
 					.text-color;
@@ -137,92 +156,7 @@
 		.text{
 			clear: both;
 		}
-	}
-
-	.task{
-		.item;
-		position: relative;
-
-		.input-container{
-			width: 5%;
-			float: left;
-
-			.checkbox, .pending-timer{
-				width: 14px;
-				height: 14px;
-			}
-		}
-
-		.text{
-			float: left;
-			width: 85%;
-		}
-
-		textarea{
-			float: left;
-			width: 93%%;
-			margin-bottom: 10px;
-		}
-
-		&.complete{
-			background-color: #eee;
-
-			.text{
-				span{
-					text-decoration: line-through;
-				}
-			}
-		}
-
-    	.icons{
-    		display: none;
-			float: right;
-			color: @blue;
-
-			.icon{
-				margin-right: 8px;
-			}
-
-			.icon:last-child{
-				margin-right: 0;
-			}
-    	}
-
-    	.buttons{
-    		button{
-    			padding: 8px;
-    			float: right;
-    			margin-right: 5px;
-    			height: 30px;
-    			width: 80px;
-    		}
-
-    		button:first-child{
-    			margin-right: 0;
-    		}
-    	}
-
-    	.details{
-    		left: 20px;
-    		position: relative;
-
-    		& > div{
-    			padding-bottom: 5px;
-    		}
-
-    		.label{
-    			font-weight: bold;
-    			margin-right: 5px;
-    		}
-    	}
-
-		&:hover{
-			.icons{
-				display: inline;
-				cursor: pointer;
-			}
-		}
-	}
+	}	
 
 	.collaboration-object-footer {
 		padding: @new-item-top-padding @new-item-right-padding @new-item-bottom-padding @new-item-left-padding;

@@ -55,7 +55,7 @@ describe('Socket', function(){
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'readMessages');
 			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
-			taskIoMock = buildMock('./task_io', 'add', 'toggleComplete', 'updateContent');
+			taskIoMock = buildMock('./task_io', 'add', 'remove', 'toggleComplete', 'updateContent');
 			authorizeMock = jasmine.createSpy();
 			mockery.registerMock('./authorize_io', authorizeMock);
 			sessionStoreMock = {};
@@ -253,6 +253,12 @@ describe('Socket', function(){
 					fire('add_task');
 					expectSessionTouchCalled();
 					expect(taskIoMock.add).toHaveBeenCalledWith(socketMock, ioMock.sockets, data, confirm);
+				});
+
+				it('removes a task', function(){
+					fire('remove_task');
+					expectSessionTouchCalled();
+					expect(taskIoMock.remove).toHaveBeenCalledWith(socketMock, data);
 				});
 
 				it('toggles a completion of task', function(){

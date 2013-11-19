@@ -30,7 +30,9 @@ define(['knockout', 'client/common'], function(ko, common){
                     }
                 }
 
-                if(callback) callback();
+                if(callback) { 
+                    callback();
+                }
             }
         }
 

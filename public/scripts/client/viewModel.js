@@ -69,7 +69,7 @@ define([
             findCollaborationObject(data, function(collaborationObject){
                 ko.utils.arrayForEach(collaborationObject.items(), function(item){
                     if(item.id() === data.id){
-                        callback(item);
+                        callback(item, collaborationObject);
                     }
                 });
             });
@@ -93,6 +93,12 @@ define([
         app.socket.on('task_content_updated', function(data){
             findItem(data, function(task){
                 task.setContent(data.content);
+            });
+        });
+
+        app.socket.on('task_removed', function(t){
+            findItem(data, function(task, collaborationObject){
+                collaborationObject.items.remove(task);
             });
         });
 

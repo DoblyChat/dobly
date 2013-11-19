@@ -6,8 +6,8 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
         var collaborationObject, testData;
 
         beforeEach(function() {
-            app.groupUsers['FT'] = 'Freddy Teddy';
-            app.groupUsers['CA'] = 'Charlie App';            
+            app.groupUsers['FT-u'] = 'Freddy Teddy';
+            app.groupUsers['CA-u'] = 'Charlie App';            
             testData = testDataCollaborationObject();
             app.socket = createMockSocket();
             app.topicSearch = ko.observable('');
@@ -190,7 +190,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 spyOn(common, 'enterKeyPressed').andReturn(true);
                 var testEvent = { shiftKey: false };
                 spyOn(collaborationObject, 'addItem');
-                app.user = { _id: 'CA' };
+                app.user = { _id: 'CA-u' };
 
                 var returnValue = addNewItem(null, testEvent);
 
@@ -210,7 +210,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 function verifyItemData(itemData){
                     expect(itemData.content).toEqual('abc');
                     expect(itemData.collaborationObjectId).toEqual('8');
-                    expect(itemData.createdById).toEqual('CA');
+                    expect(itemData.createdById).toEqual('CA-u');
                 }
             });
 
@@ -400,7 +400,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
         function testDataCollaborationObject() {
             return {
                 _id: "8",
-                createdById: "FT",
+                createdById: "FT-u",
                 groupId: "5",
                 items: [ testItemAlpha(), testItemBeta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -417,7 +417,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
         function testSomeOtherCollaborationObjectData() {
             return {
                 _id: "10",
-                createdById: "FT",
+                createdById: "FT-u",
                 groupId: "5",
                 items: [ ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -426,7 +426,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 totalMessages: 3,
                 members: {
                     entireGroup: false,
-                    users: [ 'FT', 'CA' ]
+                    users: [ 'FT-u', 'CA-u' ]
                 }
             };
         }
@@ -435,7 +435,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             return {
                 content: "alpha", 
                 collaborationObjectId: "8", 
-                createdById: "CA",
+                createdById: "CA-u"
             };
         }
 
@@ -443,7 +443,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             return {
                 content: "beta", 
                 collaborationObjectId: "8", 
-                createdById: "FT"
+                createdById: "FT-u"
             };
         }
     });

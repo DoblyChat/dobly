@@ -1,102 +1,138 @@
-define(['squire'], function(Squire){
-	describe('Task list', function(){
-		var createTaskList, createTaskMock,
-			taskList;
+define(['squire', 'knockout'], function(Squire, ko){
+    'use strict';
 
-		beforeEach(function(){
-			var done = false;
+    describe('Task list', function(){
+        var createTaskList, createTaskMock,
+            taskList;
 
-			var createCollaborationObjectMock = function(data, template){
-	            return {
-	                init: jasmine.createSpy('init'),
-	                addNewItem: jasmine.createSpy('add'),
-	                data: data,
-	                template: template
-	            } 
-	        };
+        beforeEach(function(){
+            var done = false;
 
-	        createTaskMock = jasmine.createSpy('create-task');
-	        app.socket = createMockSocket();
+            var createCollaborationObjectMock = function(data, template){
+                return {
+                    init: jasmine.createSpy('init'),
+                    addNewItem: jasmine.createSpy('add'),
+                    data: data,
+                    template: template,
+                    items: ko.observableArray([]),
+                    id: 'list-id'
+                };
+            };
 
-			runs(function(){
-				var injector = new Squire();
+            createTaskMock = jasmine.createSpy('create-task');
+            app.socket = createMockSocket();
 
-				injector.mock('client/collaboration-object', function(){
-					return createCollaborationObjectMock;
-				});
+            runs(function(){
+                var injector = new Squire();
 
-				injector.mock('client/task', function(){
-					return createTaskMock;
-				});
+                injector.mock('client/collaboration-object', function(){
+                    return createCollaborationObjectMock;
+                });
 
-				injector.require(['client/task-list'], function(createTaskListFn){
-					createTaskList = createTaskListFn;
-					done = true;
-				});
-			});
+                injector.mock('client/task', function(){
+                    return createTaskMock;
+                });
 
-			waitsFor(function(){
-				return done;
-			});
+                injector.require(['client/task-list'], function(createTaskListFn){
+                    createTaskList = createTaskListFn;
+                    done = true;
+                });
+            });
 
-			runs(function(){
-				taskList = createTaskList({
-					da: 'ta'
-				});
-			});
-		});
+            waitsFor(function(){
+                return done;
+            });
 
-		describe('creation', function(){
-			it('sets template', function(){
-				expect(taskList.template).toBe('task-list-template');
-			});
+            runs(function(){
+                taskList = createTaskList({
+                    da: 'ta' 
+                });
+            });
+        });
 
-			it('initializes', function(){
-				expect(taskList.init).toHaveBeenCalledWith(createTaskMock);
-			});
-		});
+        describe('creation', function(){
+            it('sets template', function(){
+                expect(taskList.template).toBe('task-list-template');
+            });
 
-		describe('add task', function(){
-			it('defines function based on template', function(){
-				expect(taskList.addNewItem).toHaveBeenCalled();
-			});
+            it('initializes', function(){
+                expect(taskList.init).toHaveBeenCalledWith(createTaskMock);
+            });
+        });
 
-			it('defines a way to create the task', function(){
-				var createFunc = taskList.addNewItem.mostRecentCall.args[0],
-					data = {},
-					taskObj = {
-						processing: jasmine.createSpy('processing')
-					};
+        describe('add task', function(){
+            it('defines function based on template', function(){
+                expect(taskList.addNewItem).toHaveBeenCalled();
+            });
 
-				createTaskMock.andReturn(taskObj);
-				createFunc(data);
+            it('defines a way to create the task', function(){
+                var createFunc = taskList.addNewItem.mostRecentCall.args[0],
+                    data = {},
+                    taskObj = {
+                        processing: jasmine.createSpy('processing')
+                    };
 
-				expect(createTaskMock).toHaveBeenCalledWith(data);
-				expect(taskObj.processing).toHaveBeenCalledWith(true);
-			});
+                createTaskMock.andReturn(taskObj);
+                createFunc(data);
 
-			it('defines a way to send to server', function(){
-				var sendToServer = taskList.addNewItem.mostRecentCall.args[1],
-					taskData = { task: 'data' },
-					taskObj = {
-						id: jasmine.createSpy('id'),
-						processing: jasmine.createSpy('processing'),
-						timestamp: jasmine.createSpy()
-					};
+                expect(createTaskMock).toHaveBeenCalledWith(data);
+                expect(taskObj.processing).toHaveBeenCalledWith(true);
+            });
 
-				sendToServer(taskData, taskObj);
-				expect(app.socket.emit).toHaveBeenCalled();
-				var args = app.socket.emit.mostRecentCall.args;
-				expect(args[0]).toBe('add_task');
-				expect(args[1]).toBe(taskData);
+            it('defines a way to send to server', function(){
+                var sendToServer = taskList.addNewItem.mostRecentCall.args[1],
+                    taskData = { task: 'data' },
+                    taskObj = {
+                        id: jasmine.createSpy('id'),
+                        processing: jasmine.createSpy('processing'),
+                        timestamp: jasmine.createSpy()
+                    };
 
-				var now = new Date();
-				var callback = args[2];
-				callback({ _id: 'task-id', timestamp: now });
-				expect(taskObj.id).toHaveBeenCalledWith('task-id');
-				expect(taskObj.processing).toHaveBeenCalledWith(false);
-				expect(taskObj.timestamp).toHaveBeenCalledWith(now);
-			});
-		});
-	});
+                sendToServer(taskData, taskObj);
+                expect(app.socket.emit).toHaveBeenCalled();
+                var args = app.socket.emit.mostRecentCall.args;
+                expect(args[0]).toBe('add_task');
+                expect(args[1]).toBe(taskData);
+
+                var now = new Date();
+                var callback = args[2];
+                callback({ _id: 'task-id', timestamp: now });
+                expect(taskObj.id).toHaveBeenCalledWith('task-id');
+                expect(taskObj.processing).toHaveBeenCalledWith(false);
+                expect(taskObj.timestamp).toHaveBeenCalledWith(now);
+            });
+        });
+
+        describe('remove task', function(){
+            var task;
+
+            beforeEach(function(){
+                spyOn(window, 'confirm');
+                task = { name: 'my-task', id: function() { return 123; } };
+            });
+
+            it('asks user to confirm', function(){
+                taskList.removeTask(task);
+                expect(window.confirm).toHaveBeenCalledWith('Are you sure you would like to remove this task?');
+            });
+
+            it('removes task if user confirms action', function(){
+                taskList.items.push(task);
+                window.confirm.andReturn(true);
+
+                taskList.removeTask(task);
+                expect(taskList.items().length).toBe(0);
+                expect(app.socket.emit).toHaveBeenCalledWith('remove_task', { id: 123, collaborationObjectId: 'list-id' });
+            });
+
+            it('does not remove task if not confirmed', function(){
+                taskList.items.push(task);
+                window.confirm.andReturn(false);
+
+                taskList.removeTask(task);
+                expect(taskList.items().length).toBe(1);
+                expect(app.socket.emit).not.toHaveBeenCalled();
+            });
+        });
+    });
 });

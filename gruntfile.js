@@ -9,12 +9,11 @@ module.exports = function(grunt){
                 'specs/server/*.js',
                 'specs/client/spec/*.js'],
             options: {
-                globals: {
-                    jQuery: true,
-                    node: true,
-                    curly: true,
-                    forin: true
-                }
+                jquery: true,
+                node: true,
+                curly: true,
+                forin: true,
+                validthis: true
             }
         },
         connect: {

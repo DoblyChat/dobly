@@ -12,8 +12,8 @@ define(['knockout', 'squire'], function(ko, Squire){
             var squire = new Squire(),
                 done = false;
 
-            app.groupUsers['FT'] = 'Freddy Teddy';
-            app.groupUsers['CA'] = 'Charlie App';            
+            app.groupUsers['FT-u'] = 'Freddy Teddy';
+            app.groupUsers['CA-u'] = 'Charlie App';            
             testData = testDataConversation();
             app.socket = createMockSocket();
             
@@ -31,7 +31,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                     items: ko.observableArray(),
                     data: data,
                     template: template
-                } 
+                };
             };
 
             createMessageMock = jasmine.createSpy('create-message');
@@ -41,7 +41,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                 var injector = new Squire();
                 
                 injector.mock('client/collaboration-object', function(){
-                    return createCollaborationObjectMock
+                    return createCollaborationObjectMock;
                 });
                 
                 injector.mock('client/message', function(){
@@ -297,7 +297,7 @@ define(['knockout', 'squire'], function(ko, Squire){
         function testDataConversation() {
             return {
                 _id: "8",
-                createdById: "FT",
+                createdById: "FT-u",
                 groupId: "5",
                 items: [ testDataMessageAlpha(), testDataMessageBeta() ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -314,7 +314,7 @@ define(['knockout', 'squire'], function(ko, Squire){
         function testDataSomeOtherConversation() {
             return {
                 _id: "10",
-                createdById: "FT",
+                createdById: "FT-u",
                 groupId: "5",
                 items: [ ],
                 timestamp: "2013-02-15T14:36:43.296Z",
@@ -323,7 +323,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                 totalMessages: 3,
                 members: {
                     entireGroup: false,
-                    users: [ 'FT', 'CA' ]
+                    users: [ 'FT-u', 'CA-u' ]
                 }
             };
         }
@@ -333,7 +333,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                 content: "alpha", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
-                createdById: "CA"
+                createdById: "CA-u"
             };
         }
 
@@ -342,7 +342,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                 content: "beta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:14:14'), 
-                createdById: "FT"
+                createdById: "FT-u"
             };
         }
 
@@ -351,7 +351,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                 content: "charlie", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
-                createdById: "CA"
+                createdById: "CA-u"
             };
         }
 
@@ -360,7 +360,7 @@ define(['knockout', 'squire'], function(ko, Squire){
                 content: "delta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
-                createdById: "FT"
+                createdById: "FT-u"
             };
         }
     });

@@ -61,12 +61,12 @@ define(['knockout', 'client/common'], function(ko, common){
 			self.updatedContent(self.rawContent);
 		};
 
-		function taskHasBeenUpdated(){
+		function hasBeenUpdated(){
 			return self.rawContent !== self.updatedContent();
 		}
 
-		self.updateTaskContent = function(){
-			if(taskHasBeenUpdated()){
+		self.updateContent = function(){
+			if(hasBeenUpdated()){
 				app.socket.emit('update_task_content', { 
 					id: self.id(), 
 					content: self.updatedContent(),
@@ -79,9 +79,9 @@ define(['knockout', 'client/common'], function(ko, common){
 			self.isEditing(false);
 		};
 
-		self.updateTaskContentKeyPress = function(obj, event){
+		self.updateContentKeyPress = function(obj, event){
 			if (common.enterKeyPressed(event) && !event.shiftKey) {
-				self.updateTaskContent();
+				self.updateContent();
 				return false;
 			}else{
 				return true;

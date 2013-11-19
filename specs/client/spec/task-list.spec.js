@@ -1,4 +1,6 @@
-define(['squire'], function(Squire){
+define(['squire', 'knockout'], function(Squire, ko){
+	'use strict';
+
 	describe('Task list', function(){
 		var createTaskList, createTaskMock,
 			taskList;
@@ -11,7 +13,9 @@ define(['squire'], function(Squire){
 	                init: jasmine.createSpy('init'),
 	                addNewItem: jasmine.createSpy('add'),
 	                data: data,
-	                template: template
+	                template: template,
+	                items: ko.observableArray([]),
+	                id: 'list-id'
 	            } 
 	        };
 
@@ -41,7 +45,7 @@ define(['squire'], function(Squire){
 
 			runs(function(){
 				taskList = createTaskList({
-					da: 'ta'
+					da: 'ta' 
 				});
 			});
 		});
@@ -96,6 +100,38 @@ define(['squire'], function(Squire){
 				expect(taskObj.id).toHaveBeenCalledWith('task-id');
 				expect(taskObj.processing).toHaveBeenCalledWith(false);
 				expect(taskObj.timestamp).toHaveBeenCalledWith(now);
+			});
+		});
+
+		describe('remove task', function(){
+			var task;
+
+			beforeEach(function(){
+				spyOn(window, 'confirm');
+				task = { name: 'my-task', id: function() { return 123; } };
+			});
+
+			it('asks user to confirm', function(){
+				taskList.removeTask(task);
+				expect(window.confirm).toHaveBeenCalledWith('Are you sure you would like to remove this task?');
+			});
+
+			it('removes task if user confirms action', function(){
+				taskList.items.push(task);
+				window.confirm.andReturn(true);
+
+				taskList.removeTask(task);
+				expect(taskList.items().length).toBe(0);
+				expect(app.socket.emit).toHaveBeenCalledWith('remove_task', { id: 123, collaborationObjectId: 'list-id' });
+			});
+
+			it('does not remove task if not confirmed', function(){
+				taskList.items.push(task);
+				window.confirm.andReturn(false);
+
+				taskList.removeTask(task);
+				expect(taskList.items().length).toBe(1);
+				expect(app.socket.emit).not.toHaveBeenCalled();
 			});
 		});
 	});

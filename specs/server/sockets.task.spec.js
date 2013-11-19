@@ -3,7 +3,8 @@ describe('Sockets', function(){
 
     describe('Tasks', function(){
 		var taskIo, taskMock, logMock,
-			collaborationObjectIo, confirm;
+			collaborationObjectIo, confirm,
+			socketMock;
 
 		beforeEach(function(){
 			confirm = jasmine.createSpy();
@@ -11,27 +12,30 @@ describe('Sockets', function(){
 			mockery.registerAllowable('../../lib/sockets/task_io');
 
 			collaborationObjectIo = buildMock('./base_collaboration_object_io', 'sendItem');
-			taskMock = buildMock('../models/task', 'create', 'update');
+			taskMock = buildMock('../models/task', 'create', 'update', 'remove');
 			logMock = buildMock('../common/log', 'error');
 
 			taskIo = require('../../lib/sockets/task_io');
+
+			socketMock = { 
+				broadcastToCollaborationObjectMembers: jasmine.createSpy(),
+				handshake: {
+					user: {
+						_id: 'u-id',
+						firstName: 'usr'
+					}
+				}
+			};
 		});
 
-		it('saves task', function(){
-			var socket = {
-					handshake: {
-						user: {
-							firstName: 'usr'
-						}
-					}
-				},
-				sockets = { 'sock': 'ets' },
+		it('adds task', function(){
+			var sockets = { 'sock': 'ets' },
 				data = { da: 'ta' };
 
-			taskIo.add(socket, sockets, data, confirm);
+			taskIo.add(socketMock, sockets, data, confirm);
 			expect(collaborationObjectIo.sendItem).toHaveBeenCalled();
 			var addArgs = collaborationObjectIo.sendItem.mostRecentCall.args;
-			expect(addArgs[0]).toBe(socket);
+			expect(addArgs[0]).toBe(socketMock);
 			expect(addArgs[1]).toBe(sockets);
 			expect(addArgs[2]).toBe(data);
 			expect(addArgs[4]).toBe(confirm);
@@ -43,27 +47,37 @@ describe('Sockets', function(){
 			
 			var taskData = taskMock.create.mostRecentCall.args[0];
 			expect(taskData.description).toBe(data.description);
-			expect(taskData.createdById).toBe(socket.handshake.user._id);
+			expect(taskData.createdById).toBe(socketMock.handshake.user._id);
 			expect(taskData.timestamp).toBe(Date.now());
 			expect(taskData.collaborationObjectId).toBe(data.collaborationObjectId);
 
 			expect(taskMock.create.getCallback()).toBe(callback);
-		});		
+		});
+
+		it('removes a task', function(){
+			var data = {
+				id: 't-id',
+				collaborationObjectId: 'c-id'
+			};
+
+			taskIo.remove(socketMock, data);
+
+			expect(taskMock.remove).toHaveBeenCalled();
+			expect(taskMock.remove.mostRecentCall.args[0]).toEqual({ _id: 't-id' });
+			var callback = taskMock.remove.getCallback();
+
+			callback('my error');
+			expect(logMock.error).toHaveBeenCalledWith('my error', 'Error removing task.');
+			expect(socketMock.broadcastToCollaborationObjectMembers).not.toHaveBeenCalled();
+
+			logMock.error.reset();
+
+			callback(null);
+			expect(logMock.error).not.toHaveBeenCalled();
+			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_removed', 'c-id', data);
+		});
 
 		describe('toggle whether a task is complete or not', function(){
-			var socketMock;
-
-			beforeEach(function(){
-				socketMock = { 
-					broadcastToCollaborationObjectMembers: jasmine.createSpy(),
-					handshake: {
-						user: {
-							_id: 'u-id'
-						}
-					}
-				};
-			});
-
 			it('marks a task as complete', function(){
 				var data = { id: 't-id', collaborationObjectId: 'c-id', isComplete: true };
 
@@ -129,14 +143,11 @@ describe('Sockets', function(){
 		});	
 
 		it('updates a tasks content', function(){
-			var socketMock = {
-					broadcastToCollaborationObjectMembers: jasmine.createSpy()
-				},
-				data = {
-					id: 't-id',
-					collaborationObjectId: 'c-id',
-					content: 'new content'
-				};
+			var data = {
+				id: 't-id',
+				collaborationObjectId: 'c-id',
+				content: 'new content'
+			};
 
 			taskIo.updateContent(socketMock, data);
 
@@ -149,8 +160,12 @@ describe('Sockets', function(){
 
 			callback('err');
 			expect(logMock.error).toHaveBeenCalledWith('err', 'Error updating task content.');
+			expect(socketMock.broadcastToCollaborationObjectMembers).not.toHaveBeenCalled();
+
+			logMock.error.reset();
 
 			callback(null);
+			expect(logMock.error).not.toHaveBeenCalled();
 			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_content_updated', 'c-id', data);
 		});
 	});

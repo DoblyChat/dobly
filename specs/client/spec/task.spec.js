@@ -212,7 +212,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                 it('submits new content', function(){
                     task.updatedContent('new content');
                     
-                    task.updateTaskContent();
+                    task.updateContent();
 
                     expect(app.socket.emit).toHaveBeenCalledWith('update_task_content', { id: 't-id', content: 'new content' });
                     expect(task.content()).toBe('f-new content');
@@ -220,7 +220,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                 });
 
                 it('does not submit if task content has not been updated', function(){
-                    task.updateTaskContent();
+                    task.updateContent();
                     
                     expect(app.socket.emit).not.toHaveBeenCalled();
 
@@ -232,7 +232,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                     var event;
 
                     beforeEach(function(){
-                        spyOn(task, 'updateTaskContent');
+                        spyOn(task, 'updateContent');
                         event = {
                             shiftKey: false
                         };
@@ -242,24 +242,24 @@ define(['client/task', 'client/common'], function(createTask, common){
                     it('does not submit if shift key pressed', function(){
                         common.enterKeyPressed.andReturn(true);
                         event.shiftKey = true;
-                        var ret = task.updateTaskContentKeyPress(null, event);
-                        expect(task.updateTaskContent).not.toHaveBeenCalled();
+                        var ret = task.updateContentKeyPress(null, event);
+                        expect(task.updateContent).not.toHaveBeenCalled();
                         expect(ret).toBe(true);
                     });
 
                     it('does not submit if enter not pressed', function(){
                         task.updatedContent('new content');
                         common.enterKeyPressed.andReturn(false);
-                        var ret = task.updateTaskContentKeyPress(null, event);
-                        expect(task.updateTaskContent).not.toHaveBeenCalled();
+                        var ret = task.updateContentKeyPress(null, event);
+                        expect(task.updateContent).not.toHaveBeenCalled();
                         expect(ret).toBe(true);
                     });
 
                     it('does attempt submit when enter pressed', function(){
                         common.enterKeyPressed.andReturn(true);
 
-                        var ret = task.updateTaskContentKeyPress(null, event);
-                        expect(task.updateTaskContent).toHaveBeenCalled();
+                        var ret = task.updateContentKeyPress(null, event);
+                        expect(task.updateContent).toHaveBeenCalled();
                         expect(ret).toBe(false);
                     });
                 });

@@ -29,14 +29,15 @@ script(id="task-list-template", type="text/html")
 						
 						.text(data-bind="html: content, visible: !isEditing()")
 						
-						textarea(rows=1, data-bind="value: updatedContent, visible: isEditing, valueUpdate: 'input', event: { keypress: updateTaskContentKeyPress }")
+						textarea(rows=1, data-bind="value: updatedContent, visible: isEditing, valueUpdate: 'input', event: { keypress: updateContentKeyPress }")
 						
 						.icons(data-bind="visible: !isEditing()")
 							span.icon.icon-pencil(data-bind="click: startEdit")
 							span.icon.icon-info(data-bind="click: toggleDetails")
+							span.icon.icon-dismiss(data-bind="click: $parent.removeTask")
 						
 						.buttons(data-bind="visible: isEditing")
-							button.blue-button(type="button", data-bind="click: updateTaskContent") Save
+							button.blue-button(type="button", data-bind="click: updateContent") Save
 							button.white-button(type="button", data-bind="click: cancelEdit") Cancel
 						
 						div(style="clear: both")

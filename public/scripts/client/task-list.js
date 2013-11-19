@@ -23,6 +23,18 @@ define(['client/collaboration-object', 'client/task'], function(createCollaborat
 
 		self.addTask = self.addNewItem(createNewTask, sendTaskToServer);
 
+
+		self.removeTask = function(task){
+			if(confirm('Are you sure you would like to remove this task?')){
+				self.items.remove(task);
+
+				app.socket.emit('remove_task', {
+					id: task.id(),
+					collaborationObjectId: self.id
+				});
+			}
+		};
+
 		return self;
 	}
 });

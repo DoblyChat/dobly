@@ -4,7 +4,7 @@ define([
         'client/desktop', 
         'client/notifications', 
         'client/navigation', 
-        'client/allConversations', 
+        'client/archive', 
         'client/conversation', 
         'client/task-list',
         'client/collaboration-object.new', 
@@ -15,7 +15,7 @@ define([
                                     createDesktop, 
                                     createNotifier, 
                                     createNavigationModule, 
-                                    createAllConversations,
+                                    createArchive,
                                     createConversation,
                                     createTaskList,
                                     createNewCollaborationObject,
@@ -49,7 +49,7 @@ define([
         self.desktop = createDesktop(desktopData, self.collaborationObjects());
         self.notifier = createNotifier(self.desktop);
         self.navigation = createNavigationModule(self);
-        self.allConversations = createAllConversations(self.desktop, self.navigation, self.collaborationObjects);
+        self.archive = createArchive(self.desktop, self.navigation, self.collaborationObjects);
         self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
         self.changeTopic = createChangeTopic(self.navigation);
 

@@ -5,7 +5,7 @@ define(['knockout', 'client/common'], function(ko, common){
         var self = {};
 
         self.showingDesktop = ko.observable(true);
-        self.showingAll = ko.observable(false);
+        self.showingArchive = ko.observable(false);
         self.showingNewCollaborationObject = ko.observable(false);
         self.showingNotificationSetup = ko.observable(false);
         self.showingGroup = ko.observable(false);
@@ -13,7 +13,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
         var flags = [ 
             self.showingDesktop, 
-            self.showingAll, 
+            self.showingArchive, 
             self.showingNewCollaborationObject, 
             self.showingNotificationSetup, 
             self.showingGroup, 
@@ -34,10 +34,10 @@ define(['knockout', 'client/common'], function(ko, common){
             }
         }
 
-        self.all = function() {
-            viewModel.allConversations.refresh();
-            onlyShow(self.showingAll);
-            common.delayedFocus('#all-convos .search input');
+        self.archive = function() {
+            viewModel.archive.refresh();
+            onlyShow(self.showingArchive);
+            common.delayedFocus('#archive .search input');
         };
 
         self.desktop = function() {

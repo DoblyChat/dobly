@@ -27,47 +27,6 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             expect(search.searching()).toBe(false);
         });
 
-        describe("topic search", function() {
-            var someTopic, someOtherTopic;
-
-            beforeEach(function() {
-                someTopic = createConversation(testData);
-                testData.topic = 'some other topic';
-                someOtherTopic = createConversation(testData);
-            });
-
-            it("blank", function() {
-                app.topicSearch('');
-                expect(someTopic.search.topicMatched()).toBe(true);
-                expect(someOtherTopic.search.topicMatched()).toBe(true);
-            });
-
-            it("some", function() {
-                app.topicSearch('some');
-                expect(someTopic.search.topicMatched()).toBe(true);
-                expect(someOtherTopic.search.topicMatched()).toBe(true); 
-            });
-
-            it("some topic", function() {
-                app.topicSearch('some topic');
-                expect(app.topicSearch()).toEqual('some topic');
-                expect(someTopic.search.topicMatched()).toBe(true);
-                expect(someOtherTopic.search.topicMatched()).toBe(false); 
-            });
-
-            it("some other", function() {
-                app.topicSearch('some other');
-                expect(someTopic.search.topicMatched()).toBe(false);
-                expect(someOtherTopic.search.topicMatched()).toBe(true); 
-            });
-
-            it("no matches", function() {
-                app.topicSearch('xyz');
-                expect(someTopic.search.topicMatched()).toBe(false);
-                expect(someOtherTopic.search.topicMatched()).toBe(false); 
-            });        
-        });
-
         it("done", function() {
             spyOn(search, "reset");
             spyOn(conversation.ui, "hideSearch");

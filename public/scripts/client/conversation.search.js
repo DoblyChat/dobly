@@ -11,10 +11,6 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
         self.matches = [];
         var currentQuery = '';
 
-        self.topicMatched = ko.computed(function() {
-            return conversation.topic().toLowerCase().indexOf(app.topicSearch().toLowerCase()) > -1;
-        });
-
         self.query = ko.observable('');
         self.exhausted = ko.observable(false);
         self.searching = ko.observable(false);

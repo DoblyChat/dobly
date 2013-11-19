@@ -25,7 +25,7 @@ module.exports = function(grunt){
         jasmine: {
             taskName: {
                 src: [
-                    'public/scripts/client/allConversations.js',
+                    'public/scripts/client/archive.js',
                     'public/scripts/client/changeTopic.js',
                     'public/scripts/client/common.js',
                     'public/scripts/client/conversation.js',

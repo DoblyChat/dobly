@@ -21,7 +21,10 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             it("load properties", function() {
                 collaborationObject = createCollaborationObject(testData, 'template');
                 collaborationObject.init(function(itemData){
-                    return { data: itemData };
+                    return { 
+                        data: itemData, 
+                        timestamp: jasmine.createSpy().andReturn(Date.now()) 
+                    };
                 });
                 expect(collaborationObject.id).toEqual('8');
                 expect(collaborationObject.topic()).toEqual("some topic");
@@ -65,7 +68,10 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             it("pushes items", function() {
                 collaborationObject = createCollaborationObject(testData);
                 collaborationObject.init(function(itemData){
-                    return { data: itemData };
+                    return { 
+                        data: itemData, 
+                        timestamp: jasmine.createSpy().andReturn(Date.now()) 
+                    };
                 });
 
                 expect(collaborationObject.items().length).toBe(2);
@@ -81,8 +87,13 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 beforeEach(function() {
                     app.inFocus = true;
                     collaborationObject = createCollaborationObject(testData);
-                    collaborationObject.init(function(){});               
-                    expect(collaborationObject.unreadCounter()).toBe(1);                                
+                    collaborationObject.init(function(itemData){
+                        return { 
+                            data: itemData, 
+                            timestamp: jasmine.createSpy().andReturn(Date.now()) 
+                        };
+                    });             
+                    expect(collaborationObject.unreadCounter()).toBe(1);
                     expect(collaborationObject.items().length).toBe(2);
                     spyOn(collaborationObject.ui.scroll, 'adjust');
                 });
@@ -335,6 +346,57 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             });
         });
 
+        describe("topic search", function() {
+            var someTopic, someOtherTopic;
+
+            beforeEach(function() {
+                someTopic = createCollaborationObject(testData);
+                testData.topic = 'some other topic';
+                someOtherTopic = createCollaborationObject(testData);
+            });
+
+            it("blank", function() {
+                app.topicSearch('');
+                expect(someTopic.topicMatched()).toBe(true);
+                expect(someOtherTopic.topicMatched()).toBe(true);
+            });
+
+            it("some", function() {
+                app.topicSearch('some');
+                expect(someTopic.topicMatched()).toBe(true);
+                expect(someOtherTopic.topicMatched()).toBe(true); 
+            });
+
+            it("some topic", function() {
+                app.topicSearch('some topic');
+                expect(app.topicSearch()).toEqual('some topic');
+                expect(someTopic.topicMatched()).toBe(true);
+                expect(someOtherTopic.topicMatched()).toBe(false); 
+            });
+
+            it("some other", function() {
+                app.topicSearch('some other');
+                expect(someTopic.topicMatched()).toBe(false);
+                expect(someOtherTopic.topicMatched()).toBe(true); 
+            });
+
+            it("no matches", function() {
+                app.topicSearch('xyz');
+                expect(someTopic.topicMatched()).toBe(false);
+                expect(someOtherTopic.topicMatched()).toBe(false); 
+            });        
+        });
+
+        describe("last activity message", function() {
+            var someCollaborationObject;
+
+            it("no activity", function() {
+                testData.items = [];
+                var emptyCollaborationObject = createCollaborationObject(testData);
+                expect(emptyCollaborationObject.lastActivityMessage()).toEqual('No activity.');
+            });
+        });
+
         function testDataCollaborationObject() {
             return {
                 _id: "8",
@@ -373,7 +435,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             return {
                 content: "alpha", 
                 collaborationObjectId: "8", 
-                createdById: "CA"
+                createdById: "CA",
             };
         }
 

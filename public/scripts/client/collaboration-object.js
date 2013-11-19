@@ -137,6 +137,27 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
             app.socket.emit('mark_as_read', self.id);
         }
 
+        self.topicMatched = ko.computed(function() {
+            return self.topic().toLowerCase().indexOf(app.topicSearch().toLowerCase()) > -1;
+        });
+
+        self.lastActivityMessage = ko.computed(function() {
+            var itemsLength = self.items().length;
+            if (itemsLength > 0) {
+                var lastItemTimestamp = self.items()[itemsLength - 1].timestamp();
+                var p = isToday(lastItemTimestamp) ? ' at ' : ' on ';
+                var t = common.formatSimpleTimestamp(lastItemTimestamp);
+                return 'Last activity' + p + t + '.';
+            } else {
+                return 'No activity.';
+            }            
+        });
+
+        function isToday(timestampString) {
+            var dateStamp = new Date(timestampString).clearTime();
+            return dateStamp.equals(Date.today());
+        }
+
         return self;
     };
 });

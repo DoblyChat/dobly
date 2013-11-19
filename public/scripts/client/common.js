@@ -32,7 +32,9 @@
         self.delayedFocus = function(selector, delay, hook){
             setTimeout(function () { 
                 self.focus(selector);
-                if(hook) hook();
+                if(hook) {
+                    hook();
+                }
             }, delay ? delay : 400);
         };
 

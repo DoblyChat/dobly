@@ -6,14 +6,14 @@ define(['client/message', 'client/common'], function(createMessage, common){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
                 return 'e-' + string;
             });
-            app.groupUsers["SO"] = "Someone Else";
+            app.groupUsers["SO-u"] = "Someone Else";
         });
 
         it("creates message", function() {
             var data = {
                 content: "line 1\nline 2\nline 3", 
                 conversationId: "123", 
-                createdById: "SO",
+                createdById: "SO-u",
                 _id: 'm-id'
             };
 
@@ -31,7 +31,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
             var data = {
                 content: "line 1\nline 2\nline 3", 
                 conversationId: "123", 
-                createdById: "SO",
+                createdById: "SO-u",
                 _id: 'm-id',
                 timestamp: Date.parse('2012.04.09 22:13:34'),
             };

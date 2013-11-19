@@ -21,7 +21,7 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 		});
 
 		it('sets up', function(){
-			spyOn($.fn, 'chosen')
+			spyOn($.fn, 'chosen');
 			spyOn(common, 'delayedFocus');
 
 			newCollaborationObject.setup();

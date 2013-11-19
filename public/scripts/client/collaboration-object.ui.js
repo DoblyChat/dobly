@@ -41,13 +41,11 @@ define(['jquery', 'nanoscroller', 'hoverIntent'], function($){
             }
 
             function thickBar() {
-                $(this).addClass("thickBar");
-                $(this).siblings(".pane").addClass("thickBar");
+                $(this).addClass("thickBar").siblings(".pane");
             }
 
             function thinBar() {
-                $(this).removeClass("thickBar");
-                $(this).siblings(".pane").removeClass("thickBar");
+                $(this).removeClass("thickBar").siblings(".pane");
             }
 
             scroll.adjust = function() {

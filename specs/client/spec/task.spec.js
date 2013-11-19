@@ -130,7 +130,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                     expect(task.processing()).toBe(true);
 
                     var data = {};
-                    spyOn(task, 'updateCompleteValues')
+                    spyOn(task, 'updateCompleteValues');
                     args[2](data);
                     expect(task.updateCompleteValues).toHaveBeenCalledWith(data);
                     expect(task.processing()).toBe(false);

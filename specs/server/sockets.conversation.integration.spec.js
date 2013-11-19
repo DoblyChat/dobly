@@ -45,7 +45,7 @@ describe('Sockets', function(){
                         entireGroup: true
                     }
                 }, function(err, collaborationObject){
-                    if (err) { console.log(err) };
+                    if (err) { console.log(err); }
 
                     collaborationObjectId = collaborationObject._id;
 
@@ -56,7 +56,7 @@ describe('Sockets', function(){
                         groupId: socketMock.handshake.user.groupId,
                         password: 'pass'
                     }, function(err, user){
-                        if (err) { console.log(err) };
+                        if (err) { console.log(err); }
                         userId = user._id;
                         done(err);
                     });

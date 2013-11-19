@@ -13,17 +13,20 @@ exports.up = function(next){
 
     function execute() {
     	Message.find({}, function(err, messages) {
-    		async.each(messages, changeConversationId, function(err) {
+    		async.each(messages, update, function(err) {
     			helper.logError(err);
     			UnreadMarker.find({}, function(err, unreadMarkers) {
-    				async.each(unreadMarkers, changeConversationId, function(err) {
+    				async.each(unreadMarkers, function(item, callback) {
+                        item.collaborationObjectId = item._doc.conversationId;
+                        item.save(callback);
+                    }, function(err) {
     					helper.logError(err);
     					helper.disconnect(next);
     				});
     			});
     		});
 
-            function changeConversationId(item, callback) {
+            function update(item, callback) {
                 item.collaborationObjectId = item._doc.conversationId;
                 updateCreatedById(item, callback);
             }

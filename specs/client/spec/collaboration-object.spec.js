@@ -81,7 +81,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
         });
 
         describe("add item", function() {
-            var testItem = { test: 'item' };
+            var testItem = { test: 'item', timestamp: function(){ return new Date(); } };
 
             describe("when app in focus", function() {
                 beforeEach(function() {
@@ -141,7 +141,10 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                     app.inFocus = false;
                     collaborationObject = createCollaborationObject(testData); 
                     collaborationObject.init(function(itemData){
-                        return { data: itemData };
+                        return { 
+                            data: itemData,
+                            timestamp: function(){ return new Date(); }
+                        };
                     });               
                     expect(collaborationObject.unreadCounter()).toBe(1);                                
                     expect(collaborationObject.items().length).toBe(2);

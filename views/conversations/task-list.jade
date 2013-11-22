@@ -22,7 +22,7 @@ script(id="task-list-template", type="text/html")
 		.nano.collaboration-object-body(data-bind="click: markAsRead")
 			.content
 				div(data-bind="foreach: items")
-					.task(data-bind="attr: { id: id }, css: { complete: isComplete }")
+					.item.task(data-bind="attr: { id: id }, css: { complete: isComplete }")
 						.input-container
 							input.checkbox(type='checkbox', data-bind="click: toggleComplete, checked: isComplete, visible: !processing()")
 							img.pending-timer(src="/images/spinner.gif", alt="processing...", width="14", height="14", data-bind="visible: processing")

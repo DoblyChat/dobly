@@ -69,7 +69,7 @@ define([
         };
 
         self.page = function(hook) {
-            app.socket.emit('read_next_messages', { page: nextPage, conversationId: self.id }, function(messages){
+            app.socket.emit('read_next_messages', { page: nextPage, collaborationObjectId: self.id }, function(messages){
                 ko.utils.arrayForEach(messages, function(message){
                     self.items.unshift(createMessage(message, true));
                 });

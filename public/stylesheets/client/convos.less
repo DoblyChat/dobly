@@ -67,14 +67,29 @@
 		}
 	}
 
-	.item {
+	.message {
 		.author {
 			.caption-color;
 			float: left;
 		}
 
+		.time {
+			float: right;
+
+			span{
+				font-size: @text-size - 1px;
+				.caption-color;
+			}
+			
+			.pending-timer{
+				width: 14px;
+				height: 14px;
+			}
+		}
+
 		.text {
 			padding-top: 5px;
+			clear: both;
 		}
 
 		.highlight {

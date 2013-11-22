@@ -5,7 +5,7 @@ define(['jquery'], function($){
         var self = collaborationObjectUi || {};
 
         self.highlightTopMessages = function(messageCount) {
-            $(self.getSelector('.collaboration-object-body .content .item'))
+            $(self.getSelector('.collaboration-object-body .content .message'))
                 .slice(0, messageCount)
                 .effect("highlight", { color: '#E5FBFF' }, 2000);
         };

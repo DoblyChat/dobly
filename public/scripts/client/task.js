@@ -12,7 +12,6 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.completedOn = ko.observable();
 		self.completedBy = ko.observable();
 		self.content = ko.observable();
-		self.rawContent = ko.observable();
 		self.processing = ko.observable(false);
 		self.showDetails = ko.observable(false);
 		self.isEditing = ko.observable(false);

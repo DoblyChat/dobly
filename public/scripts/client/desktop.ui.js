@@ -6,6 +6,7 @@ define(['jquery', 'jquery-ui'], function($){
 
         self.resize = (function () {
             var res = {};
+            var objectsBorder = 2;
 
             res.stripAndCollaborationObjects = function() {
                 var includeMargin = true;
@@ -14,7 +15,7 @@ define(['jquery', 'jquery-ui'], function($){
                 var $objects = $('#collaboration-objects');
                 var objectsMargin = $objects.outerHeight(includeMargin) - $objects.innerHeight();
 
-                var height = bodyHeight - headerHeight - objectsMargin;
+                var height = bodyHeight - headerHeight - objectsMargin - objectsBorder;
                 $objects.height(height);
                 $('#strip').height(height);
             };
@@ -30,11 +31,11 @@ define(['jquery', 'jquery-ui'], function($){
             };
 
             function tiles() {    
-                var stripHeight = $('#strip').outerHeight();
+                var stripHeight = $('#strip').outerHeight(  );
                 var newTileHeight = $('#new-tile').outerHeight();
                 var newMesageBar = $('#new-message-bar').outerHeight();
 
-                $('#tiles').height(stripHeight - newTileHeight - newMesageBar);
+                $('#tiles').height(stripHeight - newTileHeight - newMesageBar - objectsBorder);
             }
 
             res.tilesAndCollaborationObjectBodies = function() {

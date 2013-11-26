@@ -391,12 +391,60 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
         });
 
         describe("last activity message", function() {
-            var someCollaborationObject;
-
             it("no activity", function() {
                 testData.items = [];
                 var emptyCollaborationObject = createCollaborationObject(testData);
                 expect(emptyCollaborationObject.lastActivityMessage()).toEqual('No activity.');
+            });
+
+            it("last activity today", function() {
+                testData.items = [];
+
+                var yesterday = { 
+                    timestamp: function() {
+                        return Date.today().add(-1).days();
+                    }
+                };
+
+                var today = {
+                    timestamp: function() {
+                        return Date.today().set({ hour: 8, minute: 30 });;
+                    }
+                };
+
+                testData.items.push(yesterday);
+                testData.items.push(today);
+
+                var colabObj = createCollaborationObject(testData);
+                colabObj.init(function(item) {
+                    return item;
+                });
+                expect(colabObj.lastActivityMessage()).toEqual('Last activity at 8:30 AM.');
+            });
+
+            it("last activity in the past", function() {
+                testData.items = [];
+
+                var itemOne = { 
+                    timestamp: function() {
+                        return Date.parse('2012-06-25');
+                    }
+                };
+
+                var itemTwo = {
+                    timestamp: function() {
+                        return Date.parse('2012-07-13');
+                    }
+                };
+
+                testData.items.push(itemOne);
+                testData.items.push(itemTwo);
+
+                var colabObj = createCollaborationObject(testData);
+                colabObj.init(function(item) {
+                    return item;
+                });
+                expect(colabObj.lastActivityMessage()).toEqual('Last activity on 7/13/2012.');
             });
         });
 
@@ -438,7 +486,8 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             return {
                 content: "alpha", 
                 collaborationObjectId: "8", 
-                createdById: "CA-u"
+                createdById: "CA-u",
+                timestamp: function() { return }
             };
         }
 

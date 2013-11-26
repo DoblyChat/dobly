@@ -148,7 +148,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
                 var params = app.socket.emit.mostRecentCall.args[1];
                 expect(params.page).toBe(1);
-                expect(params.conversationId).toEqual("8");
+                expect(params.collaborationObjectId).toEqual("8");
 
                 var callback = app.socket.emit.mostRecentCall.args[2];
                 var newMessages = [ testDataMessageEcho(), testDataMessageFoxtrot() ];

@@ -43,7 +43,7 @@ describe('Sockets', function(){
 			var messageData = messageMock.create.mostRecentCall.args[0];
 			expect(messageData.content).toBe(data.content);
 			expect(messageData.createdById).toBe(socket.handshake.user._id);
-			expect(messageData.timestamp).toBe(Date.now());
+			expect(messageData.timestamp).toBeEquivalentDates(Date.now());
 			expect(messageData.collaborationObjectId).toBe(data.collaborationObjectId);
 
 			expect(messageMock.create.getCallback()).toBe(callback);

@@ -19,7 +19,7 @@ describe('Desktop route', function(){
 
 		groupMock = buildMock('../models/group', 'findOne', 'findById', 'find', 'create');
 		userMock = buildMock('../models/user', 'create', 'find');
-		desktopMock = buildMock('../models/desktop', 'findOrCreateByUserId', 'isModified');
+		desktopMock = buildMock('../models/desktop', 'findOrCreateByUserId');
 		unreadMock = buildMock('../models/unread_marker', 'find');
 		asyncMock = buildMock('async', 'parallel', 'each');
 		collaborationObjectMock = buildMock('../models/collaboration_object', 'findAllowedCollaborationObjects');
@@ -210,6 +210,7 @@ describe('Desktop route', function(){
 					desktop: {
 						collaborationObjects: [],
 						isModified: jasmine.createSpy(),
+						save: jasmine.createSpy()
 					},
 					markers: [],
 				};
@@ -235,18 +236,6 @@ describe('Desktop route', function(){
 				render('some error', {});
 
 				expect(logMock.error).toHaveBeenCalledWith('Error rendering desktop', 'some error');
-			});
-
-			it('logs error if there is an error updating the desktop collaborationObjects', function(){
-				data.desktop.isModified.andReturn(true);
-				data.desktop.save = jasmine.createSpy();
-				render(null, data);
-
-				expect(data.desktop.save).toHaveBeenCalled();
-
-				var saveCallback = data.desktop.save.getCallback();
-				saveCallback('save error');
-				expect(logMock.error).toHaveBeenCalledWith('Error updating desktop when rendering', 'save error');
 			});
 
 			it('sets groups users', function(){
@@ -293,9 +282,28 @@ describe('Desktop route', function(){
 				});
 			});
 
+			it('updates desktop if modified', function(){
+				data.desktop.isModified.andReturn(true);
+				render(null, data);
+
+				expect(data.desktop.isModified).toHaveBeenCalledWith('collaborationObjects');
+				expect(data.desktop.save).toHaveBeenCalled();
+
+				var args = data.desktop.save.mostRecentCall.args;
+				args[0]('my error');
+				expect(logMock.error).toHaveBeenCalledWith('Error updating desktop when rendering', 'my error');
+				expect(res.render).not.toHaveBeenCalled();
+
+				logMock.error.reset();
+
+				args[0](null);
+				expect(logMock.error).not.toHaveBeenCalled();
+				expect(res.render).toHaveBeenCalled();
+			});
+
 			it('renders desktop', function(){
 				data.markers.push({ collaborationObjectId: object3, count: 88 });
-
+				
 				render(null, data);
 
 				expect(res.render).toHaveBeenCalled();
@@ -311,6 +319,8 @@ describe('Desktop route', function(){
 				expect(renderData.currentUser).toBe(JSON.stringify(req.user));
 				expect(renderData.group).toBe(JSON.stringify(data.group));
 				expect(renderData.layout).toBe('');
+
+				
 			});
 		});
 	});

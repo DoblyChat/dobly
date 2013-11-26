@@ -186,11 +186,12 @@ describe('Desktop route - integration', function(){
             res.render = function(url, result){
                 expect(url).toBe('conversations');
                 verifyCollaborationObjects(JSON.parse(result.collaborationObjects));
-                verifyDesktop(JSON.parse(result.desktop));
                 verifyCurrentUser(JSON.parse(result.currentUser));
                 verifyGroup(JSON.parse(result.group));
 
-                done();
+                verifyDesktop(JSON.parse(result.desktop), function(){
+                    done();    
+                });
             };
 
             desktopRoute.get(req, res);
@@ -254,11 +255,19 @@ describe('Desktop route - integration', function(){
             verifyTasklists(collaborationObjects);
         }
 
-        function verifyDesktop(desktop){
+        function verifyDesktop(desktop, callback){
             expect(desktop.userId).toBe(testUser._id.toString());
             expect(desktop.collaborationObjects).toContain(collaborationObjects[0]._id.toString());
             expect(desktop.collaborationObjects).toContain(collaborationObjects[1]._id.toString());
             expect(desktop.collaborationObjects).not.toContain(collaborationObjects[2]._id.toString());
+
+            Desktop.findById(desktop._id, function(err, savedDesktop){
+                expect(savedDesktop.collaborationObjects).toContain(collaborationObjects[0]._id);
+                expect(savedDesktop.collaborationObjects).toContain(collaborationObjects[1]._id);
+                expect(savedDesktop.collaborationObjects).not.toContain(collaborationObjects[2]._id);
+
+                callback();
+            });
         }
 
         function verifyCurrentUser(currentUser){

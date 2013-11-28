@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>lib/routes/desktop.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">75.68</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">126</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">21.79</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">1.08</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">module.exports = (function(){
+	var CollaborationObject = require(&#039;../models/collaboration_object&#039;),
+        Message = require(&#039;../models/message&#039;),
+        Task = require(&#039;../models/task&#039;),
+        User = require(&#039;../models/user&#039;),
+        Group = require(&#039;../models/group&#039;),
+        Desktop = require(&#039;../models/desktop&#039;),
+        UnreadMarker = require(&#039;../models/unread_marker&#039;),
+        async = require(&#039;async&#039;),
+        log = require(&#039;../common/log&#039;),
+        title = &#039;Dobly&#039;,
+        self = {};
+
+    self.get = function(req, res) {
+        async.parallel({
+            collaborationObjects: function(callback){
+                CollaborationObject.findAllowedCollaborationObjects(req.user.groupId, req.user._id, function(err, collaborationObjects){
+                    if(err){
+                        callback(err);
+                    }else{
+                        async.parallel([
+                            function(callback){
+                                async.each(collaborationObjects, loadItems, callback);
+
+                                function loadItems(collaborationObject, callback){
+                                    if (collaborationObject.type === &#039;C&#039;) {
+                                        Message.readMessagesByPage(collaborationObject._id, 0, function(err, messages){
+                                            collaborationObject.items = messages.reverse();
+                                            callback(err);
+                                        });
+                                    } else {
+                                        Task.readTasks(collaborationObject._id, function(err, tasks){
+                                            collaborationObject.items = tasks;
+                                            callback(err);
+                                        });
+                                    }
+                                }
+                            },
+                            function(callback){
+                                async.each(collaborationObjects, loadMessageCount, callback);
+
+                                function loadMessageCount(collaborationObject, callback){
+                                    if (collaborationObject.type === &#039;C&#039;) {
+                                        Message.count({ collaborationObjectId: collaborationObject._id }, function(err, count){
+                                            collaborationObject.totalMessages = count;
+                                            callback(err);
+                                        });
+                                    }else{
+                                        callback(null);
+                                    }
+                                }
+                            }
+                        ], function(err){
+                            callback(err, collaborationObjects);
+                        });
+                    }
+                });
+            },
+            desktop: function(callback){
+                Desktop.findOrCreateByUserId(req.user._id, callback);
+            },
+            markers: function(callback){
+                UnreadMarker.find({ userId: req.user._id }, null, { lean: true }, callback);
+            },
+            group: function(callback){
+                Group.findById(req.user.groupId, &#039;name rawName&#039;, { lean: true }, callback);
+            },
+            users: function(callback){
+                User.find({ groupId: req.user.groupId }, &#039;_id firstName lastName&#039;, { lean: true }, callback);
+            }
+        },
+        function(err, results) {
+            function addUnread(collaborationObject){
+                collaborationObject.unread = 0;
+                
+                results.markers.forEach(function(marker){
+                    if(marker.collaborationObjectId.equals(collaborationObject._id)){
+                        collaborationObject.unread = marker.count;
+
+                        if(results.desktop.collaborationObjects.indexOf(collaborationObject._id) &lt; 0){
+                            results.desktop.collaborationObjects.push(collaborationObject._id);
+                        }
+
+                        return;
+                    }
+                });
+            }
+
+            function render() {
+                res.render(&#039;conversations&#039;, 
+                { 
+                    title: title,
+                    collaborationObjects: JSON.stringify(results.collaborationObjects),
+                    desktop: JSON.stringify(results.desktop), 
+                    currentUser: JSON.stringify(req.user),
+                    group: JSON.stringify(results.group),
+                    layout: &#039;&#039;
+                }); 
+            }
+            
+            if(err){
+                log.error(&#039;Error rendering desktop&#039;, err);
+            }else{
+                results.group.users = results.users;
+
+                results.collaborationObjects.forEach(function(collaborationObject){
+                    addUnread(collaborationObject);
+                });
+
+                if(results.desktop.isModified(&#039;conversations&#039;)){
+                    results.desktop.save(function(err){
+                        if(err){
+                            log.error(&#039;Error updating desktop when rendering&#039;, err);
+                        }else{
+                            render();   
+                        }
+                    });
+                }else{
+                    render();
+                }
+            }           
+        });
+    };
+
+    return self;
+})();</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

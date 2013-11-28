@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>public/scripts/client/desktop.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">71.94</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">169</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">57.33</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">1.44</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">define([&#039;knockout&#039;, &#039;client/desktop.ui&#039;], function(ko, createDesktopUi){
+    &#039;use strict&#039;;
+    
+    return function (data, allCollaborationObjects){
+        var self = {};
+
+        self.id = data._id;
+
+        self.collaborationObjects = ko.observableArray([]);
+        self.renderedCollaborationObjects = ko.observableArray([]);
+        self.leftCollaborationObject = ko.observable(null);
+        self.rightCollaborationObject = ko.observable(null);
+        self.loading = ko.observable(false);
+        self.ui = createDesktopUi(self);
+
+        for(var i = 0; i &lt; data.collaborationObjects.length; i++){
+            var collaborationObject = getCollaborationObject(data.collaborationObjects[i]);
+            if(collaborationObject){
+                self.collaborationObjects.push(collaborationObject);
+            }
+        }
+
+        function getCollaborationObject(id){
+            for(var c = 0; c &lt; allCollaborationObjects.length; c++){
+                if(allCollaborationObjects[c].id == id){
+                    return allCollaborationObjects[c];
+                }
+            }
+        }
+
+        self.hasLeftCollaborationObject = ko.computed(function(){
+            return self.leftCollaborationObject() !== null;
+        });
+
+        self.hasRightCollaborationObject = ko.computed(function(){
+            return self.rightCollaborationObject() !== null;
+        });
+
+        function hasCollaborationObject(collaborationObject){
+            return self.collaborationObjects.indexOf(collaborationObject) &gt;= 0;
+        }
+
+        self.add = function(collaborationObject){
+            if(!hasCollaborationObject(collaborationObject)){
+                self.persistNewCollaborationObject(collaborationObject);
+                self.collaborationObjects.push(collaborationObject);
+                self.ui.scroll.tiles();
+                //self.ui.resize.tiles();
+                //self.ui.setupStripDragAndDrop();
+
+                if (!self.hasLeftCollaborationObject() || !self.hasRightCollaborationObject()) {
+                    activateLastCollaborationObject();
+                }
+            }
+        };
+
+        function activateLastCollaborationObject() {
+            if (!self.hasLeftCollaborationObject()) {
+                activateLeftCollaborationObjectBy(self.collaborationObjects().length - 1);
+            } 
+            else if (!self.hasRightCollaborationObject()) {
+                activateRightCollaborationObjectBy(self.collaborationObjects().length - 1);
+            }
+            self.ui.updateCollaborationObjectUi();
+        }
+        
+        self.persistNewCollaborationObject = function(collaborationObject) {
+            app.socket.emit(&#039;add_to_desktop&#039;, { id: self.id, collaborationObjectId: collaborationObject.id });
+        };
+
+        self.addAndActivate = function(collaborationObject) {
+            self.add(collaborationObject);
+            self.activate(collaborationObject);
+        };
+
+        self.remove = function(collaborationObject) {
+            app.socket.emit(&#039;remove_from_desktop&#039;, { id: self.id, collaborationObjectId: collaborationObject.id });
+            var index = self.collaborationObjects.indexOf(collaborationObject);
+            self.collaborationObjects.splice(index, 1);
+            if(collaborationObject.active()) {
+                removeActive(collaborationObject, index);
+            }
+
+            self.ui.scroll.tiles();
+        };
+
+        function removeActive(collaborationObject, index) {
+            collaborationObject.deactivate();
+
+            if (isLeft(collaborationObject)) {
+                activateLeftCollaborationObjectBy(index);      
+                activateRightCollaborationObjectBy(index + 1);
+            }
+            else if (isRight(collaborationObject)) {
+                activateRightCollaborationObjectBy(index);
+            }
+            self.ui.updateCollaborationObjectUi();
+        }
+
+        function activateLeftCollaborationObjectBy(index) {
+            self.leftCollaborationObject(getCollaborationObjectAt(index));
+            if (self.hasLeftCollaborationObject()) {
+                renderCollaborationObjectIfNeeded(self.leftCollaborationObject());
+                self.leftCollaborationObject().activateOnTheLeft();
+            }
+        }
+
+        function activateRightCollaborationObjectBy(index) {
+            self.rightCollaborationObject(getCollaborationObjectAt(index));
+            if (self.hasRightCollaborationObject()) {
+                renderCollaborationObjectIfNeeded(self.rightCollaborationObject());
+                self.rightCollaborationObject().activateOnTheRight();
+            }
+        }
+
+        function renderCollaborationObjectIfNeeded(collaborationObject) {
+            if (self.renderedCollaborationObjects.indexOf(collaborationObject) &lt;= -1) {
+                self.renderedCollaborationObjects.push(collaborationObject);
+            }
+        }
+
+        function getCollaborationObjectAt(index){
+            if (index &gt;= self.collaborationObjects().length) {
+                return null;
+            } else {
+                return self.collaborationObjects()[index];
+            }
+        }
+
+        function isRight(collaborationObject) {
+            return collaborationObject === self.rightCollaborationObject();
+        }
+
+        function isLeft(collaborationObject) {
+            return collaborationObject === self.leftCollaborationObject();
+        }
+
+        self.activate = function(collaborationObject) {
+            var index = self.collaborationObjects.indexOf(collaborationObject);
+            var leftIndex = self.collaborationObjects.indexOf(self.leftCollaborationObject());
+
+            if (index !== leftIndex) {
+                self.loading(true);
+                setTimeout(function() { self.changeActiveCollaborationObjects(index); }, 0);
+            }
+        };
+
+        self.changeActiveCollaborationObjects = function(leftIndex) {
+            deactivateCollaborationObjects();
+            activateLeftCollaborationObjectBy(leftIndex);
+            activateRightCollaborationObjectBy(leftIndex + 1);
+            self.loading(false);
+            self.ui.updateCollaborationObjectUi();
+            setTimeout(function(){ self.leftCollaborationObject().hasFocus(true); }, 400);
+        };
+
+        function deactivateCollaborationObjects(){
+            ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
+                collaborationObject.deactivate();
+                collaborationObject.hasFocus(false);
+            });
+        }
+
+        activateLeftCollaborationObjectBy(0);
+        activateRightCollaborationObjectBy(1);
+
+        return self;
+    };
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

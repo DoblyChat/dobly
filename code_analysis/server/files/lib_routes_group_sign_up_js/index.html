@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>lib/routes/group_sign_up.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">76.01</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">156</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">27.77</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">1.37</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">module.exports = (function() {
+    var log = require(&#039;../common/log&#039;),
+        User = require(&#039;../models/user&#039;),
+        Group = require(&#039;../models/group&#039;),
+        Validator = require(&#039;../common/validator&#039;),
+        async = require(&#039;async&#039;),
+        passport = require(&#039;passport&#039;),
+        consts = require(&#039;../common/consts&#039;),
+        self = {};
+
+    var _req, _res, validator;
+    var fields = [&#039;groupname&#039;, &#039;firstname&#039;, &#039;lastname&#039;, &#039;email&#039;];
+    var validationErrors = &#039;validationErrors&#039;;
+
+    self.get = function(req, res) {
+        init(req, res);
+        resetFields();
+        render();
+    };
+
+    self.post = function(req, res) {
+        init(req, res);
+        setFields();
+        validateAndSave();
+    };
+
+    function init(req, res) {
+        _req = req;
+        _res = res;
+        validator = new Validator();
+    }
+
+    function resetFields() {
+        for (var i = fields.length - 1; i &gt;= 0; i--) {
+            _res.local(fields[i],&#039;&#039;);
+        }
+
+        _res.local(validationErrors, []);
+    }
+
+    function setFields() {
+        for (var i = fields.length - 1; i &gt;= 0; i--) {            
+            _res.local(fields[i], _req.body[fields[i]]);
+        }
+    }
+
+    function render() {
+        _res.render(&#039;forms/group-signup&#039;, 
+            { 
+                title: consts.title
+            });
+    }    
+
+    function validateAndSave() {
+        async.waterfall([
+            function(callback) {
+                checkFieldsNotEmpty(callback);
+            },
+            function(callback) {
+                checkFieldValues(callback);
+            },
+            function(callback) {
+                findGroupByGroupName(callback);
+            },
+            function(group, callback) {
+                checkGroupNameIsUnique(group, callback);
+            },
+            function(callback) {
+                findUserByEmail(callback);
+            },
+            function(user, callback) {
+                checkEmailIsUnique(user, callback);
+            },
+            function(callback) {
+                saveGroup(callback);
+            },
+            function(group, callback) {
+                saveUser(group, callback);
+            }
+        ], function(err, result) {
+            if (err) {
+                handleErrors(err);
+            } else {
+                self.authenticate();
+            }
+        });
+    }
+
+    function checkFieldsNotEmpty(callback) {
+        validator.check(_req.body.groupname, &#039;Group name is missing.&#039;).notEmpty();
+        validator.check(_req.body.firstname, &#039;First name is missing.&#039;).notEmpty();
+        validator.check(_req.body.lastname, &#039;Last name is missing.&#039;).notEmpty();
+        validator.check(_req.body.email, &#039;Email is missing.&#039;).notEmpty();
+        validator.check(_req.body.password, &#039;Password is missing.&#039;).notEmpty();
+        validator.check(_req.body.password2, &#039;The password confirmation is missing.&#039;).notEmpty();
+        
+        callback(validator.hasErrors());
+    }
+
+    function checkFieldValues(callback) {
+        validator.check(_req.body.password, &#039;Passwords do not match.&#039;).equals(_req.body.password2);
+        validator.check(_req.body.email, &#039;Please enter a valid email address.&#039;).isEmail();
+
+        callback(validator.hasErrors());        
+    }
+
+    function findGroupByGroupName(callback) {
+        Group.findOne({ name: _req.body.groupname.trim().toLowerCase() }, callback);
+    }
+
+    function checkGroupNameIsUnique(group, callback) {
+        if (group) {
+            validator.error(&#039;Someone is already using that group name, please try another one.&#039;);
+        }
+
+        callback(validator.hasErrors());
+    }
+
+    function findUserByEmail(callback) {
+        User.findOne({ email: _req.body.email.trim().toLowerCase() }, callback);
+    }
+
+    function checkEmailIsUnique(user, callback) {
+        if (user) {
+            validator.error(&#039;That email is already in use.&#039;);
+        }
+
+        callback(validator.hasErrors());
+    }
+
+    function saveGroup(callback) {
+        Group.create({ name: _req.body.groupname, rawName: _req.body.groupname }, callback);
+    }
+
+    function saveUser(group, callback) {
+        User.create({ firstName: _req.body.firstname, lastName: _req.body.lastname, email: _req.body.email, groupId: group._id, password: _req.body.password }, callback);
+    }
+
+    function handleErrors(err) {
+        if (!validator.hasErrors()) {
+            log.error(err, &#039;Error during group sign up.&#039;);
+            validator.error(&#039;There was an error, please try again.&#039;);
+        }
+
+        _res.local(validationErrors, validator.getErrors());
+        render();
+    }
+
+    self.authenticate = function() {
+        return passport.authenticate(&#039;local&#039;, { successRedirect: &#039;/welcome&#039;,
+                                                failureRedirect: &#039;/login&#039;,
+                                                failureFlash: &#039;There is a problem authenticating your new credentials.&#039; })(_req, _res);
+    };
+
+    return self;
+})();</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

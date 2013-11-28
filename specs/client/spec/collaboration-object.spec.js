@@ -408,7 +408,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
 
                 var today = {
                     timestamp: function() {
-                        return Date.today().set({ hour: 8, minute: 30 });;
+                        return Date.today().set({ hour: 8, minute: 30 });
                     }
                 };
 
@@ -487,7 +487,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 content: "alpha", 
                 collaborationObjectId: "8", 
                 createdById: "CA-u",
-                timestamp: function() { return }
+                timestamp: function() { return; }
             };
         }
 

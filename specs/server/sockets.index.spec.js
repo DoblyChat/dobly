@@ -44,6 +44,8 @@ describe('Socket', function(){
 
 				self.in = jasmine.createSpy('in').andReturn(groupSockets);
 
+				self.emit = jasmine.createSpy('emit');
+
 				return self;
 			})();
 
@@ -53,7 +55,7 @@ describe('Socket', function(){
 
 			collaborationObjectIoMock = buildMock('./collaboration_object_io', 'createCollaborationObject', 'markAsRead', 'updateTopic');
 			conversationIoMock = buildMock('./conversation_io', 'sendMessage', 'readMessages');
-			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'checkForActiveSession', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
+			userIoMock = buildMock('./user_io', 'userConnected', 'requestOnlineUsers', 'userDisconnected', 'isSessionActive', 'subscribeToCollaborationObjects', 'unsubscribeToCollaborationObject');
 			desktopIoMock = buildMock('./desktop_io', 'addCollaborationObject', 'removeCollaborationObject', 'updateStripOrder');
 			taskIoMock = buildMock('./task_io', 'add', 'remove', 'toggleComplete', 'updateContent');
 			authorizeMock = jasmine.createSpy();
@@ -206,7 +208,19 @@ describe('Socket', function(){
 
 				it('ping', function(){
 					fire('ping');
-					expect(userIoMock.checkForActiveSession).toHaveBeenCalledWith(socketMock);
+					expect(userIoMock.isSessionActive).toHaveBeenCalledWith(socketMock);
+				});
+
+				it('pongs', function() {
+					userIoMock.isSessionActive.andReturn(true);
+					fire('ping');
+					expect(socketMock.emit).toHaveBeenCalledWith('pong');
+				});
+
+				it("times out", function() {
+				  	userIoMock.isSessionActive.andReturn(false);
+				  	fire('ping');
+				  	expect(socketMock.emit).toHaveBeenCalledWith('timeout');	
 				});
 
 				it('subscribe to conversations', function(){

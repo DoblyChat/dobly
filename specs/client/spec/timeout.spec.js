@@ -5,6 +5,7 @@ define(['client/timeout'], function(createTimeout){
         var timeout;
         var maxReconnects = 5;
         var testGlobal;
+        var pingInterval = 5000;
 
         beforeEach(function() {
             testGlobal = {
@@ -57,7 +58,7 @@ define(['client/timeout'], function(createTimeout){
                 spyOn(window, "setInterval");
                 timeout.startPing();
 
-                expect(window.setInterval).toHaveBeenCalledWith(timeout.emitPing, 5000);
+                expect(window.setInterval).toHaveBeenCalledWith(timeout.emitPing, pingInterval);
             });
 
             it("handle timeout", function() {
@@ -67,10 +68,65 @@ define(['client/timeout'], function(createTimeout){
                 app.socket.mockEmit('timeout');
                 expectTimeout();
             });
+        });
+
+        describe("emit ping", function() {
+            beforeEach(function() {
+                loadFixtures('connectivity.fixture.html');
+            });
 
             it("emit ping", function() {
                 timeout.emitPing();
                 expect(app.socket.emit).toHaveBeenCalledWith('ping');
+            });
+
+            it("one ping interval", function() {
+                doNotExpectConnectivityIssues(1);
+            });
+
+            it("two ping intervals", function() {
+                doNotExpectConnectivityIssues(2);
+            });
+
+            it("three ping intervals", function() {
+                doNotExpectConnectivityIssues(3);
+            });
+
+            it("four ping intervals", function() {
+                expectConnectivityIssues(4);
+            });
+
+            it("five ping intervals", function() {
+                expectConnectivityIssues(5);
+            });
+
+            it("six ping intervals with pong", function() {
+                expectConnectivityIssues(6);
+                app.socket.mockEmit('pong');
+                timeout.emitPing();
+                expect($('#connectivityIssues')).toBeHidden();
+                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+            });
+
+            function doNotExpectConnectivityIssues(numberOfIntervals) {
+                timeout.lastPong.add( { milliseconds: -pingInterval*numberOfIntervals });
+                timeout.emitPing();
+                expect($('#connectivityIssues')).toBeHidden();
+                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+            }
+
+            function expectConnectivityIssues(numberOfIntervals) {
+                timeout.lastPong.add( { milliseconds: -pingInterval*numberOfIntervals });
+                timeout.emitPing();
+                expect($('#connectivityIssues')).not.toBeHidden();
+                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+            }
+        });
+
+        describe("pong", function() {
+            it("last pong is now", function() {
+                app.socket.mockEmit('pong');
+                expect(aproximateDate(timeout.lastPong)).toEqual(aproximateDate(new Date()));
             });
         });
     });

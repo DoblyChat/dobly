@@ -27,7 +27,9 @@ script(id="task-list-template", type="text/html")
 							input.checkbox(type='checkbox', data-bind="click: toggleComplete, checked: isComplete, visible: !processing()")
 							img.pending-timer(src="/images/spinner.gif", alt="processing...", width="14", height="14", data-bind="visible: processing")
 						
-						.text(data-bind="html: content, visible: !isUpdating()")
+						.text(data-bind="visible: !isUpdating()")
+							span.task-content(data-bind="html: content")
+							span.assigned-to(data-bind="text: assignedTo")
 						
 						textarea(rows=1, data-bind="value: updatedContent, visible: isEditing, valueUpdate: 'input', event: { keypress: updateKeyPress }")
 						select(data-bind="visible: isAssigning, options: $parent.users, optionsText: 'fullName', optionsValue: 'id', value: updatedAssignedToId")
@@ -35,7 +37,7 @@ script(id="task-list-template", type="text/html")
 						.icons(data-bind="visible: !isUpdating()")
 							span.icon.icon-info(data-bind="click: toggleDetails, css: { selected: showDetails }")
 							span.selected.icon.icon-menu(data-bind="visible: showMenu")
-							span.icon.icon-menu(data-bind="click: $parent.toggleMenu, visible: !showMenu()")
+							span.icon.icon-menu(data-bind="click: showPopupMenu, visible: !showMenu()")
 
 						.menu(data-bind="visible: showMenu, hasFocus: menuHasFocus", tabindex=0)
 							ul

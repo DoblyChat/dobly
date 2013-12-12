@@ -58,11 +58,9 @@ define(['knockout', 'client/common'], function(ko, common){
 			self.showDetails(!self.showDetails());
 		};
 
-		self.toggleMenu = function(){
-			if(!self.showMenu()){
-				self.showMenu(true);
-				self.menuHasFocus(true);
-			}
+		self.showPopupMenu = function(){
+			self.showMenu(true);
+			self.menuHasFocus(true);
 		};
 
 		self.startEdit = function(){

@@ -37,20 +37,6 @@ define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, 
             }
         };
 
-        function hideMenus(){
-            ko.utils.arrayForEach(self.items(), function(task){
-                task.showMenu(false);
-            });
-        }
-
-        self.toggleMenu = function(task){
-            if(!task.showMenu()){
-                hideMenus();
-            }
-            
-            task.toggleMenu();
-        };
-
         return self;
     };
 });

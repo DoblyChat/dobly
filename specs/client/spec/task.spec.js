@@ -181,22 +181,35 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.showDetails()).toBe(false);
         });
 
-        it('toggles show menu', function(){
-            spyOn(common, 'formatTimestamp');
+        describe('menu', function(){
+            var task;
+
+            beforeEach(function(){
+                spyOn(common, 'formatTimestamp');
             
-            var task = createTask({
-                content: 'hello world'
+                task = createTask({
+                    content: 'hello world'
+                });
+            });
+            
+            it('shows menu', function(){
+                expect(task.showMenu()).toBe(false);
+                expect(task.menuHasFocus()).toBe(false);
+
+                task.showPopupMenu();
+
+                expect(task.showMenu()).toBe(true);
+                expect(task.menuHasFocus()).toBe(true);
             });
 
-            expect(task.showMenu()).toBe(false);
+            it('hides menu when focus is lost', function(){
+                task.showMenu(true);
+                task.menuHasFocus(true);
 
-            task.toggleMenu();
+                task.menuHasFocus(false);
 
-            expect(task.showMenu()).toBe(true);
-
-            task.toggleMenu();
-
-            expect(task.showMenu()).toBe(false);
+                expect(task.showMenu()).toBe(false);
+            });
         });
 
         it('is updating', function(){
@@ -279,6 +292,7 @@ define(['client/task', 'client/common'], function(createTask, common){
             it('starts editing', function(){
                 task.startEdit();
                 expect(task.isEditing()).toBe(true);
+                expect(task.showMenu()).toBe(false);
             });
 
             it('cancels edit', function(){
@@ -343,6 +357,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                 expect(task.isAssigning()).toBe(false);
                 task.startAssign();
                 expect(task.isAssigning()).toBe(true);
+                expect(task.showMenu()).toBe(false);
             });
 
             it('cancels assigning', function(){

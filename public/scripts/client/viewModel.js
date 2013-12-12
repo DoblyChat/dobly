@@ -36,7 +36,7 @@ define([
         var toSubscribe = [];
 
         function buildCollaborationObject(data){
-            return data.type === 'C' ? createConversation(data) : createTaskList(data);
+            return data.type === 'C' ? createConversation(data) : createTaskList(data, self.group);
         }
 
         for(var i = 0; i < collaborationObjectsData.length; i++){

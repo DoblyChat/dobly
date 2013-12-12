@@ -1,111 +1,119 @@
 describe('Task', function() {
-	'use strict';
+    'use strict';
 
-	var Task = require('../../lib/models/task');
+    var Task = require('../../lib/models/task');
 
-	describe('#required fields', function() {
-		var taskData;
+    describe('#required fields', function() {
+        var taskData;
 
-		function requiredFieldTest(field, done) {
-			taskData[field] = null;
-			Task.create(taskData, function(err) {
-				checkRequiredFieldError(err, field);
-				done();
-			});
-		}
+        function requiredFieldTest(field, done) {
+            taskData[field] = null;
+            Task.create(taskData, function(err) {
+                checkRequiredFieldError(err, field);
+                done();
+            });
+        }
 
-		beforeEach(function(){
-			taskData = {
-				createdById: new mongo.Types.ObjectId(),
-				collaboratiobObjectId: new mongo.Types.ObjectId(),
-				content: 'test'
-			};
-		});
+        beforeEach(function(){
+            taskData = {
+                createdById: new mongo.Types.ObjectId(),
+                collaboratiobObjectId: new mongo.Types.ObjectId(),
+                content: 'test'
+            };
+        });
 
-		it('createdById', function(done) {
-			requiredFieldTest('createdById', done);
-		});		
+        it('createdById', function(done) {
+            requiredFieldTest('createdById', done);
+        });     
 
-		it('collaborationObjectId', function(done) {
-			requiredFieldTest('collaborationObjectId', done);
-		});
+        it('collaborationObjectId', function(done) {
+            requiredFieldTest('collaborationObjectId', done);
+        });
 
-		it('content', function(done) {
-			requiredFieldTest('content', done);
-		});
+        it('content', function(done) {
+            requiredFieldTest('content', done);
+        });
 
-		it('timestamp', function(done) {
-			requiredFieldTest('timestamp', done);
-		});
-	});
+        it('timestamp', function(done) {
+            requiredFieldTest('timestamp', done);
+        });
+    });
 
-	describe('#default values', function(){
-		var task;
+    describe('#default values', function(){
+        var task;
 
-		beforeEach(function(){
-			task = new Task();
-		});
+        beforeEach(function(){
+            task = new Task();
+        });
 
-		it('defaults is complete to false', function(){
-			expect(task.isComplete).toBe(false);
-		});
+        it('defaults is complete to false', function(){
+            expect(task.isComplete).toBe(false);
+        });
 
-		it('defaults completedOn to nothing', function(){
-			expect(task.completedOn).not.toBeDefined();
-		});
-	});
+        it('defaults completedOn to nothing', function(){
+            expect(task.completedOn).not.toBeDefined();
+        });
 
-	describe('reads tasks', function(done){
-		var collaborationObjectId, tasksData; 
-		var today = new Date();
-		var yesterday = new Date();
-		yesterday.setDate(yesterday.getDate() - 1);
+        it('defaults completedById to nothing', function(){
+            expect(task.completedById).not.toBeDefined();
+        });
 
-		beforeEach(function(done){
-			collaborationObjectId = new mongo.Types.ObjectId();
-			tasksData = [
-				{ 
-					createdById: new mongo.Types.ObjectId(),
-					collaborationObjectId: collaborationObjectId,
-					content: 'test-1',
-					timestamp: today
-				},
-				{ 
-					createdById: new mongo.Types.ObjectId(),
-					collaborationObjectId: collaborationObjectId,
-					content: 'test-2',
-					timestamp: yesterday
-				}
-			];
+        it('defaults assignedToId to nothing', function(){
+            expect(task.completedById).not.toBeDefined();
+        });
+    });
 
-			Task.create(tasksData, done);
-		});
+    describe('reads tasks', function(done){
+        var collaborationObjectId, tasksData; 
+        var today = new Date();
+        var yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
 
-		afterEach(function(done){
-			Task.remove({ collaborationObjectId: collaborationObjectId }, done);
-		});
+        beforeEach(function(done){
+            collaborationObjectId = new mongo.Types.ObjectId();
+            tasksData = [
+                { 
+                    createdById: new mongo.Types.ObjectId(),
+                    collaborationObjectId: collaborationObjectId,
+                    content: 'test-1',
+                    timestamp: today
+                },
+                { 
+                    createdById: new mongo.Types.ObjectId(),
+                    collaborationObjectId: collaborationObjectId,
+                    content: 'test-2',
+                    timestamp: yesterday
+                }
+            ];
 
-		it('reads', function(done){
-			Task.readTasks(collaborationObjectId, function(err, tasks){
-				expect(err).toBeNull();
-				expect(tasks.length).toBe(2);
+            Task.create(tasksData, done);
+        });
 
-				var secondTask = tasks[0];
-				expect(secondTask.createdById).toEqual(tasksData[1].createdById);
-				expect(secondTask.collaborationObjectId).toEqual(collaborationObjectId);
-				expect(secondTask.content).toBe(tasksData[1].content);
-				expect(secondTask.timestamp).toEqual(tasksData[1].timestamp);
-				expect(secondTask._id).not.toBeNull();
+        afterEach(function(done){
+            Task.remove({ collaborationObjectId: collaborationObjectId }, done);
+        });
 
-				var firstTask = tasks[1];
-				expect(firstTask.createdById).toEqual(tasksData[0].createdById);
-				expect(firstTask.collaborationObjectId).toEqual(collaborationObjectId);
-				expect(firstTask.content).toBe(tasksData[0].content);
-				expect(firstTask.timestamp).toEqual(tasksData[0].timestamp);
-				expect(firstTask._id).not.toBeNull();	
+        it('reads', function(done){
+            Task.readTasks(collaborationObjectId, function(err, tasks){
+                expect(err).toBeNull();
+                expect(tasks.length).toBe(2);
 
-				done(err);
-			});
-		});
-	});
+                var secondTask = tasks[0];
+                expect(secondTask.createdById).toEqual(tasksData[1].createdById);
+                expect(secondTask.collaborationObjectId).toEqual(collaborationObjectId);
+                expect(secondTask.content).toBe(tasksData[1].content);
+                expect(secondTask.timestamp).toEqual(tasksData[1].timestamp);
+                expect(secondTask._id).not.toBeNull();
+
+                var firstTask = tasks[1];
+                expect(firstTask.createdById).toEqual(tasksData[0].createdById);
+                expect(firstTask.collaborationObjectId).toEqual(collaborationObjectId);
+                expect(firstTask.content).toBe(tasksData[0].content);
+                expect(firstTask.timestamp).toEqual(tasksData[0].timestamp);
+                expect(firstTask._id).not.toBeNull();   
+
+                done(err);
+            });
+        });
+    });
 });

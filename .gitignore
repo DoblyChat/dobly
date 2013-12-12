@@ -7,3 +7,4 @@ _SpecRunner.html
 .grunt
 .env
 public/stylesheets/*.css
+reports/

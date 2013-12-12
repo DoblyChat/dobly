@@ -1,4 +1,4 @@
-define(['jquery', 'knockout'], function($, ko){
+define(['knockout'], function(ko){
 	'use strict';
     
     return function(data){

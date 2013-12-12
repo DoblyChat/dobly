@@ -16,6 +16,24 @@ module.exports = function(grunt){
                 validthis: true
             }
         },
+        plato: {
+            client: {
+                options: {
+                    jshint: false
+                },
+                files: {
+                    'reports/client': ['public/scripts/client/*.js']    
+                }
+            },
+            server: {
+                options: {
+                    jshint: false
+                },
+                files: {
+                    'reports/server': ['lib/*.js']
+                }
+            }
+        },
         connect: {
             test : {
                 port : 8000
@@ -156,6 +174,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-git');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-plato');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive

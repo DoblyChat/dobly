@@ -62,7 +62,7 @@
             var notText = this.isNot ? " not" : "";
 
             this.message = function () {
-                return "Expected " + actual + notText + " to be less than " + expected;
+                return "Expected " + actual + notText + " to be equivalent to " + expected;
             };
 
             if(!actual.getDate){
@@ -73,11 +73,9 @@
                 expected = new Date(expected);
             }
 
-            expect(actual.getDate()).toBe(expected.getDate());
-            expect(actual.getMonth()).toBe(expected.getMonth());
-            expect(actual.getFullYear()).toBe(expected.getFullYear());
-
-            return actual < expected;
+            return actual.getDate() === expected.getDate() && 
+                actual.getMonth() === expected.getMonth() &&
+                actual.getFullYear() === expected.getFullYear();
         }
     });
 });

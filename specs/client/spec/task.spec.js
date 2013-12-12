@@ -8,7 +8,8 @@ define(['client/task', 'client/common'], function(createTask, common){
             });
 
             app.groupUsers['u-idx'] = 'Her';
-            app.groupUsers['u-id'] = 'Me';  
+            app.groupUsers['u-id'] = 'Me';
+            app.groupUsers['a-id'] = 'Him';
 
             app.socket = createMockSocket();
         });
@@ -21,7 +22,8 @@ define(['client/task', 'client/common'], function(createTask, common){
                 timestamp: Date.parse('2012.04.09 22:13:34'), 
                 completedOn: Date.parse('2012.05.09 22:13:34'), 
                 createdById: 'u-id',
-                completedById: 'u-idx'
+                completedById: 'u-idx',
+                assignedToId: 'a-id'
             };
 
             var task = createTask(data);
@@ -37,9 +39,14 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.timestamp()).toBe(data.timestamp);
             expect(task.formattedTimestamp()).toBe('4/9/2012 10:13 PM');
             expect(task.showDetails()).toBe(false);
+            expect(task.showMenu()).toBe(false);
             expect(task.processing()).toBe(false);
             expect(task.isEditing()).toBe(false);
+            expect(task.isAssigning()).toBe(false);
             expect(task.updatedContent()).toBe(data.content);
+            expect(task.assignedTo()).toBe('Him');
+            expect(task.assignedToId).toBe('a-id');
+            expect(task.updatedAssignedToId()).toBe('a-id');
         });
 
         it("creates task without timestamp", function() {
@@ -160,8 +167,6 @@ define(['client/task', 'client/common'], function(createTask, common){
             spyOn(common, 'formatTimestamp');
             
             var task = createTask({
-                _id: 't-id',
-                collaborationObjectId: 'c-id',
                 content: 'hello world'
             });
 
@@ -176,6 +181,84 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.showDetails()).toBe(false);
         });
 
+        it('toggles show menu', function(){
+            spyOn(common, 'formatTimestamp');
+            
+            var task = createTask({
+                content: 'hello world'
+            });
+
+            expect(task.showMenu()).toBe(false);
+
+            task.toggleMenu();
+
+            expect(task.showMenu()).toBe(true);
+
+            task.toggleMenu();
+
+            expect(task.showMenu()).toBe(false);
+        });
+
+        it('is updating', function(){
+            var task = createTask({
+                content: 'hello world'
+            });
+
+            task.isEditing(false);
+            task.isAssigning(false);
+            expect(task.isUpdating()).toBe(false);
+
+            task.isEditing(true);
+            expect(task.isUpdating()).toBe(true);
+
+            task.isEditing(false);
+            task.isAssigning(true);
+            expect(task.isUpdating()).toBe(true);
+
+            task.isEditing(true);
+            expect(task.isUpdating()).toBe(true);
+        });
+
+        describe('updates on key press', function(){
+            var event, task;
+
+            beforeEach(function(){
+                task = createTask({
+                    content: 'updating on key press'
+                });
+
+                spyOn(task, 'update');
+                event = {
+                    shiftKey: false
+                };
+                spyOn(common, 'enterKeyPressed');
+            });
+
+            it('does not update if shift key pressed', function(){
+                common.enterKeyPressed.andReturn(true);
+                event.shiftKey = true;
+                var ret = task.updateKeyPress(null, event);
+                expect(task.update).not.toHaveBeenCalled();
+                expect(ret).toBe(true);
+            });
+
+            it('does not update if enter not pressed', function(){
+                task.updatedContent('new content');
+                common.enterKeyPressed.andReturn(false);
+                var ret = task.updateKeyPress(null, event);
+                expect(task.update).not.toHaveBeenCalled();
+                expect(ret).toBe(true);
+            });
+
+            it('does attempt update when enter pressed', function(){
+                common.enterKeyPressed.andReturn(true);
+
+                var ret = task.updateKeyPress(null, event);
+                expect(task.update).toHaveBeenCalled();
+                expect(ret).toBe(false);
+            });
+        });
+
         describe('edit', function(){
             var task, 
                 INITIAL_CONTENT = 'initial content';
@@ -188,7 +271,8 @@ define(['client/task', 'client/common'], function(createTask, common){
 
                 task = createTask({ 
                     content: INITIAL_CONTENT,
-                    _id: 't-id'
+                    _id: 't-id',
+                    collaborationObjectId: 'c-id'
                 });
             });
 
@@ -203,65 +287,102 @@ define(['client/task', 'client/common'], function(createTask, common){
                 task.isEditing(true);
                 task.updatedContent(content);
 
-                task.cancelEdit();
+                task.cancel();
                 expect(task.isEditing()).toBe(false);
                 expect(task.updatedContent()).toBe(INITIAL_CONTENT);
             });
 
-            describe('submit', function(){
-                it('submits new content', function(){
+            describe('update content', function(){
+                beforeEach(function(){
+                    task.isEditing(true);
+                });
+
+                it('updates new content', function(){
                     task.updatedContent('new content');
                     
-                    task.updateContent();
+                    task.update();
 
-                    expect(app.socket.emit).toHaveBeenCalledWith('update_task_content', { id: 't-id', content: 'new content' });
+                    expect(app.socket.emit).toHaveBeenCalledWith('update_task_content', { 
+                        id: 't-id', 
+                        content: 'new content',
+                        collaborationObjectId: 'c-id'
+                    });
+
                     expect(task.content()).toBe('f-new content');
                     expect(task.rawContent).toBe('new content');
                 });
 
-                it('does not submit if task content has not been updated', function(){
-                    task.updateContent();
+                it('does not update if task content has not been updated', function(){
+                    task.update();
                     
                     expect(app.socket.emit).not.toHaveBeenCalled();
 
                     expect(task.content()).toBe('f-' + INITIAL_CONTENT);
                     expect(task.rawContent).toBe(INITIAL_CONTENT);
                 });
+            });
+        });
 
-                describe('on key press', function(){
-                    var event;
+        describe('assign', function(){
+            var task;
 
-                    beforeEach(function(){
-                        spyOn(task, 'updateContent');
-                        event = {
-                            shiftKey: false
-                        };
-                        spyOn(common, 'enterKeyPressed');
+            beforeEach(function(){
+                spyOn(common, 'formatTimestamp');
+                spyOn(common, 'formatUserInput').andCallFake(function(input){
+                    return 'f-' + input;
+                });
+
+                task = createTask({ 
+                    _id: 't-id',
+                    collaborationObjectId: 'c-id',
+                    assignedToId: 'a-id'
+                });
+            });
+
+            it('starts assigning', function(){
+                expect(task.isAssigning()).toBe(false);
+                task.startAssign();
+                expect(task.isAssigning()).toBe(true);
+            });
+
+            it('cancels assigning', function(){
+                task.updatedAssignedToId('new id');
+                task.isAssigning(true);
+
+                task.cancel();
+
+                expect(task.updatedAssignedToId()).toBe('a-id');
+                expect(task.isAssigning()).toBe(false);
+            });
+
+            describe('updates assignment', function(){
+                beforeEach(function(){
+                    app.groupUsers['new'] = 'Newington';
+                    task.isAssigning(true);
+                });
+
+                it('assigns new user to task', function(){
+                    task.updatedAssignedToId('new');
+                    
+                    task.update();
+
+                    expect(app.socket.emit).toHaveBeenCalledWith('assign_task', { 
+                        id: 't-id', 
+                        assignedToId: 'new',
+                        collaborationObjectId: 'c-id'
                     });
 
-                    it('does not submit if shift key pressed', function(){
-                        common.enterKeyPressed.andReturn(true);
-                        event.shiftKey = true;
-                        var ret = task.updateContentKeyPress(null, event);
-                        expect(task.updateContent).not.toHaveBeenCalled();
-                        expect(ret).toBe(true);
-                    });
+                    expect(task.assignedTo()).toBe('Newington');
+                    expect(task.assignedToId).toBe('new');
+                });
 
-                    it('does not submit if enter not pressed', function(){
-                        task.updatedContent('new content');
-                        common.enterKeyPressed.andReturn(false);
-                        var ret = task.updateContentKeyPress(null, event);
-                        expect(task.updateContent).not.toHaveBeenCalled();
-                        expect(ret).toBe(true);
-                    });
+                it('does not assign if new user has not been selected', function(){
+                    task.update();
+                    
+                    expect(app.socket.emit).not.toHaveBeenCalled();
 
-                    it('does attempt submit when enter pressed', function(){
-                        common.enterKeyPressed.andReturn(true);
-
-                        var ret = task.updateContentKeyPress(null, event);
-                        expect(task.updateContent).toHaveBeenCalled();
-                        expect(ret).toBe(false);
-                    });
+                    expect(task.assignedTo()).toBe('Him');
+                    expect(task.assignedToId).toBe('a-id');
                 });
             });
         });

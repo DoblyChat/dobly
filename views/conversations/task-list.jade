@@ -1,5 +1,5 @@
 script(id="task-list-template", type="text/html")
-	.collaboration-object(data-bind="visible: active, css : { 'collaboration-object-left': isLeft, 'collaboration-object-right': isRight } ")
+	.collaboration-object(data-bind="visible: active, css : { 'collaboration-object-left': isLeft, 'collaboration-object-right': isRight }", tabindex=0)
 		.collaboration-object-header(data-bind="click: markAsRead")
 			.topic
 				span(data-bind="text: topic")
@@ -23,22 +23,29 @@ script(id="task-list-template", type="text/html")
 			.content
 				div(data-bind="foreach: items")
 					.item.task(data-bind="attr: { id: id }, css: { complete: isComplete }")
-						.input-container
+						.input-container(data-bind="visible: !isUpdating()")
 							input.checkbox(type='checkbox', data-bind="click: toggleComplete, checked: isComplete, visible: !processing()")
 							img.pending-timer(src="/images/spinner.gif", alt="processing...", width="14", height="14", data-bind="visible: processing")
 						
-						.text(data-bind="html: content, visible: !isEditing()")
+						.text(data-bind="html: content, visible: !isUpdating()")
 						
-						textarea(rows=1, data-bind="value: updatedContent, visible: isEditing, valueUpdate: 'input', event: { keypress: updateContentKeyPress }")
+						textarea(rows=1, data-bind="value: updatedContent, visible: isEditing, valueUpdate: 'input', event: { keypress: updateKeyPress }")
+						select(data-bind="visible: isAssigning, options: $parent.users, optionsText: 'fullName', optionsValue: 'id', value: updatedAssignedToId")
+
+						.icons(data-bind="visible: !isUpdating()")
+							span.icon.icon-info(data-bind="click: toggleDetails, css: { selected: showDetails }")
+							span.selected.icon.icon-menu(data-bind="visible: showMenu")
+							span.icon.icon-menu(data-bind="click: $parent.toggleMenu, visible: !showMenu()")
+
+						.menu(data-bind="visible: showMenu, hasFocus: menuHasFocus", tabindex=0)
+							ul
+								li(data-bind="click: startEdit") Edit
+								li(data-bind="click: $parent.removeTask") Remove
+								li(data-bind="click: startAssign") Assign
 						
-						.icons(data-bind="visible: !isEditing()")
-							span.icon.icon-pencil(data-bind="click: startEdit")
-							span.icon.icon-info(data-bind="click: toggleDetails")
-							span.icon.icon-dismiss(data-bind="click: $parent.removeTask")
-						
-						.buttons(data-bind="visible: isEditing")
-							button.blue-button(type="button", data-bind="click: updateContent") Save
-							button.white-button(type="button", data-bind="click: cancelEdit") Cancel
+						.buttons(data-bind="visible: isUpdating")
+							button.blue-button(type="button", data-bind="click: update") Save
+							button.white-button(type="button", data-bind="click: cancel") Cancel
 						
 						div(style="clear: both")
 						

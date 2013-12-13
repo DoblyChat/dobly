@@ -45,8 +45,6 @@ define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
                 self.persistNewCollaborationObject(collaborationObject);
                 self.collaborationObjects.push(collaborationObject);
                 self.ui.scroll.tiles();
-                //self.ui.resize.tiles();
-                //self.ui.setupStripDragAndDrop();
 
                 if (!self.hasLeftCollaborationObject() || !self.hasRightCollaborationObject()) {
                     activateLastCollaborationObject();

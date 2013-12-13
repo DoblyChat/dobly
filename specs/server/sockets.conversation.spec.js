@@ -45,7 +45,6 @@ describe('Sockets', function(){
 			expect(messageData.createdById).toBe(socket.handshake.user._id);
 			expect(messageData.timestamp).toBeEquivalentDates(Date.now());
 			expect(messageData.collaborationObjectId).toBe(data.collaborationObjectId);
-
 			expect(messageMock.create.getCallback()).toBe(callback);
 		});				
 		

@@ -82,15 +82,14 @@ describe('Sockets', function(){
 			expect(socketMock.leaveCollaborationObjectRoom).toHaveBeenCalledWith('object-id');
 		});
 
-		describe('checks for active sessions', function(){
+		describe('is active session', function(){
 			var rightNow;
 
 			beforeEach(function(){
-				spyOn(console, 'info');
 				rightNow = new Date();
 			});
 
-			it('does not timeout if expires time is the same as the current time', function(){
+			it('true if expires time is the same as the current time', function(){
 				socketMock.handshake.session = {
 					cookie: {
 						_expires: rightNow,
@@ -98,12 +97,10 @@ describe('Sockets', function(){
 				};
 				
 				spyOn(global, 'Date').andReturn(rightNow);
-				userIo.checkForActiveSession(socketMock);
-				expect(console.info).not.toHaveBeenCalled();
-				expect(socketMock.emit).not.toHaveBeenCalled();
+				expect(userIo.isSessionActive(socketMock)).toBe(true);
 			});
 
-			it('timea out when the expires time is less than the current time', function(){
+			it('false when the expires time is less than the current time', function(){
 				var beforeNow = new Date();
 				beforeNow.setTime(rightNow.getTime() - 1);
 
@@ -114,12 +111,10 @@ describe('Sockets', function(){
 				};
 
 				spyOn(global, 'Date').andReturn(rightNow);
-				userIo.checkForActiveSession(socketMock);
-				expect(console.info).toHaveBeenCalled();
-				expect(socketMock.emit).toHaveBeenCalledWith('timeout');
+				expect(userIo.isSessionActive(socketMock)).toBe(false);
 			});
 
-			it('does not time out if expires time is more than current time', function(){
+			it('true if expires time is more than current time', function(){
 				var afterNow = new Date();
 				afterNow.setTime(rightNow.getTime() + 1);
 
@@ -130,9 +125,7 @@ describe('Sockets', function(){
 				};
 
 				spyOn(global, 'Date').andReturn(rightNow);
-				userIo.checkForActiveSession(socketMock);
-				expect(console.info).not.toHaveBeenCalled();
-				expect(socketMock.emit).not.toHaveBeenCalledWith();
+				expect(userIo.isSessionActive(socketMock)).toBe(true);
 			});
 		});
 	});

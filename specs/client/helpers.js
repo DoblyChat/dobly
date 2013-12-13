@@ -28,5 +28,9 @@
 		_loadFixtures('../../../specs/client/fixtures/' + fixture);
 	};
 
+	global.aproximateDate = function(date) {
+        return Math.ceil(date.valueOf() / 1000);
+    };
+
 })(window);
 

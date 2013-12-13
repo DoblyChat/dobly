@@ -65,6 +65,10 @@ define(['squire', 'knockout'], function(Squire, ko){
             it('sets users', function(){
                 expect(taskList.users).toBe(groupMock.users);
             });
+
+            it('sets icon class', function(){
+                expect(taskList.iconClass).toBe('icon-task-list');
+            });
         });
 
         describe('add task', function(){

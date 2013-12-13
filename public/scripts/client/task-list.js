@@ -6,7 +6,7 @@ define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, 
 
         self.init(createTask);
         self.users = group.users;
-        self.taskListHasFocus = ko.observable(false);
+        self.iconClass = 'icon-task-list';
         
         function createNewTask(data){
             var taskObj = createTask(data);
@@ -24,7 +24,6 @@ define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, 
         }
 
         self.addTask = self.addNewItem(createNewTask, sendTaskToServer);
-
 
         self.removeTask = function(task){
             if(confirm('Are you sure you would like to remove this task?')){

@@ -8,3 +8,5 @@ _SpecRunner.html
 .env
 public/stylesheets/*.css
 reports/
+public/scripts/release/
+public/stylesheets/release/

@@ -3,8 +3,7 @@ describe('Sockets', function(){
 
     describe('Base Collaboration Object', function(){
         var collaborationObjectIo, socketMock, 
-            collaborationObjectMock, asyncMock,
-            unreadMock, userMock, notificationMock,
+            notificationMock, itemMock,
             sockets, clients;
 
         beforeEach(function(){
@@ -47,183 +46,49 @@ describe('Sockets', function(){
             mockery.enable({ useCleanCache: true, warnOnUnregistered: false });
             mockery.registerAllowable('../../lib/sockets/base_collaboration_object_io');
 
-            collaborationObjectMock = buildMock('../models/collaboration_object', 'updateLastActivity', 'findById');
-            asyncMock = buildMock('async', 'parallel', 'each');
-            unreadMock = buildMock('../models/unread_marker', 'increaseCounter');
-            userMock = buildMock('../models/user', 'find', 'findExcept');
             notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
+            itemMock = buildMock('../models/item', 'init', 'send');
 
             collaborationObjectIo = require('../../lib/sockets/base_collaboration_object_io');
         });
 
-        describe('#sendItem', function(){
-            var confirm, data, 
-                callback, save;
+        it("sends item", function() {
+            var confirm = jasmine.createSpy('confirm');
+            var save = jasmine.createSpy('save');
 
-            beforeEach(function(){
-                confirm = jasmine.createSpy('confirm');
-                callback = jasmine.createSpy('callback');
-                save = jasmine.createSpy('save');
+            var data = { 
+                content: 'my text',
+                timestamp: new Date(),
+                collaborationObjectId: 'object-id'
+            };
 
-                data = { 
-                    content: 'my text',
-                    timestamp: new Date(),
-                    collaborationObjectId: 'object-id'
-                };
+            var item = {};
 
-                collaborationObjectIo.sendItem(socketMock, sockets, data, save, confirm);
-            });
+            collaborationObjectIo.sendItem(socketMock, sockets, data, save, confirm);
 
-            describe('process', function(){
-                var saveItem, saveUnread;
+            expect(itemMock.init).toHaveBeenCalled();
+            expect(itemMock.init).toHaveBeenCalledWith(
+                socketMock.handshake.user._id, 
+                socketMock.handshake.user.groupId, 
+                data.collaborationObjectId);
 
-                beforeEach(function(){
-                    var process = asyncMock.parallel.mostRecentCall.args[0];
-                    saveItem = process[0];
-                    saveUnread = process[1];
-                });
+            expect(itemMock.send).toHaveBeenCalled();
+            var args = itemMock.send.mostRecentCall.args;
 
-                it('saves item', function(){
-                    expect(saveItem).toBe(save);
-                });
+            args[0]();
+            args[1](item);
+            args[2]();
+            args[3](item);
 
-                describe('unread', function(){
-                    var findCallback;
-
-                    beforeEach(function(){
-                        saveUnread(callback);
-                        findCallback = collaborationObjectMock.findById.getCallback();
-                    });
-
-                    it('finds collaboration object by id', function(){
-                        expect(collaborationObjectMock.findById).toHaveBeenCalled();
-                        var args = collaborationObjectMock.findById.mostRecentCall.args;
-
-                        expect(args[0]).toBe(data.collaborationObjectId);
-                    });
-
-                    it('logs an error if there is an error reading the collaboration object', function(){
-                        spyOn(console, 'error');
-                        findCallback('reading object error', null);
-                        expect(console.error).toHaveBeenCalledWith('Error reading collaboration object for saving unread', 'reading object error');
-                        expect(callback).toHaveBeenCalledWith('reading object error');
-                    });
-
-                    describe('users', function(){
-                        var collaborationObject;
-
-                        describe('for entire group', function(){
-                            beforeEach(function(){
-                                collaborationObject = {
-                                    members: {
-                                        entireGroup: true,
-                                        users: [ ]
-                                    }
-                                };
-
-                                findCallback(null, collaborationObject);
-                                expect(userMock.findExcept).toHaveBeenCalled();
-                                findCallback = userMock.findExcept.getCallback();
-                            });
-
-                            it('saves for each user in group', function(){
-                                var args = userMock.findExcept.mostRecentCall.args;
-
-                                expect(args[0][0]).toBe('usr-id');
-                                expect(args[1]).toBe('gru-id');                 
-
-                                var users = [ 
-                                    {
-                                        _id: 'first'
-                                    },
-                                    {
-                                        _id: 'second'
-                                    }
-                                ];
-
-                                findCallback(null, users);
-
-                                expect(asyncMock.each).toHaveBeenCalled();
-                                expect(asyncMock.each.mostRecentCall.args[0]).toBe(users);
-
-                                var save = asyncMock.each.mostRecentCall.args[1];
-                                var saveCallback = jasmine.createSpy('save callback');
-                                save(users[0], saveCallback);
-
-                                expect(unreadMock.increaseCounter).toHaveBeenCalledWith('first', 'object-id', saveCallback);
-
-                                var eachCallback = asyncMock.each.getCallback();
-                                eachCallback('each error');
-                                expect(callback).toHaveBeenCalledWith('each error');
-                            });
-                        });
-
-                        describe('for select users', function(){
-                            beforeEach(function(){
-                                collaborationObject = {
-                                    members: {
-                                        entireGroup: false,
-                                        users: [ 'usr-1', 'usr-2' ]
-                                    }
-                                };
-
-                                findCallback(null, collaborationObject);
-                                expect(asyncMock.each).toHaveBeenCalled();
-                            });
-
-                            it('saves unread for only selected users', function(){
-                                expect(asyncMock.each.mostRecentCall.args[0]).toBe(collaborationObject.members.users);
-
-                                var save = asyncMock.each.mostRecentCall.args[1];
-                                var saveCallback = jasmine.createSpy();
-
-                                save('userid', saveCallback);
-
-                                expect(unreadMock.increaseCounter).toHaveBeenCalledWith('userid', 'object-id', saveCallback);
-
-                                var eachCallback = asyncMock.each.getCallback();
-                                eachCallback('each error');
-                                expect(callback).toHaveBeenCalledWith('each error');
-                            });
-                        });
-                    });
-                });
-            });
-
-            describe('broadcast', function(){
-                var broadcast;
-
-                beforeEach(function(){
-                    broadcast = asyncMock.parallel.mostRecentCall.args[1];
-                });
-
-                it('logs error if passed from async processing', function(){
-                    spyOn(console, 'error');
-                    broadcast('processing error', null);
-                    expect(console.error).toHaveBeenCalledWith('Error sending collaboration item', 'processing error');
-                });
-
-                it('broadcasts and confirms', function(){
-                    var item = {};
-                    broadcast(null, [ item ]);
-
-                    expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalled();
-                    var args = socketMock.broadcastToCollaborationObjectMembers.mostRecentCall.args;
-
-                    expect(args[0]).toBe('receive_item');
-                    expect(args[1]).toBe('object-id');
-                    expect(args[2]).toBe(item);
-
-                    expect(confirm).toHaveBeenCalledWith(item);
-                });
-
-                it('inits and notifies', function(){
-                    var item = {};
-                    broadcast(null, [item]);
-                    expect(notificationMock.init).toHaveBeenCalledWith(socketMock, sockets);
-                    expect(notificationMock.notify).toHaveBeenCalledWith(item);
-                });
-            });
+            expect(save).toHaveBeenCalled();
+            expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith(
+                'receive_item',
+                data.collaborationObjectId,
+                item
+                );
+            expect(confirm).toHaveBeenCalled();
+            expect(notificationMock.init).toHaveBeenCalledWith(socketMock, sockets);
+            expect(notificationMock.notify).toHaveBeenCalledWith(item);
         });
     });
 });

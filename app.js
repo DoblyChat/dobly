@@ -2,6 +2,7 @@
 
 var express = require('express')
   , routes = require('./lib/routes')
+  , serviceRoutes = require('./lib/routes/services')
   , sockets = require('./lib/sockets')
   , MongoStore = require('connect-mongo')(express)
   , app = express.createServer()
@@ -77,6 +78,7 @@ security.config(passport);
 
 // Routes
 routes.config(app);
+serviceRoutes.config(app, io.sockets);
 
 // Socket IO
 sockets.config(io, sessionStore);

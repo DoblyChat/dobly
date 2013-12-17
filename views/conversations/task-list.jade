@@ -2,10 +2,10 @@ script(id="task-list-template", type="text/html")
 	.collaboration-object(data-bind="visible: active, css : { 'collaboration-object-left': isLeft, 'collaboration-object-right': isRight }", tabindex=0)
 		.collaboration-object-header(data-bind="click: markAsRead")
 			.topic
-				span(data-bind="text: topic")
-				span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
+				span(data-bind="text: topic")									
 			.actions
 				span.action-icon.icon-info(data-bind="click: ui.toggleInfo")
+				span.action-icon.icon-pencil(data-bind="click: $root.changeTopic.click")	
 			.info.hidden
 				div
 					span.label by:

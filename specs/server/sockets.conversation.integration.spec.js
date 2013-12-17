@@ -92,7 +92,7 @@ describe('Sockets', function(){
                         expect(message.content).toBe(content);
                         expect(message.createdById).toBe(socketMock.handshake.user._id);
                         expect(message.collaborationObjectId).toEqual(data.collaborationObjectId);
-                        expect(message.timestamp).toEqual(data.timestamp);
+                        expect(aproximateDate(message.timestamp)).toEqual(aproximateDate(data.timestamp));
                         expect(message._id).not.toBeNull();
 
                         Message.count({ content: content }, function(err, count){

@@ -22,8 +22,14 @@ describe("Notifications", function() {
             setupData();
         });
 
+        var P = new mongo.Types.ObjectId();
+        var R = new mongo.Types.ObjectId();
+        var A = new mongo.Types.ObjectId();
+        var B = new mongo.Types.ObjectId();
+        var D = new mongo.Types.ObjectId();
+
         function setupData() {
-            offlineNotification.onlineUsersIds = ['P','R'];
+            offlineNotification.onlineUsersIds = [P,R];
             offlineNotification.senderUser = {
                 groupId: 'ABC',
                 firstName: 'Mike',
@@ -31,13 +37,13 @@ describe("Notifications", function() {
             };
 
             doug = {
-                _id: 'D',
+                _id: D,
                 email: 'doug@abc.com',
                 firstName: 'doug',
                 lastName: 'teeks'
             };
             bob = {
-                _id: 'B',
+                _id: B,
                 email: 'bob@abc.com',
                 firstName: 'bob',
                 lastName: 'doe'
@@ -85,9 +91,9 @@ describe("Notifications", function() {
             var socketsStub = {
                 groupClients: function(groupId) {
                     var clientA = Object.create(Client);
-                    clientA.init("A");
+                    clientA.init(A);
                     var clientB = Object.create(Client);
-                    clientB.init("B");
+                    clientB.init(B);
                     return [ clientA, clientB ];
                 }
             };
@@ -96,8 +102,8 @@ describe("Notifications", function() {
 
             expect(offlineNotification.senderUser).toBe(someUser);
             expect(offlineNotification.onlineUsersIds.length).toBe(2);
-            expect(offlineNotification.onlineUsersIds[0]).toEqual("A");
-            expect(offlineNotification.onlineUsersIds[1]).toEqual("B");
+            expect(offlineNotification.onlineUsersIds[0]).toEqual(A);
+            expect(offlineNotification.onlineUsersIds[1]).toEqual(B);
         });
 
         it("notifies entire group", function() {
@@ -138,7 +144,7 @@ describe("Notifications", function() {
 
         it("notifies collaboration object members", function() {
             collaborationObject.members.entireGroup = false;
-            collaborationObject.members.users = ['R','D'];
+            collaborationObject.members.users = [R, D];
 
             offlineNotification.notify(message);
 

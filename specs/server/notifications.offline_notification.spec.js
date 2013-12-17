@@ -52,6 +52,7 @@ describe("Notifications", function() {
             offlineUsers = [doug, bob];
 
             collaborationObject = {
+                _id: '123',
                 members: {
                     entireGroup: true
                 },
@@ -136,7 +137,7 @@ describe("Notifications", function() {
             expect(args.to[0].name).toEqual('doug teeks');
             expect(args.to[1].email).toEqual('bob@abc.com');
             expect(args.to[1].name).toEqual('bob doe');
-            expect(args.replyToEmail).toEqual('no-reply@dobly.com');
+            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@dobly.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');
@@ -173,7 +174,7 @@ describe("Notifications", function() {
             expect(args.to.length).toBe(1);
             expect(args.to[0].email).toEqual('doug@abc.com');
             expect(args.to[0].name).toEqual('doug teeks');
-            expect(args.replyToEmail).toEqual('no-reply@dobly.com');
+            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@dobly.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');

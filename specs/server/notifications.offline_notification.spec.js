@@ -17,6 +17,8 @@ describe("Notifications", function() {
             groupMock = buildMock('../models/group','findById');
             logMock = buildMock('../common/log','error');
 
+            process.env.REPLIES_EMAIL_DOMAIN = 'test-replies.doblychat.com';
+
             offlineNotification = require('../../lib/notifications/offline_notification');
 
             setupData();
@@ -137,7 +139,7 @@ describe("Notifications", function() {
             expect(args.to[0].name).toEqual('doug teeks');
             expect(args.to[1].email).toEqual('bob@abc.com');
             expect(args.to[1].name).toEqual('bob doe');
-            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@dobly.com>');
+            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@test-replies.doblychat.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');
@@ -174,7 +176,7 @@ describe("Notifications", function() {
             expect(args.to.length).toBe(1);
             expect(args.to[0].email).toEqual('doug@abc.com');
             expect(args.to[0].name).toEqual('doug teeks');
-            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@dobly.com>');
+            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@test-replies.doblychat.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');

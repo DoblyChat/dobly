@@ -14,19 +14,31 @@
 	.text{
 		float: left;
 		width: 80%;
+
+		.assigned-to{
+			.caption-color;
+			margin-left: 5px;
+		}
 	}
 
-	textarea{
+	textarea, select{
 		float: left;
-		width: 93%%;
 		margin-bottom: 10px;
+	}
+
+	select{
+		width: 100%;
+	}
+
+	textarea {
+		width: 99%;
 	}
 
 	&.complete{
 		background-color: #eee;
 
 		.text{
-			span{
+			.task-content{
 				text-decoration: line-through;
 			}
 		}
@@ -34,18 +46,61 @@
 
 	.icons{
 		float: right;
-		color: @blue;
-		position: relative;
-		right: -200px;
-		transition: right 0.2s ease 0s;
+		color: @light-gray;
+		opacity: 0;
+		transition: opacity 0s linear 0.2s;
 
 		.icon{
-			margin-right: 8px;
+			margin-right: 3px;
+			padding: 3px 5px;
+
+			&:hover{
+				color: @gray;
+			}
 		}
 
-		.icon:last-child{
+		.selected{
+			color: @blue;
+			opacity: 1;
+		}
+
+		.icon-menu{
 			margin-right: 0;
 		}
+	}
+
+	.menu{
+		outline: none;
+		position: absolute;
+		top: 9px;
+		right: 40px;
+		background-color: #eee;
+		z-index: 1;
+		width: 70px;
+		.counter-box-shadow;
+
+		ul{
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+
+			li{
+				border-style: solid;
+				border-width: 1px 1px 0 1px;
+				border-color: @light-gray;
+				padding: 3px;
+				cursor: pointer;
+
+				&:last-child{
+					border-bottom-width: 1px;
+				}
+
+				&:hover{
+					background-color: @light-gray;
+					color: @white;
+				}
+			}
+		}	
 	}
 
 	.buttons{
@@ -78,7 +133,7 @@
 
 	&:hover{
 		.icons{
-			right: 0;
+			opacity: 1;
 			cursor: pointer;
 		}
 	}

@@ -7,3 +7,6 @@ _SpecRunner.html
 .grunt
 .env
 public/stylesheets/*.css
+reports/
+public/scripts/release/
+public/stylesheets/release/

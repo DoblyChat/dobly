@@ -41,6 +41,7 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
                 expect(collaborationObject.users).toEqual('');
                 expect(collaborationObject.template).toBe('template');
                 expect(collaborationObject.type).toBe('V');
+                expect(collaborationObject.iconClass).toBe('');
             });
 
             it("loads users", function() {

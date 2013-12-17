@@ -7,6 +7,7 @@
 					.tile-icons
 						.icon-move-handle(data-bind="click: function(){}, clickBubble: false")
 						.icon-dismiss(data-bind="click: $parent.remove")
+						div(data-bind="visible: !showUnreadCounter(), css: iconClass")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
 	#new-message-bar(data-bind="css: { active: $root.hasUnread }")
 	#new-tile(data-bind="click: $parent.addNewConversation")				

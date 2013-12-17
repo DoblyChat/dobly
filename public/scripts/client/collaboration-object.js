@@ -19,6 +19,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
         self.forEntireGroup = data.members.entireGroup;
         self.ui = createConversationObjectUi();
         self.type = data.type;
+        self.iconClass = '';
 
         self.init = function(createItem){
             if(data.items) {
@@ -116,7 +117,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
 
         self.showUnreadCounter = ko.computed(function() {
             return self.unreadCounter() > 0;
-        });  
+        }); 
 
         self.hasFocus.subscribe(function(hasFocus) {
             if (hasFocus) {

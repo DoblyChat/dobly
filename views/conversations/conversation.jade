@@ -2,11 +2,11 @@ script(id="convo-template", type="text/html")
 	.convo.collaboration-object(data-bind="visible: active, css : { 'collaboration-object-left': isLeft, 'collaboration-object-right': isRight } ")
 		.collaboration-object-header(data-bind="click: markAsRead")
 			.topic
-				span(data-bind="text: topic")
-				span.icon-pencil(alt="change topic", data-bind="click: $root.changeTopic.click")										
+				span(data-bind="text: topic")									
 			.actions
 				span.action-icon.icon-info(data-bind="click: ui.toggleInfo")
 				span.action-icon.icon-search(data-bind="click: search.show")
+				span.action-icon.icon-pencil(data-bind="click: $root.changeTopic.click")	
 			.search.hidden
 				.textbox
 					input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input', event: { keypress: search.nextOnEnter }")

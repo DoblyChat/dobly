@@ -54,6 +54,32 @@
         return Math.ceil(date.valueOf() / 1000);
     };
 
+    beforeEach(function() {
+        this.addMatchers({
+
+        toBeEquivalentDates: function(expected) {
+            var actual = this.actual;
+            var notText = this.isNot ? " not" : "";
+
+            this.message = function () {
+                return "Expected " + actual + notText + " to be equivalent to " + expected;
+            };
+
+            if(!actual.getDate){
+                actual = new Date(actual);
+            }
+
+            if(!expected.getDate){
+                expected = new Date(expected);
+            }
+
+            return actual.getDate() === expected.getDate() && 
+                actual.getMonth() === expected.getMonth() &&
+                actual.getFullYear() === expected.getFullYear();
+        }
+    });
+});
+
     afterEach(function(){
         global.mockery.disable();
         global.mockery.deregisterAll();

@@ -168,5 +168,33 @@ describe('Sockets', function(){
 			expect(logMock.error).not.toHaveBeenCalled();
 			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_content_updated', 'c-id', data);
 		});
+
+		it('assigns a task', function(){
+			var data = {
+				id: 't-id',
+				collaborationObjectId: 'c-id',
+				assignedToId: 'a-id'
+			};
+
+			taskIo.assign(socketMock, data);
+
+			expect(taskMock.update).toHaveBeenCalled();
+			var args = taskMock.update.mostRecentCall.args;
+
+			expect(args[0]).toEqual({ _id: 't-id' });
+			expect(args[1]).toEqual({ assignedToId: 'a-id' });
+			var callback = args[2];
+
+			callback('err');
+			expect(logMock.error).toHaveBeenCalledWith('err', 'Error assigning task.');
+			expect(socketMock.broadcastToCollaborationObjectMembers).not.toHaveBeenCalled();
+
+			logMock.error.reset();
+
+			callback(null);
+			expect(logMock.error).not.toHaveBeenCalled();
+			expect(socketMock.broadcastToCollaborationObjectMembers).toHaveBeenCalledWith('task_assigned', 'c-id', data);
+		
+		});
 	});
 });

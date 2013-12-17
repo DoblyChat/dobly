@@ -16,6 +16,24 @@ module.exports = function(grunt){
                 validthis: true
             }
         },
+        plato: {
+            client: {
+                options: {
+                    jshint: false
+                },
+                files: {
+                    'reports/client': ['public/scripts/client/*.js']    
+                }
+            },
+            server: {
+                options: {
+                    jshint: false
+                },
+                files: {
+                    'reports/server': ['lib/*.js']
+                }
+            }
+        },
         connect: {
             test : {
                 port : 8000
@@ -113,25 +131,6 @@ module.exports = function(grunt){
                 ]
             }
         },
-        clean: ["public/stylesheets/release/**", "public/scripts/release/**"],
-        gitcommit: {
-            task: {
-                options: {
-                    message: 'Commit of built files'
-                },
-                files: [
-                    { src: 'public/scripts/release/main.js' },
-                    { src: 'public/stylesheets/release/**' }
-                ]
-            }
-        },
-        gitcheckout: {
-            task: {
-                options: {
-                    branch: 'master'
-                }
-            }
-        },
         imagemin: {
             dist: {
                 options: {
@@ -153,9 +152,8 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-git');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-plato');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive
@@ -165,5 +163,5 @@ module.exports = function(grunt){
     grunt.registerTask('tests-client', ['connect', 'jasmine']);
     grunt.registerTask('tests', ['tests-client', 'jasmine-node']);
     grunt.registerTask('check', ['jshint', 'tests']);
-    grunt.registerTask('deploy', ['gitcheckout', 'clean', 'requirejs', 'less', 'cssmin', 'copy:css', 'gitcommit']);
+    grunt.registerTask('heroku:staging', ['requirejs', 'less', 'cssmin', 'copy:css']);
 };

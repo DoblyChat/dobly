@@ -1,11 +1,13 @@
-define(['client/collaboration-object', 'client/task'], function(createCollaborationObject, createTask){
+define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, createCollaborationObject, createTask){
     'use strict';
 
-    return function(data){
+    return function(data, group){
         var self = createCollaborationObject(data, 'task-list-template');
 
         self.init(createTask);
-
+        self.users = group.users;
+        self.iconClass = 'icon-task-list';
+        
         function createNewTask(data){
             var taskObj = createTask(data);
             taskObj.processing(true);
@@ -22,7 +24,6 @@ define(['client/collaboration-object', 'client/task'], function(createCollaborat
         }
 
         self.addTask = self.addNewItem(createNewTask, sendTaskToServer);
-
 
         self.removeTask = function(task){
             if(confirm('Are you sure you would like to remove this task?')){

@@ -3,7 +3,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 
     describe('Task list', function(){
         var createTaskList, createTaskMock,
-            taskList;
+            taskList, groupMock;
 
         beforeEach(function(){
             var done = false;
@@ -21,6 +21,9 @@ define(['squire', 'knockout'], function(Squire, ko){
 
             createTaskMock = jasmine.createSpy('create-task');
             app.socket = createMockSocket();
+            groupMock = {
+                users: [ 'my', 'users']
+            };
 
             runs(function(){
                 var injector = new Squire();
@@ -46,7 +49,7 @@ define(['squire', 'knockout'], function(Squire, ko){
             runs(function(){
                 taskList = createTaskList({
                     da: 'ta' 
-                });
+                }, groupMock);
             });
         });
 
@@ -57,6 +60,14 @@ define(['squire', 'knockout'], function(Squire, ko){
 
             it('initializes', function(){
                 expect(taskList.init).toHaveBeenCalledWith(createTaskMock);
+            });
+
+            it('sets users', function(){
+                expect(taskList.users).toBe(groupMock.users);
+            });
+
+            it('sets icon class', function(){
+                expect(taskList.iconClass).toBe('icon-task-list');
             });
         });
 

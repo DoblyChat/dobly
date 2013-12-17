@@ -194,7 +194,7 @@ describe('CollaborationObject', function(){
 		it('updates last activity time', function(done){
 			CollaborationObject.updateLastActivity(collaborationObjectId, function(err){
 				CollaborationObject.findById(collaborationObjectId, function(err, collaborationObject){
-					expect(aproximateDate(collaborationObject.lastActivity)).toBe(aproximateDate(today));
+					expect(collaborationObject.lastActivity).toBeEquivalentDates(today);
 					done(err);
 				});
 			});

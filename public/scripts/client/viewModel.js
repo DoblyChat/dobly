@@ -36,7 +36,7 @@ define([
         var toSubscribe = [];
 
         function buildCollaborationObject(data){
-            return data.type === 'C' ? createConversation(data) : createTaskList(data);
+            return data.type === 'C' ? createConversation(data) : createTaskList(data, self.group);
         }
 
         for(var i = 0; i < collaborationObjectsData.length; i++){
@@ -79,7 +79,8 @@ define([
             findCollaborationObject(data, function(collaborationObject){
                 var itemObj = buildItemObject(collaborationObject.type, data);
                 collaborationObject.addItem(itemObj);
-                self.notifier.showDeskopNotification(collaborationObject, itemObj.createdBy + ': ' + itemObj.content);
+                var content = typeof itemObj.content === 'function' ? itemObj.content() : itemObj.content;
+                self.notifier.showDeskopNotification(collaborationObject, itemObj.createdBy + ': ' + content);
                 self.desktop.add(collaborationObject);
             });
         });

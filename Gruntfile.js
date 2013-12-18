@@ -73,16 +73,11 @@ module.exports = function(grunt){
                 }
             }
         },
-        'jasmine-node': {
-            options: { 
-                captureExceptions: true,
-                forceexit: true
-            },
-            run: {
-                spec: 'specs/server'
-            },
-            env: { },
-            executable: './node_modules/.bin/jasmine-node'
+        jasmine_node: {
+            projectRoot: './specs/server',
+            requirejs: false,
+            forceExit: true,
+            useHelpers: true
         },
         requirejs: {
             compile: {
@@ -146,6 +141,7 @@ module.exports = function(grunt){
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-jasmine-node');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
@@ -160,7 +156,7 @@ module.exports = function(grunt){
     // 3-if _SpecRunner.html does not exist, run the 'tests-client'
     // task at least once
     grunt.registerTask('tests-client', ['connect', 'jasmine']);
-    grunt.registerTask('tests', ['tests-client', 'jasmine-node']);
+    grunt.registerTask('tests', ['tests-client', 'jasmine_node']);
     grunt.registerTask('check', ['jshint', 'tests']);
     grunt.registerTask('heroku:staging', ['requirejs', 'less', 'cssmin', 'copy:css']);
 };

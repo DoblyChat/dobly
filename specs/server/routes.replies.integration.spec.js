@@ -106,7 +106,7 @@ describe("Replies integration routes", function() {
             var message = MessageMock.create.mostRecentCall.args[0];
             expect(message.content).toEqual('some valid message in a reply.');
             expect(message.createdById).toEqual(testUserId);
-            expect(message.timestamp).toEqual(new Date(1387239439996));
+            expect(message.timestamp).toEqual(new Date(138723943*1000));
             expect(message.collaborationObjectId).toEqual(testCollaborationObjectId);
 
             var someMessage = 'some message';
@@ -170,7 +170,7 @@ describe("Replies integration routes", function() {
 
     function getInvalidReply() {
         return [{ 
-            "ts": 1387232656667, 
+            "ts": 138723265, 
             "event": "inbound", 
             "msg": 
             {
@@ -184,7 +184,7 @@ describe("Replies integration routes", function() {
 
     function getValidReply(collaborationObjectId, testEmail) {
         return [{ 
-            "ts": 1387239439996, 
+            "ts": 138723943, 
             "event": "inbound", 
             "msg": 
             {

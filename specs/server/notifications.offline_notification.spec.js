@@ -5,7 +5,7 @@ describe("Notifications", function() {
 
         var mandrillWrapperMock, collaborationObjectMock, userMock, groupMock, logMock;
         var offlineNotification;
-        var doug, bob, offlineUsers, collaborationObject, message, group;
+        var doug, bob, offlineUsers, collaborationObject, message, group, Client;
 
         beforeEach(function() {
             mockery.enable({ useCleanCache: true });
@@ -17,11 +17,22 @@ describe("Notifications", function() {
             groupMock = buildMock('../models/group','findById');
             logMock = buildMock('../common/log','error');
 
+            process.env.OFFLINE_NOTIFICATION_EMAIL = 'test-notification@doblychat.com';
             process.env.REPLIES_EMAIL_DOMAIN = 'test-replies.doblychat.com';
 
             offlineNotification = require('../../lib/notifications/offline_notification');
 
             setupData();
+
+            Client = {
+                init: function(userId) {
+                    this.handshake = {
+                        user: {
+                            _id: userId
+                        }
+                    };
+                }
+            };
         });
 
         var P = new mongo.Types.ObjectId();
@@ -81,15 +92,6 @@ describe("Notifications", function() {
                     user: someUser
                 }
             };
-            var Client = {
-                init: function(userId) {
-                    this.handshake = {
-                        user: {
-                            _id: userId
-                        }
-                    };
-                }
-            };
 
             var socketsStub = {
                 groupClients: function(groupId) {
@@ -107,6 +109,35 @@ describe("Notifications", function() {
             expect(offlineNotification.onlineUsersIds.length).toBe(2);
             expect(offlineNotification.onlineUsersIds[0]).toEqual(A);
             expect(offlineNotification.onlineUsersIds[1]).toEqual(B);
+        });
+
+        it("init when sender is offline", function() {
+            var senderId = new mongo.Types.ObjectId();
+
+            var sender = {
+                _id: senderId
+            };
+
+            var socketsStub = {
+                groupClients: function(groupId) {
+                    var clientA = Object.create(Client);
+                    clientA.init(A);
+                    var clientB = Object.create(Client);
+                    clientB.init(B);
+                    var clientD = Object.create(Client);
+                    clientD.init(D);
+                    return [ clientA, clientB, clientD ];
+                }
+            };
+
+            offlineNotification.initWhenSenderIsOffline(sender, '678', socketsStub);
+
+            expect(offlineNotification.senderUser).toBe(sender);
+            expect(offlineNotification.onlineUsersIds.length).toBe(4);
+            expect(offlineNotification.onlineUsersIds[0]).toEqual(A);
+            expect(offlineNotification.onlineUsersIds[1]).toEqual(B);
+            expect(offlineNotification.onlineUsersIds[2]).toEqual(D);
+            expect(offlineNotification.onlineUsersIds[3]).toEqual(senderId);
         });
 
         it("notifies entire group", function() {
@@ -133,13 +164,13 @@ describe("Notifications", function() {
             };
 
             expect(args.fromName).toEqual('Mike Myers');
-            expect(args.fromEmail).toEqual('notification@dobly.com');
+            expect(args.fromEmail).toEqual('test-notification@doblychat.com');
             expect(args.to.length).toBe(2);
             expect(args.to[0].email).toEqual('doug@abc.com');
             expect(args.to[0].name).toEqual('doug teeks');
             expect(args.to[1].email).toEqual('bob@abc.com');
             expect(args.to[1].name).toEqual('bob doe');
-            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@test-replies.doblychat.com>');
+            expect(args.replyToEmail).toEqual('Dobly Conversation <r-123@test-replies.doblychat.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');
@@ -172,11 +203,11 @@ describe("Notifications", function() {
             };
 
             expect(args.fromName).toEqual('Mike Myers');
-            expect(args.fromEmail).toEqual('notification@dobly.com');
+            expect(args.fromEmail).toEqual('test-notification@doblychat.com');
             expect(args.to.length).toBe(1);
             expect(args.to[0].email).toEqual('doug@abc.com');
             expect(args.to[0].name).toEqual('doug teeks');
-            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@test-replies.doblychat.com>');
+            expect(args.replyToEmail).toEqual('Dobly Conversation <r-123@test-replies.doblychat.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');

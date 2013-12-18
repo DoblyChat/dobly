@@ -1,4 +1,4 @@
-describe("Replies integration routes", function() {
+describe("Replies routes integration", function() {
     'use strict';
 
     var testGroupId, testCollaborationObjectId, testEmail, testUserId;
@@ -61,6 +61,8 @@ describe("Replies integration routes", function() {
             warnOnReplace: true,
             warnOnUnregistered: false
         });
+
+        process.env.OFFLINE_NOTIFICATION_EMAIL = 'test-notification@doblychat.com';
 
         var saveMessageCallback, notifyOnlineUsersCallback, senderConfirmationCallback, notifyOfflineUsersCallback;
 
@@ -188,11 +190,21 @@ describe("Replies integration routes", function() {
             "event": "inbound", 
             "msg": 
             {
-                "text": "some valid message in a reply.",
+                "text": getReplyText(),
                 "from_email": testEmail,
                 "email": "r-" + collaborationObjectId + "@replies.doblychat.com",
                 "subject": "RE: abc topic"
             } 
         }];
+    }
+
+    function getReplyText() {
+        return  "some valid message in a reply." + 
+                "\r\n" + 
+                "\r\n" +
+                "Today John <test-notification@doblychat.com> said:" +
+                "\r\n" +
+                "> hello there" +
+                "\r\n";
     }
 });

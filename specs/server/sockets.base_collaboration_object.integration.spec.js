@@ -3,7 +3,7 @@ describe('Sockets', function(){
 
     describe('Base Collaboration Object - integration', function(){
         var collaborationObjectIo, socketMock,
-            CollaborationObject, notificationMock,
+            CollaborationObject, offlineNotificationMock,
             Unread, User;
 
         beforeEach(function(){
@@ -13,7 +13,7 @@ describe('Sockets', function(){
             
             mockery.enable({ warnOnUnregistered: false });
             
-            notificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
+            offlineNotificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
             collaborationObjectIo = require('../../lib/sockets/base_collaboration_object_io');
 
             socketMock = {
@@ -75,7 +75,7 @@ describe('Sockets', function(){
                 });
             });
 
-            it('saves item and stores unread marker', function(done){
+            it('saves item, stores unread marker and notifies offline users', function(done){
                 var data = {
                     collaborationObjectId: collaborationObjectId,
                 };
@@ -88,17 +88,20 @@ describe('Sockets', function(){
 
                 var sockets = {};
 
-                collaborationObjectIo.sendItem(socketMock, sockets, data, save, function(savedItem){
+                var confirmation = function(savedItem) {
                     expect(savedItem).toBe(item);
+                };
 
+                collaborationObjectIo.sendItem(socketMock, sockets, data, save, confirmation, function(err, savedItem) {
+                    expect(savedItem).toBe(item);
                     Unread.find({ userId: userId }, function(err, markers){
                         expect(err).toBeNull();
                         expect(markers.length).toBe(1);
                         expect(markers[0].collaborationObjectId).toEqual(data.collaborationObjectId);
                         expect(markers[0].count).toBe(1);
 
-                        expect(notificationMock.init).toHaveBeenCalledWith(socketMock, sockets);
-                        expect(notificationMock.notify).toHaveBeenCalledWith(item);
+                        expect(offlineNotificationMock.init).toHaveBeenCalledWith(socketMock, sockets);
+                        expect(offlineNotificationMock.notify).toHaveBeenCalledWith(item);
                         done();
                     });
                 });

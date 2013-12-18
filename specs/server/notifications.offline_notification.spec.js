@@ -17,13 +17,21 @@ describe("Notifications", function() {
             groupMock = buildMock('../models/group','findById');
             logMock = buildMock('../common/log','error');
 
+            process.env.REPLIES_EMAIL_DOMAIN = 'test-replies.doblychat.com';
+
             offlineNotification = require('../../lib/notifications/offline_notification');
 
             setupData();
         });
 
+        var P = new mongo.Types.ObjectId();
+        var R = new mongo.Types.ObjectId();
+        var A = new mongo.Types.ObjectId();
+        var B = new mongo.Types.ObjectId();
+        var D = new mongo.Types.ObjectId();
+
         function setupData() {
-            offlineNotification.onlineUsersIds = ['P','R'];
+            offlineNotification.onlineUsersIds = [P,R];
             offlineNotification.senderUser = {
                 groupId: 'ABC',
                 firstName: 'Mike',
@@ -31,13 +39,13 @@ describe("Notifications", function() {
             };
 
             doug = {
-                _id: 'D',
+                _id: D,
                 email: 'doug@abc.com',
                 firstName: 'doug',
                 lastName: 'teeks'
             };
             bob = {
-                _id: 'B',
+                _id: B,
                 email: 'bob@abc.com',
                 firstName: 'bob',
                 lastName: 'doe'
@@ -46,6 +54,7 @@ describe("Notifications", function() {
             offlineUsers = [doug, bob];
 
             collaborationObject = {
+                _id: '123',
                 members: {
                     entireGroup: true
                 },
@@ -85,9 +94,9 @@ describe("Notifications", function() {
             var socketsStub = {
                 groupClients: function(groupId) {
                     var clientA = Object.create(Client);
-                    clientA.init("A");
+                    clientA.init(A);
                     var clientB = Object.create(Client);
-                    clientB.init("B");
+                    clientB.init(B);
                     return [ clientA, clientB ];
                 }
             };
@@ -96,8 +105,8 @@ describe("Notifications", function() {
 
             expect(offlineNotification.senderUser).toBe(someUser);
             expect(offlineNotification.onlineUsersIds.length).toBe(2);
-            expect(offlineNotification.onlineUsersIds[0]).toEqual("A");
-            expect(offlineNotification.onlineUsersIds[1]).toEqual("B");
+            expect(offlineNotification.onlineUsersIds[0]).toEqual(A);
+            expect(offlineNotification.onlineUsersIds[1]).toEqual(B);
         });
 
         it("notifies entire group", function() {
@@ -130,7 +139,7 @@ describe("Notifications", function() {
             expect(args.to[0].name).toEqual('doug teeks');
             expect(args.to[1].email).toEqual('bob@abc.com');
             expect(args.to[1].name).toEqual('bob doe');
-            expect(args.replyToEmail).toEqual('no-reply@dobly.com');
+            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@test-replies.doblychat.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');
@@ -138,7 +147,7 @@ describe("Notifications", function() {
 
         it("notifies collaboration object members", function() {
             collaborationObject.members.entireGroup = false;
-            collaborationObject.members.users = ['R','D'];
+            collaborationObject.members.users = [R, D];
 
             offlineNotification.notify(message);
 
@@ -167,7 +176,7 @@ describe("Notifications", function() {
             expect(args.to.length).toBe(1);
             expect(args.to[0].email).toEqual('doug@abc.com');
             expect(args.to[0].name).toEqual('doug teeks');
-            expect(args.replyToEmail).toEqual('no-reply@dobly.com');
+            expect(args.replyToEmail).toEqual('Reply to Conversation <r-123@test-replies.doblychat.com>');
             expect(args.subject).toEqual('[Dobly - The Supers] What do you mean when you say stop?');
             expect(args.text).toEqual('stop: collaborate and listen');
             expect(args.tags[0]).toEqual('offline-messages');

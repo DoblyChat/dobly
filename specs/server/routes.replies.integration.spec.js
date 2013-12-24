@@ -1,22 +1,27 @@
 describe("Replies routes integration", function() {
     'use strict';
 
-    var testGroupId, testCollaborationObjectId, testEmail, testUserId;
+    var testGroupId, testCollaborationObjectId, testEmail, testUserId,
+        CollaborationObject, User;
 
     beforeEach(function(done) {
         testGroupId = new mongo.Types.ObjectId();
         testEmail = "mark@ryder.com";
-        setupTestData(done);
+        
+        CollaborationObject = require('../../lib/models/collaboration_object');
+        User = require('../../lib/models/user');
+
+        setupTestData(function(err){
+            enableMockery();
+            mockery.registerMock('../models/collaboration_object', CollaborationObject);
+            mockery.registerMock('../models/user', User);
+            done(err);
+        });
     });
 
-    afterEach(function(done) {
-        deleteTestData(done);
-    });
+    afterEach(deleteTestData);
 
-    function setupTestData(done) {
-        var CollaborationObject = require('../../lib/models/collaboration_object');
-        var User = require('../../lib/models/user');
-
+    function setupTestData(callback) {
         CollaborationObject.create({
             type: 'C',
             topic: 'Replies Test',
@@ -40,28 +45,19 @@ describe("Replies routes integration", function() {
                 }, function(err, user){
                     if (err) { console.log(err); }
                     testUserId = user._id;
-                    done(err);
+                    callback(err);
                 });
             });
         });
     }
 
     function deleteTestData(done) {
-        var CollaborationObject = require('../../lib/models/collaboration_object');
-        var User = require('../../lib/models/user');
-
         CollaborationObject.findByIdAndRemove(testCollaborationObjectId, function(){
             User.remove({ email: testEmail }, done);
         });
     }
 
     it("sends valid reply as message", function(done) {
-        mockery.enable({
-            useCleanCache: false,
-            warnOnReplace: true,
-            warnOnUnregistered: false
-        });
-
         process.env.OFFLINE_NOTIFICATION_EMAIL = 'test-notification@doblychat.com';
 
         var saveMessageCallback, notifyOnlineUsersCallback, senderConfirmationCallback, notifyOfflineUsersCallback;
@@ -77,8 +73,11 @@ describe("Replies routes integration", function() {
             }
         };
 
+        mockery.registerAllowable('../common/log');
         mockery.registerMock('../models/item', ItemMock);
+
         var MessageMock = buildMock('../models/message', 'create');
+
         var socketsSpy = {
             emitToCollaborationObjectMembers: jasmine.createSpy()
         };
@@ -132,13 +131,7 @@ describe("Replies routes integration", function() {
         replies.post(req, res);
     });
 
-    xit("does not send invalid reply", function(done) {
-        mockery.enable({
-            useCleanCache: false,
-            warnOnReplace: true,
-            warnOnUnregistered: false
-        });
-
+    it("does not send invalid reply", function(done) {
         var ItemMock = buildMock('../models/item', 'init', 'send');
         var logMock = buildMock('../common/log','error');
         var replies = require('../../lib/routes/replies');

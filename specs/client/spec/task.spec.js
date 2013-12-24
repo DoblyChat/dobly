@@ -81,6 +81,16 @@ define(['client/task', 'client/common'], function(createTask, common){
             expect(task.formattedTimestamp()).toBe('10/9/2012 10:13 PM');
         });
 
+        it('builds notification text', function(){
+            var data = {
+                content: 'new notification',
+                createdById: 'u-id'
+            };
+
+            var task = createTask(data);
+            expect(task.getNotificationText()).toBe('Me has added a new task: e-new notification')
+        });
+
         describe('complete', function(){
             it('#updateCompleteValues', function(){
                 var task = createTask({

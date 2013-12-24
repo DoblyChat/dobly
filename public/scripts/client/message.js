@@ -14,6 +14,10 @@ define(['knockout', 'client/common'], function(ko, common){
         self.createdBy = app.groupUsers[data.createdById];
         self.confirmedSent = ko.observable(confirmed);
 
+        self.getNotificationText = function(){
+            return self.createdBy + ': ' + self.content;
+        };
+
         return self;
     };
 });

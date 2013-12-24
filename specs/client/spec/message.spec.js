@@ -59,6 +59,16 @@ define(['client/message', 'client/common'], function(createMessage, common){
             message.timestamp(Date.parse('2012.04.09 22:13:34'));
             expect(message.formattedTimestamp()).toBe('4/9/2012 10:13 PM');
         });
+
+        it('builds a notification message', function(){
+            var data = {
+                content: 'new notification',
+                createdById: 'SO-u'
+            };
+
+            var message = createMessage(data, true);
+            expect(message.getNotificationText()).toBe('Someone Else: e-new notification');
+        });
     });
 });
 

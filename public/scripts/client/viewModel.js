@@ -79,8 +79,7 @@ define([
             findCollaborationObject(data, function(collaborationObject){
                 var itemObj = buildItemObject(collaborationObject.type, data);
                 collaborationObject.addItem(itemObj);
-                var content = typeof itemObj.content === 'function' ? itemObj.content() : itemObj.content;
-                self.notifier.showDeskopNotification(collaborationObject, itemObj.createdBy + ': ' + content);
+                self.notifier.showDeskopNotification(collaborationObject, itemObj.getNotificationText());
                 self.desktop.add(collaborationObject);
             });
         });

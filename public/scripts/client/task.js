@@ -39,6 +39,10 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.updateCompleteValues(data);
 		self.setContent(data.content);
 
+		self.getNotificationText = function(){
+			return self.createdBy + ' has added a new task: ' + self.content();
+		};
+
 		self.toggleComplete = function(){
 			self.processing(true);
 

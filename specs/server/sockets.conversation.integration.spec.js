@@ -4,14 +4,17 @@ describe('Sockets', function(){
     describe('Conversation - integration', function(){
         var conversationIo, socketMock,
             CollaborationObject, Message, 
-            Unread, User;
+            Unread, User, offlineNotificationMock;
 
         beforeEach(function(){
-            conversationIo = require('../../lib/sockets/conversation_io');
             CollaborationObject = require('../../lib/models/collaboration_object');
             Message = require('../../lib/models/message');
             Unread = require('../../lib/models/unread_marker');
             User = require('../../lib/models/user');
+
+            mockery.enable({ warnOnUnregistered: false });
+
+            offlineNotificationMock = buildMock('../notifications/offline_notification', 'init', 'notify');
 
             socketMock = {
                 emit: jasmine.createSpy(),
@@ -25,6 +28,8 @@ describe('Sockets', function(){
                     },
                 },
             };
+
+            conversationIo = require('../../lib/sockets/conversation_io');
         });
 
         describe('#sendMessage', function(){
@@ -81,24 +86,32 @@ describe('Sockets', function(){
 
                 var sockets = { sock: 'ets' };
 
-                conversationIo.sendMessage(socketMock, sockets, data, function(message){
-                    expect(message.content).toBe(content);
-                    expect(message.createdById).toBe(socketMock.handshake.user._id);
-                    expect(message.collaborationObjectId).toEqual(data.collaborationObjectId);
-                    expect(message.timestamp).toBeEquivalentDates(Date.now());
-                    expect(message._id).not.toBeNull();
+                var confirm = {
+                    confirmation: function(message){
+                        expect(message.content).toBe(content);
+                        expect(message.createdById).toBe(socketMock.handshake.user._id);
+                        expect(message.collaborationObjectId).toEqual(data.collaborationObjectId);
+                        expect(message.timestamp).toBeEquivalentDates(Date.now());
+                        expect(message._id).not.toBeNull();
 
-                    Message.count({ content: content }, function(err, count){
-                        expect(err).toBeNull();
-                        expect(count).toBe(1);
-
-                        Unread.find({ userId: userId }, function(err, markers){
+                        Message.count({ content: content }, function(err, count){
                             expect(err).toBeNull();
-                            expect(markers.length).toBe(1);
-                            expect(markers[0].collaborationObjectId).toEqual(data.collaborationObjectId);
-                            expect(markers[0].count).toBe(1);
-                            done();
+                            expect(count).toBe(1);
                         });
+                    }
+                };
+
+                spyOn(confirm, 'confirmation').andCallThrough();
+
+                conversationIo.sendMessage(socketMock, sockets, data, confirm.confirmation, function(err, message){
+                    expect(confirm.confirmation).toHaveBeenCalled();
+
+                    Unread.find({ userId: userId }, function(err, markers){
+                        expect(err).toBeNull();
+                        expect(markers.length).toBe(1);
+                        expect(markers[0].collaborationObjectId).toEqual(data.collaborationObjectId);
+                        expect(markers[0].count).toBe(1);
+                        done();
                     });
                 });
             });

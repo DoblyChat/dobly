@@ -6,16 +6,22 @@ describe('Socket', function(){
             conversationIoMock, userIoMock,
             desktopIoMock, authorizeMock,
             sessionStoreMock, taskIoMock,
-            config, collaborationObjectIoMock;
+            config, collaborationObjectIoMock,
+            collaborationObjectSockets;
 
         beforeEach(function(){
+            collaborationObjectSockets = {
+                emit: jasmine.createSpy('emit')
+            };
+
             ioMock = {
                 configure: jasmine.createSpy('configure'),
                 set: jasmine.createSpy('set'),
                 enable: jasmine.createSpy('enable'),
                 sockets: {
                     on: jasmine.createSpy('sockets-on'),
-                    clients: jasmine.createSpy('sockets-clients')
+                    clients: jasmine.createSpy('sockets-clients'),
+                    in: jasmine.createSpy('sockets-in').andReturn(collaborationObjectSockets)
                 },
             };
 
@@ -113,6 +119,15 @@ describe('Socket', function(){
             var result = ioMock.sockets.groupClients('my-g-group');
             expect(ioMock.sockets.clients).toHaveBeenCalledWith('g-my-g-group');
             expect(result).toEqual(clients);
+        });
+
+        it("defines function to emit to collaboration object members", function() {
+            config(ioMock, sessionStoreMock);
+            expect(ioMock.sockets.emitToCollaborationObjectMembers).toBeDefined();
+            var data = {};
+            ioMock.sockets.emitToCollaborationObjectMembers('some-event', '123', data);
+            expect(ioMock.sockets.in).toHaveBeenCalledWith('c-123');
+            expect(collaborationObjectSockets.emit).toHaveBeenCalledWith('some-event', data);
         });
 
         describe('on socket connection', function(){

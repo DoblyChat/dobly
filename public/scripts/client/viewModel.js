@@ -96,15 +96,15 @@ define([
             });
         });
 
-        app.socket.on('task_removed', function(){
+        app.socket.on('task_removed', function(data){
             findItem(data, function(task, collaborationObject){
                 collaborationObject.items.remove(task);
             });
         });
 
-        app.socket.on('task_assigned', function(){
+        app.socket.on('task_assigned', function(data){
             findItem(data, function(task){
-                task.setContent(data.content);
+                task.setAssignedTo(data.assignedToId);
             });
         });
 

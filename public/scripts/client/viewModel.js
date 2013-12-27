@@ -96,9 +96,15 @@ define([
             });
         });
 
-        app.socket.on('task_removed', function(t){
+        app.socket.on('task_removed', function(){
             findItem(data, function(task, collaborationObject){
                 collaborationObject.items.remove(task);
+            });
+        });
+
+        app.socket.on('task_assigned', function(){
+            findItem(data, function(task){
+                task.setContent(data.content);
             });
         });
 

@@ -88,7 +88,7 @@ define(['client/task', 'client/common'], function(createTask, common){
             };
 
             var task = createTask(data);
-            expect(task.getNotificationText()).toBe('Me has added a new task: e-new notification')
+            expect(task.getNotificationText()).toBe('Me has added a new task: e-new notification');
         });
 
         describe('complete', function(){

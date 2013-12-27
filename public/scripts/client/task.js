@@ -20,8 +20,7 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.isEditing = ko.observable(false);
 		self.isAssigning = ko.observable(false);
 		self.updatedContent = ko.observable(data.content);
-		self.assignedTo = ko.observable(app.groupUsers[data.assignedToId]);
-		self.assignedToId = data.assignedToId;
+		self.assignedTo = ko.observable();
 		self.updatedAssignedToId = ko.observable(data.assignedToId);
 		self.menuHasFocus = ko.observable(false);
 
@@ -36,8 +35,14 @@ define(['knockout', 'client/common'], function(ko, common){
 			self.content(common.formatUserInput(content));
 		};
 
+		self.setAssignedTo = function(assignedToId){
+			self.assignedToId = assignedToId;
+			self.assignedTo(app.groupUsers[self.assignedToId]);
+		};
+
 		self.updateCompleteValues(data);
 		self.setContent(data.content);
+		self.setAssignedTo(data.assignedToId);
 
 		self.getNotificationText = function(){
 			return self.createdBy + ' has added a new task: ' + self.content();
@@ -129,8 +134,7 @@ define(['knockout', 'client/common'], function(ko, common){
 					collaborationObjectId: collaborationObjectId
 				});
 
-				self.assignedToId = self.updatedAssignedToId();
-				self.assignedTo(app.groupUsers[self.assignedToId]);
+				self.setAssignedTo(self.updatedAssignedToId());
 			}
 
 			self.isAssigning(false);

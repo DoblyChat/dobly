@@ -1,4 +1,5 @@
-define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout'], function($, ko, io, createViewModel, createTimeout) {
+define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout'], 
+        function($, ko, io, createViewModel, createTimeout) {
     'use strict';
     
     (function(global){
@@ -36,7 +37,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
 
             ko.applyBindings(viewModel);
             global.app.desktop = viewModel.desktop;
-            
+
             initUi();
             
             var timeout = createTimeout(maxReconnects, global);
@@ -58,6 +59,8 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             showRenderedElements();
             global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();
             global.app.desktop.ui.scroll.setup();
+
+            
         }
 
         function showRenderedElements(){

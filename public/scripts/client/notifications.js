@@ -31,7 +31,7 @@ define(function(){
 			}
 		};
 
-		self.showDeskopNotification = function(conversation, content){
+		self.showDesktopNotification = function(conversation, content){
 			if(!app.inFocus){
 				if(canUseNotifications){
 					if(notifications.checkPermission() === ALLOWED){

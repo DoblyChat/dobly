@@ -2,26 +2,22 @@ define([
         'knockout', 
         'client/group', 
         'client/desktop', 
-        'client/notifications', 
         'client/navigation', 
         'client/archive', 
-        'client/conversation', 
-        'client/task-list',
+        'client/builder', 
         'client/collaboration-object.new', 
         'client/changeTopic',
-        'client/message',
-        'client/task'], function(ko, 
+        'client/events',
+        'client/notifications'], function(ko, 
                                     createGroup, 
-                                    createDesktop, 
-                                    createNotifier, 
+                                    createDesktop,
                                     createNavigationModule, 
                                     createArchive,
-                                    createConversation,
-                                    createTaskList,
+                                    builder,
                                     createNewCollaborationObject,
-                                    createChangeTopic,
-                                    createMessage,
-                                    createTask){
+                                    createChangeTopic, 
+                                    events,
+                                    createNotifier){
     'use strict';
     
     return function createViewModel(collaborationObjectsData, desktopData, groupData) {
@@ -35,78 +31,13 @@ define([
 
         var toSubscribe = [];
 
-        function buildCollaborationObject(data){
-            return data.type === 'C' ? createConversation(data) : createTaskList(data, self.group);
-        }
-
         for(var i = 0; i < collaborationObjectsData.length; i++){
-            self.collaborationObjects.push(buildCollaborationObject(collaborationObjectsData[i]));
+            var obj = builder.collaborationObject(collaborationObjectsData[i], self.group);
+            self.collaborationObjects.push(obj);
             toSubscribe.push(collaborationObjectsData[i]._id);
         }
 
         app.socket.emit('subscribe_to_collaboration_objects', toSubscribe);
-
-        self.desktop = createDesktop(desktopData, self.collaborationObjects());
-        self.notifier = createNotifier(self.desktop);
-        self.navigation = createNavigationModule(self);
-        self.archive = createArchive(self.desktop, self.navigation, self.collaborationObjects);
-        self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
-        self.changeTopic = createChangeTopic(self.navigation);
-
-        function buildItemObject(collaborationObjectType, data){
-            return collaborationObjectType === 'C' ? createMessage(data, true) : createTask(data);
-        }
-        
-        function findCollaborationObject(data, callback){
-            ko.utils.arrayForEach(self.collaborationObjects(), function(collaborationObject){
-                if(data.collaborationObjectId === collaborationObject.id){
-                    callback(collaborationObject);
-                }
-            });
-        }
-
-        function findItem(data, callback){
-            findCollaborationObject(data, function(collaborationObject){
-                ko.utils.arrayForEach(collaborationObject.items(), function(item){
-                    if(item.id() === data.id){
-                        callback(item, collaborationObject);
-                    }
-                });
-            });
-        }
-
-        app.socket.on('receive_item', function(data) {
-            findCollaborationObject(data, function(collaborationObject){
-                var itemObj = buildItemObject(collaborationObject.type, data);
-                collaborationObject.addItem(itemObj);
-                self.notifier.showDeskopNotification(collaborationObject, itemObj.getNotificationText());
-                self.desktop.add(collaborationObject);
-            });
-        });
-
-        app.socket.on('task_complete_toggled', function(data){
-            findItem(data, function(task){
-                task.updateCompleteValues(data);
-            });
-        });
-
-        app.socket.on('task_content_updated', function(data){
-            findItem(data, function(task){
-                task.setContent(data.content);
-            });
-        });
-
-        app.socket.on('task_removed', function(data){
-            findItem(data, function(task, collaborationObject){
-                collaborationObject.items.remove(task);
-            });
-        });
-
-        app.socket.on('task_assigned', function(data){
-            findItem(data, function(task){
-                task.setAssignedTo(data.assignedToId);
-            });
-        });
 
         self.unreadCounter = ko.computed(function(){
             var unread = 0;
@@ -125,37 +56,32 @@ define([
             return self.unreadCounter() > 0;
         });
 
-        app.socket.on('my_new_collaboration_object', function(data) {
-            var collaborationObject = buildCollaborationObject(data);
-            self.collaborationObjects.push(collaborationObject);
-            self.desktop.addAndActivate(collaborationObject);
-            self.desktop.ui.scroll.bottomTile();
-            collaborationObject.hasFocus(true);
-        });
+        self.desktop = createDesktop(desktopData, self.collaborationObjects());
+        self.navigation = createNavigationModule(self);
+        self.archive = createArchive(self.desktop, self.navigation, self.collaborationObjects);
+        self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
+        self.changeTopic = createChangeTopic(self.navigation);
+        self.notifier = createNotifier(self.desktop);        
 
-        app.socket.on('new_collaboration_object', function(data){
-            var collaborationObject = buildCollaborationObject(data);
-            self.collaborationObjects.push(collaborationObject);
-            self.desktop.add(collaborationObject); 
-        });
+        events.register(self);
 
         self.addNewConversation = function(){
             self.navigation.newCollaborationObject(); 
             self.newCollaborationObject.setup();
         };
 
-        if(self.notifier.needsToAskForPermission()){
-            self.navigation.notificationSetup();
-        }
-
         self.cancelNotificationsSetup = function(){
             self.navigation.desktop();
         };
 
         self.allowNotificationsSetup = function(){
-            self.notifier.setup();
+            app.notifier.setup();
             self.navigation.desktop();
         };
+
+        if(self.notifier.needsToAskForPermission()){
+            self.navigation.notificationSetup();
+        }
 
         return self;
     };

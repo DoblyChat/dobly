@@ -91,6 +91,7 @@ define(['squire'], function(Squire){
 
             collaborationObject = buildCollaborationObjectMock('c-id');
             viewModelMock.collaborationObjects.push(collaborationObject);
+            collaborationObject.type = 'type';
         }
 
         describe('receive_item', function(){
@@ -110,6 +111,7 @@ define(['squire'], function(Squire){
 
                 app.socket.mockEmit('receive_item', data);
 
+                expect(builderMock.item).toHaveBeenCalledWith('type', data);
                 expect(collaborationObject.addItem).toHaveBeenCalledWith(item);
                 expect(viewModelMock.notifier.showDesktopNotification).toHaveBeenCalledWith(collaborationObject, 'my-new-item');
                 expect(app.desktop.add).toHaveBeenCalledWith(collaborationObject);

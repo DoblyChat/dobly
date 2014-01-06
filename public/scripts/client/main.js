@@ -58,9 +58,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout']
             global.app.desktop.ui.setup();
             showRenderedElements();
             global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();
-            global.app.desktop.ui.scroll.setup();
-
-            
+            global.app.desktop.ui.scroll.setup();      
         }
 
         function showRenderedElements(){

@@ -350,47 +350,6 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
             });
         });
 
-        describe("topic search", function() {
-            var someTopic, someOtherTopic;
-
-            beforeEach(function() {
-                someTopic = createCollaborationObject(testData);
-                testData.topic = 'some other topic';
-                someOtherTopic = createCollaborationObject(testData);
-            });
-
-            it("blank", function() {
-                app.topicSearch('');
-                expect(someTopic.topicMatched()).toBe(true);
-                expect(someOtherTopic.topicMatched()).toBe(true);
-            });
-
-            it("some", function() {
-                app.topicSearch('some');
-                expect(someTopic.topicMatched()).toBe(true);
-                expect(someOtherTopic.topicMatched()).toBe(true); 
-            });
-
-            it("some topic", function() {
-                app.topicSearch('some topic');
-                expect(app.topicSearch()).toEqual('some topic');
-                expect(someTopic.topicMatched()).toBe(true);
-                expect(someOtherTopic.topicMatched()).toBe(false); 
-            });
-
-            it("some other", function() {
-                app.topicSearch('some other');
-                expect(someTopic.topicMatched()).toBe(false);
-                expect(someOtherTopic.topicMatched()).toBe(true); 
-            });
-
-            it("no matches", function() {
-                app.topicSearch('xyz');
-                expect(someTopic.topicMatched()).toBe(false);
-                expect(someOtherTopic.topicMatched()).toBe(false); 
-            });        
-        });
-
         describe("last activity message", function() {
             it("no activity", function() {
                 testData.items = [];

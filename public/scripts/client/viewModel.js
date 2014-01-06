@@ -22,8 +22,6 @@ define([
     
     return function createViewModel(collaborationObjectsData, desktopData, groupData) {
         var self = {};
-
-        app.topicSearch = ko.observable('');
   
         self.collaborationObjects = ko.observableArray([]);
 

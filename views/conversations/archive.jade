@@ -1,9 +1,9 @@
 #archive
 	.search(data-bind="visible: navigation.showingArchive")
-		input.field(type="text", name="topic-search", placeholder="Search topics", data-bind="value: app.topicSearch, valueUpdate: 'input'")
+		input.field(type="text", name="topic-search", placeholder="Search topics", data-bind="value: archive.topicSearch, valueUpdate: 'input'")
 		.divide
-	.content(data-bind="visible: navigation.showingArchive, foreach: archive.sortedCollaborationObjects")
-		.convo(data-bind="visible: topicMatched")
+	.content(data-bind="visible: navigation.showingArchive, foreach: archive.collaborationObjects")
+		.convo
 			.header
 				.info
 					.topic

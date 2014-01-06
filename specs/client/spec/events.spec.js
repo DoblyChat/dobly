@@ -30,7 +30,7 @@ define(['squire'], function(Squire){
                     notifier: {
                         showDesktopNotification: jasmine.createSpy('show-desktop-notification')
                     }
-                }
+                };
             })();
 
             app.desktop = {
@@ -61,7 +61,7 @@ define(['squire'], function(Squire){
         });
         
         function buildItem(baseId){
-            var id = 'it-' + Math.random() + baseId
+            var id = 'it-' + Math.random() + baseId;
             return {
                 id: function(){
                     return id;

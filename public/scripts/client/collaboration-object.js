@@ -138,10 +138,6 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
             app.socket.emit('mark_as_read', self.id);
         }
 
-        self.topicMatched = ko.computed(function() {
-            return self.topic().toLowerCase().indexOf(app.topicSearch().toLowerCase()) > -1;
-        });
-
         self.lastActivityMessage = ko.computed(function() {
             var itemsLength = self.items().length;
             if (itemsLength > 0) {

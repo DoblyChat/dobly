@@ -65,7 +65,6 @@ define(['knockout', 'squire'], function(ko, Squire){
 
         afterEach(function(){
             createConversation = undefined;
-            app.topicSearch = null;
         });
 
         describe("creation", function() {

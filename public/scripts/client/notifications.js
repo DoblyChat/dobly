@@ -31,18 +31,18 @@ define(function(){
 			}
 		};
 
-		self.showDesktopNotification = function(conversation, content){
+		self.showDesktopNotification = function(collaborationObject, content){
 			if(!app.inFocus){
 				if(canUseNotifications){
 					if(notifications.checkPermission() === ALLOWED){
 						var notif = notifications.createNotification(
 							'/images/logo.transparent.png', 
-							conversation.topic(), content);
+							collaborationObject.topic(), content);
 
 						notif.onclick = function(){
 							window.focus();
-							desktop.activate(conversation);
-							conversation.hasFocus(true);
+							desktop.activate(collaborationObject);
+							collaborationObject.hasFocus(true);
 						};
 
 						notif.show();

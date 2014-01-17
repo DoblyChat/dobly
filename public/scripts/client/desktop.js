@@ -1,4 +1,4 @@
-define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
+define(['knockout', 'client/desktop.ui', 'client/routing'], function(ko, createDesktopUi, routing){
     'use strict';
     
     return function (data, allCollaborationObjects){
@@ -11,6 +11,7 @@ define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
         self.leftCollaborationObject = ko.observable(null);
         self.rightCollaborationObject = ko.observable(null);
         self.loading = ko.observable(false);
+        self.showing = ko.observable(false);
         self.ui = createDesktopUi(self);
 
         for(var i = 0; i < data.collaborationObjects.length; i++){
@@ -161,6 +162,10 @@ define(['knockout', 'client/desktop.ui'], function(ko, createDesktopUi){
 
         activateLeftCollaborationObjectBy(0);
         activateRightCollaborationObjectBy(1);
+
+        routing.subscribe('desktop', self.showing, function(){
+            self.ui.show();
+        }, true);
 
         return self;
     };

@@ -33,8 +33,8 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
             var groupData = JSON.parse(document.getElementById('group').value);
             
             global.app.groupUsers = createGroupUsersObject(groupData);
-            global.app.routing = routing;
-            
+            routing.bind();
+
             var viewModel = createViewModel(collaborationObjectsData, desktopData, groupData);
 
             ko.applyBindings(viewModel);
@@ -57,10 +57,11 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
         }
 
         function initUi(){
+            routing.route();
             global.app.desktop.ui.setup();
             showRenderedElements();
             global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();
-            global.app.desktop.ui.scroll.setup();      
+            global.app.desktop.ui.scroll.setup();
         }
 
         function showRenderedElements(){

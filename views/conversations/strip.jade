@@ -1,4 +1,4 @@
-#strip(data-bind="with: desktop, visible: navigation.showingDesktop")					
+#strip(data-bind="with: desktop, visible: desktop.showing")					
 	.nano#tiles
 		.content(data-bind="foreach: collaborationObjects")
 			.tile(data-bind="css: { highlight: active }, click: $parent.activate")

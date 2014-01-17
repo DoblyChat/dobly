@@ -1,4 +1,4 @@
-define(['knockout'], function(ko){
+define(['knockout', 'client/common', 'client/routing'], function(ko, common, routing){
     'use strict';
     
     return function (desktop, navigation, collaborationObjects) {
@@ -9,6 +9,7 @@ define(['knockout'], function(ko){
             navigation.desktop();
         };
 
+        self.showing = ko.observable(false);
         self.topicSearch = ko.observable('');
         
         var _sortedCollaborationObjects = [];
@@ -33,6 +34,11 @@ define(['knockout'], function(ko){
             });
 
             self.collaborationObjects(filtered);
+        });
+
+        routing.subscribe('archive', self.showing, function(){
+            self.refresh();
+            common.delayedFocus('#archive .search input');
         });
 
         return self;

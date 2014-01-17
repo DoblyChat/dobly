@@ -1,8 +1,8 @@
-#archive
-	.search(data-bind="visible: navigation.showingArchive")
-		input.field(type="text", name="topic-search", placeholder="Search topics", data-bind="value: archive.topicSearch, valueUpdate: 'input'")
+#archive(data-bind="with: archive")
+	.search(data-bind="visible: showing")
+		input.field(type="text", name="topic-search", placeholder="Search topics", data-bind="value: topicSearch, valueUpdate: 'input'")
 		.divide
-	.content(data-bind="visible: navigation.showingArchive, foreach: archive.collaborationObjects")
+	.content(data-bind="visible: showing, foreach: collaborationObjects")
 		.convo
 			.header
 				.info

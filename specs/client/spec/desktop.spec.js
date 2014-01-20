@@ -1,12 +1,50 @@
-define(['client/desktop'], function(createDesktop){
+define(['squire'], function(Squire){
     'use strict';
 
     describe("desktop", function() {
 
-        var desktop;
-        var desktopData;
-        var allCollaborationObjects;
-        var testCollaborationObject;
+        var desktop, createDesktop, desktopData, allCollaborationObjects, testCollaborationObject,
+            routingMock, uiMock, createDesktopUiMock;
+
+        beforeEach(function(){
+            routingMock = jasmine.createSpyObj('routing', ['subscribe']);
+            allCollaborationObjects = testDataAllCollaborationObjects();
+
+            uiMock = {
+                show: jasmine.createSpy('show'),
+                scroll: {
+                    tiles: jasmine.createSpy('tiles')
+                }
+            };
+
+            createDesktopUiMock = jasmine.createSpy('createDesktopUi').andCallFake(function(){
+                return uiMock;
+            });
+
+            app.socket = createMockSocket();
+            
+            var done = false;
+
+            runs(function(){
+                var injector = new Squire();
+                injector.mock('client/routing', routingMock);
+                injector.mock('client/desktop.ui', function(){
+                    return createDesktopUiMock;
+                });
+
+                injector.require(['client/desktop'], function(createDesktopFunc){
+                    createDesktop = function(data){
+                        return createDesktopFunc(data, allCollaborationObjects);
+                    };
+
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
+        });
 
         describe("3 collaboration objects", function() {
 
@@ -19,13 +57,11 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ 'A', 'C', 'E' ]
                 };
 
-                allCollaborationObjects = testDataAllCollaborationObjects();
-                desktop = createDesktop(desktopData, allCollaborationObjects);
-                app.socket = createMockSocket();
-
                 firstCollaborationObject = allCollaborationObjects[0];
                 secondCollaborationObject = allCollaborationObjects[2];
                 thirdCollaborationObject = allCollaborationObjects[4];
+
+                desktop = createDesktop(desktopData);         
             });
 
             describe("creation", function() {
@@ -58,6 +94,26 @@ define(['client/desktop'], function(createDesktop){
                     expect(desktop.rightCollaborationObject()).toEqual(secondCollaborationObject);
                     expect(desktop.rightCollaborationObject().activateOnTheRight).toHaveBeenCalled();              
                     expect(desktop.hasRightCollaborationObject()).toBe(true);              
+                });
+
+                it('ui', function(){
+                    expect(createDesktopUiMock).toHaveBeenCalledWith(desktop);
+                    expect(desktop.ui).toBe(uiMock);
+                });
+
+                it('showing', function(){
+                    expect(desktop.showing()).toBe(false);
+                });
+
+                it('subscribes', function(){
+                    expect(routingMock.subscribe).toHaveBeenCalled();
+                    var args = routingMock.subscribe.mostRecentCall.args;
+
+                    expect(args[0]).toBe('desktop');
+                    expect(args[1]).toBe(desktop.showing);
+                    args[2]();
+                    expect(desktop.ui.show).toHaveBeenCalled();
+                    expect(args[3]).toBe(true);
                 });
             }); 
 
@@ -195,9 +251,7 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ 'B', 'C' ]
                 };
 
-                allCollaborationObjects = testDataAllCollaborationObjects();
-                desktop = createDesktop(desktopData, allCollaborationObjects);
-                app.socket = createMockSocket();
+                desktop = createDesktop(desktopData);
 
                 firstCollaborationObject = allCollaborationObjects[1];
                 secondCollaborationObject = allCollaborationObjects[2];
@@ -230,8 +284,7 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ 'B' ]
                 };
 
-                allCollaborationObjects = testDataAllCollaborationObjects();
-                desktop = createDesktop(desktopData, allCollaborationObjects);
+                desktop = createDesktop(desktopData);
 
                 firstCollaborationObject = allCollaborationObjects[1];
             });
@@ -304,8 +357,7 @@ define(['client/desktop'], function(createDesktop){
                     collaborationObjects: [ ]
                 };
 
-                allCollaborationObjects = testDataAllCollaborationObjects();
-                desktop = createDesktop(desktopData, allCollaborationObjects);
+                desktop = createDesktop(desktopData);
             });
 
             describe("creation", function() {

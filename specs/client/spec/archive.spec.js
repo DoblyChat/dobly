@@ -1,8 +1,9 @@
-define(['client/archive'], function(createArchive){
+define(['squire'], function(Squire){
     'use strict';
 
     describe("archive", function() {
-        var archive, desktop, navigation, testCollaborationObjects = function() {
+        var archive, desktop, routing, common,
+            testCollaborationObjects = function() {
             return [
                 {
                     unreadCounter : function() { return 3; },
@@ -24,29 +25,56 @@ define(['client/archive'], function(createArchive){
         };
 
         beforeEach(function() {
+            var done = false;
+
             desktop = jasmine.createSpyObj('desktop', ['addAndActivate']);
-            navigation = jasmine.createSpyObj('navigation', ['desktop']);
-            archive = createArchive(desktop, navigation, null);
+            routing = jasmine.createSpyObj('routing', ['setHash', 'subscribe']);
+            common = jasmine.createSpyObj('common', ['delayedFocus']);
+
+            runs(function(){
+                var injector = new Squire();
+                injector.mock('client/routing', routing);
+                injector.mock('client/common', common);
+
+                injector.require(['client/archive'], function(createArchive){
+                    archive = createArchive(desktop, testCollaborationObjects);
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
         });
 
-        it("create", function() {
+        it("initial state", function() {
             expect(archive.collaborationObjects()).toBeDefined();
             expect(archive.collaborationObjects().length).toBe(0);
             expect(archive.topicSearch()).toBe('');
+            expect(archive.showing()).toBe(false);
+        });
+
+        it('subscribes to routing', function(){
+            expect(routing.subscribe).toHaveBeenCalled();
+            var args = routing.subscribe.mostRecentCall.args;
+
+            expect(args[0]).toBe('archive');
+            expect(args[1]).toBe(archive.showing);
+
+            spyOn(archive, 'refresh');
+            args[2]();
+            expect(archive.refresh).toHaveBeenCalled();
+            expect(common.delayedFocus).toHaveBeenCalledWith('#archive .search input');
         });
 
         it("open", function() {
             var collaborationObject = {};
-            
             archive.open(collaborationObject);
-
-            expect(navigation.desktop).toHaveBeenCalled();
+            expect(routing.setHash).toHaveBeenCalledWith('desktop');
             expect(desktop.addAndActivate).toHaveBeenCalledWith(collaborationObject);
         });
 
         it("refresh", function() {
-            archive = createArchive(null, null, testCollaborationObjects);
-
             archive.refresh();
 
             expect(archive.collaborationObjects().length).toBe(4);
@@ -58,7 +86,6 @@ define(['client/archive'], function(createArchive){
 
         describe('performs a topic search', function(){
             beforeEach(function(){
-                archive = createArchive(null, null, testCollaborationObjects);
                 archive.refresh();
             });
 

@@ -1,12 +1,12 @@
 define(['knockout', 'client/common', 'client/routing'], function(ko, common, routing){
     'use strict';
     
-    return function (desktop, navigation, collaborationObjects) {
+    return function (desktop, collaborationObjects) {
         var self = {};
 
         self.open = function(collaborationObject){
             desktop.addAndActivate(collaborationObject);
-            navigation.desktop();
+            routing.setHash('desktop');
         };
 
         self.showing = ko.observable(false);

@@ -1,4 +1,4 @@
-#change-topic(data-bind="with: changeTopic, visible: navigation.changingTopic")
+#change-topic(data-bind="with: changeTopic, visible: changeTopic.showing")
 	.prompt Change the topic for this conversation:
 	div
 		textarea(placeholder="Write a topic or question", maxlength=500, data-bind="value: newTopic, valueUpdate: 'input', event: { keypress: updateOnEnter }")

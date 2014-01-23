@@ -10,6 +10,6 @@
 						div(data-bind="visible: !showUnreadCounter(), css: iconClass")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
 	#new-message-bar(data-bind="css: { active: $root.hasUnread }")
-	#new-tile(data-bind="click: $parent.addNewConversation")				
+	a#new-tile(href="#new", data-bind="click: $parent.addNewConversation")				
 		.icon-plus
 		#new-collaboration-object-text new

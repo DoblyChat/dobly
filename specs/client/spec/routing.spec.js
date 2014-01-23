@@ -82,6 +82,22 @@ define(['client/routing'], function(routing){
 				routing.route();
 				expect(routing.setHash).toHaveBeenCalledWith('default');
 			});
+
+			it('can subscribe without providing an onload', function(){
+				routing.subscribe('other-test', 
+					function(show){
+						routes['other-test'].shown = show;
+					}
+				);
+
+				routing.getHash.andReturn('#other-test');
+
+				expect(function(){
+					routing.route();
+				}).not.toThrow();
+
+				expect(routes['other-test'].shown).toBe(true);
+			});
 		});
 
 		it('does nothing if routing to unsubscribed hash', function(){

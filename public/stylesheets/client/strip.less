@@ -112,11 +112,13 @@
 
 #new-tile {
 	.tile-common;
+	display: inline-block;
 	height: @new-tile-height - @new-tile-top-padding - @new-message-bar-height;
 	width: @tile-width;
 	padding-top: @new-tile-top-padding;
 	text-align: center;
 	color: lighten(@gray, 40%);
+	text-decoration: none;
 
 	&:hover {
 		.text-color;

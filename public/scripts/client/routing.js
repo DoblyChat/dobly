@@ -40,7 +40,9 @@ define(function(){
 		subscriptions.forEach(function(route){
 			if(route.hash === hash){
 				route.show(true);
-				route.onload();
+				if(route.onload){
+					route.onload();
+				}
 			}else{
 				route.show(false);
 			}

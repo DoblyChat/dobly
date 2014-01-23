@@ -27,7 +27,6 @@ define(function(){
 		self.emitPing = function() {
 			var now = new Date();
 			var elapsedTimeSinceLastPong = now.getTime() - self.lastPong.getTime();
-
 			showConnectivityIssuesIf(elapsedTimeSinceLastPong > pingInterval * 3);
 
 			app.socket.emit('ping');

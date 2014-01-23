@@ -1,15 +1,11 @@
-define(['client/collaboration-object.new', 'client/common'], function(createNewCollaborationObject, common){
+define(['squire'], function(Squire){
 	'use strict';
 
 	describe('new collaboration object', function(){
-		var newCollaborationObject, navMock, groupMock;
+		var newCollaborationObject, groupMock, commonMock, routingMock;
 
 		beforeEach(function(){
-			spyOn($.fn, 'trigger');
 			app.socket = createMockSocket();
-			navMock = {
-				desktop: jasmine.createSpy()
-			};
 
 			groupMock = {
 				otherUsers: [
@@ -17,17 +13,44 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 					{ id: 'usr-2', fullName: 'user two' },
 				]
 			};
-			newCollaborationObject = createNewCollaborationObject(navMock, groupMock);
+
+			routingMock = {
+				subscribe: jasmine.createSpy('subscribe'),
+				setHash: jasmine.createSpy('set-hash')
+			};
+
+			commonMock = {
+				delayedFocus: jasmine.createSpy('delayed-focus'),
+				enterKeyPressed: jasmine.createSpy('enter-key-pressed')
+			};
+
+			var done = false;
+
+			runs(function(){
+				var injector = new Squire();
+
+				injector.mock('client/routing', routingMock);
+				injector.mock('client/common', commonMock);
+
+				injector.require(['client/collaboration-object.new'], function(createNewCollaborationObject){
+					spyOn($.fn, 'trigger');
+					newCollaborationObject = createNewCollaborationObject(groupMock);
+					done = true;
+				});
+			});
+
+			waitsFor(function(){
+				return done;
+			});
 		});
 
 		it('sets up', function(){
 			spyOn($.fn, 'chosen');
-			spyOn(common, 'delayedFocus');
 
 			newCollaborationObject.setup();
 
 			expect($.fn.chosen).toHaveBeenCalledWith({ placeholder: '' });
-			expect(common.delayedFocus).toHaveBeenCalledWith('#new-collaboration-object textarea');
+			expect(commonMock.delayedFocus).toHaveBeenCalledWith('#new-collaboration-object textarea');
 		});
 
 		it('populates options', function(){
@@ -51,6 +74,10 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 			expect(newCollaborationObject.topic()).toBe('');
 		});
 
+		it('defaults to not visible', function(){
+			expect(newCollaborationObject.showing()).toBe(false);
+		});
+
 		describe('create new collaboration object on enter', function(){
 			var event = {};
 
@@ -59,14 +86,14 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 			});
 
 			it('returns true and does not create if enter not pressed', function(){
-				spyOn(common, 'enterKeyPressed').andReturn(false);
+				commonMock.enterKeyPressed.andReturn(false);
 				var result = newCollaborationObject.createOnEnter(null, event);
 				expect(result).toBe(true);
 				expect(newCollaborationObject.create).not.toHaveBeenCalled();
 			});
 
 			it('returns true and does not create if topic not set', function(){
-				spyOn(common, 'enterKeyPressed').andReturn(true);
+				commonMock.enterKeyPressed.andReturn(true);
 				newCollaborationObject.topic('');
 				var result = newCollaborationObject.createOnEnter(null, event);
 				expect(newCollaborationObject.create).not.toHaveBeenCalled();	
@@ -74,7 +101,7 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 			});
 
 			it('returns true and does not create if options not selected', function(){
-				spyOn(common, 'enterKeyPressed').andReturn(true);
+				commonMock.enterKeyPressed.andReturn(true);
 				newCollaborationObject.topic('should not be created');
 				newCollaborationObject.selectedOptions([]);
 				var result = newCollaborationObject.createOnEnter(null, event);
@@ -83,7 +110,7 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 			});
 
 			it('creates collaboration object if enter pressed and topic is filled', function(){
-				spyOn(common, 'enterKeyPressed').andReturn(true);
+				commonMock.enterKeyPressed.andReturn(true);
 				newCollaborationObject.topic('new-collaboration-object');
 
 				var result = newCollaborationObject.createOnEnter(null, event);
@@ -136,6 +163,7 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 					selectedMembers: [],
 					type: 'C'
 				});
+				expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
 			});
 
 			it('creates collaboration object with only specific users selected', function(){
@@ -148,6 +176,7 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 					selectedMembers: ['usr-1', 'usr-2'],
 					type: 'C'
 				});
+				expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
 			});
 
 			it('creates collaboration object with entire group and users selected', function(){
@@ -161,6 +190,7 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 					selectedMembers: ['usr-1', 'usr-2'],
 					type: 'C'
 				});
+				expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
 			});
 
 			it('restores defaults after it creates', function(){
@@ -188,7 +218,19 @@ define(['client/collaboration-object.new', 'client/common'], function(createNewC
 
 			newCollaborationObject.cancel();
 			checkDefaults();
-			expect(navMock.desktop).toHaveBeenCalled();
+			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+		});
+
+		it('subscribes to route', function(){
+			spyOn(newCollaborationObject, 'setup');
+			expect(routingMock.subscribe).toHaveBeenCalled();
+
+			var args = routingMock.subscribe.mostRecentCall.args;
+
+			expect(args[0]).toBe('new');
+			expect(args[1]).toBe(newCollaborationObject.showing);
+			args[2]();
+			expect(newCollaborationObject.setup).toHaveBeenCalled();
 		});
 
 		function checkDefaults(){

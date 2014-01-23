@@ -1,30 +1,54 @@
-define(['client/changeTopic', 'client/common', 'knockout'], function(createChangeTopic, common, ko){
+define(['squire', 'knockout'], function(Squire, ko){
 	'use strict';
 
 	describe("change topic", function() {
-		var nav, changeTopic, conversationMock;
+		var routingMock, changeTopic, collaborationObjectMock,
+			commonMock;
 
 		beforeEach(function() {
-			nav = jasmine.createSpyObj('nav', ['desktop', 'changeTopic']);
 			app.socket = createMockSocket();
-			changeTopic = createChangeTopic(nav);
-			conversationMock = {
+			
+			collaborationObjectMock = {
 				topic: ko.observable('last in show'),
 				id: "8"
 			};
+
+			commonMock = {
+				delayedFocus: jasmine.createSpy('delayed-focus'),
+				enterKeyPressed: jasmine.createSpy('enter-key-pressed')
+			};
+
+			routingMock = {
+				subscribe: jasmine.createSpy('subscribe'),
+				setHash: jasmine.createSpy('set-hash')
+			};
+
+			var done = false;
+
+			runs(function(){
+				var injector = new Squire();
+				injector.mock('client/common', commonMock);
+				injector.mock('client/routing', routingMock);
+
+				injector.require(['client/changeTopic'], function(createChangeTopic){
+					changeTopic = createChangeTopic();
+					done = true;
+				});
+			});
+
+			waitsFor(function(){
+				return done;
+			});
 		});
 
 		it("click", function() {
-			spyOn(common, "delayedFocus");
-			changeTopic.click(conversationMock);
-
-			expect(changeTopic.conversation).toEqual(conversationMock);
-			expect(nav.changeTopic).toHaveBeenCalled();
-			expect(common.delayedFocus).toHaveBeenCalled();
+			changeTopic.click(collaborationObjectMock);
+			expect(changeTopic.collaborationObject).toEqual(collaborationObjectMock);
+			expect(routingMock.setHash).toHaveBeenCalledWith('change-topic');
 		});
 
 		it("update", function() {
-			changeTopic.conversation = conversationMock;
+			changeTopic.collaborationObject = collaborationObjectMock;
 			changeTopic.newTopic('some new topic');
 			changeTopic.update();
 
@@ -36,7 +60,7 @@ define(['client/changeTopic', 'client/common', 'knockout'], function(createChang
 			expect(arg1.newTopic).toEqual('some new topic');
 
 			expect(changeTopic.newTopic()).toEqual('');
-			expect(nav.desktop).toHaveBeenCalled();
+			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
 		});
 
 		it("update on click", function() {
@@ -46,16 +70,20 @@ define(['client/changeTopic', 'client/common', 'knockout'], function(createChang
 		});
 
 		it("update on enter", function() {
-			var testEvent = { keyCode: 13 };
+			var testEvent = { };
+			commonMock.enterKeyPressed.andReturn(true);
 			spyOn(changeTopic, "update");
 			changeTopic.updateOnEnter(null, testEvent);
+			expect(commonMock.enterKeyPressed).toHaveBeenCalledWith(testEvent);
 			expect(changeTopic.update).toHaveBeenCalled();
 		});
 
 		it("update on enter no update", function() {
-			var testEvent = { keyCode: 10 };
+			var testEvent = { };
+			commonMock.enterKeyPressed.andReturn(false);
 			spyOn(changeTopic, "update");
 			changeTopic.updateOnEnter(null, testEvent);
+			expect(commonMock.enterKeyPressed).toHaveBeenCalledWith(testEvent);
 			expect(changeTopic.update).not.toHaveBeenCalled();
 		});
 
@@ -63,7 +91,25 @@ define(['client/changeTopic', 'client/common', 'knockout'], function(createChang
 			changeTopic.cancel();
 
 			expect(changeTopic.newTopic()).toEqual('');
-			expect(nav.desktop).toHaveBeenCalled();
+			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+		});
+
+		it('subscribes to route', function(){
+			expect(routingMock.subscribe).toHaveBeenCalled();
+			var args = routingMock.subscribe.mostRecentCall.args;
+
+			expect(args[0]).toBe('change-topic');
+			expect(args[1]).toBe(changeTopic.showing);
+			args[2]();
+
+			expect(commonMock.delayedFocus).toHaveBeenCalled();
+			var delayedArgs = commonMock.delayedFocus.mostRecentCall.args;
+			expect(delayedArgs[0]).toBe('#change-topic textarea');
+			expect(delayedArgs[1]).toBe(100);
+			
+			changeTopic.collaborationObject = collaborationObjectMock;
+			delayedArgs[2]();
+			expect(changeTopic.newTopic()).toBe('last in show');
 		});
 	});
 });

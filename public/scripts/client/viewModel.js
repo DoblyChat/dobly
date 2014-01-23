@@ -56,17 +56,12 @@ define([
 
         self.desktop = createDesktop(desktopData, self.collaborationObjects());
         self.navigation = createNavigationModule(self);
-        self.archive = createArchive(self.desktop, self.navigation, self.collaborationObjects);
-        self.newCollaborationObject = createNewCollaborationObject(self.navigation, self.group);
+        self.archive = createArchive(self.desktop, self.collaborationObjects);
+        self.newCollaborationObject = createNewCollaborationObject(self.group);
         self.changeTopic = createChangeTopic(self.navigation);
         self.notifier = createNotifier(self.desktop);        
 
         events.register(self);
-
-        self.addNewConversation = function(){
-            self.navigation.newCollaborationObject(); 
-            self.newCollaborationObject.setup();
-        };
 
         self.cancelNotificationsSetup = function(){
             self.navigation.desktop();

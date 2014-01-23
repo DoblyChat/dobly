@@ -1,7 +1,7 @@
-define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common){
+define(['jquery', 'knockout', 'client/common', 'client/routing', 'chosen'], function($, ko, common, routing){
     'use strict';
     
-    return function (navigation, group) {
+    return function (group) {
         var self = {},
             otherUsers = group.otherUsers,
             groupKey = 'g',
@@ -10,6 +10,7 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
         self.type = ko.observable(CONVERSATION_TYPE);
         self.topic = ko.observable('');
         self.options = ko.observableArray();
+        self.showing = ko.observable(false);
 
         for(var i = 0; i < otherUsers.length; i++){
             self.options.push({
@@ -44,11 +45,9 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
             return self.topic().length > 0 && self.selectedOptions().length > 0;
         }
 
-        self.createOnClick = function() {
-            if (canCreate()) {
-                self.create();
-            }
-        };
+        function backToDesktop(){
+            routing.setHash('desktop');
+        }
 
         self.create = function() {
             var selectedOptions = self.selectedOptions();
@@ -67,12 +66,18 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
 
             app.socket.emit('create_collaboration_object', data);
             restoreDefaults();
-            navigation.desktop();  
+            backToDesktop(); 
+        };
+
+        self.createOnClick = function() {
+            if (canCreate()) {
+                self.create();
+            }
         };
 
         self.cancel = function() {
             restoreDefaults();
-            navigation.desktop();    
+            backToDesktop();   
         };
 
         function restoreDefaults(){
@@ -81,6 +86,10 @@ define(['jquery', 'knockout', 'client/common', 'chosen'], function($, ko, common
             self.selectedOptions([ groupKey ]);
             $('#members-select').trigger('liszt:updated');
         }
+
+        routing.subscribe('new', self.showing, function(){
+            self.setup();
+        });
 
         return self;
     };

@@ -1,8 +1,8 @@
-define(['client/group'], function(createGroup){
+define(['squire'], function(Squire){
 	'use strict';
 
 	describe("group", function() {
-		var group;
+		var group, routingMock;
 		var testData;
 		var fernando, carlos, fido, current;
 
@@ -23,18 +23,37 @@ define(['client/group'], function(createGroup){
 			};
 
 			app.socket = createMockSocket();
+			
+			routingMock = {
+				subscribe: jasmine.createSpy('subscribe')
+			};
 
-			group = createGroup(testData);
+			var done = false;
 
-			fernando = group.users[0];
-			carlos = group.users[1];
-			fido = group.users[2];
-			current = group.users[3];
+			runs(function(){
+				var injector = new Squire();
+
+				injector.mock('client/routing', routingMock);
+
+				injector.require(['client/group'], function(createGroup){
+					group = createGroup(testData);
+
+					fernando = group.users[0];
+					carlos = group.users[1];
+					fido = group.users[2];
+					current = group.users[3];
+					done = true;
+				});
+			});
+
+			waitsFor(function(){
+				return done;
+			});
 		});
 
 		it("create group", function() {
 			expect(group.name).toBe('some test group');
-
+			expect(group.showing()).toBe(false);
 			expect(group.users.length).toBe(4);
 			expect(app.socket.emit).toHaveBeenCalledWith('request_online_users');
 
@@ -91,6 +110,10 @@ define(['client/group'], function(createGroup){
 			var newUser = group.users[4];
 			expect(newUser.online()).toBe(true);
 			expect(group.otherUsers).toContain(newUser);
+		});
+
+		it('subscribes to route', function(){
+			expect(routingMock.subscribe).toHaveBeenCalledWith('group', group.showing);
 		});
 
 		afterEach(function() {

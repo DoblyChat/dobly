@@ -1,4 +1,4 @@
-define(['knockout'], function(ko){
+define(['knockout', 'client/routing'], function(ko, routing){
 	'use strict';
     
     return function(data){
@@ -13,6 +13,8 @@ define(['knockout'], function(ko){
 		ko.utils.arrayForEach(data.users, function(userData){
 			pushUser(userData);
 		});
+
+		self.showing = ko.observable(false);
 
 		function pushUser(userData) {
 			var user = createUser(userData);
@@ -72,6 +74,8 @@ define(['knockout'], function(ko){
 		});
 
 		app.socket.emit('request_online_users');
+
+		routing.subscribe('group', self.showing);
 
 		return self;
 	};

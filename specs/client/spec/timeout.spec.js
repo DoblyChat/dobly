@@ -5,7 +5,7 @@ define(['client/timeout'], function(createTimeout){
         var timeout;
         var maxReconnects = 5;
         var testGlobal;
-        var pingInterval = 5000;
+        var pingInterval = 4999;
 
         beforeEach(function() {
             testGlobal = {
@@ -58,7 +58,7 @@ define(['client/timeout'], function(createTimeout){
                 spyOn(window, "setInterval");
                 timeout.startPing();
 
-                expect(window.setInterval).toHaveBeenCalledWith(timeout.emitPing, pingInterval);
+                expect(window.setInterval).toHaveBeenCalledWith(timeout.emitPing, pingInterval + 1);
             });
 
             it("handle timeout", function() {

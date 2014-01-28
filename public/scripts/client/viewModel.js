@@ -1,23 +1,23 @@
 define([
         'knockout', 
         'client/group', 
-        'client/desktop', 
-        'client/navigation', 
+        'client/desktop',
         'client/archive', 
         'client/builder', 
         'client/collaboration-object.new', 
         'client/changeTopic',
         'client/events',
-        'client/notifications'], function(ko, 
+        'client/notifications',
+        'client/notification-setup'], function(ko, 
                                     createGroup, 
                                     createDesktop,
-                                    createNavigationModule, 
                                     createArchive,
                                     builder,
                                     createNewCollaborationObject,
                                     createChangeTopic, 
                                     events,
-                                    createNotifier){
+                                    createNotifier,
+                                    notificationSetup){
     'use strict';
     
     return function createViewModel(collaborationObjectsData, desktopData, groupData) {
@@ -55,26 +55,15 @@ define([
         });
 
         self.desktop = createDesktop(desktopData, self.collaborationObjects());
-        self.navigation = createNavigationModule(self);
         self.archive = createArchive(self.desktop, self.collaborationObjects);
         self.newCollaborationObject = createNewCollaborationObject(self.group);
-        self.changeTopic = createChangeTopic(self.navigation);
+        self.changeTopic = createChangeTopic();
+        self.notificationSetup = notificationSetup;
         self.notifier = createNotifier(self.desktop);        
 
+        notificationSetup.requestPermission();
+
         events.register(self);
-
-        self.cancelNotificationsSetup = function(){
-            self.navigation.desktop();
-        };
-
-        self.allowNotificationsSetup = function(){
-            app.notifier.setup();
-            self.navigation.desktop();
-        };
-
-        if(self.notifier.needsToAskForPermission()){
-            self.navigation.notificationSetup();
-        }
 
         return self;
     };

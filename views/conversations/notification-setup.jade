@@ -1,9 +1,9 @@
-#notification-setup(data-bind="visible: navigation.showingNotificationSetup")
+#notification-setup(data-bind="visible: notificationSetup.showing")
 	.prompt 
 		span For a better experience, please allow 
 		span= title
 		span  to show rich notifications.
 
 	.buttons
-		button.button-left(type="button", data-bind="click: cancelNotificationsSetup") Don't Allow
-		button.button-right(type="button", data-bind="click: allowNotificationsSetup") Allow
+		button.button-left(type="button", data-bind="click: notificationSetup.cancel") Don't Allow
+		button.button-right(type="button", data-bind="click: notificationSetup.allow") Allow

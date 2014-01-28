@@ -1,6 +1,7 @@
 define(['knockout', 'client/common'], function(ko, common){
     'use strict';
     
+    // remove me and all references!!
     return function (viewModel) {
         var self = {};
 

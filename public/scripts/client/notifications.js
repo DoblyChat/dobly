@@ -7,29 +7,11 @@ define(function(){
 		var self = {};
 
 		var ALLOWED = 0;
-		var NOT_SET = 1;
 
 		var notifications = window.webkitNotifications;
 		var titleBlinkTimer;
 
 		var appTitle = document.title;
-
-		self.needsToAskForPermission = function(){
-			return canUseNotifications && permissionsNotSet();
-		};
-
-		function permissionsNotSet(){
-			// not set = 1
-			// denied = 2
-			// allowed = 0
-			return notifications.checkPermission() === NOT_SET;
-		}
-
-		self.setup = function() {
-			if(canUseNotifications && permissionsNotSet()){
-				notifications.requestPermission();
-			}
-		};
 
 		self.showDesktopNotification = function(collaborationObject, content){
 			if(!app.inFocus){

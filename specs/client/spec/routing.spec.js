@@ -20,7 +20,7 @@ define(['client/routing'], function(routing){
 		describe('subscribe and route', function(){
 			beforeEach(function(){
 				spyOn(routing, 'getHash').andReturn('#test');
-				spyOn(routing, 'setHash');
+				spyOn(routing, 'routeTo');
 
 				routing.subscribe('test', 
 					function(show){
@@ -76,13 +76,6 @@ define(['client/routing'], function(routing){
 				expect(routes['other-test'].shown).toBe(false);
 			});
 
-			it('can subscribe to a default route', function(){
-				routing.subscribe('default', function(){}, function(){}, true); 
-				routing.getHash.andReturn('');
-				routing.route();
-				expect(routing.setHash).toHaveBeenCalledWith('default');
-			});
-
 			it('can subscribe without providing an onload', function(){
 				routing.subscribe('other-test', 
 					function(show){
@@ -115,6 +108,24 @@ define(['client/routing'], function(routing){
 			expect(args[0]).toBe('hashchange');
 			expect(args[1]).toBe(routing.route);
 			expect(args[2]).toBe(false);
+		});
+
+		describe('routes to different routes', function(){
+			beforeEach(function(){
+				spyOn(routing, 'setHash');
+				spyOn(routing, 'getHash').andReturn('#my-hash');
+				spyOn(routing, 'route');
+			});
+
+			it('sets hash', function(){
+				routing.routeTo('another-hash');
+				expect(routing.setHash).toHaveBeenCalledWith('another-hash');
+			});
+
+			it('routes if current hash', function(){
+				routing.routeTo('my-hash');
+				expect(routing.route).toHaveBeenCalled();
+			});
 		});
 	});
 });

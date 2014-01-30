@@ -57,7 +57,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
         }
 
         function initUi(){
-            routing.route();
+            routing.routeTo('desktop');
             global.app.desktop.ui.setup();
             showRenderedElements();
             global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();

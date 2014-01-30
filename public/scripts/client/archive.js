@@ -6,7 +6,7 @@ define(['knockout', 'client/common', 'client/routing'], function(ko, common, rou
 
         self.open = function(collaborationObject){
             desktop.addAndActivate(collaborationObject);
-            routing.setHash('desktop');
+            routing.routeTo('desktop');
         };
 
         self.showing = ko.observable(false);

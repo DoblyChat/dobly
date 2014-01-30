@@ -6,7 +6,7 @@ define(['knockout', 'client/routing'], function(ko, routing){
 		NOT_SET = 1, HASH = 'notification-setup';
 	
 	function goToDesktop(){
-		routing.setHash('desktop');
+		routing.routeTo('desktop');
 	}
 
 	function permissionsNotSet(){
@@ -22,7 +22,7 @@ define(['knockout', 'client/routing'], function(ko, routing){
 
 	self.requestPermission = function(){
 		if(canUseNotifications && permissionsNotSet()){
-			routing.setHash(HASH);
+			routing.routeTo(HASH);
 		}
 	};
 

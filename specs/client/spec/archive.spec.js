@@ -28,7 +28,7 @@ define(['squire'], function(Squire){
             var done = false;
 
             desktop = jasmine.createSpyObj('desktop', ['addAndActivate']);
-            routing = jasmine.createSpyObj('routing', ['setHash', 'subscribe']);
+            routing = jasmine.createSpyObj('routing', ['routeTo', 'subscribe']);
             common = jasmine.createSpyObj('common', ['delayedFocus']);
 
             runs(function(){
@@ -70,7 +70,7 @@ define(['squire'], function(Squire){
         it("open", function() {
             var collaborationObject = {};
             archive.open(collaborationObject);
-            expect(routing.setHash).toHaveBeenCalledWith('desktop');
+            expect(routing.routeTo).toHaveBeenCalledWith('desktop');
             expect(desktop.addAndActivate).toHaveBeenCalledWith(collaborationObject);
         });
 

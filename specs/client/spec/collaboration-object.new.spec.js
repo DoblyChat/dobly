@@ -16,7 +16,7 @@ define(['squire'], function(Squire){
 
 			routingMock = {
 				subscribe: jasmine.createSpy('subscribe'),
-				setHash: jasmine.createSpy('set-hash')
+				routeTo: jasmine.createSpy('set-hash')
 			};
 
 			commonMock = {
@@ -163,7 +163,7 @@ define(['squire'], function(Squire){
 					selectedMembers: [],
 					type: 'C'
 				});
-				expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+				expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 			});
 
 			it('creates collaboration object with only specific users selected', function(){
@@ -176,7 +176,7 @@ define(['squire'], function(Squire){
 					selectedMembers: ['usr-1', 'usr-2'],
 					type: 'C'
 				});
-				expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+				expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 			});
 
 			it('creates collaboration object with entire group and users selected', function(){
@@ -190,7 +190,7 @@ define(['squire'], function(Squire){
 					selectedMembers: ['usr-1', 'usr-2'],
 					type: 'C'
 				});
-				expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+				expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 			});
 
 			it('restores defaults after it creates', function(){
@@ -218,7 +218,7 @@ define(['squire'], function(Squire){
 
 			newCollaborationObject.cancel();
 			checkDefaults();
-			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 		});
 
 		it('subscribes to route', function(){

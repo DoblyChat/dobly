@@ -9,7 +9,7 @@ define(['knockout', 'client/common', 'client/routing'], function(ko, common, rou
 
         self.click = function(collaborationObjectToChange){
             self.collaborationObject = collaborationObjectToChange;
-            routing.setHash(hash);
+            return true;
         };
 
         self.updateOnEnter = function(obj, event){
@@ -32,7 +32,7 @@ define(['knockout', 'client/common', 'client/routing'], function(ko, common, rou
 
         function close(){
             self.newTopic('');
-            routing.setHash('desktop');
+            routing.routeTo('desktop');
         }
 
         self.cancel = function(){

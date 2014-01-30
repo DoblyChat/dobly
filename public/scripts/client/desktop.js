@@ -165,7 +165,7 @@ define(['knockout', 'client/desktop.ui', 'client/routing'], function(ko, createD
 
         routing.subscribe('desktop', self.showing, function(){
             self.ui.show();
-        }, true);
+        });
 
         return self;
     };

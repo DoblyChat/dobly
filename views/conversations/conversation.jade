@@ -6,7 +6,7 @@ script(id="convo-template", type="text/html")
 			.actions
 				span.action-icon.icon-info(data-bind="click: ui.toggleInfo")
 				span.action-icon.icon-search(data-bind="click: search.show")
-				span.action-icon.icon-pencil(data-bind="click: $root.changeTopic.click")	
+				a.action-icon.icon-pencil(href="#change-topic", data-bind="click: $root.changeTopic.click")	
 			.search.hidden
 				.textbox
 					input(type="text", name="search-query", data-bind="value: search.query, valueUpdate: 'input', event: { keypress: search.nextOnEnter }")

@@ -20,7 +20,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 
 			routingMock = {
 				subscribe: jasmine.createSpy('subscribe'),
-				setHash: jasmine.createSpy('set-hash')
+				routeTo: jasmine.createSpy('set-hash')
 			};
 
 			var done = false;
@@ -42,9 +42,8 @@ define(['squire', 'knockout'], function(Squire, ko){
 		});
 
 		it("click", function() {
-			changeTopic.click(collaborationObjectMock);
+			expect(changeTopic.click(collaborationObjectMock)).toBe(true);
 			expect(changeTopic.collaborationObject).toEqual(collaborationObjectMock);
-			expect(routingMock.setHash).toHaveBeenCalledWith('change-topic');
 		});
 
 		it("update", function() {
@@ -60,7 +59,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 			expect(arg1.newTopic).toEqual('some new topic');
 
 			expect(changeTopic.newTopic()).toEqual('');
-			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 		});
 
 		it("update on click", function() {
@@ -91,7 +90,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 			changeTopic.cancel();
 
 			expect(changeTopic.newTopic()).toEqual('');
-			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 		});
 
 		it('subscribes to route', function(){

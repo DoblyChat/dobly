@@ -46,7 +46,7 @@ define(['jquery', 'knockout', 'client/common', 'client/routing', 'chosen'], func
         }
 
         function backToDesktop(){
-            routing.setHash('desktop');
+            routing.routeTo('desktop');
         }
 
         self.create = function() {

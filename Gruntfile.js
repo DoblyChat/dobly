@@ -41,26 +41,6 @@ module.exports = function(grunt){
         },
         jasmine: {
             taskName: {
-                src: [
-                    'public/scripts/client/archive.js',
-                    'public/scripts/client/changeTopic.js',
-                    'public/scripts/client/common.js',
-                    'public/scripts/client/conversation.js',
-                    'public/scripts/client/conversation.search.js',
-                    'public/scripts/client/conversation.ui.js',
-                    'public/scripts/client/desktop.js',
-                    'public/scripts/client/desktop.ui.js',
-                    'public/scripts/client/group.js',
-                    'public/scripts/client/message.js',
-                    'public/scripts/client/navigation.js',
-                    'public/scripts/client/collaboration-object.new.js',
-                    'public/scripts/client/collaboration-object.js',
-                    'public/scripts/client/notifications.js',
-                    'public/scripts/client/timeout.js',
-                    'public/scripts/client/viewModel.js',
-                    'public/scripts/client/task.js',
-                    'public/scripts/client/task-list.js'
-                ],
                 options: {
                     specs: 'specs/client/spec/*.spec.js',
                     host: 'http://127.0.0.1:8000/',

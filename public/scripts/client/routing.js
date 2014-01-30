@@ -12,22 +12,20 @@ define(function(){
 		window.location.hash = hash;
 	};
 
-	self.subscribe = function(hash, show, handler, isDefaultRoute){
+	self.routeTo = function(hash){
+		if(self.getHash() === '#' + hash){
+			self.route();
+		}else{
+			self.setHash(hash);
+		}
+	};
+
+	self.subscribe = function(hash, show, handler){
 		subscriptions.push({
 			hash: hash,
 			onload: handler,
 			show: show
 		});
-
-		if(isDefaultRoute){
-			subscriptions.push({
-				hash: '',
-				onload: function(){
-					self.setHash(hash);
-				}, 
-				show: function(){}
-			});
-		}
 	};
 
 	self.route = function(){

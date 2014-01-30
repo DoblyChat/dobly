@@ -113,7 +113,6 @@ define(['squire'], function(Squire){
                     expect(args[1]).toBe(desktop.showing);
                     args[2]();
                     expect(desktop.ui.show).toHaveBeenCalled();
-                    expect(args[3]).toBe(true);
                 });
             }); 
 

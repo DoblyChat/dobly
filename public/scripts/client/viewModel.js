@@ -8,7 +8,8 @@ define([
         'client/changeTopic',
         'client/events',
         'client/notifications',
-        'client/notification-setup'], function(ko, 
+        'client/notification-setup',
+        'client/top-nav'], function(ko, 
                                     createGroup, 
                                     createDesktop,
                                     createArchive,
@@ -17,7 +18,8 @@ define([
                                     createChangeTopic, 
                                     events,
                                     createNotifier,
-                                    notificationSetup){
+                                    notificationSetup,
+                                    topNav){
     'use strict';
     
     return function createViewModel(collaborationObjectsData, desktopData, groupData) {

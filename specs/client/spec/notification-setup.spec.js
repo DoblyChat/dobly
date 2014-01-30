@@ -6,7 +6,7 @@ define(['squire'], function(Squire){
 		beforeEach(function(){
 			routingMock = {
 				subscribe: jasmine.createSpy('subscribe'),
-				setHash: jasmine.createSpy('set-hash')
+				routeTo: jasmine.createSpy('set-hash')
 			};
 
 			var done = false;
@@ -42,19 +42,19 @@ define(['squire'], function(Squire){
 		it('requests permission if permissions not set', function(){
 			spyOn(notifications, 'checkPermission').andReturn(1);
 			setup.requestPermission();
-			expect(routingMock.setHash).toHaveBeenCalledWith('notification-setup');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('notification-setup');
 		});
 
 		it('allows a request for permission', function(){
 			spyOn(notifications, 'requestPermission');
 			setup.allow();
 			expect(notifications.requestPermission).toHaveBeenCalled();
-			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 		});
 
 		it('cancels request', function(){
 			setup.cancel();
-			expect(routingMock.setHash).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
 		});
 
 		it('subscribes to route', function(){

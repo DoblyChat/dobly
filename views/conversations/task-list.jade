@@ -5,7 +5,7 @@ script(id="task-list-template", type="text/html")
 				span(data-bind="text: topic")									
 			.actions
 				span.action-icon.icon-info(data-bind="click: ui.toggleInfo")
-				span.action-icon.icon-pencil(data-bind="click: $root.changeTopic.click")	
+				a.action-icon.icon-pencil(data-bind="click: $root.changeTopic.click")	
 			.info.hidden
 				div
 					span.label by:

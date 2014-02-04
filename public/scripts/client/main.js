@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout', 'client/group', 'client/routing'], 
-        function($, ko, io, createViewModel, createTimeout, createGroup, routing) {
+define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout', 'client/group', 'client/routing', 'client/data'], 
+        function($, ko, io, createViewModel, createTimeout, createGroup, routing, data) {
     'use strict';
     
     (function(global){
@@ -25,17 +25,13 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
             });
 
         function start(){
-            global.app.user = JSON.parse(document.getElementById('currentUser').value);
+            global.app.user = data.currentUser;
             global.app.inFocus = true;
-
-            var desktopData = JSON.parse(document.getElementById('desktop').value);
-            var collaborationObjectsData = JSON.parse(document.getElementById('collaborationObjects').value);
-            var groupData = JSON.parse(document.getElementById('group').value);
             
-            global.app.group = createGroup(groupData);
+            global.app.group = createGroup(data.group);
             routing.bind();
 
-            var viewModel = createViewModel(collaborationObjectsData, desktopData, groupData);
+            var viewModel = createViewModel(data.collaborationObjects, data.desktop);
 
             ko.applyBindings(viewModel);
             global.app.desktop = viewModel.desktop;

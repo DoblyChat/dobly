@@ -67,6 +67,10 @@ define(['squire'], function(Squire){
 			expect(group.users).toContain(carlos);
 			expect(group.users).toContain(fido);
 			expect(group.users).toContain(current);
+
+			expect(group.map[fernando.id]).toBe(fernando);
+			expect(group.map[carlos.id]).toBe(carlos);
+			expect(group.map[current.id]).toBe(current);
 		});
 
 		it("receive online users", function() {
@@ -94,6 +98,16 @@ define(['squire'], function(Squire){
 			expect(fernando.online()).toBe(false);
 		});
 
+		it("adds user if not existing user", function() {
+			expect(group.map['999']).toBeUndefined();
+			app.socket.mockEmit('user_connected', { _id: '999', firstName: 'New', lastName: 'User'});
+			expect(group.map['999']).toBeDefined();
+			var newUser = group.map['999'];
+			expect(newUser.id).toBe('999');
+			expect(newUser.online()).toBe(true);
+			expect(group.otherUsers).toContain(newUser);
+		});
+
 		it('has all users except current user', function(){
 			var otherUsers = group.otherUsers;
 			expect(otherUsers.length).toBe(3);
@@ -103,21 +117,12 @@ define(['squire'], function(Squire){
 			expect(otherUsers).toContain(fido);
 		});
 
-		it("adds user if not existing user", function() {
-			expect(app.groupUsers['999']).toBeUndefined();
-			app.socket.mockEmit('user_connected', { _id: '999', firstName: 'New', lastName: 'User'});
-			expect(app.groupUsers['999']).toEqual('New User');
-			var newUser = group.users[4];
-			expect(newUser.online()).toBe(true);
-			expect(group.otherUsers).toContain(newUser);
+		it('gets users full name', function(){
+			expect(group.getUserFullName(fernando.id)).toBe('Fernando Green');
 		});
 
 		it('subscribes to route', function(){
 			expect(routingMock.subscribe).toHaveBeenCalledWith('group', group.showing);
-		});
-
-		afterEach(function() {
-			app.groupUsers['999'] = undefined;
 		});
 	});
 });

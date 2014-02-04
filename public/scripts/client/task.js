@@ -5,7 +5,7 @@ define(['knockout', 'client/common'], function(ko, common){
 		var collaborationObjectId = data.collaborationObjectId;
 
 		self.id = ko.observable(data._id);	
-		self.createdBy = app.groupUsers[data.createdById];
+		self.createdBy = app.group.getUserFullName(data.createdById);
 		self.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
 		self.formattedTimestamp = ko.computed(function() {
             return common.formatTimestamp(self.timestamp());
@@ -26,7 +26,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
 		self.updateCompleteValues = function(data){
 			self.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
-			self.completedBy(data.completedById ? app.groupUsers[data.completedById] : null);
+			self.completedBy(data.completedById ? app.group.getUserFullName(data.completedById) : null);
 			self.isComplete(data.isComplete);
 		};
 
@@ -36,8 +36,10 @@ define(['knockout', 'client/common'], function(ko, common){
 		};
 
 		self.setAssignedTo = function(assignedToId){
-			self.assignedToId = assignedToId;
-			self.assignedTo(app.groupUsers[self.assignedToId]);
+			if(assignedToId){
+				self.assignedToId = assignedToId;
+				self.assignedTo(app.group.getUserFullName(self.assignedToId));
+			}	
 		};
 
 		self.updateCompleteValues(data);

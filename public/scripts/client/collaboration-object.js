@@ -7,7 +7,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
         self.template = template;
         self.id = data._id ? data._id : 0;
         self.topic = ko.observable(data.topic);
-        self.createdBy = app.groupUsers[data.createdById];
+        self.createdBy = app.group.getUserFullName(data.createdById);
         self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
         self.newItem = ko.observable('');
         self.isLeft = ko.observable(false);
@@ -33,7 +33,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
             var usersArray = [];
 
             ko.utils.arrayForEach(data.members.users, function(userId) {
-                usersArray.push(app.groupUsers[userId]);
+                usersArray.push(app.group.getUserFullName(userId));
             });
 
             self.users = usersArray.join(', ');

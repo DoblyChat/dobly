@@ -11,7 +11,7 @@ define(['knockout', 'client/common'], function(ko, common){
         self.formattedTimestamp = ko.computed(function() {
             return common.formatTimestamp(self.timestamp());
         });
-        self.createdBy = app.groupUsers[data.createdById];
+        self.createdBy = app.group.getUserFullName(data.createdById);
         self.confirmedSent = ko.observable(confirmed);
 
         self.getNotificationText = function(){

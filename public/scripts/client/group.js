@@ -9,6 +9,7 @@ define(['knockout', 'client/routing'], function(ko, routing){
 
 		self.users = [];
 		self.otherUsers = [];
+		self.map = {};
 
 		ko.utils.arrayForEach(data.users, function(userData){
 			pushUser(userData);
@@ -20,6 +21,7 @@ define(['knockout', 'client/routing'], function(ko, routing){
 			var user = createUser(userData);
 			self.users.push(user);
 			pushToOtherUsers(user);
+			self.map[user.id] = user;
 		}
 
 		function createUser(userData){
@@ -50,7 +52,6 @@ define(['knockout', 'client/routing'], function(ko, routing){
 			}
 
 			if (!self.users.some(isExistingUser)) {
-				app.groupUsers[connectedUser._id] = connectedUser.firstName + ' ' + connectedUser.lastName;
 				pushUser(connectedUser);
 			}
 
@@ -58,11 +59,9 @@ define(['knockout', 'client/routing'], function(ko, routing){
 		});
 
 		function setAsOnline(connectedUserId) {
-			ko.utils.arrayForEach(self.users, function(user){
-				if (user.id === connectedUserId){
-					user.online(true);
-				}
-			});
+			if(self.map[connectedUserId]){
+				self.map[connectedUserId].online(true);
+			}
 		}
 
 		app.socket.on('user_disconnected', function(disconnectedUserId){
@@ -72,6 +71,10 @@ define(['knockout', 'client/routing'], function(ko, routing){
 				}
 			});
 		});
+
+		self.getUserFullName = function(userId){
+			return self.map[userId].fullName;
+		};
 
 		app.socket.emit('request_online_users');
 

@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout', 'client/routing'], 
-        function($, ko, io, createViewModel, createTimeout, routing) {
+define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout', 'client/group', 'client/routing'], 
+        function($, ko, io, createViewModel, createTimeout, createGroup, routing) {
     'use strict';
     
     (function(global){
@@ -32,7 +32,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
             var collaborationObjectsData = JSON.parse(document.getElementById('collaborationObjects').value);
             var groupData = JSON.parse(document.getElementById('group').value);
             
-            global.app.groupUsers = createGroupUsersObject(groupData);
+            global.app.group = createGroup(groupData);
             routing.bind();
 
             var viewModel = createViewModel(collaborationObjectsData, desktopData, groupData);
@@ -44,16 +44,6 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
             
             var timeout = createTimeout(maxReconnects, global);
             timeout.startPing();
-        }
-
-        function createGroupUsersObject(groupData) {
-            var obj = {};
-
-            ko.utils.arrayForEach(groupData.users, function(user) {
-                obj[user._id] = user.firstName + ' ' + user.lastName;
-            });
-            
-            return obj;
         }
 
         function initUi(){

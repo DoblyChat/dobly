@@ -2,14 +2,22 @@ define(['client/task', 'client/common'], function(createTask, common){
     'use strict';
 
     describe("task", function() {
+        var groupUsers;
+
         beforeEach(function(){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
                 return 'e-' + string;
             });
 
-            app.groupUsers['u-idx'] = 'Her';
-            app.groupUsers['u-id'] = 'Me';
-            app.groupUsers['a-id'] = 'Him';
+            groupUsers = {
+                'u-idx': 'Her',
+                'u-id': 'Me',
+                'a-id': 'Him'
+            };
+
+            app.group.getUserFullName = function(userId){
+                return groupUsers[userId];
+            };
 
             app.socket = createMockSocket();
         });
@@ -89,6 +97,25 @@ define(['client/task', 'client/common'], function(createTask, common){
 
             var task = createTask(data);
             expect(task.getNotificationText()).toBe('Me has added a new task: e-new notification');
+        });
+
+        it('sets assigned to', function(){
+            var data = {
+                content: 'new notification',
+                createdById: 'u-id'
+            };
+
+            var task = createTask(data);
+            expect(task.assignedTo()).not.toBeDefined();
+            expect(task.assignedToId).not.toBeDefined();
+
+            task.setAssignedTo(null);
+            expect(task.assignedTo()).not.toBeDefined();
+            expect(task.assignedToId).not.toBeDefined();
+
+            task.setAssignedTo('a-id');
+            expect(task.assignedTo()).toBe('Him');
+            expect(task.assignedToId).toBe('a-id');
         });
 
         describe('complete', function(){
@@ -382,7 +409,7 @@ define(['client/task', 'client/common'], function(createTask, common){
 
             describe('updates assignment', function(){
                 beforeEach(function(){
-                    app.groupUsers['new'] = 'Newington';
+                    groupUsers['new'] = 'Newington';
                     task.isAssigning(true);
                 });
 

@@ -6,15 +6,17 @@ define(['knockout', 'client/collaboration-object', 'client/common'], function(ko
         var collaborationObject, testData;
 
         beforeEach(function() {
-            app.groupUsers['FT-u'] = 'Freddy Teddy';
-            app.groupUsers['CA-u'] = 'Charlie App';            
+            
+            app.group.getUserFullName = jasmine.createSpy().andCallFake(function(userId){
+                if(userId === 'FT-u'){
+                    return 'Freddy Teddy';
+                }else{
+                    return 'Charlie App';
+                }
+            });
+
             testData = testDataCollaborationObject();
             app.socket = createMockSocket();
-            app.topicSearch = ko.observable('');
-        });
-
-        afterEach(function(){
-            app.topicSearch = null;
         });
 
         describe("creation", function() {

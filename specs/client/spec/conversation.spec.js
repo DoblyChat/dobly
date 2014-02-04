@@ -9,10 +9,7 @@ define(['knockout', 'squire'], function(ko, Squire){
             createConversationSearchMock;
 
         beforeEach(function() {
-            var done = false;
-
-            app.groupUsers['FT-u'] = 'Freddy Teddy';
-            app.groupUsers['CA-u'] = 'Charlie App';            
+            var done = false;         
             testData = testDataConversation();
             app.socket = createMockSocket();
             

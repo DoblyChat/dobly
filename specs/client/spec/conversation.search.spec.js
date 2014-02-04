@@ -8,8 +8,6 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
         var search;
 
         beforeEach(function() {
-            app.groupUsers['FT-u'] = 'Fernando Trigoso';
-            app.groupUsers['CA-u'] = 'Carlos Atencio';
             testData = testDataConversation();
             conversation = createConversation(testData);
             search = createConversationSearch(conversation);

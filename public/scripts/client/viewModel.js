@@ -22,12 +22,12 @@ define([
                                     topNav){
     'use strict';
     
-    return function createViewModel(collaborationObjectsData, desktopData, groupData) {
+    return function createViewModel(collaborationObjectsData, desktopData) {
         var self = {};
   
         self.collaborationObjects = ko.observableArray([]);
 
-        self.group = createGroup(groupData);
+        self.group = app.group;
 
         var toSubscribe = [];
 

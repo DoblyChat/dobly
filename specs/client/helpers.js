@@ -2,7 +2,7 @@
 	'use strict';
 
 	global.app = {};
-	global.app.groupUsers = {};
+	global.app.group = {};
 
 	global.createMockSocket = function() {
 		var self = {};

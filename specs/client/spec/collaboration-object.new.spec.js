@@ -31,10 +31,11 @@ define(['squire'], function(Squire){
 
 				injector.mock('client/routing', routingMock);
 				injector.mock('client/common', commonMock);
+				injector.mock('client/group', groupMock);
 
-				injector.require(['client/collaboration-object.new'], function(createNewCollaborationObject){
+				injector.require(['client/collaboration-object.new'], function(newCollaborationObjModule){
 					spyOn($.fn, 'trigger');
-					newCollaborationObject = createNewCollaborationObject(groupMock);
+					newCollaborationObject = newCollaborationObjModule;
 					done = true;
 				});
 			});

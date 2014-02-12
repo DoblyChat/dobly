@@ -179,7 +179,7 @@ define(['jquery', 'knockout', 'client/common', 'highlight'], function($, ko, com
         });
 
         self.page = function() {
-            conversation.page(function(messages) {
+            conversation.page(function() {
                 conversation.loadingMore(false);
                 conversation.ui.scroll.adjust();
                 self.next();

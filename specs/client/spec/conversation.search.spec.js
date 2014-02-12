@@ -1,15 +1,25 @@
-define(['knockout', 'client/conversation.search', 'client/conversation', 'client/common'], function(ko, createConversationSearch, createConversation, common){
+define(['knockout', 'client/conversation.search', 'client/common'], function(ko, createConversationSearch, common){
     'use strict';
 
     describe("conversation search", function() {
 
-        var testData;
         var conversation;
         var search;
 
+        function createConversation(items){
+            return {
+                items: ko.observableArray(items),
+                allMessagesLoaded: jasmine.createSpy(),
+                ui: {
+                    scroll: {}
+                },
+                page: jasmine.createSpy(),
+                loadingMore: ko.observable(false)
+            };
+        }
+
         beforeEach(function() {
-            testData = testDataConversation();
-            conversation = createConversation(testData);
+            conversation = createConversation([ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie(), testDataMessageDelta() ]);
             search = createConversationSearch(conversation);
         });
 
@@ -22,7 +32,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         it("done", function() {
             spyOn(search, "reset");
-            spyOn(conversation.ui, "hideSearch");
+            conversation.ui.hideSearch = jasmine.createSpy();
 
             search.done();
 
@@ -32,7 +42,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
         });
 
         it("show", function() {
-            spyOn(conversation.ui, "showSearch");
+            conversation.ui.showSearch = jasmine.createSpy();
 
             search.show();
 
@@ -42,7 +52,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
         describe("next", function() {
 
             beforeEach(function() {
-                spyOn(conversation.ui, "resizeBodyFromHeaderChange");
+                conversation.ui.resizeBodyFromHeaderChange = jasmine.createSpy();
             });
 
             it("does not search when empty", function() {           
@@ -54,6 +64,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             });
 
             it("resets", function() {
+                conversation.allMessagesLoaded.andReturn(true);
                 search.query('some');
                 var match = jasmine.createSpyObj('match', ['removeClass', 'removeHighlight']);
                 search.matches.push(match);
@@ -73,6 +84,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             });
 
             it("does not reset", function() {
+                conversation.allMessagesLoaded.andReturn(true);
                 spyOn(search, "scrollToMatchAndHighlight");
 
                 search.query('beta');
@@ -108,7 +120,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
             it("pages if next not found", function() {
                 spyOn(search, "page");
-                spyOn(conversation, "allMessagesLoaded").andReturn(false);
+                conversation.allMessagesLoaded = jasmine.createSpy().andReturn(false);
 
                 search.query('zeta');
                 search.next();
@@ -118,7 +130,7 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
             it("does not page", function() {
                 spyOn(search, "page");
-                spyOn(conversation, "allMessagesLoaded").andReturn(true);
+                conversation.allMessagesLoaded = jasmine.createSpy().andReturn(true);
 
                 search.query('zeta');
                 search.next();
@@ -128,27 +140,21 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
             it("pages", function() {
                 spyOn(search, "next");
-                spyOn(conversation.ui.scroll, "adjust");
+                conversation.ui.scroll.adjust = jasmine.createSpy();
 
                 app.socket = createMockSocket();
 
                 search.page();
 
-                expect(app.socket.emit).toHaveBeenCalled();
+                expect(conversation.page).toHaveBeenCalled();
+                expect(conversation.loadingMore()).toBe(true);
 
-                var operation = app.socket.emit.mostRecentCall.args[0];
-                expect(operation).toEqual('read_next_messages');
+                var callback = conversation.page.mostRecentCall.args[0];
+                callback();
 
-                var params = app.socket.emit.mostRecentCall.args[1];
-                expect(params.page).toBe(1);
-                expect(params.collaborationObjectId).toEqual("8");
-
-                var callback = app.socket.emit.mostRecentCall.args[2];
-                var newMessages = [ testDataMessageEcho(), testDataMessageFoxtrot() ];
-                callback(newMessages);
-
-                expect(search.next).toHaveBeenCalled();
+                expect(conversation.loadingMore()).toBe(false);
                 expect(conversation.ui.scroll.adjust).toHaveBeenCalled();
+                expect(search.next).toHaveBeenCalled();
             });
 
             it("next on enter false", function() {
@@ -174,10 +180,9 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         describe("previous", function() {
             beforeEach(function() {
-                testData = testDataConversationForPrevious();
-                conversation = createConversation(testData);
+                conversation = createConversation([ testDataMessageAlpha(), testDataMessageAlpha2(), testDataMessageCharlie(), testDataMessageDelta() ]);
                 search = createConversationSearch(conversation);
-                spyOn(conversation.ui, "resizeBodyFromHeaderChange");
+                conversation.ui.resizeBodyFromHeaderChange = jasmine.createSpy();
                 spyOn(search, "scrollToMatchAndHighlight");
             });
 
@@ -231,44 +236,10 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
             });
         });
 
-        function testDataConversation() {
-            return {
-                _id: "8",
-                createdById: "FT-u",
-                groupId: "5",
-                items: [ testDataMessageAlpha(), testDataMessageBeta(), testDataMessageCharlie(), testDataMessageDelta() ],
-                timestamp: "2013-02-15T14:36:43.296Z",
-                topic: "some topic",
-                unread: 1,
-                totalMessages: 3,
-                members: {
-                    entireGroup: true,
-                    users: []
-                }
-            };
-        }
-
-        function testDataConversationForPrevious() {
-            return {
-                _id: "8",
-                createdById: "FT-u",
-                groupId: "5",
-                items: [ testDataMessageAlpha(), testDataMessageAlpha2(), testDataMessageCharlie(), testDataMessageDelta() ],
-                timestamp: "2013-02-15T14:36:43.296Z",
-                topic: "some other topic",
-                unread: 1,
-                totalMessages: 3,
-                members: {
-                    entireGroup: true,
-                    users: []
-                }
-            };  
-        }
-
         function testDataMessageAlpha() {
             return {
-                _id: 'a',
-                content: "alpha", 
+                id: ko.observable('a'),
+                rawContent: "alpha", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
                 createdById: "CA-u"
@@ -277,8 +248,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         function testDataMessageAlpha2() {
             return {
-                _id: 'a2',
-                content: "alpha", 
+                id: ko.observable('a2'),
+                rawContent: "alpha", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:13:34'), 
                 createdById: "CA-u"
@@ -287,8 +258,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         function testDataMessageBeta() {
             return {
-                _id: 'b',
-                content: "beta", 
+                id: ko.observable('b'),
+                rawContent: "beta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:14:14'), 
                 createdById: "FT-u"
@@ -297,8 +268,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         function testDataMessageCharlie() {
             return {
-                _id: 'c',
-                content: "charlie", 
+                id: ko.observable('c'),
+                rawContent: "charlie", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
                 createdById: "CA-u"
@@ -307,8 +278,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         function testDataMessageDelta() {
             return {
-                _id: 'd',
-                content: "delta", 
+                id: ko.observable('d'),
+                rawContent: "delta", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
                 createdById: "FT-u"
@@ -317,8 +288,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         function testDataMessageEcho() {
             return {
-                _id: 'e',
-                content: "echo", 
+                id: ko.observable('e'),
+                rawContent: "echo", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 22:15:23'), 
                 createdBy: "CA-u"
@@ -327,8 +298,8 @@ define(['knockout', 'client/conversation.search', 'client/conversation', 'client
 
         function testDataMessageFoxtrot() {
             return {
-                _id: 'f',
-                content: "foxtrot", 
+                id: ko.observable('f'),
+                rawContent: "foxtrot", 
                 collaborationObjectId: "8", 
                 timestamp: Date.parse('2013.04.09 23:18:44'), 
                 createdBy: "FT-u"

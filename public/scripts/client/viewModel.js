@@ -9,17 +9,19 @@ define([
         'client/events',
         'client/notifications',
         'client/notification-setup',
-        'client/top-nav'], function(ko, 
+        'client/top-nav',
+        'client/group'], function(ko, 
                                     createGroup, 
                                     createDesktop,
                                     createArchive,
                                     builder,
-                                    createNewCollaborationObject,
+                                    newCollaborationObject,
                                     createChangeTopic, 
                                     events,
                                     createNotifier,
                                     notificationSetup,
-                                    topNav){
+                                    topNav, 
+                                    group){
     'use strict';
     
     return function createViewModel(collaborationObjectsData, desktopData) {
@@ -27,7 +29,7 @@ define([
   
         self.collaborationObjects = ko.observableArray([]);
 
-        self.group = app.group;
+        self.group = group;
 
         var toSubscribe = [];
 
@@ -58,7 +60,7 @@ define([
 
         self.desktop = createDesktop(desktopData, self.collaborationObjects());
         self.archive = createArchive(self.desktop, self.collaborationObjects);
-        self.newCollaborationObject = createNewCollaborationObject(self.group);
+        self.newCollaborationObject = newCollaborationObject;
         self.changeTopic = createChangeTopic();
         self.notificationSetup = notificationSetup;
         self.notifier = createNotifier(self.desktop);        

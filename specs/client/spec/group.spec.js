@@ -13,13 +13,15 @@ define(['squire'], function(Squire){
 			};
 
 			testData = {
-				name: 'some test group',
-				users: [ 
-					{ firstName: 'Fernando', lastName: 'Green', _id: '123' }, 
-					{ firstName: 'Carlos', lastName: 'White',  _id: '456'},
-					{ firstName: 'Fido', lastName: 'Dido', _id: '789'},
-					{ firstName: 'Current', lastName: 'Wave', _id: '888' }
-				],
+				group: {
+					name: 'some test group',
+					users: [ 
+						{ firstName: 'Fernando', lastName: 'Green', _id: '123' }, 
+						{ firstName: 'Carlos', lastName: 'White',  _id: '456'},
+						{ firstName: 'Fido', lastName: 'Dido', _id: '789'},
+						{ firstName: 'Current', lastName: 'Wave', _id: '888' }
+					],
+				}
 			};
 
 			app.socket = createMockSocket();
@@ -34,9 +36,10 @@ define(['squire'], function(Squire){
 				var injector = new Squire();
 
 				injector.mock('client/routing', routingMock);
+				injector.mock('client/data', testData);
 
-				injector.require(['client/group'], function(createGroup){
-					group = createGroup(testData);
+				injector.require(['client/group'], function(groupObj){
+					group = groupObj;
 
 					fernando = group.users[0];
 					carlos = group.users[1];

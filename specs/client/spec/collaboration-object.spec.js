@@ -1,22 +1,40 @@
-define(['knockout', 'client/collaboration-object', 'client/common'], function(ko, createCollaborationObject, common){
+define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
     'use strict';
 
     describe("collaboration object", function() {
 
-        var collaborationObject, testData;
+        var collaborationObject, testData, createCollaborationObject;
 
-        beforeEach(function() {
-            
-            app.group.getUserFullName = jasmine.createSpy().andCallFake(function(userId){
-                if(userId === 'FT-u'){
-                    return 'Freddy Teddy';
-                }else{
-                    return 'Charlie App';
-                }
-            });
+        beforeEach(function() {     
+            var groupMock = {
+                getUserFullName: jasmine.createSpy().andCallFake(function(userId){
+                    if(userId === 'FT-u'){
+                        return 'Freddy Teddy';
+                    }else{
+                        return 'Charlie App';
+                    }
+                })
+            };
 
             testData = testDataCollaborationObject();
             app.socket = createMockSocket();
+
+            var done = false;
+
+            runs(function(){
+                var injector = new Squire();
+                injector.mock('client/group', groupMock);
+                injector.mock('client/common', common);
+
+                injector.require(['client/collaboration-object'], function(create){
+                    createCollaborationObject = create;
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
         });
 
         describe("creation", function() {

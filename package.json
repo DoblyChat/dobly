@@ -40,6 +40,7 @@
     "grunt-jasmine-node": "~0.1.0",
     "grunt-git": "~0.1.1",
     "grunt-contrib-imagemin": "~0.1.4",
-    "grunt-plato": "~0.2.1"
+    "grunt-plato": "~0.2.1",
+    "grunt-contrib-watch": "~0.5.3"
   }
 }

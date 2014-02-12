@@ -1,4 +1,5 @@
-define(['knockout', 'client/common', 'client/collaboration-object.ui'], function(ko, common, createConversationObjectUi){
+define(['knockout', 'client/common', 'client/collaboration-object.ui', 'client/group'], 
+    function(ko, common, createConversationObjectUi, group){
     'use strict';
     
     return function (data, template) {
@@ -7,7 +8,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
         self.template = template;
         self.id = data._id ? data._id : 0;
         self.topic = ko.observable(data.topic);
-        self.createdBy = app.group.getUserFullName(data.createdById);
+        self.createdBy = group.getUserFullName(data.createdById);
         self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
         self.newItem = ko.observable('');
         self.isLeft = ko.observable(false);
@@ -33,7 +34,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui'], function
             var usersArray = [];
 
             ko.utils.arrayForEach(data.members.users, function(userId) {
-                usersArray.push(app.group.getUserFullName(userId));
+                usersArray.push(group.getUserFullName(userId));
             });
 
             self.users = usersArray.join(', ');

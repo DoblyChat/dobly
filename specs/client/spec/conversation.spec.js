@@ -289,6 +289,42 @@ define(['knockout', 'squire'], function(ko, Squire){
             });
         });
 
+        it('pages', function(){
+            conversation = createConversation(testData);
+            conversation.id = testData._id;
+
+            var callback = jasmine.createSpy();
+            conversation.page(callback);
+
+            expect(app.socket.emit).toHaveBeenCalled();
+
+            var emitArgs = app.socket.emit.mostRecentCall.args;
+            expect(emitArgs[0]).toBe('read_next_messages');
+            expect(emitArgs[1]).toEqual({ page: 1, collaborationObjectId: '8'});
+
+            var messages = [testDataMessageCharlie(), testDataMessageDelta()];
+            
+            createMessageMock.andCallFake(function(data){
+                data.id = data.content + 'obj';
+                return data;
+            });
+
+            emitArgs[2](messages);
+
+            expect(createMessageMock).toHaveBeenCalledWith(messages[0], true);
+            expect(createMessageMock).toHaveBeenCalledWith(messages[1], true);
+            expect(conversation.items()[0].id).toBe('deltaobj');
+            expect(conversation.items()[1].id).toBe('charlieobj');
+            expect(callback).toHaveBeenCalledWith(messages);
+
+            callback.reset();
+
+            //previous page bumps up the nextPage indicator
+            conversation.page(callback);
+            emitArgs = app.socket.emit.mostRecentCall.args;
+            expect(emitArgs[1]).toEqual({ page: 2, collaborationObjectId: '8'});
+        });
+
         function testDataConversation() {
             return {
                 _id: "8",
@@ -345,7 +381,7 @@ define(['knockout', 'squire'], function(ko, Squire){
             return {
                 content: "charlie", 
                 collaborationObjectId: "8", 
-                timestamp: Date.parse('2013.04.09 22:15:23'), 
+                //timestamp: Date.parse('2013.04.09 22:15:23'), 
                 createdById: "CA-u"
             };
         }
@@ -354,7 +390,7 @@ define(['knockout', 'squire'], function(ko, Squire){
             return {
                 content: "delta", 
                 collaborationObjectId: "8", 
-                timestamp: Date.parse('2013.04.09 23:18:44'), 
+                //timestamp: Date.parse('2013.04.09 23:18:44'), 
                 createdById: "FT-u"
             };
         }

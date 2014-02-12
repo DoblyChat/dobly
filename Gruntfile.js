@@ -115,6 +115,12 @@ module.exports = function(grunt){
                     'public/images/logo.png': 'public/images/src/logo.png',
                 }
             }
+        },
+        watch: {
+            client: {
+                files: ['public/scripts/client/*.js', 'specs/client/**/*.js'],
+                tasks: ['tests-client']
+            }
         }
     });
 
@@ -128,6 +134,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-plato');
 
     // To run tests through the browser:

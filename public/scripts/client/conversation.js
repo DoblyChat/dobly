@@ -1,11 +1,13 @@
 define([
         'knockout',
+        'client/socket',
         'client/collaboration-object', 
         'client/message', 
         'client/conversation.search', 
         'client/conversation.ui'
     ], 
         function(ko,
+                socket,
                 createCollaborationObject, 
                 createMessage, 
                 createConversationSearch, 
@@ -33,7 +35,7 @@ define([
         };
 
         function sendMessageToServer(messageData, messageObj){
-            app.socket.emit('send_message', messageData, function(message){
+            socket.emit('send_message', messageData, function(message){
                 messageObj.timestamp(message.timestamp);
                 messageObj.confirmedSent(true);
                 messageObj.id(message._id);
@@ -69,7 +71,7 @@ define([
         };
 
         self.page = function(hook) {
-            app.socket.emit('read_next_messages', { page: nextPage, collaborationObjectId: self.id }, function(messages){
+            socket.emit('read_next_messages', { page: nextPage, collaborationObjectId: self.id }, function(messages){
                 ko.utils.arrayForEach(messages, function(message){
                     self.items.unshift(createMessage(message, true));
                 });

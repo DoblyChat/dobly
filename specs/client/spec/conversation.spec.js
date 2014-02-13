@@ -5,13 +5,13 @@ define(['knockout', 'squire'], function(ko, Squire){
 
         var conversation, testData, 
             createConversation, createCollaborationObjectMock,
-            createMessageMock, common,
+            createMessageMock, common, socketMock,
             createConversationSearchMock;
 
         beforeEach(function() {
             var done = false;         
             testData = testDataConversation();
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
             
             createCollaborationObjectMock = function(data, template){
                 return {
@@ -47,6 +47,8 @@ define(['knockout', 'squire'], function(ko, Squire){
                 injector.mock('client/conversation.search', function(){
                     return createConversationSearchMock;
                 });
+
+                injector.mock('client/socket', socketMock);
 
                 injector.require(['client/common', 'client/conversation'], function(aCommon, createConversationFunction){
                     common = aCommon;
@@ -122,8 +124,8 @@ define(['knockout', 'squire'], function(ko, Squire){
             };
 
             sendMessageToServer(messageData, messageObj);
-            expect(app.socket.emit).toHaveBeenCalled();
-            var args = app.socket.emit.mostRecentCall.args;
+            expect(socketMock.emit).toHaveBeenCalled();
+            var args = socketMock.emit.mostRecentCall.args;
             expect(args[0]).toBe('send_message');
             expect(args[1]).toBe(messageData);
             var callback = args[2];
@@ -184,13 +186,13 @@ define(['knockout', 'squire'], function(ko, Squire){
             it('does not initiate request if loading more', function(){
                 conversation.loadingMore(true);
                 conversation.scrolled(null, event);
-                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(socketMock.emit).not.toHaveBeenCalled();
             });
 
             it('does not initiate request if scroll not near the top', function(){
                 event.target.scrollTop = 41;
                 conversation.scrolled(null, event);
-                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(socketMock.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
             });
 
@@ -202,19 +204,19 @@ define(['knockout', 'squire'], function(ko, Squire){
                 conversation.items.push({});
 
                 conversation.scrolled(null, event);
-                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(socketMock.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
 
                 conversation.items.push({});
                 conversation.scrolled(null, event);
-                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(socketMock.emit).not.toHaveBeenCalled();
                 expect(conversation.loadingMore()).toBe(false);
             });
 
             it('initiates a request and sets conversation as loading more', function(){
                 conversation.scrolled(null, event);
-                expect(app.socket.emit).toHaveBeenCalled();
-                var args = app.socket.emit.mostRecentCall.args;
+                expect(socketMock.emit).toHaveBeenCalled();
+                var args = socketMock.emit.mostRecentCall.args;
                 expect(args[0]).toBe('read_next_messages');
                 expect(args[1].page).toBe(1);
                 expect(args[1].conversationId).toBe(conversation.id);
@@ -226,7 +228,7 @@ define(['knockout', 'squire'], function(ko, Squire){
 
                 beforeEach(function(){
                     conversation.scrolled(null, event);
-                    readMessages = app.socket.emit.mostRecentCall.args[2];
+                    readMessages = socketMock.emit.mostRecentCall.args[2];
                     spyOn(conversation.ui, 'highlightTopMessages');
                 });
 
@@ -267,17 +269,17 @@ define(['knockout', 'squire'], function(ko, Squire){
 
                 it('increases next page by 1', function(){
                     conversation.scrolled(null, event);
-                    expect(app.socket.emit.mostRecentCall.args[1].page).toBe(1);
+                    expect(socketMock.emit.mostRecentCall.args[1].page).toBe(1);
                     
                     readMessages([]);
 
                     conversation.scrolled(null, event);
-                    expect(app.socket.emit.mostRecentCall.args[1].page).toBe(2);
+                    expect(socketMock.emit.mostRecentCall.args[1].page).toBe(2);
 
                     readMessages([]);
 
                     conversation.scrolled(null, event);
-                    expect(app.socket.emit.mostRecentCall.args[1].page).toBe(3);
+                    expect(socketMock.emit.mostRecentCall.args[1].page).toBe(3);
                 });
 
                 it('highlights received messages', function(){
@@ -296,9 +298,9 @@ define(['knockout', 'squire'], function(ko, Squire){
             var callback = jasmine.createSpy();
             conversation.page(callback);
 
-            expect(app.socket.emit).toHaveBeenCalled();
+            expect(socketMock.emit).toHaveBeenCalled();
 
-            var emitArgs = app.socket.emit.mostRecentCall.args;
+            var emitArgs = socketMock.emit.mostRecentCall.args;
             expect(emitArgs[0]).toBe('read_next_messages');
             expect(emitArgs[1]).toEqual({ page: 1, collaborationObjectId: '8'});
 
@@ -321,7 +323,7 @@ define(['knockout', 'squire'], function(ko, Squire){
 
             //previous page bumps up the nextPage indicator
             conversation.page(callback);
-            emitArgs = app.socket.emit.mostRecentCall.args;
+            emitArgs = socketMock.emit.mostRecentCall.args;
             expect(emitArgs[1]).toEqual({ page: 2, collaborationObjectId: '8'});
         });
 

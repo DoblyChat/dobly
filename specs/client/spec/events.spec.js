@@ -2,7 +2,7 @@ define(['squire'], function(Squire){
     'use strict';
 
     describe('events', function(){
-        var builderMock, viewModelMock, events, collaborationObject;
+        var builderMock, socketMock, viewModelMock, events, collaborationObject;
 
         beforeEach(function(){
             var done = false;
@@ -12,7 +12,7 @@ define(['squire'], function(Squire){
                 item: jasmine.createSpy('build-item')
             };
 
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
 
             viewModelMock = (function(){
                 var _collaborationObjects = [];
@@ -47,6 +47,7 @@ define(['squire'], function(Squire){
                 var injector = new Squire();
 
                 injector.mock('client/builder', builderMock);
+                injector.mock('client/socket', socketMock);
 
                 injector.require(['client/events'], function(eventsObj){
                     events = eventsObj;
@@ -109,7 +110,7 @@ define(['squire'], function(Squire){
 
                 builderMock.item.andReturn(item);
 
-                app.socket.mockEmit('receive_item', data);
+                socketMock.mockEmit('receive_item', data);
 
                 expect(builderMock.item).toHaveBeenCalledWith('type', data);
                 expect(collaborationObject.addItem).toHaveBeenCalledWith(item);
@@ -122,7 +123,7 @@ define(['squire'], function(Squire){
                     collaborationObjectId: '1-id'
                 };
 
-                app.socket.mockEmit('receive_item', data);
+                socketMock.mockEmit('receive_item', data);
                 expect(builderMock.item).not.toHaveBeenCalled();
             });
         });
@@ -142,7 +143,7 @@ define(['squire'], function(Squire){
                     id: task.id()
                 };
 
-                app.socket.mockEmit('task_complete_toggled', data);
+                socketMock.mockEmit('task_complete_toggled', data);
 
                 expect(task.updateCompleteValues).toHaveBeenCalledWith(data);
             });
@@ -154,7 +155,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_complete_toggled', data);
+                    socketMock.mockEmit('task_complete_toggled', data);
                 }).not.toThrow();
             });
 
@@ -165,7 +166,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_complete_toggled', data);
+                    socketMock.mockEmit('task_complete_toggled', data);
                 }).not.toThrow();
 
                 expect(task.updateCompleteValues).not.toHaveBeenCalled();
@@ -188,7 +189,7 @@ define(['squire'], function(Squire){
                     content: 'hello-world'
                 };
 
-                app.socket.mockEmit('task_content_updated', data);
+                socketMock.mockEmit('task_content_updated', data);
 
                 expect(task.setContent).toHaveBeenCalledWith('hello-world');
             });
@@ -200,7 +201,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_content_updated', data);
+                    socketMock.mockEmit('task_content_updated', data);
                 }).not.toThrow();
             });
 
@@ -211,7 +212,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_content_updated', data);
+                    socketMock.mockEmit('task_content_updated', data);
                 }).not.toThrow();
 
                 expect(task.setContent).not.toHaveBeenCalled();
@@ -233,7 +234,7 @@ define(['squire'], function(Squire){
                     id: task.id()
                 };
 
-                app.socket.mockEmit('task_removed', data);
+                socketMock.mockEmit('task_removed', data);
 
                 expect(collaborationObject.items.remove).toHaveBeenCalledWith(task);
             });
@@ -245,7 +246,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_removed', data);
+                    socketMock.mockEmit('task_removed', data);
                 }).not.toThrow();
 
                 expect(collaborationObject.items.remove).not.toHaveBeenCalled();
@@ -258,7 +259,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_removed', data);
+                    socketMock.mockEmit('task_removed', data);
                 }).not.toThrow();
             });
         });
@@ -279,7 +280,7 @@ define(['squire'], function(Squire){
                     assignedToId: 'a-id'
                 };
 
-                app.socket.mockEmit('task_assigned', data);
+                socketMock.mockEmit('task_assigned', data);
 
                 expect(task.setAssignedTo).toHaveBeenCalledWith('a-id');
             });
@@ -291,7 +292,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_assigned', data);
+                    socketMock.mockEmit('task_assigned', data);
                 }).not.toThrow();
             });
 
@@ -302,7 +303,7 @@ define(['squire'], function(Squire){
                 };
 
                 expect(function(){
-                    app.socket.mockEmit('task_assigned', data);
+                    socketMock.mockEmit('task_assigned', data);
                 }).not.toThrow();
 
                 expect(task.setAssignedTo).not.toHaveBeenCalled();
@@ -321,7 +322,7 @@ define(['squire'], function(Squire){
 
             it('adds a new collaboration object from current user', function(){
                 newObj.hasFocus = jasmine.createSpy('has-focus');
-                app.socket.mockEmit('my_new_collaboration_object', data);
+                socketMock.mockEmit('my_new_collaboration_object', data);
 
                 expect(viewModelMock.collaborationObjects()).toContain(newObj);
                 expect(app.desktop.addAndActivate).toHaveBeenCalledWith(newObj);
@@ -330,7 +331,7 @@ define(['squire'], function(Squire){
             });
 
             it('adds a new collaboration object from a different user', function(){
-                app.socket.mockEmit('new_collaboration_object', data);
+                socketMock.mockEmit('new_collaboration_object', data);
                 expect(viewModelMock.collaborationObjects()).toContain(newObj);
                 expect(app.desktop.add).toHaveBeenCalledWith(newObj);
             });

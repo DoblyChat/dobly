@@ -1,16 +1,11 @@
-define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout', 'client/routing', 'client/data'], 
-        function($, ko, io, createViewModel, createTimeout, createGroup, routing, data) {
+define(['jquery', 'knockout', 'client/viewModel', 'client/timeout', 'client/routing', 'client/data'], 
+        function($, ko, createViewModel, createTimeout, routing, data) {
     'use strict';
     
     (function(global){
         global.app = {};
 
         var maxReconnects = 5;
-
-        global.app.socket = io.connect(global.location.origin, {
-            'max reconnection attempts': maxReconnects,
-            'sync disconnect on unload': true
-        });
 
         $(global)
             .focus(function() {
@@ -37,7 +32,7 @@ define(['jquery', 'knockout', 'socket-io', 'client/viewModel', 'client/timeout',
 
             initUi();
             
-            var timeout = createTimeout(maxReconnects, global);
+            var timeout = createTimeout(5, global);
             timeout.startPing();
         }
 

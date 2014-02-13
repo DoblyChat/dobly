@@ -1,11 +1,12 @@
-define(['knockout', 'client/common'], function(ko, common){
+define(['knockout', 'client/socket', 'client/group', 'client/common'], 
+	function(ko, socket, group, common){
 	return function(data){
 		var self = {};
 
 		var collaborationObjectId = data.collaborationObjectId;
 
 		self.id = ko.observable(data._id);	
-		self.createdBy = app.group.getUserFullName(data.createdById);
+		self.createdBy = group.getUserFullName(data.createdById);
 		self.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
 		self.formattedTimestamp = ko.computed(function() {
             return common.formatTimestamp(self.timestamp());
@@ -26,7 +27,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
 		self.updateCompleteValues = function(data){
 			self.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
-			self.completedBy(data.completedById ? app.group.getUserFullName(data.completedById) : null);
+			self.completedBy(data.completedById ? group.getUserFullName(data.completedById) : null);
 			self.isComplete(data.isComplete);
 		};
 
@@ -38,7 +39,7 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.setAssignedTo = function(assignedToId){
 			if(assignedToId){
 				self.assignedToId = assignedToId;
-				self.assignedTo(app.group.getUserFullName(self.assignedToId));
+				self.assignedTo(group.getUserFullName(self.assignedToId));
 			}	
 		};
 
@@ -53,7 +54,7 @@ define(['knockout', 'client/common'], function(ko, common){
 		self.toggleComplete = function(){
 			self.processing(true);
 
-			app.socket.emit('toggle_complete_task', {
+			socket.emit('toggle_complete_task', {
 				id: self.id(),
 				collaborationObjectId: collaborationObjectId,
 				isComplete: !self.isComplete()
@@ -112,7 +113,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
 		function updateContent(){
 			if(contentHasBeenUpdated()){
-				app.socket.emit('update_task_content', { 
+				socket.emit('update_task_content', { 
 					id: self.id(), 
 					content: self.updatedContent(),
 					collaborationObjectId: collaborationObjectId
@@ -130,7 +131,7 @@ define(['knockout', 'client/common'], function(ko, common){
 
 		function updateAssignedTo(){
 			if(assignedToHasBeenUpdated()){
-				app.socket.emit('assign_task', {
+				socket.emit('assign_task', {
 					id: self.id(),
 					assignedToId: self.updatedAssignedToId(),
 					collaborationObjectId: collaborationObjectId

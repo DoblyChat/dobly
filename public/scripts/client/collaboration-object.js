@@ -1,5 +1,5 @@
-define(['knockout', 'client/common', 'client/collaboration-object.ui', 'client/group'], 
-    function(ko, common, createConversationObjectUi, group){
+define(['knockout', 'client/socket', 'client/common', 'client/collaboration-object.ui', 'client/group'], 
+    function(ko, socket, common, createConversationObjectUi, group){
     'use strict';
     
     return function (data, template) {
@@ -136,7 +136,7 @@ define(['knockout', 'client/common', 'client/collaboration-object.ui', 'client/g
         };
 
         function emitMarkAsRead(){
-            app.socket.emit('mark_as_read', self.id);
+            socket.emit('mark_as_read', self.id);
         }
 
         self.lastActivityMessage = ko.computed(function() {

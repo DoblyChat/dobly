@@ -1,8 +1,8 @@
-define(['client/task', 'client/common'], function(createTask, common){
+define(['squire', 'client/common'], function(Squire, common){
     'use strict';
 
     describe("task", function() {
-        var groupUsers;
+        var groupUsers, socketMock, groupMock, createTask;
 
         beforeEach(function(){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
@@ -15,11 +15,32 @@ define(['client/task', 'client/common'], function(createTask, common){
                 'a-id': 'Him'
             };
 
-            app.group.getUserFullName = function(userId){
-                return groupUsers[userId];
+            groupMock = {
+                getUserFullName: function(userId){
+                    return groupUsers[userId];
+                }
             };
 
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
+
+            var done = false;
+
+            runs(function(){
+                var injector = new Squire();
+
+                injector.mock('client/socket', socketMock);
+                injector.mock('client/group', groupMock);
+                injector.mock('client/common', common);
+
+                injector.require(['client/task'], function(createTaskFunc){
+                    createTask = createTaskFunc;
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
         });
 
         it("creates task", function() {
@@ -164,7 +185,7 @@ define(['client/task', 'client/common'], function(createTask, common){
 
                     expect(task.toggleComplete()).toBe(true);
 
-                    var args = app.socket.emit.mostRecentCall.args;
+                    var args = socketMock.emit.mostRecentCall.args;
                     expect(args[0]).toBe('toggle_complete_task');
                     expect(args[1]).toEqual({ 
                         id: 't-id',
@@ -189,7 +210,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                     });
 
                     expect(task.toggleComplete(null, event)).toBe(true);
-                    var args = app.socket.emit.mostRecentCall.args;
+                    var args = socketMock.emit.mostRecentCall.args;
                     expect(args[0]).toBe('toggle_complete_task');
                     expect(args[1]).toEqual({ 
                         id: 't-id',
@@ -353,7 +374,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                     
                     task.update();
 
-                    expect(app.socket.emit).toHaveBeenCalledWith('update_task_content', { 
+                    expect(socketMock.emit).toHaveBeenCalledWith('update_task_content', { 
                         id: 't-id', 
                         content: 'new content',
                         collaborationObjectId: 'c-id'
@@ -366,7 +387,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                 it('does not update if task content has not been updated', function(){
                     task.update();
                     
-                    expect(app.socket.emit).not.toHaveBeenCalled();
+                    expect(socketMock.emit).not.toHaveBeenCalled();
 
                     expect(task.content()).toBe('f-' + INITIAL_CONTENT);
                     expect(task.rawContent).toBe(INITIAL_CONTENT);
@@ -418,7 +439,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                     
                     task.update();
 
-                    expect(app.socket.emit).toHaveBeenCalledWith('assign_task', { 
+                    expect(socketMock.emit).toHaveBeenCalledWith('assign_task', { 
                         id: 't-id', 
                         assignedToId: 'new',
                         collaborationObjectId: 'c-id'
@@ -431,7 +452,7 @@ define(['client/task', 'client/common'], function(createTask, common){
                 it('does not assign if new user has not been selected', function(){
                     task.update();
                     
-                    expect(app.socket.emit).not.toHaveBeenCalled();
+                    expect(socketMock.emit).not.toHaveBeenCalled();
 
                     expect(task.assignedTo()).toBe('Him');
                     expect(task.assignedToId).toBe('a-id');

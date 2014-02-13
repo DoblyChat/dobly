@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'client/common', 'client/routing', 'client/group', 'chosen'], 
-        function($, ko, common, routing, group){
+define(['jquery', 'knockout', 'client/socket', 'client/common', 'client/routing', 'client/group', 'chosen'], 
+        function($, ko, socket, common, routing, group){
     'use strict';
     
     var self = {},
@@ -64,7 +64,7 @@ define(['jquery', 'knockout', 'client/common', 'client/routing', 'client/group',
             type: self.type()
         };
 
-        app.socket.emit('create_collaboration_object', data);
+        socket.emit('create_collaboration_object', data);
         restoreDefaults();
         backToDesktop(); 
     };

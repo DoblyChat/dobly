@@ -4,7 +4,7 @@ define(['squire'], function(Squire){
     describe("desktop", function() {
 
         var desktop, createDesktop, desktopData, allCollaborationObjects, testCollaborationObject,
-            routingMock, uiMock, createDesktopUiMock;
+            routingMock, uiMock, socketMock, createDesktopUiMock;
 
         beforeEach(function(){
             routingMock = jasmine.createSpyObj('routing', ['subscribe']);
@@ -14,14 +14,15 @@ define(['squire'], function(Squire){
                 show: jasmine.createSpy('show'),
                 scroll: {
                     tiles: jasmine.createSpy('tiles')
-                }
+                },
+                updateCollaborationObjectUi: jasmine.createSpy('update-collaboration-object-ui')
             };
 
             createDesktopUiMock = jasmine.createSpy('createDesktopUi').andCallFake(function(){
                 return uiMock;
             });
 
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
             
             var done = false;
 
@@ -31,6 +32,7 @@ define(['squire'], function(Squire){
                 injector.mock('client/desktop.ui', function(){
                     return createDesktopUiMock;
                 });
+                injector.mock('client/socket', socketMock);
 
                 injector.require(['client/desktop'], function(createDesktopFunc){
                     createDesktop = function(data){
@@ -119,7 +121,6 @@ define(['squire'], function(Squire){
             describe("add", function() {
                 
                 it("adds but does not activate", function() {
-                    spyDesktopUi(desktop);
                     testCollaborationObject = allCollaborationObjects[1];
                     expect(desktop.collaborationObjects()).not.toContain(testCollaborationObject);
 
@@ -144,7 +145,7 @@ define(['squire'], function(Squire){
                     desktop.add(testCollaborationObject);
 
                     expect(desktop.collaborationObjects().length).toBe(3);
-                    expect(app.socket.emit).not.toHaveBeenCalled();
+                    expect(socketMock.emit).not.toHaveBeenCalled();
                 });
             }); 
 
@@ -163,7 +164,6 @@ define(['squire'], function(Squire){
 
             describe("activate", function() {
                 it("activates", function() {
-                    spyDesktopUi(desktop);
                     desktop.add(allCollaborationObjects[1]);
                     expect(desktop.collaborationObjects().length).toBe(4);
                     expect(desktop.collaborationObjects()[0]).toEqual(firstCollaborationObject);
@@ -212,8 +212,6 @@ define(['squire'], function(Squire){
 
             describe("remove", function() {
                 it("third collaboration object", function() {
-                    spyDesktopUi(desktop);
-                    
                     desktop.remove(thirdCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('1','E');
@@ -225,8 +223,6 @@ define(['squire'], function(Squire){
                 });
 
                 it("first collaboration object", function() {
-                    spyDesktopUi(desktop);
-                    
                     desktop.remove(firstCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('1','A');
@@ -236,6 +232,55 @@ define(['squire'], function(Squire){
                     expect(firstCollaborationObject.active()).toBe(false);
                     expectDesktopUiToHaveBeenCalled(desktop);
                 });
+            });
+
+            describe('sort', function(){
+                var indexZero, indexOne, indexTwo;
+
+                beforeEach(function(){
+                    indexZero = desktop.collaborationObjects()[0];
+                    indexOne = desktop.collaborationObjects()[1];
+                    indexTwo = desktop.collaborationObjects()[2];
+                    spyOn(desktop, 'changeActiveCollaborationObjects');
+                });
+
+                function verifyOrder(first, second, third){
+                    expect(desktop.collaborationObjects()[0]).toBe(first);
+                    expect(desktop.collaborationObjects()[1]).toBe(second);
+                    expect(desktop.collaborationObjects()[2]).toBe(third);
+                }
+
+                it('does not update if the start index equals the stop index', function(){
+                    desktop.updateSort(9, 9);
+                    expect(socketMock.emit).not.toHaveBeenCalled();
+                });
+
+                it('updates sort', function(){
+                    desktop.updateSort(1, 2);
+                    expect(socketMock.emit).toHaveBeenCalledWith('update_strip_order', {
+                        id: desktop.id,
+                        currentSort: {
+                            startIndex: 1,
+                            stopIndex: 2
+                        }
+                    });
+
+                    verifyOrder(indexZero, indexTwo, indexOne);
+                });
+
+                it('keeps as active and activates the object to the right', function(){
+                    indexZero.activeValue = true;
+                    desktop.updateSort(0, 2);
+                    verifyOrder(indexOne, indexTwo, indexZero);
+                    expect(desktop.changeActiveCollaborationObjects).toHaveBeenCalledWith(2);
+                });
+
+                it('activates object if moved after an active object', function(){
+                    indexZero.activeValue = true;
+                    desktop.updateSort(1, 0);
+                    verifyOrder(indexOne, indexZero, indexTwo);
+                    expect(desktop.changeActiveCollaborationObjects).toHaveBeenCalledWith(0);
+                }); 
             });
         });
 
@@ -258,8 +303,6 @@ define(['squire'], function(Squire){
 
             describe("remove", function() {
                 it("second collaboration object", function() {
-                    spyDesktopUi(desktop);
-                    
                     desktop.remove(secondCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('3','C');
@@ -315,7 +358,6 @@ define(['squire'], function(Squire){
             describe("add", function() {
                 
                 it("activates on the right", function() {
-                    spyDesktopUi(desktop);
                     testCollaborationObject = allCollaborationObjects[4];
                     expect(desktop.collaborationObjects()).not.toContain(testCollaborationObject);
 
@@ -333,8 +375,6 @@ define(['squire'], function(Squire){
 
             describe("remove", function() {
                 it("first collaboration object", function() {
-                    spyDesktopUi(desktop);
-                    
                     desktop.remove(firstCollaborationObject);
 
                     expectSocketEmitRemoveFromDesktop('1','B');
@@ -383,7 +423,6 @@ define(['squire'], function(Squire){
             describe("add", function() {
                 
                 it("activates on the left", function() {
-                    spyDesktopUi(desktop);
                     testCollaborationObject = allCollaborationObjects[2];
                     expect(desktop.collaborationObjects()).not.toContain(testCollaborationObject);
 
@@ -443,21 +482,16 @@ define(['squire'], function(Squire){
             return self;
         }
 
-        function spyDesktopUi(desktop) {
-            desktop.ui = jasmine.createSpyObj('ui', ['scroll','updateCollaborationObjectUi']);
-            desktop.ui.scroll = jasmine.createSpyObj('scroll', ['tiles']);
-        }
-
         function expectDesktopUiToHaveBeenCalled(desktop) {
             expect(desktop.ui.updateCollaborationObjectUi).toHaveBeenCalled();
             expect(desktop.ui.scroll.tiles).toHaveBeenCalled();
         }
 
         function expectSocketEmitAddToDesktop(id, collaborationObjectId) {
-            expect(app.socket.emit).toHaveBeenCalled();
+            expect(socketMock.emit).toHaveBeenCalled();
 
-            var arg0 = app.socket.emit.mostRecentCall.args[0];
-            var arg1 = app.socket.emit.mostRecentCall.args[1];
+            var arg0 = socketMock.emit.mostRecentCall.args[0];
+            var arg1 = socketMock.emit.mostRecentCall.args[1];
 
             expect(arg0).toEqual('add_to_desktop');
             expect(arg1.id).toEqual(id);
@@ -465,10 +499,10 @@ define(['squire'], function(Squire){
         }
 
         function expectSocketEmitRemoveFromDesktop(id, collaborationObjectId) {
-            expect(app.socket.emit).toHaveBeenCalled();
+            expect(socketMock.emit).toHaveBeenCalled();
 
-            var arg0 = app.socket.emit.mostRecentCall.args[0];
-            var arg1 = app.socket.emit.mostRecentCall.args[1];
+            var arg0 = socketMock.emit.mostRecentCall.args[0];
+            var arg1 = socketMock.emit.mostRecentCall.args[1];
 
             expect(arg0).toEqual('remove_from_desktop');
             expect(arg1.id).toEqual(id);

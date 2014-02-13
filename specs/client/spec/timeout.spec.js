@@ -1,11 +1,11 @@
-define(['client/timeout'], function(createTimeout){
+define(['squire'], function(Squire){
     'use strict';
 
     describe("timeout", function() {
         var timeout;
-        var maxReconnects = 5;
         var testGlobal;
         var pingInterval = 4999;
+        var socketMock;
 
         beforeEach(function() {
             testGlobal = {
@@ -14,9 +14,24 @@ define(['client/timeout'], function(createTimeout){
                     host: 'testing-dobly.com',
                 },
             };
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
+            socketMock.maxReconnects = 5;
 
-            timeout = createTimeout(maxReconnects, testGlobal);
+            var done = false;
+
+            runs(function(){
+                var injector = new Squire();
+                injector.mock('client/socket', socketMock);
+
+                injector.require(['client/timeout'], function(createTimeout){
+                    timeout = createTimeout(testGlobal);
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
         });
 
         describe("reconnecting", function() {
@@ -43,12 +58,12 @@ define(['client/timeout'], function(createTimeout){
         });
 
         function doNotExpectTimeout(attempt) {
-            app.socket.mockEmit('reconnecting', null, attempt);
+            socketMock.mockEmit('reconnecting', null, attempt);
             expect(testGlobal.location.href).toEqual('http://testing-dobly.com/conversations');
         }
 
         function expectTimeout(attempt) {
-            app.socket.mockEmit('reconnecting', null, attempt);
+            socketMock.mockEmit('reconnecting', null, attempt);
             expect(testGlobal.location.href).toEqual('http://testing-dobly.com/timeout');
         }
 
@@ -65,7 +80,7 @@ define(['client/timeout'], function(createTimeout){
                 spyOn(window, "setInterval");
                 timeout.startPing();
 
-                app.socket.mockEmit('timeout');
+                socketMock.mockEmit('timeout');
                 expectTimeout();
             });
         });
@@ -77,7 +92,7 @@ define(['client/timeout'], function(createTimeout){
 
             it("emit ping", function() {
                 timeout.emitPing();
-                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+                expect(socketMock.emit).toHaveBeenCalledWith('ping');
             });
 
             it("one ping interval", function() {
@@ -102,30 +117,30 @@ define(['client/timeout'], function(createTimeout){
 
             it("six ping intervals with pong", function() {
                 expectConnectivityIssues(6);
-                app.socket.mockEmit('pong');
+                socketMock.mockEmit('pong');
                 timeout.emitPing();
                 expect($('#connectivityIssues')).toBeHidden();
-                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+                expect(socketMock.emit).toHaveBeenCalledWith('ping');
             });
 
             function doNotExpectConnectivityIssues(numberOfIntervals) {
                 timeout.lastPong.add( { milliseconds: -pingInterval*numberOfIntervals });
                 timeout.emitPing();
                 expect($('#connectivityIssues')).toBeHidden();
-                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+                expect(socketMock.emit).toHaveBeenCalledWith('ping');
             }
 
             function expectConnectivityIssues(numberOfIntervals) {
                 timeout.lastPong.add( { milliseconds: -pingInterval*numberOfIntervals });
                 timeout.emitPing();
                 expect($('#connectivityIssues')).not.toBeHidden();
-                expect(app.socket.emit).toHaveBeenCalledWith('ping');
+                expect(socketMock.emit).toHaveBeenCalledWith('ping');
             }
         });
 
         describe("pong", function() {
             it("last pong is now", function() {
-                app.socket.mockEmit('pong');
+                socketMock.mockEmit('pong');
                 expect(aproximateDate(timeout.lastPong)).toEqual(aproximateDate(new Date()));
             });
         });

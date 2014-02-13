@@ -1,4 +1,4 @@
-define(['knockout', 'client/builder'], function(ko, builder){
+define(['knockout', 'client/socket', 'client/builder'], function(ko, socket, builder){
     'use strict';
 
     var self = {};
@@ -23,7 +23,7 @@ define(['knockout', 'client/builder'], function(ko, builder){
                 });
             }
 
-            app.socket.on('receive_item', function(data) {
+            socket.on('receive_item', function(data) {
                 findCollaborationObject(data, function(collaborationObject){
                     var itemObj = builder.item(collaborationObject.type, data);
                     collaborationObject.addItem(itemObj);
@@ -32,31 +32,31 @@ define(['knockout', 'client/builder'], function(ko, builder){
                 });
             });
 
-            app.socket.on('task_complete_toggled', function(data){
+            socket.on('task_complete_toggled', function(data){
                 findItem(data, function(task){
                     task.updateCompleteValues(data);
                 });
             });
 
-            app.socket.on('task_content_updated', function(data){
+            socket.on('task_content_updated', function(data){
                 findItem(data, function(task){
                     task.setContent(data.content);
                 });
             });
 
-            app.socket.on('task_removed', function(data){
+            socket.on('task_removed', function(data){
                 findItem(data, function(task, collaborationObject){
                     collaborationObject.items.remove(task);
                 });
             });
 
-            app.socket.on('task_assigned', function(data){
+            socket.on('task_assigned', function(data){
                 findItem(data, function(task){
                     task.setAssignedTo(data.assignedToId);
                 });
             });
 
-            app.socket.on('my_new_collaboration_object', function(data) {
+            socket.on('my_new_collaboration_object', function(data) {
                 var collaborationObject = builder.collaborationObject(data, viewModel.group);
                 viewModel.collaborationObjects.push(collaborationObject);
                 app.desktop.addAndActivate(collaborationObject);
@@ -64,7 +64,7 @@ define(['knockout', 'client/builder'], function(ko, builder){
                 collaborationObject.hasFocus(true);
             });
 
-            app.socket.on('new_collaboration_object', function(data){
+            socket.on('new_collaboration_object', function(data){
                 var collaborationObject = builder.collaborationObject(data, viewModel.group);
                 viewModel.collaborationObjects.push(collaborationObject);
                 app.desktop.add(collaborationObject); 

@@ -100,37 +100,9 @@ define(['jquery', 'jquery-ui'], function($){
                 },
                 stop: function(event, ui){
                     currentSort.stopIndex = ui.item.index();
-
-                    if (currentSort.startIndex !== currentSort.stopIndex) {
-                        app.socket.emit('update_strip_order', { id: desktop.id, currentSort: currentSort });
-                        var collaborationObject = desktop.collaborationObjects()[currentSort.startIndex];
-                        reorder(collaborationObject);
-                        if (collaborationObject.active()) {
-                            desktop.changeActiveCollaborationObjects(currentSort.stopIndex);
-                        }
-                        else {
-                            checkIfItNeedsToBeActivated();
-                        }
-                    }
+                    desktop.updateSort(currentSort.startIndex, currentSort.stopIndex);
                 },
             });
-
-            function reorder(collaborationObject) {      
-                desktop.collaborationObjects.splice(currentSort.startIndex, 1);
-                desktop.collaborationObjects.splice(currentSort.stopIndex, 0, collaborationObject);
-            }
-
-            function checkIfItNeedsToBeActivated() {
-                var leftActiveIndex = desktop.collaborationObjects.indexOf(desktop.leftCollaborationObject());
-
-                if (movedAfterActiveCollaborationObject(leftActiveIndex)) {
-                    desktop.changeActiveCollaborationObjects(leftActiveIndex);
-                }
-
-                function movedAfterActiveCollaborationObject(leftActiveIndex){
-                    return leftActiveIndex + 1 === currentSort.stopIndex;
-                }
-            }
 
             $('#tiles').disableSelection();
         };

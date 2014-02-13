@@ -1,4 +1,5 @@
-define(['knockout', 'client/desktop.ui', 'client/routing'], function(ko, createDesktopUi, routing){
+define(['knockout', 'client/socket', 'client/desktop.ui', 'client/routing'], 
+    function(ko, socket, createDesktopUi, routing){
     'use strict';
     
     return function (data, allCollaborationObjects){
@@ -64,7 +65,7 @@ define(['knockout', 'client/desktop.ui', 'client/routing'], function(ko, createD
         }
         
         self.persistNewCollaborationObject = function(collaborationObject) {
-            app.socket.emit('add_to_desktop', { id: self.id, collaborationObjectId: collaborationObject.id });
+            socket.emit('add_to_desktop', { id: self.id, collaborationObjectId: collaborationObject.id });
         };
 
         self.addAndActivate = function(collaborationObject) {
@@ -73,7 +74,7 @@ define(['knockout', 'client/desktop.ui', 'client/routing'], function(ko, createD
         };
 
         self.remove = function(collaborationObject) {
-            app.socket.emit('remove_from_desktop', { id: self.id, collaborationObjectId: collaborationObject.id });
+            socket.emit('remove_from_desktop', { id: self.id, collaborationObjectId: collaborationObject.id });
             var index = self.collaborationObjects.indexOf(collaborationObject);
             self.collaborationObjects.splice(index, 1);
             if(collaborationObject.active()) {
@@ -158,6 +159,45 @@ define(['knockout', 'client/desktop.ui', 'client/routing'], function(ko, createD
                 collaborationObject.deactivate();
                 collaborationObject.hasFocus(false);
             });
+        }
+
+        self.updateSort = function(startIndex, stopIndex){
+            if (startIndex !== stopIndex) {
+                socket.emit('update_strip_order', { 
+                    id: self.id, 
+                    currentSort: { 
+                        startIndex: startIndex,
+                        stopIndex: stopIndex 
+                    }
+                });
+                
+                var collaborationObject = self.collaborationObjects()[startIndex];
+                
+                reorder(collaborationObject, startIndex, stopIndex);
+                if (collaborationObject.active()) {
+                    self.changeActiveCollaborationObjects(stopIndex);
+                }
+                else {
+                    checkIfItNeedsToBeActivated(stopIndex);
+                }
+            }
+        };
+
+        function reorder(collaborationObject, startIndex, stopIndex) {      
+            self.collaborationObjects.splice(startIndex, 1);
+            self.collaborationObjects.splice(stopIndex, 0, collaborationObject);
+        }
+
+        function checkIfItNeedsToBeActivated(stopIndex) {
+            var leftActiveIndex = self.collaborationObjects.indexOf(self.leftCollaborationObject());
+
+            if (movedAfterActiveCollaborationObject(leftActiveIndex)) {
+                self.changeActiveCollaborationObjects(leftActiveIndex);
+            }
+
+            function movedAfterActiveCollaborationObject(leftActiveIndex){
+                return leftActiveIndex + 1 === stopIndex;
+            }
         }
 
         activateLeftCollaborationObjectBy(0);

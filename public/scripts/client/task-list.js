@@ -1,4 +1,5 @@
-define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, createCollaborationObject, createTask){
+define(['knockout', 'client/socket', 'client/collaboration-object', 'client/task'], 
+    function(ko, socket, createCollaborationObject, createTask){
     'use strict';
 
     return function(data, group){
@@ -16,7 +17,7 @@ define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, 
         }
 
         function sendTaskToServer(taskData, taskObj){
-            app.socket.emit('add_task', taskData, function(task){
+            socket.emit('add_task', taskData, function(task){
                 taskObj.timestamp(task.timestamp);
                 taskObj.id(task._id);
                 taskObj.processing(false);
@@ -29,7 +30,7 @@ define(['knockout', 'client/collaboration-object', 'client/task'], function(ko, 
             if(confirm('Are you sure you would like to remove this task?')){
                 self.items.remove(task);
 
-                app.socket.emit('remove_task', {
+                socket.emit('remove_task', {
                     id: task.id(),
                     collaborationObjectId: self.id
                 });

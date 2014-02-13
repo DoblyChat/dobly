@@ -1,5 +1,6 @@
 define([
-        'knockout', 
+        'knockout',
+        'client/socket',
         'client/group', 
         'client/desktop',
         'client/archive', 
@@ -10,7 +11,8 @@ define([
         'client/notifications',
         'client/notification-setup',
         'client/top-nav',
-        'client/group'], function(ko, 
+        'client/group'], function(  ko, 
+                                    socket,
                                     createGroup, 
                                     createDesktop,
                                     createArchive,
@@ -39,7 +41,7 @@ define([
             toSubscribe.push(collaborationObjectsData[i]._id);
         }
 
-        app.socket.emit('subscribe_to_collaboration_objects', toSubscribe);
+        socket.emit('subscribe_to_collaboration_objects', toSubscribe);
 
         self.unreadCounter = ko.computed(function(){
             var unread = 0;

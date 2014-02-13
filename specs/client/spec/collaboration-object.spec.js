@@ -3,7 +3,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
     describe("collaboration object", function() {
 
-        var collaborationObject, testData, createCollaborationObject;
+        var collaborationObject, socketMock, testData, createCollaborationObject;
 
         beforeEach(function() {     
             var groupMock = {
@@ -17,7 +17,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             };
 
             testData = testDataCollaborationObject();
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
 
             var done = false;
 
@@ -25,6 +25,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 var injector = new Squire();
                 injector.mock('client/group', groupMock);
                 injector.mock('client/common', common);
+                injector.mock('client/socket', socketMock);
 
                 injector.require(['client/collaboration-object'], function(create){
                     createCollaborationObject = create;
@@ -128,7 +129,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                     expect(collaborationObject.items().length).toBe(3);
                     expect(collaborationObject.ui.scroll.adjust).toHaveBeenCalled();
-                    expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
+                    expect(socketMock.emit).toHaveBeenCalledWith('mark_as_read', '8');
                     expect(collaborationObject.unreadCounter()).toBe(0);
                 });
 
@@ -140,7 +141,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                     expect(collaborationObject.items().length).toBe(3);
                     expect(collaborationObject.ui.scroll.adjust).toHaveBeenCalled();
-                    expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
+                    expect(socketMock.emit).toHaveBeenCalledWith('mark_as_read', '8');
                     expect(collaborationObject.unreadCounter()).toBe(2);
                 });
 
@@ -152,7 +153,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                     expect(collaborationObject.items().length).toBe(3);
                     expect(collaborationObject.ui.scroll.adjust).not.toHaveBeenCalled();
-                    expect(app.socket.emit).not.toHaveBeenCalled();
+                    expect(socketMock.emit).not.toHaveBeenCalled();
                     expect(collaborationObject.unreadCounter()).toBe(2);
                 });
             });
@@ -298,7 +299,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 collaborationObject.markAsRead();
 
                 expect(collaborationObject.unreadCounter()).toBe(0);
-                expect(app.socket.emit).toHaveBeenCalledWith('mark_as_read', '8');
+                expect(socketMock.emit).toHaveBeenCalledWith('mark_as_read', '8');
             });
 
             it("when unread counter is 0", function() {
@@ -309,7 +310,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 collaborationObject.markAsRead();
 
                 expect(collaborationObject.unreadCounter()).toBe(0);            
-                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(socketMock.emit).not.toHaveBeenCalled();
             });
         });
 

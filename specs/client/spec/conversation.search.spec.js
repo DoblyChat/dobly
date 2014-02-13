@@ -142,8 +142,6 @@ define(['knockout', 'client/conversation.search', 'client/common'], function(ko,
                 spyOn(search, "next");
                 conversation.ui.scroll.adjust = jasmine.createSpy();
 
-                app.socket = createMockSocket();
-
                 search.page();
 
                 expect(conversation.page).toHaveBeenCalled();

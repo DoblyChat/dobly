@@ -3,7 +3,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 
     describe('Task list', function(){
         var createTaskList, createTaskMock,
-            taskList, groupMock;
+            taskList, socketMock, groupMock;
 
         beforeEach(function(){
             var done = false;
@@ -20,7 +20,7 @@ define(['squire', 'knockout'], function(Squire, ko){
             };
 
             createTaskMock = jasmine.createSpy('create-task');
-            app.socket = createMockSocket();
+            socketMock = createMockSocket();
             groupMock = {
                 users: [ 'my', 'users']
             };
@@ -35,6 +35,8 @@ define(['squire', 'knockout'], function(Squire, ko){
                 injector.mock('client/task', function(){
                     return createTaskMock;
                 });
+
+                injector.mock('client/socket', socketMock);
 
                 injector.require(['client/task-list'], function(createTaskListFn){
                     createTaskList = createTaskListFn;
@@ -100,8 +102,8 @@ define(['squire', 'knockout'], function(Squire, ko){
                     };
 
                 sendToServer(taskData, taskObj);
-                expect(app.socket.emit).toHaveBeenCalled();
-                var args = app.socket.emit.mostRecentCall.args;
+                expect(socketMock.emit).toHaveBeenCalled();
+                var args = socketMock.emit.mostRecentCall.args;
                 expect(args[0]).toBe('add_task');
                 expect(args[1]).toBe(taskData);
 
@@ -133,7 +135,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 
                 taskList.removeTask(task);
                 expect(taskList.items().length).toBe(0);
-                expect(app.socket.emit).toHaveBeenCalledWith('remove_task', { id: 123, collaborationObjectId: 'list-id' });
+                expect(socketMock.emit).toHaveBeenCalledWith('remove_task', { id: 123, collaborationObjectId: 'list-id' });
             });
 
             it('does not remove task if not confirmed', function(){
@@ -142,7 +144,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 
                 taskList.removeTask(task);
                 expect(taskList.items().length).toBe(1);
-                expect(app.socket.emit).not.toHaveBeenCalled();
+                expect(socketMock.emit).not.toHaveBeenCalled();
             });
         });
     });

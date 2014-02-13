@@ -1,13 +1,13 @@
-define(function(){
+define(['client/socket'], function(socket){
 	'use strict';
     
-    return function createTimeout(maxReconnects, global) {
+    return function createTimeout(global) {
 		var self = {};
 		var pingInterval = 5000;
 		self.lastPong = new Date();
 
-		app.socket.on('reconnecting', function(delay, attempt) {
-			if (attempt === maxReconnects) {
+		socket.on('reconnecting', function(delay, attempt) {
+			if (attempt === socket.maxReconnects) {
 				timeout();
 			}
 		});
@@ -19,7 +19,7 @@ define(function(){
 		self.startPing = function() {
 			setInterval(self.emitPing, pingInterval);
 
-			app.socket.on('timeout', function() {
+			socket.on('timeout', function() {
 				timeout();
 			});
 		};
@@ -29,10 +29,10 @@ define(function(){
 			var elapsedTimeSinceLastPong = now.getTime() - self.lastPong.getTime();
 			showConnectivityIssuesIf(elapsedTimeSinceLastPong > pingInterval * 3);
 
-			app.socket.emit('ping');
+			socket.emit('ping');
 		};
 
-		app.socket.on('pong', function() {
+		socket.on('pong', function() {
 			self.lastPong = new Date();
 		});
 

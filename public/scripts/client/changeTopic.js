@@ -1,4 +1,5 @@
-define(['knockout', 'client/common', 'client/routing'], function(ko, common, routing){
+define(['knockout', 'client/socket', 'client/common', 'client/routing'], 
+    function(ko, socket, common, routing){
     'use strict';
     
     return function (){
@@ -25,7 +26,7 @@ define(['knockout', 'client/common', 'client/routing'], function(ko, common, rou
         };
 
         self.update = function(){
-            app.socket.emit('update_topic', { collaborationObjectId: self.collaborationObject.id, newTopic: self.newTopic() });
+            socket.emit('update_topic', { collaborationObjectId: self.collaborationObject.id, newTopic: self.newTopic() });
             self.collaborationObject.topic(self.newTopic());
             close();
         };

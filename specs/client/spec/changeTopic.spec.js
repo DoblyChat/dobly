@@ -3,10 +3,10 @@ define(['squire', 'knockout'], function(Squire, ko){
 
 	describe("change topic", function() {
 		var routingMock, changeTopic, collaborationObjectMock,
-			commonMock;
+			commonMock, socketMock;
 
 		beforeEach(function() {
-			app.socket = createMockSocket();
+			socketMock = createMockSocket();
 			
 			collaborationObjectMock = {
 				topic: ko.observable('last in show'),
@@ -29,6 +29,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 				var injector = new Squire();
 				injector.mock('client/common', commonMock);
 				injector.mock('client/routing', routingMock);
+				injector.mock('client/socket', socketMock);
 
 				injector.require(['client/changeTopic'], function(createChangeTopic){
 					changeTopic = createChangeTopic();
@@ -51,9 +52,9 @@ define(['squire', 'knockout'], function(Squire, ko){
 			changeTopic.newTopic('some new topic');
 			changeTopic.update();
 
-			expect(app.socket.emit).toHaveBeenCalled();
-			var arg0 = app.socket.emit.mostRecentCall.args[0];
-			var arg1 = app.socket.emit.mostRecentCall.args[1];
+			expect(socketMock.emit).toHaveBeenCalled();
+			var arg0 = socketMock.emit.mostRecentCall.args[0];
+			var arg1 = socketMock.emit.mostRecentCall.args[1];
 			expect(arg0).toEqual('update_topic');
 			expect(arg1.collaborationObjectId).toEqual('8');
 			expect(arg1.newTopic).toEqual('some new topic');

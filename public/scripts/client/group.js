@@ -1,4 +1,4 @@
-define(['knockout', 'client/routing', 'client/data'], function(ko, routing, data){
+define(['knockout', 'client/socket', 'client/routing', 'client/data'], function(ko, socket, routing, data){
 	'use strict';
     
     var self = {};
@@ -32,12 +32,12 @@ define(['knockout', 'client/routing', 'client/data'], function(ko, routing, data
 	}
 
 	function pushToOtherUsers(user) {
-		if(user.id !== app.user._id){
+		if(user.id !== data.currentUser._id){
 			self.otherUsers.push(user);
 		}
 	}
 
-	app.socket.on('receive_online_users', function(onlineUsers){
+	socket.on('receive_online_users', function(onlineUsers){
 		ko.utils.arrayForEach(self.users, function(user){
 			if (onlineUsers.indexOf(user.id) >= 0){
 				user.online(true);
@@ -45,7 +45,7 @@ define(['knockout', 'client/routing', 'client/data'], function(ko, routing, data
 		});
 	});
 
-	app.socket.on('user_connected', function(connectedUser){
+	socket.on('user_connected', function(connectedUser){
 		function isExistingUser(user) {
 			return user.id === connectedUser._id;
 		}
@@ -63,7 +63,7 @@ define(['knockout', 'client/routing', 'client/data'], function(ko, routing, data
 		}
 	}
 
-	app.socket.on('user_disconnected', function(disconnectedUserId){
+	socket.on('user_disconnected', function(disconnectedUserId){
 		ko.utils.arrayForEach(self.users, function(user){
 			if (user.id === disconnectedUserId){
 				user.online(false);
@@ -75,7 +75,7 @@ define(['knockout', 'client/routing', 'client/data'], function(ko, routing, data
 		return self.map[userId].fullName;
 	};
 
-	app.socket.emit('request_online_users');
+	socket.emit('request_online_users');
 
 	routing.subscribe('group', self.showing);
 

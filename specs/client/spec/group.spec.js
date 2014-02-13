@@ -2,16 +2,11 @@ define(['squire'], function(Squire){
 	'use strict';
 
 	describe("group", function() {
-		var group, routingMock;
+		var group, routingMock, socketMock;
 		var testData;
 		var fernando, carlos, fido, current;
 
 		beforeEach(function() {
-
-			app.user = {
-				_id: '888'
-			};
-
 			testData = {
 				group: {
 					name: 'some test group',
@@ -21,10 +16,13 @@ define(['squire'], function(Squire){
 						{ firstName: 'Fido', lastName: 'Dido', _id: '789'},
 						{ firstName: 'Current', lastName: 'Wave', _id: '888' }
 					],
+				},
+				currentUser: {
+					_id: '888'
 				}
 			};
 
-			app.socket = createMockSocket();
+			socketMock = createMockSocket();
 			
 			routingMock = {
 				subscribe: jasmine.createSpy('subscribe')
@@ -37,6 +35,7 @@ define(['squire'], function(Squire){
 
 				injector.mock('client/routing', routingMock);
 				injector.mock('client/data', testData);
+				injector.mock('client/socket', socketMock);
 
 				injector.require(['client/group'], function(groupObj){
 					group = groupObj;
@@ -58,7 +57,7 @@ define(['squire'], function(Squire){
 			expect(group.name).toBe('some test group');
 			expect(group.showing()).toBe(false);
 			expect(group.users.length).toBe(4);
-			expect(app.socket.emit).toHaveBeenCalledWith('request_online_users');
+			expect(socketMock.emit).toHaveBeenCalledWith('request_online_users');
 
 			expect(fernando.fullName).toEqual('Fernando Green');
 			expect(fernando.online()).toBe(false);
@@ -78,7 +77,7 @@ define(['squire'], function(Squire){
 
 		it("receive online users", function() {
 			var onlineUsers = [ '123', '789' ];
-			app.socket.mockEmit('receive_online_users', onlineUsers);
+			socketMock.mockEmit('receive_online_users', onlineUsers);
 
 			expect(fernando.online()).toBe(true);
 			expect(carlos.online()).toBe(false);
@@ -86,7 +85,7 @@ define(['squire'], function(Squire){
 		});
 
 		it("user connected", function() {
-			app.socket.mockEmit('user_connected', { _id: '456' });
+			socketMock.mockEmit('user_connected', { _id: '456' });
 
 			expect(fernando.online()).toBe(false);
 			expect(carlos.online()).toBe(true);
@@ -94,16 +93,16 @@ define(['squire'], function(Squire){
 		});
 
 		it("user disconnected", function() {		
-			app.socket.mockEmit('user_connected', { _id: '123' });
+			socketMock.mockEmit('user_connected', { _id: '123' });
 			expect(fernando.online()).toBe(true);
 
-			app.socket.mockEmit('user_disconnected', '123');
+			socketMock.mockEmit('user_disconnected', '123');
 			expect(fernando.online()).toBe(false);
 		});
 
 		it("adds user if not existing user", function() {
 			expect(group.map['999']).toBeUndefined();
-			app.socket.mockEmit('user_connected', { _id: '999', firstName: 'New', lastName: 'User'});
+			socketMock.mockEmit('user_connected', { _id: '999', firstName: 'New', lastName: 'User'});
 			expect(group.map['999']).toBeDefined();
 			var newUser = group.map['999'];
 			expect(newUser.id).toBe('999');

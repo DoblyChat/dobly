@@ -1,12 +1,34 @@
-define(['client/message', 'client/common'], function(createMessage, common){
+define(['squire', 'client/common'], function(Squire, common){
     'use strict';
 
     describe("message", function() {
+        var groupMock, createMessage;
+
         beforeEach(function(){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
                 return 'e-' + string;
             });
-            app.group.getUserFullName = jasmine.createSpy().andReturn("Someone Else");
+
+            groupMock = {
+                getUserFullName: jasmine.createSpy().andReturn("Someone Else")
+            }
+
+            var done = false;
+
+            runs(function(){
+                var injector = new Squire();
+                injector.mock('client/group', groupMock);
+                injector.mock('client/common', common);
+
+                injector.require(['client/message'], function(createMessageFunc){
+                    createMessage = createMessageFunc;
+                    done = true;
+                });
+            });
+
+            waitsFor(function(){
+                return done;
+            });
         });
 
         it("creates message", function() {
@@ -22,7 +44,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
             expect(message.rawContent).toBe('line 1\nline 2\nline 3');
             expect(message.timestamp()).toBeNull();
             expect(message.formattedTimestamp()).toBe('');
-            expect(app.group.getUserFullName).toHaveBeenCalledWith('SO-u');
+            expect(groupMock.getUserFullName).toHaveBeenCalledWith('SO-u');
             expect(message.createdBy).toBe('Someone Else');
             expect(message.confirmedSent()).toBe(true);
             expect(message.id()).toBe('m-id');
@@ -42,7 +64,7 @@ define(['client/message', 'client/common'], function(createMessage, common){
             expect(message.rawContent).toBe('line 1\nline 2\nline 3');
             expect(message.timestamp()).toBe(data.timestamp);
             expect(message.formattedTimestamp()).toBe('4/9/2012 10:13 PM');
-            expect(app.group.getUserFullName).toHaveBeenCalledWith('SO-u');
+            expect(groupMock.getUserFullName).toHaveBeenCalledWith('SO-u');
             expect(message.createdBy).toBe('Someone Else');
             expect(message.confirmedSent()).toBe(true);
             expect(message.id()).toBe('m-id');

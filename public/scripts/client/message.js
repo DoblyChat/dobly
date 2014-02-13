@@ -1,4 +1,4 @@
-define(['knockout', 'client/common'], function(ko, common){
+define(['knockout', 'client/group', 'client/common'], function(ko, group, common){
     'use strict';
     
     return function (data, confirmed) {
@@ -11,7 +11,7 @@ define(['knockout', 'client/common'], function(ko, common){
         self.formattedTimestamp = ko.computed(function() {
             return common.formatTimestamp(self.timestamp());
         });
-        self.createdBy = app.group.getUserFullName(data.createdById);
+        self.createdBy = group.getUserFullName(data.createdById);
         self.confirmedSent = ko.observable(confirmed);
 
         self.getNotificationText = function(){

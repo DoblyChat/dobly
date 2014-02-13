@@ -2,10 +2,11 @@ define(['squire'], function(Squire){
 	'use strict';
 
 	describe('new collaboration object', function(){
-		var newCollaborationObject, groupMock, commonMock, routingMock;
+		var newCollaborationObject, groupMock, 
+			socketMock, commonMock, routingMock;
 
 		beforeEach(function(){
-			app.socket = createMockSocket();
+			socketMock = createMockSocket();
 
 			groupMock = {
 				otherUsers: [
@@ -32,6 +33,7 @@ define(['squire'], function(Squire){
 				injector.mock('client/routing', routingMock);
 				injector.mock('client/common', commonMock);
 				injector.mock('client/group', groupMock);
+				injector.mock('client/socket', socketMock);
 
 				injector.require(['client/collaboration-object.new'], function(newCollaborationObjModule){
 					spyOn($.fn, 'trigger');
@@ -158,7 +160,7 @@ define(['squire'], function(Squire){
 			it('creates new collaboration object with entire group selected', function(){
 				newCollaborationObject.selectedOptions.push('g');
 				newCollaborationObject.create();
-				expect(app.socket.emit).toHaveBeenCalledWith('create_collaboration_object', {
+				expect(socketMock.emit).toHaveBeenCalledWith('create_collaboration_object', {
 					topic: 'create-t',
 					forEntireGroup: true,
 					selectedMembers: [],
@@ -171,7 +173,7 @@ define(['squire'], function(Squire){
 				newCollaborationObject.selectedOptions.push('usr-1');
 				newCollaborationObject.selectedOptions.push('usr-2');
 				newCollaborationObject.create();
-				expect(app.socket.emit).toHaveBeenCalledWith('create_collaboration_object', {
+				expect(socketMock.emit).toHaveBeenCalledWith('create_collaboration_object', {
 					topic: 'create-t',
 					forEntireGroup: false,
 					selectedMembers: ['usr-1', 'usr-2'],
@@ -185,7 +187,7 @@ define(['squire'], function(Squire){
 				newCollaborationObject.selectedOptions.push('usr-2');
 				newCollaborationObject.selectedOptions.push('g');
 				newCollaborationObject.create();
-				expect(app.socket.emit).toHaveBeenCalledWith('create_collaboration_object', {
+				expect(socketMock.emit).toHaveBeenCalledWith('create_collaboration_object', {
 					topic: 'create-t',
 					forEntireGroup: true,
 					selectedMembers: ['usr-1', 'usr-2'],
@@ -204,7 +206,7 @@ define(['squire'], function(Squire){
 				newCollaborationObject.type('T');
 				newCollaborationObject.create();
 				expect(newCollaborationObject.type()).toBe('C');
-				expect(app.socket.emit).toHaveBeenCalledWith('create_collaboration_object', {
+				expect(socketMock.emit).toHaveBeenCalledWith('create_collaboration_object', {
 					topic: 'create-t',
 					forEntireGroup: false,
 					selectedMembers: [],

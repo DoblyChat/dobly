@@ -139,4 +139,5 @@ module.exports = function(grunt){
     grunt.registerTask('tests', ['tests-client', 'jasmine_node']);
     grunt.registerTask('check', ['jshint', 'tests']);
     grunt.registerTask('heroku:staging', ['requirejs', 'less', 'cssmin', 'copy:css']);
+    grunt.registerTask('heroku:production', ['requirejs', 'less', 'cssmin', 'copy:css']);
 };

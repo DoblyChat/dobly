@@ -118,10 +118,11 @@ module.exports = function(grunt){
         }
     });
 
+    function isDevelopmentEnvironment() {
+        return grunt.file.exists('.env') && grunt.file.read('.env').indexOf('NODE_ENV=development') !== -1;
+    }
 
-    if (typeof process.env.NODE_ENV === 'undefined' || 
-        process.env.NODE_ENV === 'development' ||
-        process.env.NODE_ENV === 'test') {
+    if (isDevelopmentEnvironment()) {
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-jasmine');
         grunt.loadNpmTasks('grunt-jasmine-node');
@@ -145,4 +146,5 @@ module.exports = function(grunt){
     grunt.registerTask('check', ['jshint', 'tests']);
     grunt.registerTask('heroku:staging', ['requirejs', 'less', 'cssmin', 'copy:css']);
     grunt.registerTask('heroku:production', ['requirejs', 'less', 'cssmin', 'copy:css']);
+    grunt.registerTask('printenv', function () { console.log(grunt.file.read('.env')); });
 };

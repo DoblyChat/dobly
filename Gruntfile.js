@@ -119,16 +119,21 @@ module.exports = function(grunt){
     });
 
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-jasmine-node');
-    grunt.loadNpmTasks('grunt-contrib-connect');
+    if (typeof process.env.NODE_ENV === 'undefined' || 
+        process.env.NODE_ENV === 'development' ||
+        process.env.NODE_ENV === 'test') {
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-jasmine');
+        grunt.loadNpmTasks('grunt-jasmine-node');
+        grunt.loadNpmTasks('grunt-contrib-connect');
+        grunt.loadNpmTasks('grunt-plato');
+        grunt.loadNpmTasks('grunt-contrib-imagemin');
+    }     
+    
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.loadNpmTasks('grunt-plato');
 
     // To run tests through the browser:
     // 1-grunt connect:test:keepalive

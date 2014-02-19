@@ -145,6 +145,5 @@ module.exports = function(grunt){
     grunt.registerTask('tests', ['tests-client', 'jasmine_node']);
     grunt.registerTask('check', ['jshint', 'tests']);
     grunt.registerTask('heroku:staging', ['requirejs', 'less', 'cssmin', 'copy:css']);
-    grunt.registerTask('heroku:production', ['requirejs', 'less', 'cssmin', 'copy:css']);
-    grunt.registerTask('printenv', function () { console.log(grunt.file.read('.env')); });
+    grunt.registerTask('heroku:', ['requirejs', 'less', 'cssmin', 'copy:css']);
 };

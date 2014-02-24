@@ -34,7 +34,7 @@
         var mock = {};
 
         for (var i = 1; i < arguments.length; i++){
-            mock[arguments[i]] = jasmine.createSpy();
+            mock[arguments[i]] = jasmine.createSpy(arguments[i]);
         }
 
         mockery.registerMock(path, mock);
@@ -79,6 +79,15 @@
             }
         });
     });
+
+    global.waitUntilSpyCalled = function(spy, callback){
+        var wait = setInterval(function(){
+            if(spy.calls.length > 0){
+                clearInterval(wait);
+                callback(spy.mostRecentCall.args);
+            }
+        }, 500);
+    };
 
     afterEach(function(){
         global.mockery.disable();

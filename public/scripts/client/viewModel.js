@@ -33,15 +33,23 @@ define([
 
         self.group = group;
 
-        var toSubscribe = [];
+        function subscribe(){
+            var toSubscribe = [];
 
-        for(var i = 0; i < collaborationObjectsData.length; i++){
-            var obj = builder.collaborationObject(collaborationObjectsData[i], self.group);
-            self.collaborationObjects.push(obj);
-            toSubscribe.push(collaborationObjectsData[i]._id);
+            for(var i = 0; i < collaborationObjectsData.length; i++){
+                var obj = builder.collaborationObject(collaborationObjectsData[i], self.group);
+                self.collaborationObjects.push(obj);
+                toSubscribe.push(collaborationObjectsData[i]._id);
+            }
+
+            socket.emit('subscribe_to_collaboration_objects', toSubscribe);
         }
 
-        socket.emit('subscribe_to_collaboration_objects', toSubscribe);
+        socket.on('reconnect', function(){
+            subscribe();
+        });
+
+        subscribe();
 
         self.unreadCounter = ko.computed(function(){
             var unread = 0;

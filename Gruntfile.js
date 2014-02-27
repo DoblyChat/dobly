@@ -124,16 +124,23 @@ module.exports = function(grunt){
         }
     });
 
+    function isDevelopmentEnvironment() {
+        return grunt.file.exists('.env') && grunt.file.read('.env').indexOf('NODE_ENV=development') !== -1;
+    }
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-jasmine-node');
-    grunt.loadNpmTasks('grunt-contrib-connect');
+    if (isDevelopmentEnvironment()) {
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-jasmine');
+        grunt.loadNpmTasks('grunt-jasmine-node');
+        grunt.loadNpmTasks('grunt-contrib-connect');
+        grunt.loadNpmTasks('grunt-plato');
+        grunt.loadNpmTasks('grunt-contrib-imagemin');
+    }     
+    
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-plato');
 
@@ -146,4 +153,5 @@ module.exports = function(grunt){
     grunt.registerTask('tests', ['tests-client', 'jasmine_node']);
     grunt.registerTask('check', ['jshint', 'tests']);
     grunt.registerTask('heroku:staging', ['requirejs', 'less', 'cssmin', 'copy:css']);
+    grunt.registerTask('heroku:', ['requirejs', 'less', 'cssmin', 'copy:css']);
 };

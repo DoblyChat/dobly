@@ -36,7 +36,7 @@ define(['jquery', 'knockout', 'client/viewModel', 'client/timeout', 'client/rout
         }
 
         function initUi(){
-            routing.routeTo('desktop');
+            routing.routeTo('conversations');
             global.app.desktop.ui.setup();
             showRenderedElements();
             global.app.desktop.ui.resize.tilesAndCollaborationObjectBodies();

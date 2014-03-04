@@ -111,7 +111,7 @@ define(['squire'], function(Squire){
                     expect(routingMock.subscribe).toHaveBeenCalled();
                     var args = routingMock.subscribe.mostRecentCall.args;
 
-                    expect(args[0]).toBe('desktop');
+                    expect(args[0]).toBe('conversations');
                     expect(args[1]).toBe(desktop.showing);
                     args[2]();
                     expect(desktop.ui.show).toHaveBeenCalled();

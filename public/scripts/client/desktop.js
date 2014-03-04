@@ -203,7 +203,7 @@ define(['knockout', 'client/socket', 'client/desktop.ui', 'client/routing'],
         activateLeftCollaborationObjectBy(0);
         activateRightCollaborationObjectBy(1);
 
-        routing.subscribe('desktop', self.showing, function(){
+        routing.subscribe('conversations', self.showing, function(){
             self.ui.show();
         });
 

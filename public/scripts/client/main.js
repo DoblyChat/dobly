@@ -20,7 +20,6 @@ define(['jquery', 'knockout', 'client/viewModel', 'client/timeout', 'client/rout
             });
 
         function start(){
-            global.app.user = data.currentUser;
             global.app.inFocus = true;
             
             routing.bind();

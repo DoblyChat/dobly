@@ -45,7 +45,7 @@ define([
             socket.emit('subscribe_to_collaboration_objects', toSubscribe);
         }
 
-        socket.on('reconnect', function(){
+        socket.on('connect', function(){
             subscribe();
         });
 

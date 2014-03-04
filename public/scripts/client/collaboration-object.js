@@ -1,5 +1,5 @@
-define(['knockout', 'client/socket', 'client/common', 'client/collaboration-object.ui', 'client/group'], 
-    function(ko, socket, common, createConversationObjectUi, group){
+define(['knockout', 'client/socket', 'client/common', 'client/collaboration-object.ui', 'client/group', 'client/data'], 
+    function(ko, socket, common, createConversationObjectUi, group, clientData){
     'use strict';
     
     return function (data, template) {
@@ -95,7 +95,7 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
             return { 
                 content: self.newItem(), 
                 collaborationObjectId: self.id, 
-                createdById: app.user._id
+                createdById: clientData.currentUser._id
             };
         }
 

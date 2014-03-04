@@ -4,7 +4,7 @@ define(['squire'], function(Squire){
     describe("timeout", function() {
         var timeout;
         var testGlobal;
-        var pingInterval = 4999;
+        var pingInterval = 4990; // reducing pingInterval to increase test stability
         var socketMock;
 
         beforeEach(function() {
@@ -73,7 +73,7 @@ define(['squire'], function(Squire){
                 spyOn(window, "setInterval");
                 timeout.startPing();
 
-                expect(window.setInterval).toHaveBeenCalledWith(timeout.emitPing, pingInterval + 1);
+                expect(window.setInterval).toHaveBeenCalledWith(timeout.emitPing, 5000);
             });
 
             it("handle timeout", function() {

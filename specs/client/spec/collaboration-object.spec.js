@@ -3,7 +3,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
     describe("collaboration object", function() {
 
-        var collaborationObject, socketMock, testData, createCollaborationObject;
+        var collaborationObject, socketMock, 
+            testData, createCollaborationObject, dataMock;
 
         beforeEach(function() {     
             var groupMock = {
@@ -18,6 +19,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
             testData = testDataCollaborationObject();
             socketMock = createMockSocket();
+            dataMock = {};
 
             var done = false;
 
@@ -26,6 +28,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 injector.mock('client/group', groupMock);
                 injector.mock('client/common', common);
                 injector.mock('client/socket', socketMock);
+                injector.mock('client/data', dataMock);
 
                 injector.require(['client/collaboration-object'], function(create){
                     createCollaborationObject = create;
@@ -215,7 +218,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 spyOn(common, 'enterKeyPressed').andReturn(true);
                 var testEvent = { shiftKey: false };
                 spyOn(collaborationObject, 'addItem');
-                app.user = { _id: 'CA-u' };
+                dataMock.currentUser = { _id: 'CA-u' };
 
                 var returnValue = addNewItem(null, testEvent);
 

@@ -45,10 +45,6 @@ define([
             socket.emit('subscribe_to_collaboration_objects', toSubscribe);
         }
 
-        socket.on('connect', function(){
-            subscribe();
-        });
-
         subscribe();
 
         self.unreadCounter = ko.computed(function(){

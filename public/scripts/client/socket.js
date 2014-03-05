@@ -8,6 +8,18 @@ define(['socket-io'], function(io){
         'sync disconnect on unload': true
 	});
 
+	socket.on('reconnect', function(){
+		console.log(new Date(), 'reconnect');
+	});
+	
+	socket.on('disconnect', function(){
+		console.log(new Date(), 'disconnect');
+	});
+
+	socket.on('connect', function(){
+		console.log(new Date(), 'connect');
+	});
+
 	socket.maxReconnects = maxReconnects;
 
 	return socket;

@@ -33,7 +33,7 @@ define(['knockout', 'client/socket', 'client/common', 'client/routing'],
 
         function close(){
             self.newTopic('');
-            routing.routeTo('desktop');
+            routing.routeTo('conversations');
         }
 
         self.cancel = function(){

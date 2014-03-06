@@ -46,7 +46,7 @@ define(['jquery', 'knockout', 'client/socket', 'client/common', 'client/routing'
     }
 
     function backToDesktop(){
-        routing.routeTo('desktop');
+        routing.routeTo('conversations');
     }
 
     self.create = function() {

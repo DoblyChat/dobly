@@ -60,7 +60,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 			expect(arg1.newTopic).toEqual('some new topic');
 
 			expect(changeTopic.newTopic()).toEqual('');
-			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 		});
 
 		it("update on click", function() {
@@ -91,7 +91,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 			changeTopic.cancel();
 
 			expect(changeTopic.newTopic()).toEqual('');
-			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 		});
 
 		it('subscribes to route', function(){

@@ -49,12 +49,12 @@ define(['squire'], function(Squire){
 			spyOn(notifications, 'requestPermission');
 			setup.allow();
 			expect(notifications.requestPermission).toHaveBeenCalled();
-			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 		});
 
 		it('cancels request', function(){
 			setup.cancel();
-			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 		});
 
 		it('subscribes to route', function(){

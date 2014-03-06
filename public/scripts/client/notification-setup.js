@@ -6,7 +6,7 @@ define(['knockout', 'client/routing'], function(ko, routing){
 		NOT_SET = 1, HASH = 'notification-setup';
 	
 	function goToDesktop(){
-		routing.routeTo('desktop');
+		routing.routeTo('conversations');
 	}
 
 	function permissionsNotSet(){

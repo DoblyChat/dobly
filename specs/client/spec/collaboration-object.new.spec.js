@@ -166,7 +166,7 @@ define(['squire'], function(Squire){
 					selectedMembers: [],
 					type: 'C'
 				});
-				expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+				expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 			});
 
 			it('creates collaboration object with only specific users selected', function(){
@@ -179,7 +179,7 @@ define(['squire'], function(Squire){
 					selectedMembers: ['usr-1', 'usr-2'],
 					type: 'C'
 				});
-				expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+				expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 			});
 
 			it('creates collaboration object with entire group and users selected', function(){
@@ -193,7 +193,7 @@ define(['squire'], function(Squire){
 					selectedMembers: ['usr-1', 'usr-2'],
 					type: 'C'
 				});
-				expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+				expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 			});
 
 			it('restores defaults after it creates', function(){
@@ -215,13 +215,13 @@ define(['squire'], function(Squire){
 			});
 		});
 
-		it('restores defaults and navigates back to desktop on cancel', function(){
+		it('restores defaults and navigates back to conversations on cancel', function(){
 			newCollaborationObject.topic('clear me!!');
 			newCollaborationObject.selectedOptions([ '1', '2' ]);
 
 			newCollaborationObject.cancel();
 			checkDefaults();
-			expect(routingMock.routeTo).toHaveBeenCalledWith('desktop');
+			expect(routingMock.routeTo).toHaveBeenCalledWith('conversations');
 		});
 
 		it('subscribes to route', function(){

@@ -70,7 +70,7 @@ define(['squire'], function(Squire){
         it("open", function() {
             var collaborationObject = {};
             archive.open(collaborationObject);
-            expect(routing.routeTo).toHaveBeenCalledWith('desktop');
+            expect(routing.routeTo).toHaveBeenCalledWith('conversations');
             expect(desktop.addAndActivate).toHaveBeenCalledWith(collaborationObject);
         });
 

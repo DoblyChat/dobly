@@ -31,7 +31,7 @@ define(['jquery', 'knockout', 'client/viewModel', 'client/timeout', 'client/rout
 
             initUi();
             
-            var timeout = createTimeout(5, global);
+            var timeout = createTimeout(global);
             timeout.startPing();
         }
 

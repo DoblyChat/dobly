@@ -10,7 +10,6 @@ describe('Sockets', function(){
 				joinCollaborationObjectRoom: jasmine.createSpy(),
 				joinGroupRoom: jasmine.createSpy(),
 				leaveCollaborationObjectRoom: jasmine.createSpy(),
-				leaveGroupRoom: jasmine.createSpy(),
 				broadcastToGroup: jasmine.createSpy(),
 				emit: jasmine.createSpy(),
 				handshake:{
@@ -40,7 +39,6 @@ describe('Sockets', function(){
 
 		it('handles "user disconnected" event', function(){
 			userIo.userDisconnected(socketMock);
-			expect(socketMock.leaveGroupRoom).toHaveBeenCalledWith('my group');
 			expect(socketMock.broadcastToGroup).toHaveBeenCalledWith('user_disconnected', testUserId);
 		});
 

@@ -8,7 +8,7 @@ describe('Sockets', function(){
 
 		beforeEach(function(){
 			confirm = jasmine.createSpy();
-			mockery.enable({ useCleanCache: true });
+			enableMockery();
 			mockery.registerAllowable('../../lib/sockets/task_io');
 
 			collaborationObjectIo = buildMock('./base_collaboration_object_io', 'sendItem');
@@ -48,7 +48,7 @@ describe('Sockets', function(){
 			var taskData = taskMock.create.mostRecentCall.args[0];
 			expect(taskData.description).toBe(data.description);
 			expect(taskData.createdById).toBe(socketMock.handshake.user._id);
-			expect(taskData.timestamp).toBe(Date.now());
+			expect(taskData.timestamp).toBeEquivalentDates(Date.now());
 			expect(taskData.collaborationObjectId).toBe(data.collaborationObjectId);
 
 			expect(taskMock.create.getCallback()).toBe(callback);

@@ -45,7 +45,7 @@
     global.enableMockery = function() {
         mockery.enable({
             useCleanCache: true,
-            warnOnReplace: false,
+            warnOnReplace: true,
             warnOnUnregistered: false
         });
     };
@@ -89,9 +89,19 @@
         }, 500);
     };
 
+    global.waitUntil = function(check, done){
+        check(function(isDone){
+            if(isDone){
+                done();
+            }else{
+                global.waitUntil(check, done);
+            }
+        });
+    };
+
     afterEach(function(){
-        global.mockery.disable();
         global.mockery.deregisterAll();
-        global.mockery.warnOnUnregistered(true);
+        //global.mockery.resetCache();
+        global.mockery.disable();
     });
 })(global);

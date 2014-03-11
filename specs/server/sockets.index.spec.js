@@ -191,12 +191,6 @@ describe('Socket', function(){
                     socketMock.joinGroupRoom('group-id');
                     expect(socketMock.join).toHaveBeenCalledWith('g-group-id');
                 });
-
-                it('defines a leaveGroupRoom method', function(){
-                    expect(socketMock.leaveGroupRoom).toBeDefined();
-                    socketMock.leaveGroupRoom('group-id');
-                    expect(socketMock.leave).toHaveBeenCalledWith('g-group-id');
-                });
             });
 
             it('signals that user connected', function(){

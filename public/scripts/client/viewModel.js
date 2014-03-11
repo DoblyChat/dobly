@@ -47,6 +47,8 @@ define([
 
         subscribe();
 
+        socket.on('reconnect', subscribe);
+
         self.unreadCounter = ko.computed(function(){
             var unread = 0;
             ko.utils.arrayForEach(self.collaborationObjects(), function(conversation){

@@ -13,7 +13,8 @@ module.exports = function(grunt){
                 node: true,
                 curly: true,
                 forin: true,
-                validthis: true
+                validthis: true,
+                smarttabs: true
             }
         },
         plato: {

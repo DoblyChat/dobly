@@ -27,7 +27,7 @@ define(['squire'], function(Squire){
 				injector.require(['client/notification-setup'], function(notificationSetup){
 					setup = notificationSetup;
 					done = true;
-				})
+				});
 			});
 
 			waitsFor(function(){

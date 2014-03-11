@@ -11,7 +11,7 @@ define(['squire', 'client/common'], function(Squire, common){
 
             groupMock = {
                 getUserFullName: jasmine.createSpy().andReturn("Someone Else")
-            }
+            };
 
             var done = false;
 

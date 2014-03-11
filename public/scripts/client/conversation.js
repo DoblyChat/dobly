@@ -9,7 +9,7 @@ define([
         function(ko,
                 socket,
                 createCollaborationObject, 
-                createMessage, 
+                Message, 
                 createConversationSearch, 
                 createConversationUi){
 
@@ -21,7 +21,7 @@ define([
         self.ui = createConversationUi(self.ui);
         
         self.init(function(itemData){
-            return createMessage(itemData, true);
+            return new Message(itemData, true);
         });
 
         self.search = createConversationSearch(self);
@@ -43,7 +43,7 @@ define([
         }
 
         function createItem(itemData){
-            return createMessage(itemData, false);
+            return new Message(itemData, false);
         }
 
         self.sendMessage = self.addNewItem(createItem, sendMessageToServer);
@@ -73,7 +73,7 @@ define([
         self.page = function(hook) {
             socket.emit('read_next_messages', { page: nextPage, collaborationObjectId: self.id }, function(messages){
                 ko.utils.arrayForEach(messages, function(message){
-                    self.items.unshift(createMessage(message, true));
+                    self.items.unshift(new Message(message, true));
                 });
                 nextPage += 1;
 

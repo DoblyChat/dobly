@@ -1,16 +1,19 @@
 define(['knockout', 'client/socket', 'client/collaboration-object', 'client/task'], 
-    function(ko, socket, createCollaborationObject, createTask){
+    function(ko, socket, createCollaborationObject, Task){
     'use strict';
 
     return function(data, group){
         var self = createCollaborationObject(data, 'task-list-template');
 
-        self.init(createTask);
+        self.init(function(itemData){
+            return new Task(itemData);
+        });
+
         self.users = group.users;
         self.iconClass = 'icon-task-list';
         
         function createNewTask(data){
-            var taskObj = createTask(data);
+            var taskObj = new Task(data);
             taskObj.processing(true);
 
             return taskObj;

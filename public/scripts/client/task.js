@@ -1,106 +1,99 @@
 define(['knockout', 'client/socket', 'client/group', 'client/common'], 
 	function(ko, socket, group, common){
-	return function(data){
-		var self = {};
-
+	
+	function Task(data){
 		var collaborationObjectId = data.collaborationObjectId;
 
-		self.id = ko.observable(data._id);	
-		self.createdBy = group.getUserFullName(data.createdById);
-		self.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
-		self.formattedTimestamp = ko.computed(function() {
-            return common.formatTimestamp(self.timestamp());
-        });
-		self.isComplete = ko.observable();
-		self.completedOn = ko.observable();
-		self.completedBy = ko.observable();
-		self.content = ko.observable();
-		self.processing = ko.observable(false);
-		self.showDetails = ko.observable(false);
-		self.showMenu = ko.observable(false);
-		self.isEditing = ko.observable(false);
-		self.isAssigning = ko.observable(false);
-		self.updatedContent = ko.observable(data.content);
-		self.assignedTo = ko.observable();
-		self.updatedAssignedToId = ko.observable(data.assignedToId);
-		self.menuHasFocus = ko.observable(false);
+		this.id = ko.observable(data._id);	
+		this.createdBy = group.getUserFullName(data.createdById);
+		this.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
+		this.formattedTimestamp = ko.computed(function() {
+            return common.formatTimestamp(this.timestamp());
+        }, this);
+		this.isComplete = ko.observable();
+		this.completedOn = ko.observable();
+		this.completedBy = ko.observable();
+		this.content = ko.observable();
+		this.processing = ko.observable(false);
+		this.showDetails = ko.observable(false);
+		this.showMenu = ko.observable(false);
+		this.isEditing = ko.observable(false);
+		this.isAssigning = ko.observable(false);
+		this.updatedContent = ko.observable(data.content);
+		this.assignedTo = ko.observable();
+		this.updatedAssignedToId = ko.observable(data.assignedToId);
+		this.menuHasFocus = ko.observable(false);
 
-		self.updateCompleteValues = function(data){
-			self.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
-			self.completedBy(data.completedById ? group.getUserFullName(data.completedById) : null);
-			self.isComplete(data.isComplete);
+		this.setContent = function(content){
+			this.rawContent = content;
+			this.content(common.formatUserInput(content));
 		};
 
-		self.setContent = function(content){
-			self.rawContent = content;
-			self.content(common.formatUserInput(content));
-		};
-
-		self.setAssignedTo = function(assignedToId){
+		this.setAssignedTo = function(assignedToId){
 			if(assignedToId){
-				self.assignedToId = assignedToId;
-				self.assignedTo(group.getUserFullName(self.assignedToId));
+				this.assignedToId = assignedToId;
+				this.assignedTo(group.getUserFullName(this.assignedToId));
 			}	
 		};
 
-		self.updateCompleteValues(data);
-		self.setContent(data.content);
-		self.setAssignedTo(data.assignedToId);
+		this.updateCompleteValues(data);
+		this.setContent(data.content);
+		this.setAssignedTo(data.assignedToId);
 
-		self.getNotificationText = function(){
-			return self.createdBy + ' has added a new task: ' + self.content();
+		this.getNotificationText = function(){
+			return this.createdBy + ' has added a new task: ' + this.content();
 		};
 
-		self.toggleComplete = function(){
-			self.processing(true);
+		this.toggleComplete = function(){
+			this.processing(true);
 
 			socket.emit('toggle_complete_task', {
-				id: self.id(),
+				id: this.id(),
 				collaborationObjectId: collaborationObjectId,
-				isComplete: !self.isComplete()
+				isComplete: !this.isComplete()
 			}, function(completeData){
-				self.updateCompleteValues(completeData);
-				self.processing(false);
+				this.updateCompleteValues(completeData);
+				this.processing(false);
 			});
 			
 			return true;
 		};
 
-		self.toggleDetails = function(){
-			self.showDetails(!self.showDetails());
+		this.toggleDetails = function(){
+			this.showDetails(!this.showDetails());
 		};
 
-		self.showPopupMenu = function(){
-			self.showMenu(true);
-			self.menuHasFocus(true);
+		this.showPopupMenu = function(){
+			this.showMenu(true);
+			this.menuHasFocus(true);
 		};
 
-		self.startEdit = function(){
-			self.showMenu(false);
-			self.isEditing(true);
+		this.startEdit = function(){
+			this.showMenu(false);
+			this.isEditing(true);
 		};
 
-		self.startAssign = function(){
-			self.showMenu(false);
-			self.isAssigning(true);
+		this.startAssign = function(){
+			this.showMenu(false);
+			this.isAssigning(true);
 		};
 
-		self.isUpdating = ko.computed(function(){
-			return self.isEditing() || self.isAssigning();
-		});
+		this.isUpdating = ko.computed(function(){
+			return this.isEditing() || this.isAssigning();
+		}, this);
 
 		function cancelEdit(){
-			self.isEditing(false);
-			self.updatedContent(self.rawContent);
+			this.isEditing(false);
+			this.updatedContent(this.rawContent);
 		}
 
 		function cancelAssign(){
-			self.isAssigning(false);
-			self.updatedAssignedToId(self.assignedToId);
+			this.isAssigning(false);
+			this.updatedAssignedToId(this.assignedToId);
 		}
 
-		self.cancel = function(){
-			if(self.isEditing()){
+		this.cancel = function(){
+			if(this.isEditing()){
 				cancelEdit();
 			}else{
 				cancelAssign();
@@ -108,64 +101,70 @@ define(['knockout', 'client/socket', 'client/group', 'client/common'],
 		};
 
 		function contentHasBeenUpdated(){
-			return self.rawContent !== self.updatedContent();
+			return this.rawContent !== this.updatedContent();
 		}
 
 		function updateContent(){
 			if(contentHasBeenUpdated()){
 				socket.emit('update_task_content', { 
-					id: self.id(), 
-					content: self.updatedContent(),
+					id: this.id(), 
+					content: this.updatedContent(),
 					collaborationObjectId: collaborationObjectId
 				});
 
-				self.setContent(self.updatedContent());	
+				this.setContent(this.updatedContent());	
 			}
 
-			self.isEditing(false);
+			this.isEditing(false);
 		}
 
 		function assignedToHasBeenUpdated(){
-			return self.assignedToId !== self.updatedAssignedToId();
+			return this.assignedToId !== this.updatedAssignedToId();
 		}
 
 		function updateAssignedTo(){
 			if(assignedToHasBeenUpdated()){
 				socket.emit('assign_task', {
-					id: self.id(),
-					assignedToId: self.updatedAssignedToId(),
+					id: this.id(),
+					assignedToId: this.updatedAssignedToId(),
 					collaborationObjectId: collaborationObjectId
 				});
 
-				self.setAssignedTo(self.updatedAssignedToId());
+				this.setAssignedTo(this.updatedAssignedToId());
 			}
 
-			self.isAssigning(false);
+			this.isAssigning(false);
 		}
 
-		self.update = function(){
-			if(self.isEditing()){
+		this.update = function(){
+			if(this.isEditing()){
 				updateContent();
 			}else{
 				updateAssignedTo();
 			}
 		};
 
-		self.updateKeyPress = function(obj, event){
+		this.updateKeyPress = function(obj, event){
 			if (common.enterKeyPressed(event) && !event.shiftKey) {
-				self.update();
+				this.update();
 				return false;
 			}else{
 				return true;
 			}
 		};
 
-		self.menuHasFocus.subscribe(function(focus){
+		this.menuHasFocus.subscribe(function(focus){
 			if(!focus){
-				self.showMenu(false);
+				this.showMenu(false);
 			}
 		});
+	}
 
-		return self;
+	Task.prototype.updateCompleteValues = function(data){
+		this.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
+		this.completedBy(data.completedById ? group.getUserFullName(data.completedById) : null);
+		this.isComplete(data.isComplete);
 	};
+
+	return Task;
 });

@@ -8,7 +8,7 @@ define([
     ], 
         function(ko,
                 socket,
-                createCollaborationObject, 
+                CollaborationObject, 
                 Message, 
                 createConversationSearch, 
                 createConversationUi){
@@ -16,7 +16,7 @@ define([
     'use strict';
 
     return function (data) {
-        var self = createCollaborationObject(data, 'convo-template');
+        var self = new CollaborationObject(data, 'convo-template');
 
         self.ui = createConversationUi(self.ui);
         

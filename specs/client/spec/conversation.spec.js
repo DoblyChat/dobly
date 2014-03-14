@@ -14,20 +14,19 @@ define(['knockout', 'squire'], function(ko, Squire){
             socketMock = createMockSocket();
             
             createCollaborationObjectMock = function(data, template){
-                return {
-                    ui: { 
-                        u: 'i',
-                        scroll: {
-                            adjustToOffset: jasmine.createSpy()
-                        }
-                    },
-                    init: jasmine.createSpy('init'),
-                    addNewItem: jasmine.createSpy('add'),
-                    topic: function() { return 'topic'; },
-                    items: ko.observableArray(),
-                    data: data,
-                    template: template
+                this.ui = { 
+                    u: 'i',
+                    scroll: {
+                        adjustToOffset: jasmine.createSpy()
+                    }
                 };
+                
+                this.init = jasmine.createSpy('init');
+                this.addNewItem = jasmine.createSpy('add');
+                this.topic = function() { return 'topic'; };
+                this.items = ko.observableArray();
+                this.data = data;
+                this.template = template;
             };
 
             createMessageMock = jasmine.createSpy('create-message');

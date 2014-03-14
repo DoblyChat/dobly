@@ -9,14 +9,12 @@ define(['squire', 'knockout'], function(Squire, ko){
             var done = false;
 
             var createCollaborationObjectMock = function(data, template){
-                return {
-                    init: jasmine.createSpy('init'),
-                    addNewItem: jasmine.createSpy('add'),
-                    data: data,
-                    template: template,
-                    items: ko.observableArray([]),
-                    id: 'list-id'
-                };
+                this.init = jasmine.createSpy('init');
+                this.addNewItem = jasmine.createSpy('add');
+                this.data = data;
+                this.template = template;
+                this.items = ko.observableArray([]);
+                this.id = 'list-id';
             };
 
             createTaskMock = jasmine.createSpy('create-task');

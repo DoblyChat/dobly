@@ -61,7 +61,10 @@ define(['squire', 'knockout'], function(Squire, ko){
             });
 
             it('initializes', function(){
-                expect(taskList.init).toHaveBeenCalledWith(createTaskMock);
+                var itemData = {};
+                expect(taskList.init).toHaveBeenCalled();
+                taskList.init.mostRecentCall.args[0](itemData);
+                expect(createTaskMock).toHaveBeenCalledWith(itemData);
             });
 
             it('sets users', function(){

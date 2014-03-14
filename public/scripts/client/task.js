@@ -2,168 +2,164 @@ define(['knockout', 'client/socket', 'client/group', 'client/common'],
 	function(ko, socket, group, common){
 	
 	function Task(data){
-		var collaborationObjectId = data.collaborationObjectId;
+		var self = this;
 
-		this.id = ko.observable(data._id);	
-		this.createdBy = group.getUserFullName(data.createdById);
-		this.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
-		this.formattedTimestamp = ko.computed(function() {
-            return common.formatTimestamp(this.timestamp());
-        }, this);
-		this.isComplete = ko.observable();
-		this.completedOn = ko.observable();
-		this.completedBy = ko.observable();
-		this.content = ko.observable();
-		this.processing = ko.observable(false);
-		this.showDetails = ko.observable(false);
-		this.showMenu = ko.observable(false);
-		this.isEditing = ko.observable(false);
-		this.isAssigning = ko.observable(false);
-		this.updatedContent = ko.observable(data.content);
-		this.assignedTo = ko.observable();
-		this.updatedAssignedToId = ko.observable(data.assignedToId);
-		this.menuHasFocus = ko.observable(false);
+		self.collaborationObjectId = data.collaborationObjectId;
+		self.id = ko.observable(data._id);	
+		self.createdBy = group.getUserFullName(data.createdById);
+		self.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
+		self.formattedTimestamp = ko.computed(function() {
+            return common.formatTimestamp(self.timestamp());
+        });
+		self.isComplete = ko.observable();
+		self.completedOn = ko.observable();
+		self.completedBy = ko.observable();
+		self.content = ko.observable();
+		self.processing = ko.observable(false);
+		self.showDetails = ko.observable(false);
+		self.showMenu = ko.observable(false);
+		self.isEditing = ko.observable(false);
+		self.isAssigning = ko.observable(false);
+		self.updatedContent = ko.observable(data.content);
+		self.assignedTo = ko.observable();
+		self.updatedAssignedToId = ko.observable(data.assignedToId);
+		self.menuHasFocus = ko.observable(false);
 
-		this.setContent = function(content){
-			this.rawContent = content;
-			this.content(common.formatUserInput(content));
-		};
+		self.updateCompleteValues(data);
+		self.setContent(data.content);
+		self.setAssignedTo(data.assignedToId);		
 
-		this.setAssignedTo = function(assignedToId){
-			if(assignedToId){
-				this.assignedToId = assignedToId;
-				this.assignedTo(group.getUserFullName(this.assignedToId));
-			}	
-		};
+		self.isUpdating = ko.computed(function(){
+			return self.isEditing() || self.isAssigning();
+		}, self);
 
-		this.updateCompleteValues(data);
-		this.setContent(data.content);
-		this.setAssignedTo(data.assignedToId);
-
-		this.getNotificationText = function(){
-			return this.createdBy + ' has added a new task: ' + this.content();
-		};
-
-		this.toggleComplete = function(){
-			this.processing(true);
-
-			socket.emit('toggle_complete_task', {
-				id: this.id(),
-				collaborationObjectId: collaborationObjectId,
-				isComplete: !this.isComplete()
-			}, function(completeData){
-				this.updateCompleteValues(completeData);
-				this.processing(false);
-			});
-			
-			return true;
-		};
-
-		this.toggleDetails = function(){
-			this.showDetails(!this.showDetails());
-		};
-
-		this.showPopupMenu = function(){
-			this.showMenu(true);
-			this.menuHasFocus(true);
-		};
-
-		this.startEdit = function(){
-			this.showMenu(false);
-			this.isEditing(true);
-		};
-
-		this.startAssign = function(){
-			this.showMenu(false);
-			this.isAssigning(true);
-		};
-
-		this.isUpdating = ko.computed(function(){
-			return this.isEditing() || this.isAssigning();
-		}, this);
-
-		function cancelEdit(){
-			this.isEditing(false);
-			this.updatedContent(this.rawContent);
-		}
-
-		function cancelAssign(){
-			this.isAssigning(false);
-			this.updatedAssignedToId(this.assignedToId);
-		}
-
-		this.cancel = function(){
-			if(this.isEditing()){
-				cancelEdit();
-			}else{
-				cancelAssign();
-			}
-		};
-
-		function contentHasBeenUpdated(){
-			return this.rawContent !== this.updatedContent();
-		}
-
-		function updateContent(){
-			if(contentHasBeenUpdated()){
-				socket.emit('update_task_content', { 
-					id: this.id(), 
-					content: this.updatedContent(),
-					collaborationObjectId: collaborationObjectId
-				});
-
-				this.setContent(this.updatedContent());	
-			}
-
-			this.isEditing(false);
-		}
-
-		function assignedToHasBeenUpdated(){
-			return this.assignedToId !== this.updatedAssignedToId();
-		}
-
-		function updateAssignedTo(){
-			if(assignedToHasBeenUpdated()){
-				socket.emit('assign_task', {
-					id: this.id(),
-					assignedToId: this.updatedAssignedToId(),
-					collaborationObjectId: collaborationObjectId
-				});
-
-				this.setAssignedTo(this.updatedAssignedToId());
-			}
-
-			this.isAssigning(false);
-		}
-
-		this.update = function(){
-			if(this.isEditing()){
-				updateContent();
-			}else{
-				updateAssignedTo();
-			}
-		};
-
-		this.updateKeyPress = function(obj, event){
-			if (common.enterKeyPressed(event) && !event.shiftKey) {
-				this.update();
-				return false;
-			}else{
-				return true;
-			}
-		};
-
-		this.menuHasFocus.subscribe(function(focus){
+		self.menuHasFocus.subscribe(function(focus){
 			if(!focus){
-				this.showMenu(false);
+				self.showMenu(false);
 			}
 		});
 	}
 
-	Task.prototype.updateCompleteValues = function(data){
+	var proto = Task.prototype;
+
+	proto.updateCompleteValues = function(data){
 		this.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
 		this.completedBy(data.completedById ? group.getUserFullName(data.completedById) : null);
 		this.isComplete(data.isComplete);
+	};
+
+	proto.setContent = function(content){
+		this.rawContent = content;
+		this.content(common.formatUserInput(content));
+	};
+
+	proto.setAssignedTo = function(assignedToId){
+		if(assignedToId){
+			this.assignedToId = assignedToId;
+			this.assignedTo(group.getUserFullName(this.assignedToId));
+		}	
+	};
+
+	proto.getNotificationText = function(){
+		return this.createdBy + ' has added a new task: ' + this.content();
+	};
+
+	proto.toggleComplete = function(){
+		var self = this;
+		this.processing(true);
+
+		socket.emit('toggle_complete_task', {
+			id: this.id(),
+			collaborationObjectId: this.collaborationObjectId,
+			isComplete: !this.isComplete()
+		}, function(completeData){
+			self.updateCompleteValues(completeData);
+			self.processing(false);
+		});
+		
+		return true;
+	};
+
+	proto.toggleDetails = function(){
+		this.showDetails(!this.showDetails());
+	};
+
+	proto.showPopupMenu = function(){
+		this.showMenu(true);
+		this.menuHasFocus(true);
+	};
+
+	proto.startEdit = function(){
+		this.showMenu(false);
+		this.isEditing(true);
+	};
+
+	proto.startAssign = function(){
+		this.showMenu(false);
+		this.isAssigning(true);
+	};
+
+	proto.cancel = function(){
+		if(this.isEditing()){
+			this.isEditing(false);
+			this.updatedContent(this.rawContent);
+		}else{
+			this.isAssigning(false);
+			this.updatedAssignedToId(this.assignedToId);
+		}
+	};
+
+	function contentHasBeenUpdated(task){
+		return task.rawContent !== task.updatedContent();
+	}
+
+	function updateContent(task){
+		if(contentHasBeenUpdated(task)){
+			socket.emit('update_task_content', { 
+				id: task.id(), 
+				content: task.updatedContent(),
+				collaborationObjectId: task.collaborationObjectId
+			});
+
+			task.setContent(task.updatedContent());	
+		}
+
+		task.isEditing(false);
+	}
+
+	function assignedToHasBeenUpdated(task){
+		return task.assignedToId !== task.updatedAssignedToId();
+	}
+
+	function updateAssignedTo(task){
+		if(assignedToHasBeenUpdated(task)){
+			socket.emit('assign_task', {
+				id: task.id(),
+				assignedToId: task.updatedAssignedToId(),
+				collaborationObjectId: task.collaborationObjectId
+			});
+
+			task.setAssignedTo(task.updatedAssignedToId());
+		}
+
+		task.isAssigning(false);
+	}
+
+	proto.update = function(){
+		if(this.isEditing()){
+			updateContent(this);
+		}else{
+			updateAssignedTo(this);
+		}
+	};
+
+	proto.updateKeyPress = function(obj, event){
+		if (common.enterKeyPressed(event) && !event.shiftKey) {
+			this.update();
+			return false;
+		}else{
+			return true;
+		}
 	};
 
 	return Task;

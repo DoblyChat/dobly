@@ -2,7 +2,7 @@ define(['squire', 'client/common'], function(Squire, common){
     'use strict';
 
     describe("task", function() {
-        var groupUsers, socketMock, groupMock, createTask;
+        var groupUsers, socketMock, groupMock, Task;
 
         beforeEach(function(){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
@@ -32,8 +32,8 @@ define(['squire', 'client/common'], function(Squire, common){
                 injector.mock('client/group', groupMock);
                 injector.mock('client/common', common);
 
-                injector.require(['client/task'], function(createTaskFunc){
-                    createTask = createTaskFunc;
+                injector.require(['client/task'], function(TaskFunc){
+                    Task = TaskFunc;
                     done = true;
                 });
             });
@@ -52,10 +52,11 @@ define(['squire', 'client/common'], function(Squire, common){
                 completedOn: Date.parse('2012.05.09 22:13:34'), 
                 createdById: 'u-id',
                 completedById: 'u-idx',
-                assignedToId: 'a-id'
+                assignedToId: 'a-id',
+                collaborationObjectId: 'c-id'
             };
 
-            var task = createTask(data);
+            var task = new Task(data);
             expect(task.content()).toBe(common.formatUserInput("line 1\nline 2\nline 3"));
             expect(task.rawContent).toBe(data.content);
             expect(task.isComplete()).toBe(true);
@@ -76,6 +77,7 @@ define(['squire', 'client/common'], function(Squire, common){
             expect(task.assignedTo()).toBe('Him');
             expect(task.assignedToId).toBe('a-id');
             expect(task.updatedAssignedToId()).toBe('a-id');
+            expect(task.collaborationObjectId).toBe('c-id');
         });
 
         it("creates task without timestamp", function() {
@@ -86,7 +88,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 createdById: 'u-id',
             };
 
-            var task = createTask(data);
+            var task = new Task(data);
             expect(task.content()).toBe(common.formatUserInput("line 1"));
             expect(task.rawContent).toBe(data.content);
             expect(task.isComplete()).toBe(false);
@@ -104,7 +106,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 createdById: 'u-id',
             };
 
-            var task = createTask(data);
+            var task = new Task(data);
 
             task.timestamp(Date.parse('2012.10.09 22:13:34'));
             expect(task.formattedTimestamp()).toBe('10/9/2012 10:13 PM');
@@ -116,7 +118,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 createdById: 'u-id'
             };
 
-            var task = createTask(data);
+            var task = new Task(data);
             expect(task.getNotificationText()).toBe('Me has added a new task: e-new notification');
         });
 
@@ -126,7 +128,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 createdById: 'u-id'
             };
 
-            var task = createTask(data);
+            var task = new Task(data);
             expect(task.assignedTo()).not.toBeDefined();
             expect(task.assignedToId).not.toBeDefined();
 
@@ -141,7 +143,7 @@ define(['squire', 'client/common'], function(Squire, common){
 
         describe('complete', function(){
             it('#updateCompleteValues', function(){
-                var task = createTask({
+                var task = new Task({
                     _id: 't-id',
                     collaborationObjectId: 'c-id',
                     content: 'hello world',
@@ -174,7 +176,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 });
 
                 it('completes a task', function(){
-                    var task = createTask({
+                    var task = new Task({
                         _id: 't-id',
                         collaborationObjectId: 'c-id',
                         content: 'hello world',
@@ -202,7 +204,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 });
 
                 it('marks a task as not complete', function(){
-                    var task = createTask({
+                    var task = new Task({
                         _id: 't-id',
                         collaborationObjectId: 'c-id',
                         content: 'hello world',
@@ -224,7 +226,7 @@ define(['squire', 'client/common'], function(Squire, common){
         it('toggles show details', function(){
             spyOn(common, 'formatTimestamp');
             
-            var task = createTask({
+            var task = new Task({
                 content: 'hello world'
             });
 
@@ -245,7 +247,7 @@ define(['squire', 'client/common'], function(Squire, common){
             beforeEach(function(){
                 spyOn(common, 'formatTimestamp');
             
-                task = createTask({
+                task = new Task({
                     content: 'hello world'
                 });
             });
@@ -271,7 +273,7 @@ define(['squire', 'client/common'], function(Squire, common){
         });
 
         it('is updating', function(){
-            var task = createTask({
+            var task = new Task({
                 content: 'hello world'
             });
 
@@ -294,7 +296,7 @@ define(['squire', 'client/common'], function(Squire, common){
             var event, task;
 
             beforeEach(function(){
-                task = createTask({
+                task = new Task({
                     content: 'updating on key press'
                 });
 
@@ -340,7 +342,7 @@ define(['squire', 'client/common'], function(Squire, common){
                     return 'f-' + input;
                 });
 
-                task = createTask({ 
+                task = new Task({ 
                     content: INITIAL_CONTENT,
                     _id: 't-id',
                     collaborationObjectId: 'c-id'
@@ -404,7 +406,7 @@ define(['squire', 'client/common'], function(Squire, common){
                     return 'f-' + input;
                 });
 
-                task = createTask({ 
+                task = new Task({ 
                     _id: 't-id',
                     collaborationObjectId: 'c-id',
                     assignedToId: 'a-id'

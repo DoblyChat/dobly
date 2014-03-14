@@ -2,7 +2,7 @@ define(['squire', 'client/common'], function(Squire, common){
     'use strict';
 
     describe("message", function() {
-        var groupMock, createMessage;
+        var groupMock, Message;
 
         beforeEach(function(){
             spyOn(common, 'htmlEncode').andCallFake(function(string){
@@ -20,8 +20,8 @@ define(['squire', 'client/common'], function(Squire, common){
                 injector.mock('client/group', groupMock);
                 injector.mock('client/common', common);
 
-                injector.require(['client/message'], function(createMessageFunc){
-                    createMessage = createMessageFunc;
+                injector.require(['client/message'], function(MessageFunc){
+                    Message = MessageFunc;
                     done = true;
                 });
             });
@@ -39,7 +39,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 _id: 'm-id'
             };
 
-            var message = createMessage(data, true);
+            var message = new Message(data, true);
             expect(message.content).toBe(common.formatUserInput("line 1\nline 2\nline 3"));
             expect(message.rawContent).toBe('line 1\nline 2\nline 3');
             expect(message.timestamp()).toBeNull();
@@ -59,7 +59,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 timestamp: Date.parse('2012.04.09 22:13:34'),
             };
 
-            var message = createMessage(data, true);
+            var message = new Message(data, true);
             expect(message.content).toBe(common.formatUserInput("line 1\nline 2\nline 3"));
             expect(message.rawContent).toBe('line 1\nline 2\nline 3');
             expect(message.timestamp()).toBe(data.timestamp);
@@ -78,7 +78,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 _id: 'm-id'
             };
 
-            var message = createMessage(data, true);
+            var message = new Message(data, true);
 
             message.timestamp(Date.parse('2012.04.09 22:13:34'));
             expect(message.formattedTimestamp()).toBe('4/9/2012 10:13 PM');
@@ -90,7 +90,7 @@ define(['squire', 'client/common'], function(Squire, common){
                 createdById: 'SO-u'
             };
 
-            var message = createMessage(data, true);
+            var message = new Message(data, true);
             expect(message.getNotificationText()).toBe('Someone Else: e-new notification');
         });
     });

@@ -4,7 +4,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
     describe("collaboration object", function() {
 
         var collaborationObject, socketMock, 
-            testData, createCollaborationObject, dataMock;
+            testData, CollaborationObject, dataMock;
 
         beforeEach(function() {     
             var groupMock = {
@@ -31,7 +31,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 injector.mock('client/data', dataMock);
 
                 injector.require(['client/collaboration-object'], function(create){
-                    createCollaborationObject = create;
+                    CollaborationObject = create;
                     done = true;
                 });
             });
@@ -43,7 +43,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
         describe("creation", function() {
             it("load properties", function() {
-                collaborationObject = createCollaborationObject(testData, 'template');
+                collaborationObject = new CollaborationObject(testData, 'template');
                 collaborationObject.init(function(itemData){
                     return { 
                         data: itemData, 
@@ -69,7 +69,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             });
 
             it("loads users", function() {
-                collaborationObject = createCollaborationObject(testSomeOtherCollaborationObjectData());
+                collaborationObject = new CollaborationObject(testSomeOtherCollaborationObjectData());
                 collaborationObject.init(function(){});
 
                 expect(collaborationObject.forEntireGroup).toBe(false);
@@ -78,20 +78,20 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
             it("undefined id", function() {
                 testData._id = undefined;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
 
                 expect(collaborationObject.id).toBe(0);
             });
 
             it("undefined unread", function() {
                 testData.unread = undefined;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
 
                 expect(collaborationObject.unreadCounter()).toBe(0);
             });
 
             it("pushes items", function() {
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 collaborationObject.init(function(itemData){
                     return { 
                         data: itemData, 
@@ -111,7 +111,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             describe("when app in focus", function() {
                 beforeEach(function() {
                     app.inFocus = true;
-                    collaborationObject = createCollaborationObject(testData);
+                    collaborationObject = new CollaborationObject(testData);
                     collaborationObject.init(function(itemData){
                         return { 
                             data: itemData, 
@@ -164,7 +164,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             describe("when app not in focus", function() {
                 beforeEach(function() {
                     app.inFocus = false;
-                    collaborationObject = createCollaborationObject(testData); 
+                    collaborationObject = new CollaborationObject(testData); 
                     collaborationObject.init(function(itemData){
                         return { 
                             data: itemData,
@@ -200,7 +200,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             var createObject, sendToServer, addNewItem;
 
             beforeEach(function() {
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 createObject = jasmine.createSpy().andCallFake(function(data){
                     return { data: data };
                 });
@@ -276,19 +276,19 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
         describe("unread counter", function() {
             it("0 messages", function() {
                 testData.unread = 0;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 expect(collaborationObject.showUnreadCounter()).toBe(false);
             });
 
             it("1 message", function() {
                 testData.unread = 1;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 expect(collaborationObject.showUnreadCounter()).toBe(true);
             });
 
             it("2 messages", function() {
                 testData.unread = 2;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 expect(collaborationObject.showUnreadCounter()).toBe(true);
             });
         });
@@ -296,7 +296,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
         describe("mark as read", function() {
             it("when unread counter is 1", function() {
                 testData.unread = 1;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 expect(collaborationObject.unreadCounter()).toBe(1);
 
                 collaborationObject.markAsRead();
@@ -307,7 +307,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
             it("when unread counter is 0", function() {
                 testData.unread = 0;
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 expect(collaborationObject.unreadCounter()).toBe(0);
 
                 collaborationObject.markAsRead();
@@ -319,7 +319,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
         describe("has focus", function() {
             it("true", function() {
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 spyOn(collaborationObject, 'markAsRead');
 
                 collaborationObject.hasFocus(true);
@@ -328,7 +328,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             });
 
             it("false", function() {
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
                 spyOn(collaborationObject, 'markAsRead');
 
                 collaborationObject.hasFocus(false);
@@ -340,7 +340,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
         describe("activate", function() {
 
             beforeEach(function() {
-                collaborationObject = createCollaborationObject(testData);
+                collaborationObject = new CollaborationObject(testData);
             });
 
             it("on the left", function() {
@@ -377,7 +377,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
         describe("last activity message", function() {
             it("no activity", function() {
                 testData.items = [];
-                var emptyCollaborationObject = createCollaborationObject(testData);
+                var emptyCollaborationObject = new CollaborationObject(testData);
                 expect(emptyCollaborationObject.lastActivityMessage()).toEqual('No activity.');
             });
 
@@ -399,7 +399,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 testData.items.push(yesterday);
                 testData.items.push(today);
 
-                var colabObj = createCollaborationObject(testData);
+                var colabObj = new CollaborationObject(testData);
                 colabObj.init(function(item) {
                     return item;
                 });
@@ -424,7 +424,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
                 testData.items.push(itemOne);
                 testData.items.push(itemTwo);
 
-                var colabObj = createCollaborationObject(testData);
+                var colabObj = new CollaborationObject(testData);
                 colabObj.init(function(item) {
                     return item;
                 });

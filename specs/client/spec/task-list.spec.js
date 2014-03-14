@@ -38,6 +38,8 @@ define(['squire', 'knockout'], function(Squire, ko){
 
                 injector.mock('client/socket', socketMock);
 
+                injector.mock('client/group', groupMock);
+
                 injector.require(['client/task-list'], function(createTaskListFn){
                     createTaskList = createTaskListFn;
                     done = true;

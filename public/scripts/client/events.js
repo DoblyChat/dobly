@@ -57,7 +57,7 @@ define(['knockout', 'client/socket', 'client/builder'], function(ko, socket, bui
             });
 
             socket.on('my_new_collaboration_object', function(data) {
-                var collaborationObject = builder.collaborationObject(data, viewModel.group);
+                var collaborationObject = builder.collaborationObject(data);
                 viewModel.collaborationObjects.push(collaborationObject);
                 app.desktop.addAndActivate(collaborationObject);
                 app.desktop.ui.scroll.bottomTile();
@@ -65,7 +65,7 @@ define(['knockout', 'client/socket', 'client/builder'], function(ko, socket, bui
             });
 
             socket.on('new_collaboration_object', function(data){
-                var collaborationObject = builder.collaborationObject(data, viewModel.group);
+                var collaborationObject = builder.collaborationObject(data);
                 viewModel.collaborationObjects.push(collaborationObject);
                 app.desktop.add(collaborationObject); 
             });

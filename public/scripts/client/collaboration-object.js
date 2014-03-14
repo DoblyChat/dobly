@@ -2,8 +2,8 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
     function(ko, socket, common, createConversationObjectUi, group, clientData){
     'use strict';
     
-    return function (data, template) {
-        var self = {};
+    function CollaborationObject(data, template) {
+        var self = this;
 
         self.template = template;
         self.id = data._id ? data._id : 0;
@@ -40,82 +40,6 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
             self.users = usersArray.join(', ');
         };
 
-        self.activateOnTheLeft = function() {
-            self.isLeft(true);
-            self.isRight(false);
-            activate(".collaboration-object-left");
-        };
-
-        self.activateOnTheRight = function() {
-            self.isRight(true);
-            self.isLeft(false);
-            activate(".collaboration-object-right");
-        };
-
-        function activate(convoSelector) {
-            self.active(true);
-
-            var getSelector = function getSelector(cssSelector) {
-                return convoSelector + ' > ' + cssSelector;
-            };
-
-            self.ui.init(getSelector);
-        }
-
-        self.deactivate = function() {
-            if (self.active()){
-                if (self.ui.scroll !== undefined) {
-                    self.ui.scroll.stop();
-                }
-
-                self.active(false);
-                self.isRight(false);
-                self.isLeft(false);
-            }
-        };
-
-        self.addItem = function(itemObj){
-            self.items.push(itemObj);
-
-            if (self.active()) {
-                self.ui.scroll.adjust();
-                emitMarkAsRead();
-            } 
-
-            if (!(app.inFocus && self.hasFocus())) {
-                self.unreadCounter(self.unreadCounter() + 1);  
-            }
-        };
-
-        function thereIsANewItem(){
-            return self.newItem().trim() !== '';
-        }
-
-        function getItemData(){
-            return { 
-                content: self.newItem(), 
-                collaborationObjectId: self.id, 
-                createdById: clientData.currentUser._id
-            };
-        }
-
-        self.addNewItem = function (createObject, sendToServer) {    
-            return function(object, event){
-                self.markAsRead();
-                
-                if (thereIsANewItem() && common.enterKeyPressed(event) && !event.shiftKey) {
-                    var itemData = getItemData();
-                    var obj = createObject(itemData);
-                    self.addItem(obj);
-                    sendToServer(itemData, obj);
-                    self.newItem('');
-                    return false;
-                } else {
-                    return true;
-                }
-            };
-        };
-
         self.showUnreadCounter = ko.computed(function() {
             return self.unreadCounter() > 0;
         }); 
@@ -126,17 +50,9 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
             }
         });
 
-        self.markAsRead = function() {
-            if (self.unreadCounter() > 0) {
-                self.unreadCounter(0);
-                emitMarkAsRead();
-            }
-
-            return true;
-        };
-
-        function emitMarkAsRead(){
-            socket.emit('mark_as_read', self.id);
+        function isToday(timestampString) {
+            var dateStamp = new Date(timestampString).clearTime();
+            return dateStamp.equals(Date.today());
         }
 
         self.lastActivityMessage = ko.computed(function() {
@@ -150,12 +66,100 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
                 return 'No activity.';
             }            
         });
+    };
 
-        function isToday(timestampString) {
-            var dateStamp = new Date(timestampString).clearTime();
-            return dateStamp.equals(Date.today());
+    var proto = CollaborationObject.prototype;
+
+    proto.activateOnTheLeft = function() {
+        this.isLeft(true);
+        this.isRight(false);
+        activate(this, ".collaboration-object-left");
+    };
+
+    proto.activateOnTheRight = function() {
+        this.isRight(true);
+        this.isLeft(false);
+        activate(this, ".collaboration-object-right");
+    };
+
+    function activate(collaborationObject, convoSelector) {
+        collaborationObject.active(true);
+
+        var getSelector = function getSelector(cssSelector) {
+            return convoSelector + ' > ' + cssSelector;
+        };
+
+        collaborationObject.ui.init(getSelector);
+    }
+
+    proto.deactivate = function() {
+        if (this.active()){
+            if (this.ui.scroll !== undefined) {
+                this.ui.scroll.stop();
+            }
+
+            this.active(false);
+            this.isRight(false);
+            this.isLeft(false);
+        }
+    };
+
+    proto.addItem = function(itemObj){
+        this.items.push(itemObj);
+
+        if (this.active()) {
+            this.ui.scroll.adjust();
+            emitMarkAsRead(this);
+        } 
+
+        if (!(app.inFocus && this.hasFocus())) {
+            this.unreadCounter(this.unreadCounter() + 1);  
+        }
+    };
+
+    function thereIsANewItem(collaborationObject){
+        return collaborationObject.newItem().trim() !== '';
+    }
+
+    function getItemData(collaborationObject){
+        return { 
+            content: collaborationObject.newItem(), 
+            collaborationObjectId: collaborationObject.id, 
+            createdById: clientData.currentUser._id
+        };
+    }
+
+    proto.markAsRead = function() {
+        if (this.unreadCounter() > 0) {
+            this.unreadCounter(0);
+            emitMarkAsRead(this);
         }
 
-        return self;
+        return true;
     };
+
+    proto.addNewItem = function (createObject, sendToServer) {    
+        var self = this;
+
+        return function(object, event){
+            self.markAsRead();
+            
+            if (thereIsANewItem(self) && common.enterKeyPressed(event) && !event.shiftKey) {
+                var itemData = getItemData(self);
+                var obj = createObject(itemData);
+                self.addItem(obj);
+                sendToServer(itemData, obj);
+                self.newItem('');
+                return false;
+            } else {
+                return true;
+            }
+        };
+    };
+
+    function emitMarkAsRead(collaborationObject){
+        socket.emit('mark_as_read', collaborationObject.id);
+    }
+
+    return CollaborationObject;
 });

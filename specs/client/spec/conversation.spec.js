@@ -4,7 +4,7 @@ define(['knockout', 'squire'], function(ko, Squire){
     describe("conversation", function() {
 
         var conversation, testData, 
-            createConversation, createCollaborationObjectMock,
+            Conversation, createCollaborationObjectMock,
             createMessageMock, common, socketMock,
             createConversationSearchMock;
 
@@ -13,19 +13,18 @@ define(['knockout', 'squire'], function(ko, Squire){
             testData = testDataConversation();
             socketMock = createMockSocket();
             
-            createCollaborationObjectMock = function(data, template){
+            createCollaborationObjectMock = function(template){
                 this.ui = { 
                     u: 'i',
                     scroll: {
                         adjustToOffset: jasmine.createSpy()
                     }
                 };
-                
+
                 this.init = jasmine.createSpy('init');
-                this.addNewItem = jasmine.createSpy('add');
+                this.bindAddNewItem = jasmine.createSpy('add');
                 this.topic = function() { return 'topic'; };
                 this.items = ko.observableArray();
-                this.data = data;
                 this.template = template;
             };
 
@@ -49,9 +48,9 @@ define(['knockout', 'squire'], function(ko, Squire){
 
                 injector.mock('client/socket', socketMock);
 
-                injector.require(['client/common', 'client/conversation'], function(aCommon, createConversationFunction){
+                injector.require(['client/common', 'client/conversation'], function(aCommon, ConversationFunc){
                     common = aCommon;
-                    createConversation = createConversationFunction;
+                    Conversation = ConversationFunc;
                     done = true;
                 });
             });
@@ -61,23 +60,19 @@ define(['knockout', 'squire'], function(ko, Squire){
             });
         });
 
-        afterEach(function(){
-            createConversation = undefined;
-        });
-
         describe("creation", function() {
             beforeEach(function(){
-                conversation = createConversation(testData);
+                conversation = new Conversation(testData);
             });
 
             it("load properties", function() {
-                expect(conversation.data).toBe(testData);
                 expect(conversation.template).toBe('convo-template');
             });
 
             it('inits properties', function(){
                 expect(conversation.init).toHaveBeenCalled();
-                var callback = conversation.init.mostRecentCall.args[0];
+                expect(conversation.init.mostRecentCall.args[0]).toBe(testData);
+                var callback = conversation.init.mostRecentCall.args[1];
                 createMessageMock.andReturn({ message: 'my-message'} );
                 var message = callback({ item: 'data' }, true);
                 expect(createMessageMock).toHaveBeenCalledWith({ item: 'data' }, true);
@@ -85,18 +80,18 @@ define(['knockout', 'squire'], function(ko, Squire){
             });
 
             it("undefined totalMessages", function() {
-                conversation = createConversation(testData);
+                conversation = new Conversation(testData);
                 expect(conversation.allMessagesLoaded()).toBe(false);
 
                 testData.totalMessages = undefined;
-                conversation = createConversation(testData);
+                conversation = new Conversation(testData);
 
                 expect(conversation.allMessagesLoaded()).toBe(true);
             });
 
             it('creates a conversation search module', function(){
                 createConversationSearchMock.andReturn({ search: 'module' });
-                conversation = createConversation(testData);
+                conversation = new Conversation(testData);
                 
                 expect(createConversationSearchMock).toHaveBeenCalledWith(conversation);
                 expect(conversation.search).toEqual({ search: 'module' });
@@ -104,16 +99,16 @@ define(['knockout', 'squire'], function(ko, Squire){
         });
 
         it("sends message", function() {
-            conversation = createConversation(testData);
-            expect(conversation.addNewItem).toHaveBeenCalled();
+            conversation = new Conversation(testData);
+            expect(conversation.bindAddNewItem).toHaveBeenCalled();
 
-            var createItem = conversation.addNewItem.mostRecentCall.args[0];
+            var createItem = conversation.bindAddNewItem.mostRecentCall.args[0];
             createMessageMock.andReturn({ _id: 'my-id' });
             var message = createItem(testDataMessageAlpha());
             expect(message._id).toBe('my-id');
             expect(createMessageMock).toHaveBeenCalledWith(testDataMessageAlpha(), false);
 
-            var sendMessageToServer = conversation.addNewItem.mostRecentCall.args[1];
+            var sendMessageToServer = conversation.bindAddNewItem.mostRecentCall.args[1];
             var messageData = { message: 'data' };
             var messageObj = { 
                 message: 'obj', 
@@ -139,7 +134,7 @@ define(['knockout', 'squire'], function(ko, Squire){
 
         describe("last messages", function() {
             beforeEach(function(){
-                conversation = createConversation(testData);
+                conversation = new Conversation(testData);
             });
 
             it("3 messages", function() {
@@ -173,7 +168,7 @@ define(['knockout', 'squire'], function(ko, Squire){
             var conversation, event;
 
             beforeEach(function(){
-                conversation = createConversation(testDataConversation());            
+                conversation = new Conversation(testDataConversation());            
                 event = {
                     target: {
                         scrollTop: 0,
@@ -198,7 +193,7 @@ define(['knockout', 'squire'], function(ko, Squire){
             it('does not initiate request if all messages have been loaded', function(){
                 var testData = testDataConversation();
                 testData.totalMessages = 2;
-                conversation = createConversation(testData);
+                conversation = new Conversation(testData);
                 conversation.items.push({});
                 conversation.items.push({});
 
@@ -291,7 +286,7 @@ define(['knockout', 'squire'], function(ko, Squire){
         });
 
         it('pages', function(){
-            conversation = createConversation(testData);
+            conversation = new Conversation(testData);
             conversation.id = testData._id;
 
             var callback = jasmine.createSpy();

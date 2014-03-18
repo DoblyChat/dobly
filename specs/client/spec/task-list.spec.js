@@ -2,16 +2,17 @@ define(['squire', 'knockout'], function(Squire, ko){
     'use strict';
 
     describe('Task list', function(){
-        var createTaskList, createTaskMock,
+        var TaskList, createTaskMock, data,
             taskList, socketMock, groupMock;
 
         beforeEach(function(){
             var done = false;
 
-            var createCollaborationObjectMock = function(data, template){
+            data = { da: 'ta' };
+
+            var createCollaborationObjectMock = function(template){
                 this.init = jasmine.createSpy('init');
-                this.addNewItem = jasmine.createSpy('add');
-                this.data = data;
+                this.bindAddNewItem = jasmine.createSpy('add');
                 this.template = template;
                 this.items = ko.observableArray([]);
                 this.id = 'list-id';
@@ -38,8 +39,8 @@ define(['squire', 'knockout'], function(Squire, ko){
 
                 injector.mock('client/group', groupMock);
 
-                injector.require(['client/task-list'], function(createTaskListFn){
-                    createTaskList = createTaskListFn;
+                injector.require(['client/task-list'], function(TaskListFn){
+                    TaskList = TaskListFn;
                     done = true;
                 });
             });
@@ -49,9 +50,7 @@ define(['squire', 'knockout'], function(Squire, ko){
             });
 
             runs(function(){
-                taskList = createTaskList({
-                    da: 'ta' 
-                }, groupMock);
+                taskList = new TaskList(data);
             });
         });
 
@@ -63,7 +62,9 @@ define(['squire', 'knockout'], function(Squire, ko){
             it('initializes', function(){
                 var itemData = {};
                 expect(taskList.init).toHaveBeenCalled();
-                taskList.init.mostRecentCall.args[0](itemData);
+                var args = taskList.init.mostRecentCall.args;
+                expect(args[0]).toBe(data)
+                args[1](itemData);
                 expect(createTaskMock).toHaveBeenCalledWith(itemData);
             });
 
@@ -78,11 +79,11 @@ define(['squire', 'knockout'], function(Squire, ko){
 
         describe('add task', function(){
             it('defines function based on template', function(){
-                expect(taskList.addNewItem).toHaveBeenCalled();
+                expect(taskList.bindAddNewItem).toHaveBeenCalled();
             });
 
             it('defines a way to create the task', function(){
-                var createFunc = taskList.addNewItem.mostRecentCall.args[0],
+                var createFunc = taskList.bindAddNewItem.mostRecentCall.args[0],
                     data = {},
                     taskObj = {
                         processing: jasmine.createSpy('processing')
@@ -96,7 +97,7 @@ define(['squire', 'knockout'], function(Squire, ko){
             });
 
             it('defines a way to send to server', function(){
-                var sendToServer = taskList.addNewItem.mostRecentCall.args[1],
+                var sendToServer = taskList.bindAddNewItem.mostRecentCall.args[1],
                     taskData = { task: 'data' },
                     taskObj = {
                         id: jasmine.createSpy('id'),

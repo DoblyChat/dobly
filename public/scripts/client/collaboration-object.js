@@ -2,32 +2,42 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
     function(ko, socket, common, createConversationObjectUi, group, clientData){
     'use strict';
     
-    function CollaborationObject(data, template) {
-        var self = this;
+    function CollaborationObject(template) {
+        this.template = template;
+        this.id = 0;
+        this.topic = ko.observable();
+        this.createdBy = '';
+        this.unreadCounter = ko.observable(0);
+        this.newItem = ko.observable('');
+        this.isLeft = ko.observable(false);
+        this.isRight = ko.observable(false);
+        this.items = ko.observableArray([]);
+        this.active = ko.observable(false);
+        this.hasFocus = ko.observable(false);
+        this.timestamp = '';
+        this.forEntireGroup = false;
+        this.ui = createConversationObjectUi();
+        this.type = '';
+        this.iconClass = '';
 
-        self.template = template;
-        self.id = data._id ? data._id : 0;
-        self.topic = ko.observable(data.topic);
-        self.createdBy = group.getUserFullName(data.createdById);
-        self.unreadCounter = ko.observable(data.unread ? data.unread : 0);
-        self.newItem = ko.observable('');
-        self.isLeft = ko.observable(false);
-        self.isRight = ko.observable(false);
-        self.items = ko.observableArray([]);
-        self.active = ko.observable(false);
-        self.hasFocus = ko.observable(false);
-        self.timestamp = common.formatTimestamp(data.timestamp);
-        self.forEntireGroup = data.members.entireGroup;
-        self.ui = createConversationObjectUi();
-        self.type = data.type;
-        self.iconClass = '';
+        function setProperties(self, data){
+            self.id = data._id ? data._id : 0;
+            self.topic(data.topic);
+            self.createdBy = group.getUserFullName(data.createdById);
+            self.unreadCounter(data.unread ? data.unread : 0);
+            self.timestamp = common.formatTimestamp(data.timestamp);
+            self.type = data.type;
+            self.forEntireGroup = data.members.entireGroup;
+        }
 
-        self.init = function(createItem){
+        this.init = function(data, createItem){
+            setProperties(this, data);
+
             if(data.items) {
                 var itemsLength = data.items.length;
                 
                 for(var i = 0; i < itemsLength; i++) {
-                    self.items.push(createItem(data.items[i]));
+                    this.items.push(createItem(data.items[i]));
                 }
             }
 
@@ -37,35 +47,35 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
                 usersArray.push(group.getUserFullName(userId));
             });
 
-            self.users = usersArray.join(', ');
+            this.users = usersArray.join(', ');
         };
 
-        self.showUnreadCounter = ko.computed(function() {
-            return self.unreadCounter() > 0;
-        }); 
+        this.showUnreadCounter = ko.computed(function() {
+            return this.unreadCounter() > 0;
+        }, this); 
 
-        self.hasFocus.subscribe(function(hasFocus) {
+        this.hasFocus.subscribe(function(hasFocus) {
             if (hasFocus) {
-                self.markAsRead();
+                this.markAsRead();
             }
-        });
+        }, this);
 
         function isToday(timestampString) {
             var dateStamp = new Date(timestampString).clearTime();
             return dateStamp.equals(Date.today());
         }
 
-        self.lastActivityMessage = ko.computed(function() {
-            var itemsLength = self.items().length;
+        this.lastActivityMessage = ko.computed(function() {
+            var itemsLength = this.items().length;
             if (itemsLength > 0) {
-                var lastItemTimestamp = self.items()[itemsLength - 1].timestamp();
+                var lastItemTimestamp = this.items()[itemsLength - 1].timestamp();
                 var p = isToday(lastItemTimestamp) ? ' at ' : ' on ';
                 var t = common.formatSimpleTimestamp(lastItemTimestamp);
                 return 'Last activity' + p + t + '.';
             } else {
                 return 'No activity.';
             }            
-        });
+        }, this);
     };
 
     var proto = CollaborationObject.prototype;
@@ -138,23 +148,23 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
         return true;
     };
 
-    proto.addNewItem = function (createObject, sendToServer) {    
-        var self = this;
+    function addNewItem(createObject, sendToServer, object, event){
+        this.markAsRead();
+        
+        if (thereIsANewItem(this) && common.enterKeyPressed(event) && !event.shiftKey) {
+            var itemData = getItemData(this);
+            var obj = createObject(itemData);
+            this.addItem(obj);
+            sendToServer(itemData, obj);
+            this.newItem('');
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-        return function(object, event){
-            self.markAsRead();
-            
-            if (thereIsANewItem(self) && common.enterKeyPressed(event) && !event.shiftKey) {
-                var itemData = getItemData(self);
-                var obj = createObject(itemData);
-                self.addItem(obj);
-                sendToServer(itemData, obj);
-                self.newItem('');
-                return false;
-            } else {
-                return true;
-            }
-        };
+    proto.bindAddNewItem = function (createObject, sendToServer) {    
+        return addNewItem.bind(this, createObject, sendToServer);
     };
 
     function emitMarkAsRead(collaborationObject){

@@ -15,72 +15,80 @@ define([
 
     'use strict';
 
-    return function (data) {
-        var self = new CollaborationObject(data, 'convo-template');
+
+    function createItem(itemData){
+        return new Message(itemData, false);
+    }
+
+    function sendMessageToServer(messageData, messageObj){
+        socket.emit('send_message', messageData, function(message){
+            messageObj.timestamp(message.timestamp);
+            messageObj.confirmedSent(true);
+            messageObj.id(message._id);
+        });
+    }
+
+    function Conversation(data) {
+        var self = this;
 
         self.ui = createConversationUi(self.ui);
         
-        self.init(function(itemData){
+        self.init(data, function(itemData){
             return new Message(itemData, true);
         });
 
         self.search = createConversationSearch(self);
 
-        self.lastMessages = function () {
-            if(self.items().length - 2 >= 0) {
-                return self.items.slice(self.items().length - 2);  
-            } else {
-                return self.items();
-            }
-        };
-
-        function sendMessageToServer(messageData, messageObj){
-            socket.emit('send_message', messageData, function(message){
-                messageObj.timestamp(message.timestamp);
-                messageObj.confirmedSent(true);
-                messageObj.id(message._id);
-            });
-        }
-
-        function createItem(itemData){
-            return new Message(itemData, false);
-        }
-
-        self.sendMessage = self.addNewItem(createItem, sendMessageToServer);
+        self.sendMessage = self.bindAddNewItem(createItem, sendMessageToServer);
         self.loadingMore = ko.observable(false);
 
-        var nextPage = 1;
-        var totalMessages = data.totalMessages || 0;
-
-        self.allMessagesLoaded = function() {
-            return totalMessages <= self.items().length;
-        };
-
-        self.scrolled = function(conversation, event){
-            if (!self.loadingMore() && event.target.scrollTop - 40 < 0 && !self.allMessagesLoaded()) {
-                var originalScrollHeight = event.target.scrollHeight;
-
-                self.page(function(messages) {
-                    self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);            
-                    self.loadingMore(false);
-                    self.ui.highlightTopMessages(messages.length);
-                });
-
-                self.loadingMore(true);
-            }
-        };
-
-        self.page = function(hook) {
-            socket.emit('read_next_messages', { page: nextPage, collaborationObjectId: self.id }, function(messages){
-                ko.utils.arrayForEach(messages, function(message){
-                    self.items.unshift(new Message(message, true));
-                });
-                nextPage += 1;
-
-                hook(messages);
-            });
-        };
-
-        return self;
+        this.nextPage = 1;
+        this.totalMessages = data.totalMessages || 0;
     };
+
+    Conversation.prototype = new CollaborationObject('convo-template');
+
+    Conversation.prototype.lastMessages = function () {
+        if(this.items().length - 2 >= 0) {
+            return this.items.slice(this.items().length - 2);  
+        } else {
+            return this.items();
+        }
+    };
+
+    Conversation.prototype.allMessagesLoaded = function() {
+        return this.totalMessages <= this.items().length;
+    };
+
+    Conversation.prototype.scrolled = function(conversation, event){
+        if (!this.loadingMore() && event.target.scrollTop - 40 < 0 && !this.allMessagesLoaded()) {
+            var originalScrollHeight = event.target.scrollHeight;
+
+            var self = this;
+
+            this.page(function(messages) {
+                self.ui.scroll.adjustToOffset(event.target.scrollHeight - originalScrollHeight - 80);            
+                self.loadingMore(false);
+                self.ui.highlightTopMessages(messages.length);
+            });
+
+            this.loadingMore(true);
+        }
+    };
+
+    Conversation.prototype.page = function(hook) {
+        var self = this;
+
+        socket.emit('read_next_messages', { page: this.nextPage, collaborationObjectId: this.id }, function(messages){
+            ko.utils.arrayForEach(messages, function(message){
+                self.items.unshift(new Message(message, true));
+            });
+
+            self.nextPage += 1;
+
+            hook(messages);
+        });
+    };
+
+    return Conversation;
 });

@@ -324,6 +324,7 @@ define(['squire'], function(Squire){
                 newObj.hasFocus = jasmine.createSpy('has-focus');
                 socketMock.mockEmit('my_new_collaboration_object', data);
 
+                expect(builderMock.collaborationObject).toHaveBeenCalledWith(data);
                 expect(viewModelMock.collaborationObjects()).toContain(newObj);
                 expect(app.desktop.addAndActivate).toHaveBeenCalledWith(newObj);
                 expect(app.desktop.ui.scroll.bottomTile).toHaveBeenCalled();
@@ -332,6 +333,7 @@ define(['squire'], function(Squire){
 
             it('adds a new collaboration object from a different user', function(){
                 socketMock.mockEmit('new_collaboration_object', data);
+                expect(builderMock.collaborationObject).toHaveBeenCalledWith(data);
                 expect(viewModelMock.collaborationObjects()).toContain(newObj);
                 expect(app.desktop.add).toHaveBeenCalledWith(newObj);
             });

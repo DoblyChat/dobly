@@ -1,10 +1,10 @@
 define(['knockout', 'client/socket', 'client/group', 'client/common'], 
 	function(ko, socket, group, common){
-	return function(data){
-		var self = {};
+	
+	function Task(data){
+		var self = this;
 
-		var collaborationObjectId = data.collaborationObjectId;
-
+		self.collaborationObjectId = data.collaborationObjectId;
 		self.id = ko.observable(data._id);	
 		self.createdBy = group.getUserFullName(data.createdById);
 		self.timestamp = ko.observable(data.timestamp ? data.timestamp : null);
@@ -25,147 +25,142 @@ define(['knockout', 'client/socket', 'client/group', 'client/common'],
 		self.updatedAssignedToId = ko.observable(data.assignedToId);
 		self.menuHasFocus = ko.observable(false);
 
-		self.updateCompleteValues = function(data){
-			self.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
-			self.completedBy(data.completedById ? group.getUserFullName(data.completedById) : null);
-			self.isComplete(data.isComplete);
-		};
-
-		self.setContent = function(content){
-			self.rawContent = content;
-			self.content(common.formatUserInput(content));
-		};
-
-		self.setAssignedTo = function(assignedToId){
-			if(assignedToId){
-				self.assignedToId = assignedToId;
-				self.assignedTo(group.getUserFullName(self.assignedToId));
-			}	
-		};
-
 		self.updateCompleteValues(data);
 		self.setContent(data.content);
-		self.setAssignedTo(data.assignedToId);
-
-		self.getNotificationText = function(){
-			return self.createdBy + ' has added a new task: ' + self.content();
-		};
-
-		self.toggleComplete = function(){
-			self.processing(true);
-
-			socket.emit('toggle_complete_task', {
-				id: self.id(),
-				collaborationObjectId: collaborationObjectId,
-				isComplete: !self.isComplete()
-			}, function(completeData){
-				self.updateCompleteValues(completeData);
-				self.processing(false);
-			});
-			
-			return true;
-		};
-
-		self.toggleDetails = function(){
-			self.showDetails(!self.showDetails());
-		};
-
-		self.showPopupMenu = function(){
-			self.showMenu(true);
-			self.menuHasFocus(true);
-		};
-
-		self.startEdit = function(){
-			self.showMenu(false);
-			self.isEditing(true);
-		};
-
-		self.startAssign = function(){
-			self.showMenu(false);
-			self.isAssigning(true);
-		};
+		self.setAssignedTo(data.assignedToId);		
 
 		self.isUpdating = ko.computed(function(){
 			return self.isEditing() || self.isAssigning();
-		});
-
-		function cancelEdit(){
-			self.isEditing(false);
-			self.updatedContent(self.rawContent);
-		}
-
-		function cancelAssign(){
-			self.isAssigning(false);
-			self.updatedAssignedToId(self.assignedToId);
-		}
-
-		self.cancel = function(){
-			if(self.isEditing()){
-				cancelEdit();
-			}else{
-				cancelAssign();
-			}
-		};
-
-		function contentHasBeenUpdated(){
-			return self.rawContent !== self.updatedContent();
-		}
-
-		function updateContent(){
-			if(contentHasBeenUpdated()){
-				socket.emit('update_task_content', { 
-					id: self.id(), 
-					content: self.updatedContent(),
-					collaborationObjectId: collaborationObjectId
-				});
-
-				self.setContent(self.updatedContent());	
-			}
-
-			self.isEditing(false);
-		}
-
-		function assignedToHasBeenUpdated(){
-			return self.assignedToId !== self.updatedAssignedToId();
-		}
-
-		function updateAssignedTo(){
-			if(assignedToHasBeenUpdated()){
-				socket.emit('assign_task', {
-					id: self.id(),
-					assignedToId: self.updatedAssignedToId(),
-					collaborationObjectId: collaborationObjectId
-				});
-
-				self.setAssignedTo(self.updatedAssignedToId());
-			}
-
-			self.isAssigning(false);
-		}
-
-		self.update = function(){
-			if(self.isEditing()){
-				updateContent();
-			}else{
-				updateAssignedTo();
-			}
-		};
-
-		self.updateKeyPress = function(obj, event){
-			if (common.enterKeyPressed(event) && !event.shiftKey) {
-				self.update();
-				return false;
-			}else{
-				return true;
-			}
-		};
+		}, self);
 
 		self.menuHasFocus.subscribe(function(focus){
 			if(!focus){
 				self.showMenu(false);
 			}
 		});
+	}
 
-		return self;
+	var proto = Task.prototype;
+
+	proto.updateCompleteValues = function(data){
+		this.completedOn(data.completedOn ? common.formatTimestamp(data.completedOn) : null);
+		this.completedBy(data.completedById ? group.getUserFullName(data.completedById) : null);
+		this.isComplete(data.isComplete);
 	};
+
+	proto.setContent = function(content){
+		this.rawContent = content;
+		this.content(common.formatUserInput(content));
+	};
+
+	proto.setAssignedTo = function(assignedToId){
+		if(assignedToId){
+			this.assignedToId = assignedToId;
+			this.assignedTo(group.getUserFullName(this.assignedToId));
+		}	
+	};
+
+	proto.getNotificationText = function(){
+		return this.createdBy + ' has added a new task: ' + this.content();
+	};
+
+	proto.toggleComplete = function(){
+		var self = this;
+		this.processing(true);
+
+		socket.emit('toggle_complete_task', {
+			id: this.id(),
+			collaborationObjectId: this.collaborationObjectId,
+			isComplete: !this.isComplete()
+		}, function(completeData){
+			self.updateCompleteValues(completeData);
+			self.processing(false);
+		});
+		
+		return true;
+	};
+
+	proto.toggleDetails = function(){
+		this.showDetails(!this.showDetails());
+	};
+
+	proto.showPopupMenu = function(){
+		this.showMenu(true);
+		this.menuHasFocus(true);
+	};
+
+	proto.startEdit = function(){
+		this.showMenu(false);
+		this.isEditing(true);
+	};
+
+	proto.startAssign = function(){
+		this.showMenu(false);
+		this.isAssigning(true);
+	};
+
+	proto.cancel = function(){
+		if(this.isEditing()){
+			this.isEditing(false);
+			this.updatedContent(this.rawContent);
+		}else{
+			this.isAssigning(false);
+			this.updatedAssignedToId(this.assignedToId);
+		}
+	};
+
+	function contentHasBeenUpdated(task){
+		return task.rawContent !== task.updatedContent();
+	}
+
+	function updateContent(task){
+		if(contentHasBeenUpdated(task)){
+			socket.emit('update_task_content', { 
+				id: task.id(), 
+				content: task.updatedContent(),
+				collaborationObjectId: task.collaborationObjectId
+			});
+
+			task.setContent(task.updatedContent());	
+		}
+
+		task.isEditing(false);
+	}
+
+	function assignedToHasBeenUpdated(task){
+		return task.assignedToId !== task.updatedAssignedToId();
+	}
+
+	function updateAssignedTo(task){
+		if(assignedToHasBeenUpdated(task)){
+			socket.emit('assign_task', {
+				id: task.id(),
+				assignedToId: task.updatedAssignedToId(),
+				collaborationObjectId: task.collaborationObjectId
+			});
+
+			task.setAssignedTo(task.updatedAssignedToId());
+		}
+
+		task.isAssigning(false);
+	}
+
+	proto.update = function(){
+		if(this.isEditing()){
+			updateContent(this);
+		}else{
+			updateAssignedTo(this);
+		}
+	};
+
+	proto.updateKeyPress = function(obj, event){
+		if (common.enterKeyPressed(event) && !event.shiftKey) {
+			this.update();
+			return false;
+		}else{
+			return true;
+		}
+	};
+
+	return Task;
 });

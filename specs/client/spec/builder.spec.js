@@ -3,34 +3,34 @@ define(['squire'], function(Squire){
 
 	describe('builder', function(){
 
-		var builder, createConversationMock, createTaskListMock,
-			createMessageMock, createTaskMock;
+		var builder, ConversationMock, TaskListMock,
+			MessageMock, TaskMock;
 
 		beforeEach(function(){
 			var done = false;
 
-			createConversationMock = jasmine.createSpy('create-conversation-mock');
-			createTaskListMock = jasmine.createSpy('create-task-list-mock');
-			createMessageMock = jasmine.createSpy('create-message-mock');
-			createTaskMock = jasmine.createSpy('create-task-mock');
+			ConversationMock = jasmine.createSpy('create-conversation-mock');
+			TaskListMock = jasmine.createSpy('create-task-list-mock');
+			MessageMock = jasmine.createSpy('create-message-mock');
+			TaskMock = jasmine.createSpy('create-task-mock');
 
 			runs(function(){
 				var injector = new Squire();
 
 				injector.mock('client/conversation', function(){
-					return createConversationMock;
+					return ConversationMock;
 				});
 
 				injector.mock('client/task-list', function(){
-					return createTaskListMock;
+					return TaskListMock;
 				});
 
 				injector.mock('client/message', function(){
-					return createMessageMock;
+					return MessageMock;
 				});
 
 				injector.mock('client/task', function(){
-					return createTaskMock;
+					return TaskMock;
 				});
 
 				injector.require(['client/builder'], function(builderObj){
@@ -50,7 +50,7 @@ define(['squire'], function(Squire){
 
 				builder.collaborationObject(data);
 
-				expect(createConversationMock).toHaveBeenCalledWith(data);
+				expect(ConversationMock).toHaveBeenCalledWith(data);
 			});
 
 			it('builds task list', function(){
@@ -59,7 +59,7 @@ define(['squire'], function(Squire){
 
 				builder.collaborationObject(data, group);
 
-				expect(createTaskListMock).toHaveBeenCalledWith(data, group);
+				expect(TaskListMock).toHaveBeenCalledWith(data, group);
 			});
 		});
 
@@ -70,7 +70,7 @@ define(['squire'], function(Squire){
 
 				builder.item(collaborationObjectType, data);
 
-				expect(createMessageMock).toHaveBeenCalledWith(data, true);
+				expect(MessageMock).toHaveBeenCalledWith(data, true);
 			});
 
 			it('builds task', function(){
@@ -79,7 +79,7 @@ define(['squire'], function(Squire){
 
 				builder.item(collaborationObjectType, data);
 
-				expect(createTaskMock).toHaveBeenCalledWith(data);
+				expect(TaskMock).toHaveBeenCalledWith(data);
 			});
 		});
 	});

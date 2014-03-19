@@ -3,6 +3,10 @@ define(['socket-io'], function(io){
 
 	var maxReconnects = 5;
 
+	if (!window.location.origin) {
+		window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+	}
+
 	var socket = io.connect(window.location.origin, {
         'max reconnection attempts': maxReconnects,
         'sync disconnect on unload': true

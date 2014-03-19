@@ -64,6 +64,7 @@ function prodConfig(){
     app.use(express.compress());
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.errorHandler({ dumpExceptions: true }));
+    app.enable("trust proxy");
 
     app.locals({
         production_mode: true

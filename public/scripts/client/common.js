@@ -4,6 +4,13 @@
     function common($){
         var self = {};
 
+        // RegExp moved outside of the function to make sure they are compiled only once.
+        //  URLs starting with http://, https://, or ftp://
+        var REPLACEMENT_PATTERN_1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+
+        // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+        var REPLACEMENT_PATTERN_2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
         self.browser = {
             getUserAgent : function() {
                 return navigator.userAgent.toLowerCase();
@@ -82,13 +89,8 @@
         };
 
         function parseLinks(input){
-            //URLs starting with http://, https://, or ftp://
-            var replacePattern1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-            var replacedText = input.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
-
-            //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-            var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-            replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+            var replacedText = input.replace(REPLACEMENT_PATTERN_1, '<a href="$1" target="_blank">$1</a>');
+            replacedText = replacedText.replace(REPLACEMENT_PATTERN_2, '$1<a href="http://$2" target="_blank">$2</a>');
 
             return replacedText;
         }

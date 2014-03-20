@@ -71,8 +71,7 @@ define(['knockout', 'squire'], function(ko, Squire){
 
             it('inits properties', function(){
                 expect(conversation.init).toHaveBeenCalled();
-                expect(conversation.init.mostRecentCall.args[0]).toBe(testData);
-                var callback = conversation.init.mostRecentCall.args[1];
+                var callback = conversation.init.mostRecentCall.args[0];
                 createMessageMock.andReturn({ message: 'my-message'} );
                 var message = callback({ item: 'data' }, true);
                 expect(createMessageMock).toHaveBeenCalledWith({ item: 'data' }, true);

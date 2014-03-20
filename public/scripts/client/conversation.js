@@ -34,7 +34,7 @@ define([
         CollaborationObject.call(self, data, 'convo-template');
         self.ui = createConversationUi(self.ui);
         
-        self.init(data, function(itemData){
+        self.init(function(itemData){
             return new Message(itemData, true);
         });
 

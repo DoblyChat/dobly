@@ -2,37 +2,25 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
     function(ko, socket, common, createConversationObjectUi, group, clientData){
     'use strict';
     
-    function CollaborationObject(template) {
+    function CollaborationObject(data, template) {
         this.template = template;
-        this.id = 0;
-        this.topic = ko.observable();
-        this.createdBy = '';
-        this.unreadCounter = ko.observable(0);
+        this.id = data._id ? data._id : 0;
+        this.topic = ko.observable(data.topic);
+        this.createdBy = group.getUserFullName(data.createdById);
+        this.unreadCounter = ko.observable(data.unread ? data.unread : 0);
         this.newItem = ko.observable('');
         this.isLeft = ko.observable(false);
         this.isRight = ko.observable(false);
         this.items = ko.observableArray([]);
         this.active = ko.observable(false);
         this.hasFocus = ko.observable(false);
-        this.timestamp = '';
-        this.forEntireGroup = false;
+        this.timestamp = common.formatTimestamp(data.timestamp);
+        this.forEntireGroup = data.members.entireGroup;
         this.ui = createConversationObjectUi();
-        this.type = '';
+        this.type = data.type;
         this.iconClass = '';
 
-        function setProperties(self, data){
-            self.id = data._id ? data._id : 0;
-            self.topic(data.topic);
-            self.createdBy = group.getUserFullName(data.createdById);
-            self.unreadCounter(data.unread ? data.unread : 0);
-            self.timestamp = common.formatTimestamp(data.timestamp);
-            self.type = data.type;
-            self.forEntireGroup = data.members.entireGroup;
-        }
-
-        this.init = function(data, createItem){
-            setProperties(this, data);
-
+        this.init = function(createItem){
             if(data.items) {
                 var itemsLength = data.items.length;
                 
@@ -76,7 +64,7 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
                 return 'No activity.';
             }            
         }, this);
-    };
+    }
 
     var proto = CollaborationObject.prototype;
 

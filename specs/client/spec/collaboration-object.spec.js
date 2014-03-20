@@ -50,8 +50,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
         describe("creation", function() {
             it("load properties", function() {
-                collaborationObject = new CollaborationObject('template');
-                collaborationObject.init(testData, createItemMock);
+                collaborationObject = new CollaborationObject(testData, 'template');
+                collaborationObject.init(createItemMock);
                 expect(collaborationObject.id).toEqual('8');
                 expect(collaborationObject.topic()).toEqual("some topic");
                 expect(collaborationObject.createdBy).toEqual("Freddy Teddy");
@@ -71,8 +71,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             });
 
             it("loads users", function() {
-                collaborationObject = new CollaborationObject();
-                collaborationObject.init(testSomeOtherCollaborationObjectData(), createItemMock);
+                collaborationObject = new CollaborationObject(testSomeOtherCollaborationObjectData());
+                collaborationObject.init(createItemMock);
 
                 expect(collaborationObject.forEntireGroup).toBe(false);
                 expect(collaborationObject.users).toEqual('Freddy Teddy, Charlie App');
@@ -80,22 +80,22 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
             it("undefined id", function() {
                 testData._id = undefined;
-                collaborationObject = new CollaborationObject();
-                collaborationObject.init(testData, createItemMock);
+                collaborationObject = new CollaborationObject(testData);
+                collaborationObject.init(createItemMock);
                 expect(collaborationObject.id).toBe(0);
             });
 
             it("undefined unread", function() {
                 testData.unread = undefined;
-                collaborationObject = new CollaborationObject();
-                collaborationObject.init(testData, createItemMock);
+                collaborationObject = new CollaborationObject(testData);
+                collaborationObject.init(createItemMock);
 
                 expect(collaborationObject.unreadCounter()).toBe(0);
             });
 
             it("pushes items", function() {
-                collaborationObject = new CollaborationObject();
-                collaborationObject.init(testData, function(itemData){
+                collaborationObject = new CollaborationObject(testData);
+                collaborationObject.init(function(itemData){
                     return { 
                         data: itemData, 
                         timestamp: jasmine.createSpy().andReturn(Date.now()) 
@@ -114,8 +114,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             describe("when app in focus", function() {
                 beforeEach(function() {
                     app.inFocus = true;
-                    collaborationObject = new CollaborationObject();
-                    collaborationObject.init(testData, function(itemData){
+                    collaborationObject = new CollaborationObject(testData);
+                    collaborationObject.init(function(itemData){
                         return { 
                             data: itemData, 
                             timestamp: jasmine.createSpy().andReturn(Date.now()) 
@@ -167,8 +167,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             describe("when app not in focus", function() {
                 beforeEach(function() {
                     app.inFocus = false;
-                    collaborationObject = new CollaborationObject(); 
-                    collaborationObject.init(testData, function(itemData){
+                    collaborationObject = new CollaborationObject(testData); 
+                    collaborationObject.init(function(itemData){
                         return { 
                             data: itemData,
                             timestamp: function(){ return new Date(); }
@@ -203,12 +203,12 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             var createObject, sendToServer, addNewItem;
 
             beforeEach(function() {
-                collaborationObject = new CollaborationObject();
+                collaborationObject = new CollaborationObject(testData);
                 createObject = jasmine.createSpy().andCallFake(function(data){
                     return { data: data };
                 });
                 sendToServer = jasmine.createSpy();
-                collaborationObject.init(testData, createItemMock);
+                collaborationObject.init(createItemMock);
                 addNewItem = collaborationObject.bindAddNewItem(createObject, sendToServer);
                 spyOn(collaborationObject, 'markAsRead');
             });
@@ -278,41 +278,33 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
         });
 
         describe("unread counter", function() {
-            var obj;
-
-            beforeEach(function(){
-                obj = new CollaborationObject();
-            });
-
             it("0 messages", function() {
                 testData.unread = 0;
-                obj.init(testData, createItemMock);
+                var obj = new CollaborationObject(testData);
+                obj.init(createItemMock);
                 expect(obj.showUnreadCounter()).toBe(false);
             });
 
             it("1 message", function() {
                 testData.unread = 1;
-                obj.init(testData, createItemMock);
+                var obj = new CollaborationObject(testData);
+                obj.init(createItemMock);
                 expect(obj.showUnreadCounter()).toBe(true);
             });
 
             it("2 messages", function() {
                 testData.unread = 2;
-                obj.init(testData, createItemMock);
+                var obj = new CollaborationObject(testData);
+                obj.init(createItemMock);
                 expect(obj.showUnreadCounter()).toBe(true);
             });
         });
 
         describe("mark as read", function() {
-            var obj;
-
-            beforeEach(function(){
-                obj = new CollaborationObject();
-            });
-
             it("when unread counter is 1", function() {
                 testData.unread = 1;
-                obj.init(testData, createItemMock);
+                var obj = new CollaborationObject(testData);
+                obj.init(createItemMock);
                 expect(obj.unreadCounter()).toBe(1);
 
                 obj.markAsRead();
@@ -323,7 +315,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
             it("when unread counter is 0", function() {
                 testData.unread = 0;
-                obj.init(testData, createItemMock);
+                var obj = new CollaborationObject(testData);
+                obj.init(createItemMock);
                 expect(obj.unreadCounter()).toBe(0);
 
                 obj.markAsRead();
@@ -391,15 +384,10 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
         });
 
         describe("last activity message", function() {
-            var obj;
-
-            beforeEach(function(){
-                obj = new CollaborationObject();
-            });
-
             it("no activity", function() {
                 testData.items = [];
-                obj.init(testData, createItemMock);
+                var obj = new CollaborationObject(testData);
+                obj.init(createItemMock);
                 expect(obj.lastActivityMessage()).toEqual('No activity.');
             });
 
@@ -420,8 +408,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                 testData.items.push(yesterday);
                 testData.items.push(today);
-
-                obj.init(testData, function(item) {
+                var obj = new CollaborationObject(testData);
+                obj.init(function(item) {
                     return item;
                 });
                 expect(obj.lastActivityMessage()).toEqual('Last activity at 8:30 AM.');
@@ -444,8 +432,8 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                 testData.items.push(itemOne);
                 testData.items.push(itemTwo);
-
-                obj.init(testData, function(item) {
+                var obj = new CollaborationObject(testData);
+                obj.init(function(item) {
                     return item;
                 });
                 expect(obj.lastActivityMessage()).toEqual('Last activity on 7/13/2012.');

@@ -13,7 +13,7 @@ define(['knockout', 'squire'], function(ko, Squire){
             testData = testDataConversation();
             socketMock = createMockSocket();
             
-            createCollaborationObjectMock = function(template){
+            createCollaborationObjectMock = function(data, template){
                 this.ui = { 
                     u: 'i',
                     scroll: {

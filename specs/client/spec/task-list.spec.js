@@ -10,7 +10,7 @@ define(['squire', 'knockout'], function(Squire, ko){
 
             data = { da: 'ta' };
 
-            var createCollaborationObjectMock = function(template){
+            var createCollaborationObjectMock = function(data, template){
                 this.init = jasmine.createSpy('init');
                 this.bindAddNewItem = jasmine.createSpy('add');
                 this.template = template;
@@ -63,8 +63,7 @@ define(['squire', 'knockout'], function(Squire, ko){
                 var itemData = {};
                 expect(taskList.init).toHaveBeenCalled();
                 var args = taskList.init.mostRecentCall.args;
-                expect(args[0]).toBe(data)
-                args[1](itemData);
+                args[0](itemData);
                 expect(createTaskMock).toHaveBeenCalledWith(itemData);
             });
 

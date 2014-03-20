@@ -20,7 +20,9 @@ define(['knockout', 'client/socket', 'client/collaboration-object', 'client/task
     function TaskList(data){
         var self = this;
 
-        self.init(data, function(itemData){
+        CollaborationObject.call(self, data, 'task-list-template');
+
+        self.init(function(itemData){
             return new Task(itemData);
         });
 
@@ -28,9 +30,17 @@ define(['knockout', 'client/socket', 'client/collaboration-object', 'client/task
         self.iconClass = 'icon-task-list';
 
         self.addTask = self.bindAddNewItem(createNewTask, sendTaskToServer);
-    };
+    }
 
-    TaskList.prototype = new CollaborationObject('task-list-template');
+    function Surrogate() {}
+ 
+    function extend(base, sub) {
+        Surrogate.prototype = base.prototype;
+        sub.prototype = new Surrogate();
+        sub.prototype.constructor = sub;
+    }
+
+    extend(CollaborationObject, TaskList);
 
     TaskList.prototype.removeTask = function(task){
         if(confirm('Are you sure you would like to remove this task?')){

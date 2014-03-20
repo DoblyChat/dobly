@@ -31,6 +31,7 @@ define([
     function Conversation(data) {
         var self = this;
 
+        CollaborationObject.call(self, data, 'convo-template');
         self.ui = createConversationUi(self.ui);
         
         self.init(data, function(itemData){
@@ -44,9 +45,17 @@ define([
 
         this.nextPage = 1;
         this.totalMessages = data.totalMessages || 0;
-    };
+    }
 
-    Conversation.prototype = new CollaborationObject('convo-template');
+    function Surrogate() {}
+ 
+    function extend(base, sub) {
+        Surrogate.prototype = base.prototype;
+        sub.prototype = new Surrogate();
+        sub.prototype.constructor = sub;
+    }
+
+    extend(CollaborationObject, Conversation);
 
     Conversation.prototype.lastMessages = function () {
         if(this.items().length - 2 >= 0) {

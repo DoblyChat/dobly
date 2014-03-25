@@ -3,6 +3,7 @@
 var express = require('express')
   , routes = require('./lib/routes')
   , serviceRoutes = require('./lib/routes/services')
+  , forceSslRoutes = require('./lib/routes/force_ssl')
   , sockets = require('./lib/sockets')
   , MongoStore = require('connect-mongo')(express)
   , app = express.createServer()
@@ -78,6 +79,7 @@ app.listen(port);
 security.config(passport);
 
 // Routes
+forceSslRoutes.config(app);
 routes.config(app);
 serviceRoutes.config(app, io.sockets);
 

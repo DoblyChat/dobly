@@ -39,7 +39,9 @@ define(['knockout', 'client/socket', 'client/desktop.ui', 'client/routing'],
         });
 
         function hasCollaborationObject(collaborationObject){
-            return self.collaborationObjects.indexOf(collaborationObject) >= 0;
+            var has = self.collaborationObjects.indexOf(collaborationObject) >= 0;
+            console.log('socket id: ', socket.socket.sessionid, ' has collaborationObject ', collaborationObject.id, has, self.collaborationObjects().length);
+            return has;
         }
 
         self.add = function(collaborationObject){

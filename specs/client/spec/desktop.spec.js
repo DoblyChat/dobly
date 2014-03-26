@@ -400,7 +400,6 @@ define(['squire'], function(Squire){
             });
 
             describe("creation", function() {
-
                 it("collaboration objects", function() {
                     expect(desktop.collaborationObjects().length).toBe(0);
                 });

@@ -55,11 +55,10 @@ define(['squire'], function(Squire){
 
 			it('builds task list', function(){
 				var data = { type: 'T' };
-				var group = { my: 'group' };
 
-				builder.collaborationObject(data, group);
+				builder.collaborationObject(data);
 
-				expect(TaskListMock).toHaveBeenCalledWith(data, group);
+				expect(TaskListMock).toHaveBeenCalledWith(data);
 			});
 		});
 

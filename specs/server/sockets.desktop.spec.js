@@ -15,44 +15,30 @@ describe('Sockets', function(){
 				moveCollaborationObject: jasmine.createSpy(),
 			};
 
-			socketMock = {
-				joinCollaborationObjectRoom: jasmine.createSpy(),
-				leaveCollaborationObjectRoom: jasmine.createSpy()
-			};
-
 			spyOn(console, 'error');
 		});
 
 		describe('#addCollaborationObject', function(){
 			it('adds a collaboration object', function(){
-				desktopIo.addCollaborationObject(socketMock, { id: 3, collaborationObjectId: 23 });
+				desktopIo.addCollaborationObject({ id: 3, collaborationObjectId: 23 });
 				expect(modelMock.addCollaborationObject).toHaveBeenCalled();
 				expect(modelMock.addCollaborationObject.mostRecentCall.args[0]).toBe(3);
 				expect(modelMock.addCollaborationObject.mostRecentCall.args[1]).toBe(23);
 			});
 
 			it('logs an error if add collaboration object failed', function(){
-				desktopIo.addCollaborationObject(socketMock, { id: 15 });
+				desktopIo.addCollaborationObject({ id: 15 });
 				expect(modelMock.addCollaborationObject).toHaveBeenCalled();
 
 				var addCallback = modelMock.addCollaborationObject.getCallback();
 				addCallback('add-error');
 				expect(console.error).toHaveBeenCalledWith('Desktop error adding collaboration object', 'add-error');
-				expect(socketMock.joinCollaborationObjectRoom).not.toHaveBeenCalled();
-			});
-
-			it('joins collaboration object room if save successfull', function(){
-				desktopIo.addCollaborationObject(socketMock, { id: 15, collaborationObjectId: 34 });
-				var callback = modelMock.addCollaborationObject.getCallback();
-				callback(null);
-				expect(console.error).not.toHaveBeenCalled();
-				expect(socketMock.joinCollaborationObjectRoom).toHaveBeenCalledWith(34);
 			});
 		});
 
 		describe('#removeCollaborationObject', function(){
 			it('removes a collaboration object', function(){
-				desktopIo.removeCollaborationObject(socketMock, { id: 'id', collaborationObjectId: 34 });
+				desktopIo.removeCollaborationObject({ id: 'id', collaborationObjectId: 34 });
 				expect(modelMock.removeCollaborationObject).toHaveBeenCalled();
 				expect(modelMock.removeCollaborationObject.mostRecentCall.args[0]).toBe('id');
 				expect(modelMock.removeCollaborationObject.mostRecentCall.args[1]).toBe(34);
@@ -61,21 +47,12 @@ describe('Sockets', function(){
 			});
 
 			it('logs an error if remove collaboration object failed', function(){
-				desktopIo.removeCollaborationObject(socketMock, { id: 15 });
+				desktopIo.removeCollaborationObject({ id: 15 });
 				expect(modelMock.removeCollaborationObject).toHaveBeenCalled();
 
 				var callback = modelMock.removeCollaborationObject.getCallback();
 				callback('remove-error');
 				expect(console.error).toHaveBeenCalledWith('Desktop error removing collaboration object', 'remove-error');
-				expect(socketMock.leaveCollaborationObjectRoom).not.toHaveBeenCalled();
-			});
-
-			it('leaves collaboration object room if save successfull', function(){
-				desktopIo.removeCollaborationObject(socketMock, { id: 15, collaborationObjectId: 34 });
-				var callback = modelMock.removeCollaborationObject.getCallback();
-				callback(null);
-				expect(console.error).not.toHaveBeenCalled();
-				expect(socketMock.leaveCollaborationObjectRoom).toHaveBeenCalledWith(34);
 			});
 		});
 

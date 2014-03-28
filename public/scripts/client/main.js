@@ -24,7 +24,7 @@ define(['jquery', 'knockout', 'client/viewModel', 'client/timeout', 'client/rout
             
             routing.bind();
 
-            var viewModel = createViewModel(data.collaborationObjects, data.desktop);
+            var viewModel = createViewModel(data.desktop);
 
             ko.applyBindings(viewModel);
             global.app.desktop = viewModel.desktop;

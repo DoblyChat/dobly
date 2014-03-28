@@ -245,13 +245,13 @@ describe('Socket', function(){
                 it('adds conversation to desktop', function(){
                     fire('add_to_desktop');
                     expectSessionTouchCalled();
-                    expect(desktopIoMock.addCollaborationObject).toHaveBeenCalledWith(socketMock, data);
+                    expect(desktopIoMock.addCollaborationObject).toHaveBeenCalledWith(data, confirm);
                 });
 
                 it('removes conversation from desktop', function(){
                     fire('remove_from_desktop');
                     expectSessionTouchCalled();
-                    expect(desktopIoMock.removeCollaborationObject).toHaveBeenCalledWith(socketMock, data);
+                    expect(desktopIoMock.removeCollaborationObject).toHaveBeenCalledWith(data, confirm);
                 });
 
                 it('updates strip order', function(){

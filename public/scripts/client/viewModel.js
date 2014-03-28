@@ -3,44 +3,41 @@ define([
         'client/socket',
         'client/group', 
         'client/desktop',
-        'client/archive', 
-        'client/builder', 
+        'client/archive',
         'client/collaboration-object.new', 
         'client/changeTopic',
         'client/events',
         'client/notifications',
         'client/notification-setup',
         'client/top-nav',
-        'client/group'], function(  ko, 
+        'client/group',
+        'client/collaboration-object.db'], 
+                            function(  ko, 
                                     socket,
                                     createGroup, 
                                     createDesktop,
                                     createArchive,
-                                    builder,
                                     newCollaborationObject,
                                     createChangeTopic, 
                                     events,
                                     createNotifier,
                                     notificationSetup,
                                     topNav, 
-                                    group){
+                                    group,
+                                    db){
     'use strict';
     
-    return function createViewModel(collaborationObjectsData, desktopData) {
+    return function createViewModel(desktopData) {
         var self = {};
   
-        self.collaborationObjects = ko.observableArray([]);
+        self.collaborationObjects = ko.observableArray(db.getCollaborationObjects());
 
         self.group = group;
 
         function subscribe(){
-            var toSubscribe = [];
-
-            for(var i = 0; i < collaborationObjectsData.length; i++){
-                var obj = builder.collaborationObject(collaborationObjectsData[i], self.group);
-                self.collaborationObjects.push(obj);
-                toSubscribe.push(collaborationObjectsData[i]._id);
-            }
+            var toSubscribe = db.getCollaborationObjects().map(function(obj){
+                return obj.id;
+            });
 
             socket.emit('subscribe_to_collaboration_objects', toSubscribe);
         }

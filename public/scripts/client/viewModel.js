@@ -29,9 +29,7 @@ define([
     
     return function createViewModel(desktopData) {
         var self = {};
-  
-        self.collaborationObjects = ko.observableArray(db.getCollaborationObjects());
-
+        
         self.group = group;
 
         function subscribe(){
@@ -48,7 +46,7 @@ define([
 
         self.unreadCounter = ko.computed(function(){
             var unread = 0;
-            ko.utils.arrayForEach(self.collaborationObjects(), function(conversation){
+            ko.utils.arrayForEach(db.getCollaborationObjects(), function(conversation){
                 unread += conversation.unreadCounter();
             });
 
@@ -64,7 +62,7 @@ define([
         });
 
         self.desktop = createDesktop(desktopData);
-        self.archive = createArchive(self.desktop, self.collaborationObjects);
+        self.archive = createArchive(self.desktop);
         self.newCollaborationObject = newCollaborationObject;
         self.changeTopic = createChangeTopic();
         self.notificationSetup = notificationSetup;

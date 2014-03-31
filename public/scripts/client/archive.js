@@ -1,7 +1,7 @@
 define(['knockout', 'client/common', 'client/routing', 'client/collaboration-object.db'], function(ko, common, routing, db){
     'use strict';
     
-    return function (desktop, collaborationObjects) {
+    return function (desktop) {
         var self = {};
 
         self.open = function(collaborationObject){

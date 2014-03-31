@@ -4,11 +4,18 @@ define(['squire'], function(Squire){
     describe("desktop", function() {
 
         var desktop, createDesktop, desktopData, allCollaborationObjects, testCollaborationObject,
-            routingMock, uiMock, socketMock, createDesktopUiMock;
+            routingMock, uiMock, socketMock, createDesktopUiMock, dbMock;
 
         beforeEach(function(){
             routingMock = jasmine.createSpyObj('routing', ['subscribe']);
+            
             allCollaborationObjects = testDataAllCollaborationObjects();
+
+            dbMock = {
+                getCollaborationObjects: function(){
+                    return allCollaborationObjects;
+                }
+            };
 
             uiMock = {
                 show: jasmine.createSpy('show'),
@@ -33,10 +40,11 @@ define(['squire'], function(Squire){
                     return createDesktopUiMock;
                 });
                 injector.mock('client/socket', socketMock);
+                injector.mock('client/collaboration-object.db', dbMock);
 
                 injector.require(['client/desktop'], function(createDesktopFunc){
                     createDesktop = function(data){
-                        return createDesktopFunc(data, allCollaborationObjects);
+                        return createDesktopFunc(data);
                     };
 
                     done = true;

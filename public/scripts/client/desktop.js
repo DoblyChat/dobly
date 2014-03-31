@@ -1,8 +1,8 @@
-define(['knockout', 'client/socket', 'client/desktop.ui', 'client/routing'], 
-    function(ko, socket, createDesktopUi, routing){
+define(['knockout', 'client/socket', 'client/desktop.ui', 'client/routing', 'client/collaboration-object.db'], 
+    function(ko, socket, createDesktopUi, routing, db){
     'use strict';
     
-    return function (data, allCollaborationObjects){
+    return function (data){
         var self = {};
 
         self.id = data._id;
@@ -23,6 +23,8 @@ define(['knockout', 'client/socket', 'client/desktop.ui', 'client/routing'],
         }
 
         function getCollaborationObject(id){
+            var allCollaborationObjects = db.getCollaborationObjects();
+
             for(var c = 0; c < allCollaborationObjects.length; c++){
                 if(allCollaborationObjects[c].id == id){
                     return allCollaborationObjects[c];

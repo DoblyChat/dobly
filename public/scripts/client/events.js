@@ -1,4 +1,4 @@
-define(['knockout', 'client/socket', 'client/builder'], function(ko, socket, builder){
+define(['knockout', 'client/socket', 'client/builder', 'client/collaboration-object.db'], function(ko, socket, builder, db){
     'use strict';
 
     var self = {};
@@ -6,7 +6,7 @@ define(['knockout', 'client/socket', 'client/builder'], function(ko, socket, bui
     return {
         register: function(viewModel){
             function findCollaborationObject(data, callback){
-                ko.utils.arrayForEach(viewModel.collaborationObjects(), function(collaborationObject){
+                ko.utils.arrayForEach(db.getCollaborationObjects(), function(collaborationObject){
                     if(data.collaborationObjectId === collaborationObject.id){
                         callback(collaborationObject);
                     }
@@ -57,16 +57,14 @@ define(['knockout', 'client/socket', 'client/builder'], function(ko, socket, bui
             });
 
             socket.on('my_new_collaboration_object', function(data) {
-                var collaborationObject = builder.collaborationObject(data);
-                viewModel.collaborationObjects.push(collaborationObject);
+                var collaborationObject = db.addCollaborationObject(data);
                 app.desktop.addAndActivate(collaborationObject);
                 app.desktop.ui.scroll.bottomTile();
                 collaborationObject.hasFocus(true);
             });
 
             socket.on('new_collaboration_object', function(data){
-                var collaborationObject = builder.collaborationObject(data);
-                viewModel.collaborationObjects.push(collaborationObject);
+                var collaborationObject = db.addCollaborationObject(data);
                 app.desktop.add(collaborationObject); 
             });
         }

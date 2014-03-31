@@ -2,33 +2,31 @@ define(['squire'], function(Squire){
     'use strict';
 
     describe('events', function(){
-        var builderMock, socketMock, viewModelMock, events, collaborationObject;
+        var builderMock, socketMock, viewModelMock, dbMock, events, collaborationObject;
 
         beforeEach(function(){
             var done = false;
 
             builderMock = {
-                collaborationObject: jasmine.createSpy('build-collaboration-object'),
                 item: jasmine.createSpy('build-item')
+            };
+
+            viewModelMock = {
+                notifier: {
+                    showDesktopNotification: jasmine.createSpy('show-desktop-notification')
+                }
+                
             };
 
             socketMock = createMockSocket();
 
-            viewModelMock = (function(){
+            dbMock = (function(){
                 var _collaborationObjects = [];
 
-                function collaborationObjects(){
-                    return _collaborationObjects;
-                }
-
-                collaborationObjects.push = function(obj){
-                    _collaborationObjects.push(obj);
-                };
-
                 return {
-                    collaborationObjects: collaborationObjects,
-                    notifier: {
-                        showDesktopNotification: jasmine.createSpy('show-desktop-notification')
+                    addCollaborationObject: jasmine.createSpy('add-collab-obj'),
+                    getCollaborationObjects: function(){
+                        return _collaborationObjects;
                     }
                 };
             })();
@@ -48,6 +46,7 @@ define(['squire'], function(Squire){
 
                 injector.mock('client/builder', builderMock);
                 injector.mock('client/socket', socketMock);
+                injector.mock('client/collaboration-object.db', dbMock);
 
                 injector.require(['client/events'], function(eventsObj){
                     events = eventsObj;
@@ -87,11 +86,11 @@ define(['squire'], function(Squire){
 
         function setup(){
             events.register(viewModelMock);
-            viewModelMock.collaborationObjects.push(buildCollaborationObjectMock('a-id'));
-            viewModelMock.collaborationObjects.push(buildCollaborationObjectMock('b-id'));
+            dbMock.getCollaborationObjects().push(buildCollaborationObjectMock('a-id'));
+            dbMock.getCollaborationObjects().push(buildCollaborationObjectMock('b-id'));
 
             collaborationObject = buildCollaborationObjectMock('c-id');
-            viewModelMock.collaborationObjects.push(collaborationObject);
+            dbMock.getCollaborationObjects().push(collaborationObject);
             collaborationObject.type = 'type';
         }
 
@@ -316,7 +315,7 @@ define(['squire'], function(Squire){
             beforeEach(function(){
                 data = { id: 'n-id' };
                 newObj = buildCollaborationObjectMock('n-id');
-                builderMock.collaborationObject.andReturn(newObj);
+                dbMock.addCollaborationObject.andReturn(newObj);
 
             });
 
@@ -324,8 +323,7 @@ define(['squire'], function(Squire){
                 newObj.hasFocus = jasmine.createSpy('has-focus');
                 socketMock.mockEmit('my_new_collaboration_object', data);
 
-                expect(builderMock.collaborationObject).toHaveBeenCalledWith(data);
-                expect(viewModelMock.collaborationObjects()).toContain(newObj);
+                expect(dbMock.addCollaborationObject).toHaveBeenCalledWith(data);
                 expect(app.desktop.addAndActivate).toHaveBeenCalledWith(newObj);
                 expect(app.desktop.ui.scroll.bottomTile).toHaveBeenCalled();
                 expect(newObj.hasFocus).toHaveBeenCalledWith(true);
@@ -333,8 +331,7 @@ define(['squire'], function(Squire){
 
             it('adds a new collaboration object from a different user', function(){
                 socketMock.mockEmit('new_collaboration_object', data);
-                expect(builderMock.collaborationObject).toHaveBeenCalledWith(data);
-                expect(viewModelMock.collaborationObjects()).toContain(newObj);
+                expect(dbMock.addCollaborationObject).toHaveBeenCalledWith(data);
                 expect(app.desktop.add).toHaveBeenCalledWith(newObj);
             });
         });

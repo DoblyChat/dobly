@@ -2,26 +2,26 @@ define(['squire'], function(Squire){
     'use strict';
 
     describe("archive", function() {
-        var archive, desktop, routing, common,
+        var archive, desktop, routing, common, db,
             testCollaborationObjects = function() {
-            return [
-                {
-                    unreadCounter : function() { return 3; },
-                    topic: function() { return 'dEf'; },
-                },
-                {
-                    unreadCounter : function() { return 3; },
-                    topic: function() { return 'abC'; },
-                },
-                {
-                    unreadCounter : function() { return 0; },
-                    topic: function() { return 'zero'; },
-                },
-                {
-                    unreadCounter : function() { return 1; },
-                    topic: function() { return 'one'; },
-                },
-            ];
+                return [
+                    {
+                        unreadCounter : function() { return 3; },
+                        topic: function() { return 'dEf'; },
+                    },
+                    {
+                        unreadCounter : function() { return 3; },
+                        topic: function() { return 'abC'; },
+                    },
+                    {
+                        unreadCounter : function() { return 0; },
+                        topic: function() { return 'zero'; },
+                    },
+                    {
+                        unreadCounter : function() { return 1; },
+                        topic: function() { return 'one'; },
+                    },
+                ];
         };
 
         beforeEach(function() {
@@ -30,11 +30,16 @@ define(['squire'], function(Squire){
             desktop = jasmine.createSpyObj('desktop', ['addAndActivate']);
             routing = jasmine.createSpyObj('routing', ['routeTo', 'subscribe']);
             common = jasmine.createSpyObj('common', ['delayedFocus']);
+            
+            db = {
+                getCollaborationObjects: testCollaborationObjects
+            };
 
             runs(function(){
                 var injector = new Squire();
                 injector.mock('client/routing', routing);
                 injector.mock('client/common', common);
+                injector.mock('client/collaboration-object.db', db);
 
                 injector.require(['client/archive'], function(createArchive){
                     archive = createArchive(desktop, testCollaborationObjects);

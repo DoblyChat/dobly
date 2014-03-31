@@ -63,7 +63,7 @@ define([
             return self.unreadCounter() > 0;
         });
 
-        self.desktop = createDesktop(desktopData, self.collaborationObjects());
+        self.desktop = createDesktop(desktopData);
         self.archive = createArchive(self.desktop, self.collaborationObjects);
         self.newCollaborationObject = newCollaborationObject;
         self.changeTopic = createChangeTopic();

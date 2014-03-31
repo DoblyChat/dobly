@@ -1,4 +1,4 @@
-define(['knockout', 'client/common', 'client/routing'], function(ko, common, routing){
+define(['knockout', 'client/common', 'client/routing', 'client/collaboration-object.db'], function(ko, common, routing, db){
     'use strict';
     
     return function (desktop, collaborationObjects) {
@@ -17,7 +17,7 @@ define(['knockout', 'client/common', 'client/routing'], function(ko, common, rou
         self.collaborationObjects = ko.observableArray([]);
 
         self.refresh = function () {
-            _sortedCollaborationObjects = collaborationObjects().sort(function(left, right){
+            _sortedCollaborationObjects = db.getCollaborationObjects().sort(function(left, right){
                 if (left.unreadCounter() == right.unreadCounter()) {
                     return left.topic().toLowerCase().localeCompare(right.topic().toLowerCase());
                 } else {

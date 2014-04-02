@@ -1,67 +1,41 @@
 define(function(){
 	'use strict';
     
-    var canUseNotifications = !!(window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications);		
+    var notifications = window.webkitNotifications || window.mozNotifications || window.oNotifications || window.msNotifications || window.notifications,
+    	canUseNotifications = !!(notifications),
+		self = {},
+		ALLOWED = 0,
+		notifications = window.webkitNotifications;
 
-	return function (desktop){
-		var self = {};
+	self.showDesktopNotification = function(collaborationObject, content){
+		if(!app.inFocus){
+			if(canUseNotifications){
+				if(notifications.checkPermission() === ALLOWED){
+					var notif = notifications.createNotification(
+						'/images/logo.transparent.png', 
+						collaborationObject.topic(), content);
 
-		var ALLOWED = 0;
+					notif.onclick = function(){
+						window.focus();
+						app.desktop.activate(collaborationObject);
+						collaborationObject.hasFocus(true);
+					};
 
-		var notifications = window.webkitNotifications;
-		var titleBlinkTimer;
+					notif.show();
 
-		var appTitle = document.title;
-
-		self.showDesktopNotification = function(collaborationObject, content){
-			if(!app.inFocus){
-				if(canUseNotifications){
-					if(notifications.checkPermission() === ALLOWED){
-						var notif = notifications.createNotification(
-							'/images/logo.transparent.png', 
-							collaborationObject.topic(), content);
-
-						notif.onclick = function(){
-							window.focus();
-							desktop.activate(collaborationObject);
-							collaborationObject.hasFocus(true);
-						};
-
-						notif.show();
-
-						setTimeout(function(){
-							notif.cancel();
-						}, '5000');
-					}
+					setTimeout(function(){
+						notif.cancel();
+					}, '5000');
 				}
-				playSound();
 			}
-		};
-
-		function playSound(){
-			document.getElementById('notification-sound').play();
+			playSound();
 		}
-
-		self.updateTitle = function(unreadCount){
-			clearInterval(titleBlinkTimer);
-
-			if(unreadCount > 0){
-				titleBlinkTimer = setInterval(blink, '1500');
-			}else{
-				document.title = appTitle;
-			}
-
-			function blink(){
-				var currentTitle = document.title;
-				if(currentTitle === appTitle){
-					document.title = '(' + unreadCount + ') unread - ' + appTitle;
-				}else{
-					document.title = appTitle;
-				}
-			}
-		};
-
-		return self;
 	};
+
+	function playSound(){
+		document.getElementById('notification-sound').play();
+	}
+
+	return self;
 });
 

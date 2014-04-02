@@ -9,7 +9,7 @@
 						.icon-dismiss(data-bind="click: $parent.remove, clickBubble: false")
 						div(data-bind="visible: !showUnreadCounter(), css: iconClass")
 						.tile-counter(data-bind="visible: showUnreadCounter, text: unreadCounter")
-	#new-message-bar(data-bind="css: { active: $root.hasUnread }")
+	#new-message-bar(data-bind="css: { active: $root.unread.hasUnread }")
 	a#new-tile(href="#new", data-bind="click: $parent.addNewConversation")				
 		.icon-plus
 		#new-collaboration-object-text new

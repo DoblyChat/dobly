@@ -2,7 +2,8 @@ define(['squire'], function(Squire){
     'use strict';
 
     describe('events', function(){
-        var builderMock, socketMock, viewModelMock, dbMock, events, collaborationObject;
+        var builderMock, socketMock, notificationsMock, 
+        dbMock, events, collaborationObject, unreadMock;
 
         beforeEach(function(){
             var done = false;
@@ -11,11 +12,8 @@ define(['squire'], function(Squire){
                 item: jasmine.createSpy('build-item')
             };
 
-            viewModelMock = {
-                notifier: {
-                    showDesktopNotification: jasmine.createSpy('show-desktop-notification')
-                }
-                
+            notificationsMock = {
+                showDesktopNotification: jasmine.createSpy('show-desktop-notification')
             };
 
             socketMock = createMockSocket();
@@ -30,6 +28,11 @@ define(['squire'], function(Squire){
                     }
                 };
             })();
+
+            unreadMock = {
+                update: jasmine.createSpy('show-unread'),
+                subscribeToMarkAsRead: jasmine.createSpy('unread-subscribe')
+            };
 
             app.desktop = {
                 add: jasmine.createSpy('add'),
@@ -47,6 +50,8 @@ define(['squire'], function(Squire){
                 injector.mock('client/builder', builderMock);
                 injector.mock('client/socket', socketMock);
                 injector.mock('client/collaboration-object.db', dbMock);
+                injector.mock('client/notifications', notificationsMock);
+                injector.mock('client/unread', unreadMock);
 
                 injector.require(['client/events'], function(eventsObj){
                     events = eventsObj;
@@ -85,7 +90,6 @@ define(['squire'], function(Squire){
         }
 
         function setup(){
-            events.register(viewModelMock);
             dbMock.getCollaborationObjects().push(buildCollaborationObjectMock('a-id'));
             dbMock.getCollaborationObjects().push(buildCollaborationObjectMock('b-id'));
 
@@ -113,8 +117,9 @@ define(['squire'], function(Squire){
 
                 expect(builderMock.item).toHaveBeenCalledWith('type', data);
                 expect(collaborationObject.addItem).toHaveBeenCalledWith(item);
-                expect(viewModelMock.notifier.showDesktopNotification).toHaveBeenCalledWith(collaborationObject, 'my-new-item');
+                expect(notificationsMock.showDesktopNotification).toHaveBeenCalledWith(collaborationObject, 'my-new-item');
                 expect(app.desktop.add).toHaveBeenCalledWith(collaborationObject);
+                expect(unreadMock.update).toHaveBeenCalled();
             });
 
             it('does nothing if item does not belong to any current collaboration object', function(){
@@ -316,7 +321,6 @@ define(['squire'], function(Squire){
                 data = { id: 'n-id' };
                 newObj = buildCollaborationObjectMock('n-id');
                 dbMock.addCollaborationObject.andReturn(newObj);
-
             });
 
             it('adds a new collaboration object from current user', function(){
@@ -327,12 +331,14 @@ define(['squire'], function(Squire){
                 expect(app.desktop.addAndActivate).toHaveBeenCalledWith(newObj);
                 expect(app.desktop.ui.scroll.bottomTile).toHaveBeenCalled();
                 expect(newObj.hasFocus).toHaveBeenCalledWith(true);
+                expect(unreadMock.subscribeToMarkAsRead).toHaveBeenCalledWith(newObj);
             });
 
             it('adds a new collaboration object from a different user', function(){
                 socketMock.mockEmit('new_collaboration_object', data);
                 expect(dbMock.addCollaborationObject).toHaveBeenCalledWith(data);
                 expect(app.desktop.add).toHaveBeenCalledWith(newObj);
+                expect(unreadMock.subscribeToMarkAsRead).toHaveBeenCalledWith(newObj);
             });
         });
     });

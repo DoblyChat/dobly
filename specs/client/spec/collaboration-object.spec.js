@@ -4,7 +4,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
     describe("collaboration object", function() {
 
         var collaborationObject, socketMock, createItemMock,
-            testData, CollaborationObject, dataMock;
+            testData, CollaborationObject, dataMock, unreadMock;
 
         beforeEach(function() {     
             var groupMock = {
@@ -19,6 +19,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
             testData = testDataCollaborationObject();
             socketMock = createMockSocket();
+
             dataMock = {};
             
             createItemMock = function(itemData){
@@ -304,6 +305,12 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
             it("when unread counter is 1", function() {
                 testData.unread = 1;
                 var obj = new CollaborationObject(testData);
+                var callbackFired = false;
+
+                obj.subscribeToMarkAsRead(function(){
+                    callbackFired = true;
+                });
+
                 obj.init(createItemMock);
                 expect(obj.unreadCounter()).toBe(1);
 
@@ -311,11 +318,18 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                 expect(obj.unreadCounter()).toBe(0);
                 expect(socketMock.emit).toHaveBeenCalledWith('mark_as_read', '8');
+                expect(callbackFired).toBe(true);
             });
 
             it("when unread counter is 0", function() {
                 testData.unread = 0;
                 var obj = new CollaborationObject(testData);
+                var callbackFired = false;
+
+                obj.subscribeToMarkAsRead(function(){
+                    callbackFired = true;
+                });
+
                 obj.init(createItemMock);
                 expect(obj.unreadCounter()).toBe(0);
 
@@ -323,6 +337,7 @@ define(['knockout', 'client/common', 'squire'], function(ko, common, Squire){
 
                 expect(obj.unreadCounter()).toBe(0);            
                 expect(socketMock.emit).not.toHaveBeenCalled();
+                expect(callbackFired).toBe(false);
             });
         });
 

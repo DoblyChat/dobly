@@ -19,6 +19,7 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
         this.ui = createConversationObjectUi();
         this.type = data.type;
         this.iconClass = '';
+        this.markAsReadObserver = null;
 
         this.init = function(createItem){
             if(data.items) {
@@ -127,10 +128,17 @@ define(['knockout', 'client/socket', 'client/common', 'client/collaboration-obje
         };
     }
 
+    proto.subscribeToMarkAsRead = function(callback){
+        this.markAsReadObserver = callback;
+    };
+
     proto.markAsRead = function() {
         if (this.unreadCounter() > 0) {
             this.unreadCounter(0);
             emitMarkAsRead(this);
+            if(this.markAsReadObserver){
+                this.markAsReadObserver();
+            }
         }
 
         return true;

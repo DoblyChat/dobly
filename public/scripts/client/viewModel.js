@@ -1,5 +1,4 @@
 define([
-        'client/socket',
         'client/group', 
         'client/desktop',
         'client/archive',
@@ -9,10 +8,8 @@ define([
         'client/unread',
         'client/notification-setup',
         'client/top-nav',
-        'client/group',
-        'client/collaboration-object.db'], 
-                            function(socket,
-                                    createGroup, 
+        'client/group'], 
+                            function(createGroup, 
                                     createDesktop,
                                     createArchive,
                                     newCollaborationObject,
@@ -21,26 +18,11 @@ define([
                                     unread,
                                     notificationSetup,
                                     topNav, 
-                                    group,
-                                    db){
+                                    group){
     'use strict';
     
     return function createViewModel(desktopData) {
         var self = {};
-
-
-        function subscribe(){
-            var toSubscribe = db.getCollaborationObjects().map(function(obj){
-                return obj.id;
-            });
-
-            socket.emit('subscribe_to_collaboration_objects', toSubscribe);
-        }
-
-        subscribe();
-
-        socket.on('reconnect', subscribe);
-
         self.group = group;
         self.unread = unread;
         self.desktop = createDesktop(desktopData);

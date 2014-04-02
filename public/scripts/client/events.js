@@ -20,6 +20,18 @@ define(['knockout', 'client/socket', 'client/builder', 'client/collaboration-obj
         });
     }
 
+    function subscribe(){
+        var toSubscribe = db.getCollaborationObjects().map(function(obj){
+            return obj.id;
+        });
+
+        socket.emit('subscribe_to_collaboration_objects', toSubscribe);
+    }
+
+    subscribe();
+
+    socket.on('reconnect', subscribe);
+        
     socket.on('receive_item', function(data) {
         findCollaborationObject(data, function(collaborationObject){
             var itemObj = builder.item(collaborationObject.type, data);

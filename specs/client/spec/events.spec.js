@@ -44,6 +44,8 @@ define(['squire'], function(Squire){
                 }
             };
 
+            setup();
+            
             runs(function(){
                 var injector = new Squire();
 
@@ -55,7 +57,7 @@ define(['squire'], function(Squire){
 
                 injector.require(['client/events'], function(eventsObj){
                     events = eventsObj;
-                    setup();
+                    
                     done = true;
                 });
             });
@@ -97,6 +99,19 @@ define(['squire'], function(Squire){
             dbMock.getCollaborationObjects().push(collaborationObject);
             collaborationObject.type = 'type';
         }
+
+        describe('subscribe', function(){
+            it('automatically subscribes to collaboration objects', function(){
+                expect(socketMock.emit).toHaveBeenCalledWith('subscribe_to_collaboration_objects', [ 'a-id', 'b-id', 'c-id' ]);
+            });
+
+            it('subscribes again on reconnect', function(){
+                dbMock.getCollaborationObjects().push(buildCollaborationObjectMock('d-id'));
+                socketMock.mockEmit('reconnect');
+                expect(socketMock.emit).toHaveBeenCalledWith('subscribe_to_collaboration_objects', [ 'a-id', 'b-id', 'c-id', 'd-id']);
+            });
+
+        });
 
         describe('receive_item', function(){
             it('adds item to the appropriate collaboration object', function(){
